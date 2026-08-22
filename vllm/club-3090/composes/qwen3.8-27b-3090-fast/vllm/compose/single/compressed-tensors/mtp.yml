@@ -1,0 +1,69 @@
+# ===========================================================================
+# Profile (at-a-glance):
+#   Model:     Qwen3.8-27B 3090 fast variant (prepared syv-ai W4A16 artifact)
+#   Topology:  Single RTX 3090 (TP=1)
+#   Drafter:   Built-in MTP n=3 (DRAFT_TOKENS override)
+#   KV:        fp8/e4m3 via FlashInfer
+#   Vision:    enabled
+#   Template:  native Qwen3.8 template; qwen3 reasoning + qwen3_coder tools
+#   Max ctx:   140000
+#   Status:    🐣 Incubating
+#   Caveats:   The underlying v4 image/profile is live-validated, but this exact
+#              Club wrapper has not been booted. It deliberately uses the local
+#              patched image; stock vLLM 0.27.1 lacks required syv-ai patches.
+#   Best for:  one or a few agent/chat users needing long context, tools, vision
+# ---------------------------------------------------------------------------
+# syvai/qwen3.8-27b-3090-fast-variant is a companion overlay, not a full
+# checkpoint. MODEL_DIR must contain Qwen3.8-27B-W4A16-AutoRound-fast.
+# ===========================================================================
+services:
+  vllm-qwen38-27b-3090-fast:
+    # Intentionally NOT VLLM_IMAGE: Club injects its overlay-free stable image
+    # into that variable. This profile requires the syv-ai patched image.
+    image: ${QWEN38_IMAGE:-qwen38-27b-3090:v4}
+    container_name: "${ESTATE_CONTAINER:-vllm-qwen38-27b-3090-fast}"
+    user: "${CLUB3090_UID:-1000}:${DOCKER_GID:-1000}"
+    restart: ${CLUB3090_RESTART:-unless-stopped}
+    ipc: host
+    shm_size: "2gb"
+    ports:
+      - "${BIND_HOST:-0.0.0.0}:${PORT:-18020}:${PORT:-18020}"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - ${MODEL_DIR:?set MODEL_DIR to the prepared model parent}:/app/models:ro
+      - ${QWEN38_CACHE_DIR:?set QWEN38_CACHE_DIR to a writable cache directory}:/cache
+    environment:
+      HOME: /cache
+      PORT: ${PORT:-18020}
+      CTX: long
+      VISION: "1"
+      MAX_LEN: ${MAX_MODEL_LEN:-140000}
+      MAX_SEQS: ${MAX_NUM_SEQS:-8}
+      GPU_UTIL: ${GPU_MEMORY_UTILIZATION:-0.95}
+      PREFIX_CACHE: ${PREFIX_CACHE:-1}
+      DRAFT_TOKENS: ${DRAFT_TOKENS:-3}
+      ASYNC_SCHED: ${ASYNC_SCHED:-0}
+      VERIFY: ${QWEN38_VERIFY:-0}
+      TOOLS: ${TOOLS:-1}
+      TOOL_PARSER: ${TOOL_PARSER:-qwen3_coder}
+      EXTRA_ARGS: >-
+        --chat-template
+        /app/models/Qwen3.8-27B-W4A16-AutoRound-fast/chat_template.jinja
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-0}
+      VLLM_NO_USAGE_STATS: "1"
+      PYTORCH_CUDA_ALLOC_CONF: ${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}
+    command: ["single"]
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:${PORT:-18020}/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 4
+      start_period: 900s

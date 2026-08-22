@@ -1,0 +1,32 @@
+{
+  "local/qwen38-27b-single-3090-fast": {
+    "model": "qwen3.8-27b-3090-fast",
+    "weights_variant": "compressed-tensors",
+    "workload": "long-ctx-single",
+    "engine": "vllm-stable",
+    "drafter": null,
+    "kv_format": "fp8_e4m3",
+    "act_format": "16bit",
+    "act8_capable": false,
+    "offload": null,
+    "moe_cache": false,
+    "host_ram_gb": null,
+    "chat_template": "native",
+    "tp": 1,
+    "max_ctx": 140000,
+    "max_num_seqs": 8,
+    "mem_util": 0.95,
+    "compose_path": "scripts/lib/profiles-local/composes/qwen3.8-27b-3090-fast/vllm/compose/single/compressed-tensors/mtp.yml",
+    "requires_nvlink": false,
+    "requires_homogeneous_arch": false,
+    "required_engine_features": [],
+    "default_port": 18020,
+    "kvcalc_key": "SKIP",
+    "status": "incubating",
+    "status_note": "Local-only wrapper around the prepared syv-ai fast artifact and qwen38-27b-3090:v4 patched image. The underlying 140K MTP-3 profile is live-qualified, but the Docker Compose wrapper requires a maintenance-window boot before promotion. The Hugging Face fast-variant repository is an overlay, so this entry intentionally provides no automatic download recipe.",
+    "weights_companions": [],
+    "served_name": "qwen3.8-27b",
+    "gateway": false,
+    "serve_aliases": []
+  }
+}

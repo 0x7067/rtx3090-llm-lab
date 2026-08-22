@@ -1,0 +1,68 @@
+diff --git a/Dockerfile b/Dockerfile
+index 30220f4..5c71f66 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -26,2 +26,3 @@
+ COPY . .
++RUN bash docker/patch_flashinfer_pageable_buffers.sh
+ RUN set -e; SP=$(venv/bin/python -c 'import vllm, os; print(os.path.dirname(vllm.__file__))' | tail -n1); \
+@@ -29,4 +30,8 @@
+     bash kvarn/install.sh; \
+     bash verify.sh --install
+-
++
++# k8s runs this image as uid 1000; COPY preserves restrictive host modes, so
++# make the app tree world-readable regardless of build-context permissions.
++RUN chmod -R a+rX /app
++
+ # HOME is a volume: torch.compile cache (~/.cache/vllm), Triton (~/.triton),
+diff --git a/docker/patch_flashinfer_pageable_buffers.sh b/docker/patch_flashinfer_pageable_buffers.sh
+new file mode 100644
+index 0000000..77c240d
+--- /dev/null
++++ b/docker/patch_flashinfer_pageable_buffers.sh
+@@ -0,0 +1,25 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++flashinfer_dir=$(/app/venv/bin/python -c 'import flashinfer, os; print(os.path.dirname(flashinfer.__file__))' | tail -n1)
++files=("$flashinfer_dir/prefill.py" "$flashinfer_dir/decode.py")
++
++# FlashInfer reuses these CPU planning workspaces across plan calls. Pageable
++# memory makes the subsequent H2D copy synchronous with respect to the host,
++# preventing the next MTP draft step from rewriting a pinned buffer whose copy
++# is still in flight. Keep the patch narrow: sparse/MLA/POD buffers are outside
++# the Qwen target/draft path under test.
++matches=$(grep -h -c 'pin_memory=True' "${files[@]}" | awk '{sum += $1} END {print sum + 0}')
++if [ "$matches" -ne 8 ]; then
++  echo "expected 8 FlashInfer prefill/decode pinned planning buffers, found $matches" >&2
++  exit 1
++fi
++
++sed -i 's/pin_memory=True/pin_memory=False/g' "${files[@]}"
++
++if grep -q 'pin_memory=True' "${files[@]}"; then
++  echo "FlashInfer planning-buffer patch is incomplete" >&2
++  exit 1
++fi
++
++echo "patched 8 FlashInfer prefill/decode planning buffers to pageable memory"
+diff --git a/single-user/start_qwen.sh b/single-user/start_qwen.sh
+index 16090c6..03d4149 100755
+--- a/single-user/start_qwen.sh
++++ b/single-user/start_qwen.sh
+@@ -253,3 +253,8 @@ else
+   MAX_SEQS=${MAX_SEQS:-8}
+-  SPEC_CFG="{\"method\":\"mtp\",\"num_speculative_tokens\":$DRAFT_TOKENS,\"draft_sample_method\":\"${DRAFT_SAMPLE:-probabilistic}\"}"
++  # The MTP draft head can use a different attention backend and KV dtype from
++  # the target. This lets long mode keep FlashInfer/FP8 for its 128k target KV
++  # while routing only the drafter away from FlashInfer's repeated-plan path.
++  DRAFT_ATTN_JSON=${DRAFT_ATTN_BACKEND:+,\"attention_backend\":\"$DRAFT_ATTN_BACKEND\"}
++  DRAFT_KV_JSON=${DRAFT_KV_DTYPE:+,\"kv_cache_dtype\":\"$DRAFT_KV_DTYPE\"}
++  SPEC_CFG="{\"method\":\"mtp\",\"num_speculative_tokens\":$DRAFT_TOKENS,\"draft_sample_method\":\"${DRAFT_SAMPLE:-probabilistic}\"${DRAFT_ATTN_JSON}${DRAFT_KV_JSON}}"
+   CG=${CG:-32}
+@@ -370,3 +375,3 @@ exec venv/bin/vllm serve "$MODEL" \
+   --api-server-count $API_SERVERS \
+-  --language-model-only \
++  $([ "${VISION:-0}" = "1" ] || echo --language-model-only) \
+   $ATTN_ARGS \

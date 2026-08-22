@@ -1,9 +1,12 @@
 #!/bin/bash
 # Wave 7 validation: v11 image, original vs d48k truncated drafter.
+# The published table used Qwen3.8-27B-Q4_K_L.gguf. MAIN_MODEL defaults to the
+# later promoted UD-Q4_K_XL target; override it for exact historical replay.
 # Usage: run_validation.sh <arm-name> <drafter-file> [extra docker env args...]
 set -eu
 IMG=llama:cuda-swap-v11
 MODELS="${MODELS:-/data/buttercup_6tb/k3s/llama-models}"
+MAIN_MODEL="${MAIN_MODEL:-Qwen3.8-27B-UD-Q4_K_XL.gguf}"
 BENCH="$(cd "$(dirname "$0")" && pwd)"
 ARM="$1"; DRAFTER="$2"; shift 2
 
@@ -11,9 +14,10 @@ docker rm -f w7bench >/dev/null 2>&1 || true
 docker run -d --name w7bench --runtime nvidia --gpus all \
   -v "$MODELS":/models -v "$BENCH":/bench \
   -p 127.0.0.1:5899:5899 \
-  -e GGML_CUDA_MMVQ_NE11_MAX=3 "$@" \
+  -e GGML_CUDA_MMVQ_NE11_MAX=3 \
+  -e GGML_CUDA_MMQ_SMALLN=3 "$@" \
   "$IMG" llama-server \
-  -m /models/Qwen3.8-27B-Q4_K_L.gguf \
+  -m "/models/$MAIN_MODEL" \
   --mmproj /models/mmproj-Qwen3.8-27B-Q8_0.gguf \
   --host 0.0.0.0 --port 5899 \
   --ctx-size 131072 --predict 131072 \
@@ -33,7 +37,7 @@ for i in $(seq 1 120); do
   if [ "$i" = 120 ]; then echo "LOAD TIMEOUT"; docker logs w7bench | tail -20; docker rm -f w7bench; exit 1; fi
 done
 
-echo "=== ARM $ARM drafter=$DRAFTER ==="
+echo "=== ARM $ARM main=$MAIN_MODEL drafter=$DRAFTER ==="
 docker logs w7bench 2>&1 | grep -iE "d2t|draft_vocab|creating MTP" || echo "(no d2t log line)"
 nvidia-smi --query-gpu=memory.used --format=csv,noheader
 

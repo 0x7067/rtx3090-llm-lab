@@ -1,7 +1,11 @@
       "qwen3.8-27b":
-        # Bartowski's imatrix Q4_K_L conversion keeps embedding/output tensors
-        # at Q8_0. It passed exact output, tool calling, 10/10 vision, and a
-        # 90,040-token retrieval on this pinned runtime. The hybrid DeltaNet
+        # Unsloth UD-Q4_K_XL is the promoted quality quant. A same-harness
+        # KLD-to-Q6_K sweep scored it at 0.787x the prior bartowski Q4_K_L
+        # divergence (lower is better), for ~3.4% pooled-step-time cost and
+        # ~190 MiB less VRAM. The prior Q4_K_L passed exact output, tool
+        # calling, 10/10 vision, and a 90,040-token retrieval; re-run those
+        # behavioral gates after changing this file or the model bytes.
+        # The hybrid DeltaNet
         # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 131k fits
         # the 24 GB 3090 with everything resident (23,350 MiB peak observed
         # at draft-n 4). Native 262k would need ~4.6 GB KV — doesn't fit
@@ -35,12 +39,14 @@
         #     'tr "\0" "\n" < /proc/$(pgrep -x llama-server|head -1)/environ | grep MMVQ'
         env:
           - "GGML_CUDA_MMVQ_NE11_MAX=3"
+          # Patch 0008 couples n5 with the m=1024 stream-k/double-buffer gate.
+          - "GGML_CUDA_MMQ_SMALLN=3"
           # JSON via env, not a cmd flag: llama-swap's shell-word splitting
           # strips the quotes from a --chat-template-kwargs argument.
           - 'LLAMA_ARG_CHAT_TEMPLATE_KWARGS={"reasoning_effort":"medium"}'
         cmd: >
           /usr/local/bin/llama-server
-          -m /models/Qwen3.8-27B-Q4_K_L.gguf
+          -m /models/Qwen3.8-27B-UD-Q4_K_XL.gguf
           --mmproj /models/mmproj-Qwen3.8-27B-Q8_0.gguf
           --host 0.0.0.0 --port ${PORT}
           --ctx-size 131072
@@ -86,4 +92,3 @@
         # rebuild from mtp-Qwen3.8-27B-Q4_0.gguf + draft_vocab_48k.json).
         # Rollback: point --model-draft back at mtp-Qwen3.8-27B-Q4_0.gguf
         # (works on any image; the d2t path is a no-op without the tensor).
-

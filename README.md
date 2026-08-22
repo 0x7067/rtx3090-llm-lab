@@ -5,7 +5,9 @@ RTX 3090 (24 GB, Ampere cc 8.6) with llama.cpp. The full 131k context stays
 resident: main model, MTP drafter, and vision projector together use about
 22.9 GiB. Speculative decoding runs on the model's native MTP head.
 
-Results on the target workload (54k-token-deep agentic decode, temp 0):
+Results on the target workload (54k-token-deep agentic decode, temp 0). The
+patch/drafter campaign used the former Q4_K_L target; the current UD-Q4_K_XL
+target was selected in the later quant sweep described below:
 
 - The patch stack takes decode from **49.8 to 69.3 tok/s (+39%)**. Mid-depth
   (1k) goes from **63 to 84 tok/s (+33%)**.
@@ -18,6 +20,12 @@ The approach is inspired by
 which uses vLLM. This is the llama.cpp counterpart. It has no multi-minute
 cold start, it hot-swaps models through llama-swap, and decode holds up at
 54k depth.
+
+The current home deployment moved to the vLLM companion on 2026-08-20. This
+repository remains the reproducible llama.cpp optimization project; "prod"
+below means its last promoted llama.cpp profile. The separate vLLM profile,
+its exact local overlay, Club 3090 bundle, matched MTP/batch arms, and quality
+gates are documented in [`docs/vllm-companion.md`](docs/vllm-companion.md).
 
 ## Results
 
@@ -111,8 +119,9 @@ uses only the standard library. Payload and vocabulary building also need
 #    It clones llama.cpp @4df29be4f, applies patches/, and builds for sm_86.
 docker build -t llama:cuda-swap-v11 .
 
-# 2. Download the models (~20.5 GB total, links below) into a $MODELS dir:
-#    Qwen3.8-27B-Q4_K_L.gguf, mmproj-Qwen3.8-27B-Q8_0.gguf, mtp-Qwen3.8-27B-Q4_0.gguf.
+# 2. Download the models (~19.9 GiB total, links below) into a $MODELS dir:
+#    Qwen3.8-27B-UD-Q4_K_XL.gguf, mmproj-Qwen3.8-27B-Q8_0.gguf,
+#    and mtp-Qwen3.8-27B-Q4_0.gguf.
 #    Also download tokenizer.json from any Qwen3.8-27B HF repo (a few MB).
 
 # 3. Rebuild the truncated drafter byte-for-byte, then verify it:
@@ -131,14 +140,16 @@ MODELS=$MODELS tools/run_validation.sh A mtp-Qwen3.8-27B-Q4_0.gguf
 MODELS=$MODELS tools/run_validation.sh B mtp-Qwen3.8-27B-Q4_0-d48k.gguf
 ```
 
-Expected result: arm B beats arm A by ~5–6% at mid and deep depth, and the
-output hashes match per payload. Absolute tok/s might differ from the table,
-because acceptance depends on the corpus. The portable results are the A/B
-delta and the hash equality.
+The published Q4_K_L run had arm B beat arm A by ~5–6% at mid and deep depth,
+with matching output hashes. `tools/run_validation.sh` now defaults to the
+current UD-Q4_K_XL target; set
+`MAIN_MODEL=Qwen3.8-27B-Q4_K_L.gguf` to reproduce the historical table exactly.
+On another target or corpus, hash equality remains required, but re-measure the
+A/B delta instead of assuming it transfers.
 
 Models:
-[bartowski Q4_K_L main](https://huggingface.co/bartowski/Qwen3.8-27B-GGUF)
-(embeds an unused MTP block; Q8_0 embed/output), plus
+[Unsloth UD-Q4_K_XL main](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF)
+(17,559,178,144 bytes; embeds an unused MTP block), plus
 [ggml-org's](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF)
 `mtp-*-Q4_0` drafter and Q8_0 mmproj.
 
@@ -267,6 +278,8 @@ docs/truncated-draft-vocab-design.md   design doc for patch 0007 (data flow, cor
 docs/thermals-and-oc.md     fan-curve dead zone, NVML offset convention, OC ladder, thermal ceiling
 docs/dflash2-findings.md    DFlash2 (llama.cpp PR #27342) vs our MTP drafter: env-cap effect, caveats
 docs/quant-selection.md     main-quant sweep: why UD-Q4_K_XL, the rejected 3.7bpw extreme, cost model
+docs/vllm-companion.md      current vLLM profile, Club 3090 bundle, arms, quality gates
+vllm/                       reproducible local overlay + Club 3090 local-layer bundle
 ```
 
 ## License and credits
@@ -285,9 +298,11 @@ Prior art and sources this work builds on:
 - [llama-swap](https://github.com/mostlygeek/llama-swap) — the model-swapping
   proxy the `config/` block targets; its per-model `env:` lists are what make
   the env-gated kernel caps (patches 0004/0008) deployable per-backend.
-- Model files: [bartowski](https://huggingface.co/bartowski) (main GGUF),
-  [ggml-org](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF) (MTP drafter and
-  vision projector GGUFs), and [Qwen](https://huggingface.co/Qwen) for
+- Model files: [Unsloth](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF)
+  (current main GGUF), [bartowski](https://huggingface.co/bartowski) (the
+  prior Q4_K_L and rejected IQ4_XS comparison),
+  [ggml-org](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF) (MTP drafter
+  and vision projector GGUFs), and [Qwen](https://huggingface.co/Qwen) for
   Qwen3.8-27B itself.
 - The `ngram-mod` stacking defaults in `config/` were informed by a community
   ablation posted to r/LocalLLaMA (u/lukaLLM); tuned values are our own

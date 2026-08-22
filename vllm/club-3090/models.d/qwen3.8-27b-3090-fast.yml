@@ -1,0 +1,37 @@
+schema_version: 1
+id: qwen3.8-27b-3090-fast
+display_name: Qwen 3.8 27B 3090 Fast
+description: Local single-RTX-3090 Qwen3.8 profile using the prepared syv-ai W4A16 fast variant and its patched vLLM image.
+family: qwen35-dense
+hidden_size: 5120
+num_hidden_layers: 64
+num_attn_layers: 16
+num_gdn_layers: 48
+num_attn_heads: 24
+num_kv_heads: 4
+head_dim_attn: 256
+intermediate_size: 17408
+linear_num_k_heads: 16
+linear_num_v_heads: 48
+linear_k_head_dim: 128
+linear_v_head_dim: 128
+linear_conv_kernel_dim: 4
+max_ctx_supported: 262144
+attention_k_eq_v: false
+kv_calc_supported: false
+vision_capable: true
+weights:
+  compressed-tensors:
+    path: Qwen3.8-27B-W4A16-AutoRound-fast
+    local_subdir: Qwen3.8-27B-W4A16-AutoRound-fast
+    size_gb: 15.9
+    format: compressed-tensors
+    status: experimental
+    engine: vllm
+    kind: main
+    verify_glob: "*.safetensors"
+    manual_note: "Prepared local artifact: dbirks W4A16 base plus syvai/qwen3.8-27b-3090-fast-variant companion files and syv-ai preparation steps. The Hugging Face fast-variant repo is not a standalone checkpoint, so setup.sh intentionally has no automatic download recipe for this entry."
+default_weight_variant: compressed-tensors
+compatible_drafters:
+  - qwen-mtp-builtin
+valid_tp: [1]

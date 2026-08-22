@@ -7,10 +7,9 @@
 #   Vision:    enabled
 #   Template:  native Qwen3.8 template; qwen3 reasoning + qwen3_coder tools
 #   Max ctx:   140000
-#   Status:    🐣 Incubating
-#   Caveats:   The underlying v4 image/profile is live-validated, but this exact
-#              Club wrapper has not been booted. It deliberately uses the local
-#              patched image; stock vLLM 0.27.1 lacks required syv-ai patches.
+#   Status:    ⚠️ Caveats (target-3090 boot + generation qualified 2026-08-22)
+#   Caveats:   Requires the prepared local artifact and patched v4 image; stock
+#              vLLM 0.27.1 lacks required syv-ai patches.
 #   Best for:  one or a few agent/chat users needing long context, tools, vision
 # ---------------------------------------------------------------------------
 # syvai/qwen3.8-27b-3090-fast-variant is a companion overlay, not a full

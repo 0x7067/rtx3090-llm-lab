@@ -33,13 +33,24 @@ docker compose \
   config --quiet
 ```
 
-The entry is incubating and requires `--force`. Do not launch it until the RTX
-3090 is free; it cannot coexist with the active llama service on the same GPU.
+The entry is marked `caveats`: the exact wrapper passed its target-3090 boot
+and generation canary on 2026-08-22, but it still depends on a manually
+prepared model artifact and local patched image. Do not launch it until the RTX
+3090 is free; it cannot coexist with another model service on the same GPU.
 
 ```bash
 MODEL_DIR=/absolute/path/to/prepared/models \
 QWEN38_CACHE_DIR=/absolute/path/to/cache \
-bash scripts/launch.sh --variant local/qwen38-27b-single-3090-fast --force
+bash scripts/launch.sh --variant local/qwen38-27b-single-3090-fast
+```
+
+Pass the same required paths when stopping it so Compose can resolve the local
+mounts:
+
+```bash
+MODEL_DIR=/absolute/path/to/prepared/models \
+QWEN38_CACHE_DIR=/absolute/path/to/cache \
+bash scripts/switch.sh --down
 ```
 
 Club's local layer is gitignored by design. This directory is the tracked

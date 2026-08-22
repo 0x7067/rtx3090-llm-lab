@@ -112,9 +112,16 @@ same card. Stop the current owner of the GPU first and wait until VRAM is free.
 
 The installable local-layer bundle lives in [`vllm/club-3090/`](../vllm/club-3090/).
 It deliberately does not modify Club 3090's curated catalog and does not need
-a fork or pull request. The entry remains incubating because the underlying
-profile is live-qualified but the exact Docker Compose wrapper has only passed
-static validation.
+a fork or pull request. The exact Docker Compose wrapper was maintenance-window
+qualified on the target 3090 on 2026-08-22 and is now marked `caveats` rather
+than `incubating`.
+
+The qualification boot reached `/v1/models` in 108 seconds, served the expected
+140,000-token model, stayed healthy with zero restarts, and completed a real
+chat request with `finish_reason=stop`. Metrics confirmed FP8 KV, prefix cache,
+143,804 KV tokens, and three-token MTP activity. The container used 21,232 MiB
+after startup. The existing k3s service was restored and generation-tested
+after the canary.
 
 The local slug is:
 

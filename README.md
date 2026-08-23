@@ -1,19 +1,25 @@
 # Qwen3.8-27B on one RTX 3090: llama.cpp patches and a truncated MTP draft vocabulary
 
-This repo makes Qwen3.8-27B (hybrid Gated-DeltaNet, 27B) decode faster on one
-RTX 3090 (24 GB, Ampere cc 8.6) with llama.cpp. The full 131k context stays
-resident: main model, MTP drafter, and vision projector together use about
-22.9 GiB. Speculative decoding runs on the model's native MTP head.
+This repo contains the llama.cpp optimization stack for Qwen3.8-27B (hybrid
+Gated-DeltaNet, 27B) on one RTX 3090 (24 GB, Ampere cc 8.6). The full 131k
+context stays resident: main model, MTP drafter, and vision projector together
+use about 22.9 GiB. Speculative decoding runs on the model's native MTP head.
+
+It also contains the exact overlay and Club 3090 local bundle for the current
+vLLM deployment. The two runtimes use different model formats, caches, and
+benchmark harnesses, so their results are reported separately.
 
 Results on the target workload (54k-token-deep agentic decode, temp 0). The
-patch/drafter campaign used the former Q4_K_L target; the current UD-Q4_K_XL
-target was selected in the later quant sweep described below:
+patch/drafter campaign used the former Q4_K_L target; the last promoted
+llama.cpp profile uses UD-Q4_K_XL, selected in the later quant sweep below:
 
 - The patch stack takes decode from **49.8 to 69.3 tok/s (+39%)**. Mid-depth
   (1k) goes from **63 to 84 tok/s (+33%)**.
 - The truncated draft vocabulary adds another **+5–6% at mid to 54k depth**
   and frees **0.5 GiB of VRAM**. Output stays byte-identical, verified by
   output sha256 in every A/B pair.
+- Patch 0008 adds **+7% at 1k depth and +5.4–6.4% at deep decode** on top of
+  that profile when `GGML_CUDA_MMQ_SMALLN=3` is paired with the MMVQ cap.
 
 The approach is inspired by
 [syv-ai/qwen38-27b-rtx3090](https://github.com/syv-ai/qwen38-27b-rtx3090),
@@ -21,13 +27,26 @@ which uses vLLM. This is the llama.cpp counterpart. It has no multi-minute
 cold start, it hot-swaps models through llama-swap, and decode holds up at
 54k depth.
 
-The current home deployment moved to the vLLM companion on 2026-08-20. This
-repository remains the reproducible llama.cpp optimization project; "prod"
-below means its last promoted llama.cpp profile. The separate vLLM profile,
-its exact local overlay, Club 3090 bundle, matched MTP/batch arms, and quality
-gates are documented in [`docs/vllm-companion.md`](docs/vllm-companion.md).
+## Current deployment
 
-## Results
+The home deployment moved to vLLM on 2026-08-20. Its qualified profile uses
+vLLM 0.27.1 with the syv-ai patch stack and this repo's v4 overlay, prepared
+W4A16 weights, FP8 KV, prefix caching, vision, a 140,000-token limit, and
+three-token MTP speculation. The retained MTP-3 / 2,048-token batch arm
+measured 104.02 tok/s shallow, 95.69 tok/s at 60k, and 70.41 tok/s at 100k.
+Four concurrent requests reached 358.41 tok/s aggregate.
+
+The exact overlay and installable Club 3090 local bundle are under
+[`vllm/`](vllm/). The wrapper passed a target-3090 boot and generation canary
+on 2026-08-22. See [`docs/vllm-companion.md`](docs/vllm-companion.md) for the
+model assembly, matched arms, quality position, environment, and qualification
+evidence.
+
+The rest of this README documents the reproducible llama.cpp project. "Prod"
+in its historical notes means the last promoted llama.cpp profile, not the
+current vLLM service.
+
+## llama.cpp results
 
 Conditions: temp 0, warm, `/completion` timings, `--spec-draft-n-max 5`,
 `GGML_CUDA_MMVQ_NE11_MAX=3`. "Full drafter" and "d48k drafter" run the same
@@ -50,15 +69,15 @@ cannot change output. See `docs/truncated-draft-vocab-design.md`, section 4.
 Patches 0001–0006 produced the earlier 49.8 → 69.3 tok/s campaign result.
 `docs/PERFORMANCE.md` is the full write-up.
 
-## Main quant: now UD-Q4_K_XL
+## llama.cpp main quant: UD-Q4_K_XL
 
-Prod's main-model quant moved from bartowski Q4_K_L to **unsloth
-UD-Q4_K_XL**, chosen for quality: a KLD-to-Q6K sweep found UD-Q4_K_XL at
-ratio **0.787** vs Q4_K_L's own 1.0 (lower is closer to the Q6_K reference),
-at a ~3.4% pooled-step-time cost and a small VRAM *saving*. A faster
+The last promoted llama.cpp main-model quant moved from bartowski Q4_K_L to
+**unsloth UD-Q4_K_XL**, chosen for quality: a KLD-to-Q6K sweep found
+UD-Q4_K_XL at ratio **0.787** vs Q4_K_L's own 1.0 (lower is closer to the
+Q6_K reference), at a ~3.4% pooled-step-time cost and a small VRAM *saving*. A faster
 candidate (bartowski IQ4_XS, −7% pooled step time) was measured and rejected
-for prod because its KLD ratio (1.415) is a real quality regression, not a
-free lunch. Full sweep, a rejected 3.7bpw extreme, and the corrected
+because its KLD ratio (1.415) is a real quality regression, not a free lunch.
+Full sweep, a rejected 3.7bpw extreme, and the corrected
 weight-bytes cost model: `docs/quant-selection.md`.
 
 ## The patches
@@ -116,7 +135,8 @@ uses only the standard library. Payload and vocabulary building also need
 
 ```bash
 # 1. Build the image. No GPU is needed for this step.
-#    It clones llama.cpp @4df29be4f, applies patches/, and builds for sm_86.
+#    It clones llama.cpp @4df29be4f, applies patches 0001-0008, and builds
+#    for sm_86. The v11 tag is retained because the validation script uses it.
 docker build -t llama:cuda-swap-v11 .
 
 # 2. Download the models (~19.9 GiB total, links below) into a $MODELS dir:
@@ -142,7 +162,7 @@ MODELS=$MODELS tools/run_validation.sh B mtp-Qwen3.8-27B-Q4_0-d48k.gguf
 
 The published Q4_K_L run had arm B beat arm A by ~5–6% at mid and deep depth,
 with matching output hashes. `tools/run_validation.sh` now defaults to the
-current UD-Q4_K_XL target; set
+promoted llama.cpp UD-Q4_K_XL target; set
 `MAIN_MODEL=Qwen3.8-27B-Q4_K_L.gguf` to reproduce the historical table exactly.
 On another target or corpus, hash equality remains required, but re-measure the
 A/B delta instead of assuming it transfers.
@@ -264,9 +284,10 @@ environment variables or edit the paths before reuse:
 
 ```
 Dockerfile                  build llama.cpp @4df29be4f + patches (CUDA sm_86) + llama-swap
-patches/0001..0007          the vendored patch stack (apply with git apply, in order)
+patches/0001..0008          the shipped patch stack (apply with git apply, in order)
 tools/                      draft-vocab pipeline, GGUF surgery + validation, bench harnesses
                             (one-shot A/B, cumulative session, 12-turn episode metric)
+tools/bench/                shared GPU lock, quiesce, health, and result-posting helpers
 data/                       keep-sets (32k/40k/48k), ranked token frequencies, coverage evidence
 config/                     llama-swap model block (flags + env couplings, commented)
 experiments/                measured but unshipped patches (see experiments/README.md)
@@ -299,8 +320,9 @@ Prior art and sources this work builds on:
   proxy the `config/` block targets; its per-model `env:` lists are what make
   the env-gated kernel caps (patches 0004/0008) deployable per-backend.
 - Model files: [Unsloth](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF)
-  (current main GGUF), [bartowski](https://huggingface.co/bartowski) (the
-  prior Q4_K_L and rejected IQ4_XS comparison),
+  (promoted llama.cpp main GGUF),
+  [bartowski](https://huggingface.co/bartowski) (the prior Q4_K_L and rejected
+  IQ4_XS comparison),
   [ggml-org](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF) (MTP drafter
   and vision projector GGUFs), and [Qwen](https://huggingface.co/Qwen) for
   Qwen3.8-27B itself.

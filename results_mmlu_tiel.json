@@ -1,0 +1,3234 @@
+{
+  "summary": {
+    "model": "tiel-coder-35b-a3b",
+    "n": 350,
+    "correct": 287,
+    "accuracy": 82.0,
+    "unparseable": 20,
+    "truncated": 20,
+    "per_category": {
+      "biology": {
+        "correct": 23,
+        "n": 25,
+        "acc": 92.0
+      },
+      "business": {
+        "correct": 20,
+        "n": 25,
+        "acc": 80.0
+      },
+      "chemistry": {
+        "correct": 22,
+        "n": 25,
+        "acc": 88.0
+      },
+      "computer science": {
+        "correct": 22,
+        "n": 25,
+        "acc": 88.0
+      },
+      "economics": {
+        "correct": 24,
+        "n": 25,
+        "acc": 96.0
+      },
+      "engineering": {
+        "correct": 15,
+        "n": 25,
+        "acc": 60.0
+      },
+      "health": {
+        "correct": 21,
+        "n": 25,
+        "acc": 84.0
+      },
+      "history": {
+        "correct": 18,
+        "n": 25,
+        "acc": 72.0
+      },
+      "law": {
+        "correct": 18,
+        "n": 25,
+        "acc": 72.0
+      },
+      "math": {
+        "correct": 23,
+        "n": 25,
+        "acc": 92.0
+      },
+      "other": {
+        "correct": 18,
+        "n": 25,
+        "acc": 72.0
+      },
+      "philosophy": {
+        "correct": 22,
+        "n": 25,
+        "acc": 88.0
+      },
+      "physics": {
+        "correct": 23,
+        "n": 25,
+        "acc": 92.0
+      },
+      "psychology": {
+        "correct": 18,
+        "n": 25,
+        "acc": 72.0
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": 2937,
+      "category": "biology",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3457,
+      "category": "biology",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2952,
+      "category": "biology",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3311,
+      "category": "biology",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3443,
+      "category": "biology",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3350,
+      "category": "biology",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3135,
+      "category": "biology",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3109,
+      "category": "biology",
+      "gold": "D",
+      "pred": "E",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2969,
+      "category": "biology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3137,
+      "category": "biology",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3345,
+      "category": "biology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3197,
+      "category": "biology",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3072,
+      "category": "biology",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2930,
+      "category": "biology",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3305,
+      "category": "biology",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3048,
+      "category": "biology",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3437,
+      "category": "biology",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3397,
+      "category": "biology",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2987,
+      "category": "biology",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3022,
+      "category": "biology",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3184,
+      "category": "biology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3202,
+      "category": "biology",
+      "gold": "J",
+      "pred": "E",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3270,
+      "category": "biology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3403,
+      "category": "biology",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3295,
+      "category": "biology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 217,
+      "category": "business",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 299,
+      "category": "business",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 334,
+      "category": "business",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 241,
+      "category": "business",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 110,
+      "category": "business",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 563,
+      "category": "business",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 230,
+      "category": "business",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 247,
+      "category": "business",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 783,
+      "category": "business",
+      "gold": "H",
+      "pred": "J",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 816,
+      "category": "business",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 408,
+      "category": "business",
+      "gold": "E",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 302,
+      "category": "business",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 527,
+      "category": "business",
+      "gold": "A",
+      "pred": "B",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 397,
+      "category": "business",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 848,
+      "category": "business",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 787,
+      "category": "business",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 616,
+      "category": "business",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 545,
+      "category": "business",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 674,
+      "category": "business",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 496,
+      "category": "business",
+      "gold": "A",
+      "pred": "E",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 711,
+      "category": "business",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 420,
+      "category": "business",
+      "gold": "E",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 286,
+      "category": "business",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 623,
+      "category": "business",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 204,
+      "category": "business",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3625,
+      "category": "chemistry",
+      "gold": "H",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4663,
+      "category": "chemistry",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4381,
+      "category": "chemistry",
+      "gold": "B",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 4358,
+      "category": "chemistry",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4143,
+      "category": "chemistry",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3668,
+      "category": "chemistry",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4422,
+      "category": "chemistry",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4660,
+      "category": "chemistry",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3889,
+      "category": "chemistry",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4028,
+      "category": "chemistry",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3803,
+      "category": "chemistry",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4310,
+      "category": "chemistry",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3559,
+      "category": "chemistry",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4025,
+      "category": "chemistry",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4494,
+      "category": "chemistry",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4175,
+      "category": "chemistry",
+      "gold": "C",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 4207,
+      "category": "chemistry",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4481,
+      "category": "chemistry",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4383,
+      "category": "chemistry",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4238,
+      "category": "chemistry",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4390,
+      "category": "chemistry",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4416,
+      "category": "chemistry",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4654,
+      "category": "chemistry",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 3588,
+      "category": "chemistry",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4021,
+      "category": "chemistry",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10685,
+      "category": "computer science",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10539,
+      "category": "computer science",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10526,
+      "category": "computer science",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10552,
+      "category": "computer science",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10630,
+      "category": "computer science",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10540,
+      "category": "computer science",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10402,
+      "category": "computer science",
+      "gold": "I",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 10415,
+      "category": "computer science",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10750,
+      "category": "computer science",
+      "gold": "A",
+      "pred": "D",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10432,
+      "category": "computer science",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10681,
+      "category": "computer science",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10678,
+      "category": "computer science",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10418,
+      "category": "computer science",
+      "gold": "J",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 10378,
+      "category": "computer science",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10363,
+      "category": "computer science",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10576,
+      "category": "computer science",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10645,
+      "category": "computer science",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10554,
+      "category": "computer science",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10573,
+      "category": "computer science",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10386,
+      "category": "computer science",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10423,
+      "category": "computer science",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10367,
+      "category": "computer science",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10459,
+      "category": "computer science",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10450,
+      "category": "computer science",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10764,
+      "category": "computer science",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6982,
+      "category": "economics",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7207,
+      "category": "economics",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7392,
+      "category": "economics",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7520,
+      "category": "economics",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7513,
+      "category": "economics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7478,
+      "category": "economics",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7601,
+      "category": "economics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7003,
+      "category": "economics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7362,
+      "category": "economics",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7655,
+      "category": "economics",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7400,
+      "category": "economics",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7257,
+      "category": "economics",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7117,
+      "category": "economics",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7022,
+      "category": "economics",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7262,
+      "category": "economics",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7070,
+      "category": "economics",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7680,
+      "category": "economics",
+      "gold": "D",
+      "pred": "A",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7226,
+      "category": "economics",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7027,
+      "category": "economics",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7277,
+      "category": "economics",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6899,
+      "category": "economics",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7528,
+      "category": "economics",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6887,
+      "category": "economics",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7287,
+      "category": "economics",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6916,
+      "category": "economics",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11325,
+      "category": "engineering",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11681,
+      "category": "engineering",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11506,
+      "category": "engineering",
+      "gold": "J",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11965,
+      "category": "engineering",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 12169,
+      "category": "engineering",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 12174,
+      "category": "engineering",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11660,
+      "category": "engineering",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11635,
+      "category": "engineering",
+      "gold": "D",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11429,
+      "category": "engineering",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11761,
+      "category": "engineering",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11394,
+      "category": "engineering",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11408,
+      "category": "engineering",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11613,
+      "category": "engineering",
+      "gold": "H",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 12227,
+      "category": "engineering",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11788,
+      "category": "engineering",
+      "gold": "C",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11918,
+      "category": "engineering",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11535,
+      "category": "engineering",
+      "gold": "G",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 12194,
+      "category": "engineering",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11314,
+      "category": "engineering",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11958,
+      "category": "engineering",
+      "gold": "B",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11597,
+      "category": "engineering",
+      "gold": "J",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11509,
+      "category": "engineering",
+      "gold": "F",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11697,
+      "category": "engineering",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11345,
+      "category": "engineering",
+      "gold": "B",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 11698,
+      "category": "engineering",
+      "gold": "I",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 6806,
+      "category": "health",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6327,
+      "category": "health",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6800,
+      "category": "health",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6747,
+      "category": "health",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6335,
+      "category": "health",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6162,
+      "category": "health",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6333,
+      "category": "health",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6744,
+      "category": "health",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6172,
+      "category": "health",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6654,
+      "category": "health",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6245,
+      "category": "health",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6619,
+      "category": "health",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6234,
+      "category": "health",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6498,
+      "category": "health",
+      "gold": "A",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6524,
+      "category": "health",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6281,
+      "category": "health",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6412,
+      "category": "health",
+      "gold": "A",
+      "pred": "D",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6543,
+      "category": "health",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6259,
+      "category": "health",
+      "gold": "D",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 6825,
+      "category": "health",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6218,
+      "category": "health",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6324,
+      "category": "health",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6643,
+      "category": "health",
+      "gold": "I",
+      "pred": "E",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6336,
+      "category": "health",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 6080,
+      "category": "health",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4993,
+      "category": "history",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4931,
+      "category": "history",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4852,
+      "category": "history",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4995,
+      "category": "history",
+      "gold": "D",
+      "pred": "B",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4770,
+      "category": "history",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4783,
+      "category": "history",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4843,
+      "category": "history",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4857,
+      "category": "history",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4885,
+      "category": "history",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4928,
+      "category": "history",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4889,
+      "category": "history",
+      "gold": "A",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 4784,
+      "category": "history",
+      "gold": "C",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 4941,
+      "category": "history",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4698,
+      "category": "history",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4742,
+      "category": "history",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4676,
+      "category": "history",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5047,
+      "category": "history",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5051,
+      "category": "history",
+      "gold": "H",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5018,
+      "category": "history",
+      "gold": "F",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5043,
+      "category": "history",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4868,
+      "category": "history",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4795,
+      "category": "history",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4682,
+      "category": "history",
+      "gold": "B",
+      "pred": "D",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4862,
+      "category": "history",
+      "gold": "J",
+      "pred": "A",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 4930,
+      "category": "history",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1728,
+      "category": "law",
+      "gold": "F",
+      "pred": "E",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1152,
+      "category": "law",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1431,
+      "category": "law",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1724,
+      "category": "law",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1075,
+      "category": "law",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 961,
+      "category": "law",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1394,
+      "category": "law",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1603,
+      "category": "law",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1551,
+      "category": "law",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1771,
+      "category": "law",
+      "gold": "G",
+      "pred": "I",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 899,
+      "category": "law",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 942,
+      "category": "law",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1232,
+      "category": "law",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1866,
+      "category": "law",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1970,
+      "category": "law",
+      "gold": "F",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1279,
+      "category": "law",
+      "gold": "F",
+      "pred": "J",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1627,
+      "category": "law",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1319,
+      "category": "law",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 979,
+      "category": "law",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1664,
+      "category": "law",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1596,
+      "category": "law",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1940,
+      "category": "law",
+      "gold": "G",
+      "pred": "A",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1125,
+      "category": "law",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 1071,
+      "category": "law",
+      "gold": "A",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 1838,
+      "category": "law",
+      "gold": "G",
+      "pred": "B",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8529,
+      "category": "math",
+      "gold": "D",
+      "pred": "J",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8656,
+      "category": "math",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8110,
+      "category": "math",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7853,
+      "category": "math",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8753,
+      "category": "math",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8671,
+      "category": "math",
+      "gold": "F",
+      "pred": "C",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8090,
+      "category": "math",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8433,
+      "category": "math",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8086,
+      "category": "math",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8948,
+      "category": "math",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8134,
+      "category": "math",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8639,
+      "category": "math",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8994,
+      "category": "math",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8980,
+      "category": "math",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7959,
+      "category": "math",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8984,
+      "category": "math",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8375,
+      "category": "math",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8102,
+      "category": "math",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 7772,
+      "category": "math",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8820,
+      "category": "math",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8583,
+      "category": "math",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8728,
+      "category": "math",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8663,
+      "category": "math",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8620,
+      "category": "math",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 8093,
+      "category": "math",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5380,
+      "category": "other",
+      "gold": "B",
+      "pred": "D",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5731,
+      "category": "other",
+      "gold": "C",
+      "pred": "I",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5918,
+      "category": "other",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5709,
+      "category": "other",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5226,
+      "category": "other",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5265,
+      "category": "other",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5971,
+      "category": "other",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5345,
+      "category": "other",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5645,
+      "category": "other",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5215,
+      "category": "other",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5689,
+      "category": "other",
+      "gold": "H",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5216,
+      "category": "other",
+      "gold": "J",
+      "pred": null,
+      "correct": false,
+      "no_answer": true,
+      "truncated": true
+    },
+    {
+      "question_id": 5608,
+      "category": "other",
+      "gold": "A",
+      "pred": "B",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5089,
+      "category": "other",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5120,
+      "category": "other",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5252,
+      "category": "other",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5350,
+      "category": "other",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5502,
+      "category": "other",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5468,
+      "category": "other",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5764,
+      "category": "other",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5905,
+      "category": "other",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5703,
+      "category": "other",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5683,
+      "category": "other",
+      "gold": "F",
+      "pred": "D",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5454,
+      "category": "other",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 5568,
+      "category": "other",
+      "gold": "E",
+      "pred": "I",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10979,
+      "category": "philosophy",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10847,
+      "category": "philosophy",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11179,
+      "category": "philosophy",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10834,
+      "category": "philosophy",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11235,
+      "category": "philosophy",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10841,
+      "category": "philosophy",
+      "gold": "B",
+      "pred": "C",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11085,
+      "category": "philosophy",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10900,
+      "category": "philosophy",
+      "gold": "G",
+      "pred": "B",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10926,
+      "category": "philosophy",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10999,
+      "category": "philosophy",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10937,
+      "category": "philosophy",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10844,
+      "category": "philosophy",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11228,
+      "category": "philosophy",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11263,
+      "category": "philosophy",
+      "gold": "I",
+      "pred": "A",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11209,
+      "category": "philosophy",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11210,
+      "category": "philosophy",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10781,
+      "category": "philosophy",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11008,
+      "category": "philosophy",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11119,
+      "category": "philosophy",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11070,
+      "category": "philosophy",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11105,
+      "category": "philosophy",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10785,
+      "category": "philosophy",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10802,
+      "category": "philosophy",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10889,
+      "category": "philosophy",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 11252,
+      "category": "philosophy",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9728,
+      "category": "physics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9225,
+      "category": "physics",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9916,
+      "category": "physics",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9729,
+      "category": "physics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10353,
+      "category": "physics",
+      "gold": "H",
+      "pred": "E",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10231,
+      "category": "physics",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10343,
+      "category": "physics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10268,
+      "category": "physics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9272,
+      "category": "physics",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9764,
+      "category": "physics",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9780,
+      "category": "physics",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9116,
+      "category": "physics",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10119,
+      "category": "physics",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9851,
+      "category": "physics",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9977,
+      "category": "physics",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9677,
+      "category": "physics",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9547,
+      "category": "physics",
+      "gold": "B",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9998,
+      "category": "physics",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9278,
+      "category": "physics",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9958,
+      "category": "physics",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9996,
+      "category": "physics",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10151,
+      "category": "physics",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9154,
+      "category": "physics",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 10283,
+      "category": "physics",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 9845,
+      "category": "physics",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2116,
+      "category": "psychology",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2196,
+      "category": "psychology",
+      "gold": "I",
+      "pred": "D",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2313,
+      "category": "psychology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2347,
+      "category": "psychology",
+      "gold": "F",
+      "pred": "C",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2579,
+      "category": "psychology",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2118,
+      "category": "psychology",
+      "gold": "J",
+      "pred": "J",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2161,
+      "category": "psychology",
+      "gold": "B",
+      "pred": "J",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2301,
+      "category": "psychology",
+      "gold": "B",
+      "pred": "G",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2028,
+      "category": "psychology",
+      "gold": "G",
+      "pred": "J",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2407,
+      "category": "psychology",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2564,
+      "category": "psychology",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2072,
+      "category": "psychology",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2078,
+      "category": "psychology",
+      "gold": "J",
+      "pred": "H",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2719,
+      "category": "psychology",
+      "gold": "D",
+      "pred": "D",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2418,
+      "category": "psychology",
+      "gold": "H",
+      "pred": "H",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2318,
+      "category": "psychology",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2492,
+      "category": "psychology",
+      "gold": "A",
+      "pred": "C",
+      "correct": false,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2760,
+      "category": "psychology",
+      "gold": "A",
+      "pred": "A",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2311,
+      "category": "psychology",
+      "gold": "F",
+      "pred": "F",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2049,
+      "category": "psychology",
+      "gold": "B",
+      "pred": "B",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2230,
+      "category": "psychology",
+      "gold": "E",
+      "pred": "E",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2182,
+      "category": "psychology",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2388,
+      "category": "psychology",
+      "gold": "G",
+      "pred": "G",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2753,
+      "category": "psychology",
+      "gold": "I",
+      "pred": "I",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    },
+    {
+      "question_id": 2149,
+      "category": "psychology",
+      "gold": "C",
+      "pred": "C",
+      "correct": true,
+      "no_answer": false,
+      "truncated": false
+    }
+  ]
+}

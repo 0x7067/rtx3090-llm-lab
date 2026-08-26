@@ -1,0 +1,8 @@
+[
+{"ctx":262144,"parallel":1,"kv_unified":"no","status":"ok","n_ctx_slot":262144,"load_mib":23050,"peak_mib":23068,"decode_1_tok_s":112.2,"aggregate_4_tok_s":119.1},
+{"ctx":262144,"parallel":2,"kv_unified":"yes","status":"ok","n_ctx_slot":262144,"load_mib":23112,"peak_mib":23130,"decode_1_tok_s":115.0,"aggregate_4_tok_s":162.2},
+{"ctx":262144,"parallel":4,"kv_unified":"yes","status":"ok","n_ctx_slot":262144,"load_mib":23238,"peak_mib":23258,"decode_1_tok_s":114.2,"aggregate_4_tok_s":195.3},
+{"ctx":262144,"parallel":8,"kv_unified":"yes","status":"ok","n_ctx_slot":262144,"load_mib":23506,"peak_mib":23526,"decode_1_tok_s":113.8,"aggregate_4_tok_s":196.4},
+{"ctx":262144,"parallel":2,"kv_unified":"no","status":"ok","n_ctx_slot":131072,"load_mib":23112,"peak_mib":23130,"decode_1_tok_s":114.6,"aggregate_4_tok_s":17.3},
+{"ctx":262144,"parallel":4,"kv_unified":"no","status":"ok","n_ctx_slot":65536,"load_mib":23238,"peak_mib":23260,"decode_1_tok_s":115.1,"aggregate_4_tok_s":22.9}
+]

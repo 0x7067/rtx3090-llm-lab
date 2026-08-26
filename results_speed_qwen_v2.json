@@ -1,0 +1,43 @@
+{
+  "base_url": "http://127.0.0.1:8094",
+  "model": "qwen3.8-27b",
+  "single_stream_decode": [
+    {
+      "ttft_s": 0.11,
+      "completion_tokens": 512,
+      "gen_tok_s": 111.18
+    },
+    {
+      "ttft_s": 0.109,
+      "completion_tokens": 512,
+      "gen_tok_s": 104.19
+    },
+    {
+      "ttft_s": 0.109,
+      "completion_tokens": 512,
+      "gen_tok_s": 113.76
+    }
+  ],
+  "prefill": [
+    {
+      "prompt_tokens": 6741,
+      "ttft_s": 5.311,
+      "prefill_tok_s": 1269.2
+    },
+    {
+      "prompt_tokens": 6744,
+      "ttft_s": 5.309,
+      "prefill_tok_s": 1270.3
+    },
+    {
+      "prompt_tokens": 6738,
+      "ttft_s": 5.312,
+      "prefill_tok_s": 1268.4
+    }
+  ],
+  "concurrent_4": {
+    "wall_s": 3.68,
+    "completion_tokens": 1024,
+    "aggregate_gen_tok_s": 278.04
+  }
+}

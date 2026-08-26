@@ -1,0 +1,11 @@
+# 20 GB of GGUF weights; re-download from the model repo instead.
+models/
+# 4 MB dataset, re-fetchable from TIGER-Lab/MMLU-Pro.
+*.parquet
+# Per-run scratch: model output and sandbox scoring dirs.
+work_*/
+cand_*.jsonl
+candidates_*.jsonl
+mutants*.jsonl
+he_subset.jsonl
+smoke.json

@@ -1,0 +1,43 @@
+{
+  "base_url": "http://llama.internal:8080",
+  "model": "qwen3.8-27b",
+  "single_stream_decode": [
+    {
+      "ttft_s": 0.114,
+      "completion_tokens": 512,
+      "gen_tok_s": 109.38
+    },
+    {
+      "ttft_s": 0.117,
+      "completion_tokens": 512,
+      "gen_tok_s": 84.58
+    },
+    {
+      "ttft_s": 0.115,
+      "completion_tokens": 512,
+      "gen_tok_s": 86.82
+    }
+  ],
+  "prefill": [
+    {
+      "prompt_tokens": 6742,
+      "ttft_s": 5.167,
+      "prefill_tok_s": 1304.9
+    },
+    {
+      "prompt_tokens": 6742,
+      "ttft_s": 5.184,
+      "prefill_tok_s": 1300.6
+    },
+    {
+      "prompt_tokens": 6741,
+      "ttft_s": 5.193,
+      "prefill_tok_s": 1298.2
+    }
+  ],
+  "concurrent_4": {
+    "wall_s": 3.48,
+    "completion_tokens": 1024,
+    "aggregate_gen_tok_s": 294.41
+  }
+}

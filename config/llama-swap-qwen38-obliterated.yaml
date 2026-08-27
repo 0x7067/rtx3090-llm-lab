@@ -1,0 +1,70 @@
+      "qwen3.8-27b-obliterated":
+        # OBLITERATUS/Qwen3.8-27B-OBLITERATED is the Apache-2.0 V3
+        # "abliterated"/uncensored variant of Qwen/Qwen3.8-27B. Abliteration
+        # means the checkpoint was modified to reduce refusal behavior. It
+        # retains the qwen3_5 hybrid architecture: linear attention with full
+        # attention every 4th layer, 64 layers, an MTP layer at blk.64, the
+        # vision tower, and native ctx 262144. The GGUF arch string is qwen35.
+        # This standalone option is NOT the production model. Production
+        # serves the stock model through vLLM.
+        #
+        # The Q4_K_M GGUF is 16.8 GB. Its sha256 matched the HF-declared LFS
+        # oid. This variant stays in the llama.cpp lane because the HF repo
+        # ships GGUF and safetensors only; it has no W4A16 checkpoint for the
+        # vLLM lane. No stock-model quality comparison was run here. Any MMLU
+        # figures on the HF card are publisher claims, not measurements from
+        # this repo.
+        #
+        # MTP TRAP: ghcr.io/ggml-org/llama.cpp:full-cuda has no --spec-type
+        # flag at all. It silently drops all 15 blk.64.* tensors, including
+        # nextn.eh_proj, nextn.enorm, nextn.hnorm, and nextn.shared_head_norm,
+        # as "unused tensor -- ignoring". Mainline can never speculate on this
+        # model, and no error announces that fact. The patched
+        # llama:cuda-swap-v13-kvarn-rc2 image starts MTP only when
+        # --spec-type draft-mtp is present; verify the startup log contains:
+        #   common_speculative_init_result: creating MTP draft context against the target model
+        # The patched image also needs container entrypoint
+        # /usr/local/bin/llama-server and NO --server argument, unlike
+        # mainline. It is CUDA-linked, so even a -ngl 0 probe needs --gpus all.
+        #
+        # Controlled decode A/B on the patched image used tiel-bench
+        # bench_decode_n.py at temp 1.0, top-k 20, top-p 0.95: 4 samples over
+        # 3 prompt classes, single stream, ctx 65536, q8_0 KV. MTP off measured
+        # 42.4 tok/s overall median. draft-n-max 3 measured 64.1 tok/s (+51%);
+        # draft-n-max 5 fell to 59.4 tok/s. Only 42.4 -> 64.1 is a controlled
+        # comparison. Do not compare 64.1 with the stock-model results in this
+        # repo or the vLLM lane's 95.6 tok/s: quant, engine, KV type, context,
+        # and drafter all differ.
+        #
+        # At parallel 1, draft acceptance was 0.67-0.72. At the shipped
+        # parallel 4, 7 requests had median 0.687 (range 0.578-0.833) and mean
+        # accepted draft length 2.73-3.19. n-max 3 is the sweet spot. n-max 5
+        # drafts more, but acceptance falls to 0.56-0.62. This agrees with the
+        # stock model's k=3 conclusion in the vLLM lane.
+        #
+        # Correctness control: a 60-item HumanEval subset at parallel 4 /
+        # concurrency 4 scored MTP ON 55/60 (0.917) and MTP OFF 54/60 (0.900).
+        # The one-item difference at temp 1.0 is indistinguishable; MTP did not
+        # corrupt output. The run completed without a crash, which checks
+        # draft-mtp concurrency on this stack.
+        #
+        # With vision loaded, this full config uses 22.1 GB of 24 GB VRAM.
+        # About 2.4 GB of headroom is thin. Concurrent large-image vision
+        # encode plus deep prefills might OOM, and that case was NOT
+        # stress-tested. GPU cold start reaches ready in 10s.
+        cmd: >
+          /usr/local/bin/llama-server
+          -m /models/Qwen3.8-27B-OBLITERATED-Q4_K_M.gguf
+          --mmproj /models/mmproj-model-bf16.gguf
+          --host 0.0.0.0 --port ${PORT}
+          --ctx-size 65536
+          --parallel 4
+          --cache-type-k q8_0 --cache-type-v q8_0
+          --spec-type draft-mtp --spec-draft-n-max 3
+          -ngl 99 --jinja --metrics
+        ttl: 3600
+        # OPEN LEADS, not results: the stock profile stacks
+        # --spec-type draft-mtp,ngram-mod with n-max 5 and a truncated-vocab
+        # drafter. Neither ngram-mod stacking nor the d48k drafter was tried on
+        # this variant. Before using the d48k drafter, its vocabulary mapping
+        # must be checked against this checkpoint's 248,320-row head.

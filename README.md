@@ -46,6 +46,19 @@ The rest of this README documents the reproducible llama.cpp project. "Prod"
 in its historical notes means the last promoted llama.cpp profile, not the
 current vLLM service.
 
+## OBLITERATED standalone variant
+
+The Apache-2.0 `OBLITERATUS/Qwen3.8-27B-OBLITERATED` Q4_K_M checkpoint is a
+standalone llama.cpp benchmark option, not a production deployment. On the
+patched image, three-token MTP raised its controlled median decode from 42.4
+to 64.1 tok/s (+51%). Do not compare 64.1 tok/s with this repo's stock-model
+results or the vLLM lane; only the MTP-off to MTP-on pair is controlled.
+
+Use [`config/llama-swap-qwen38-obliterated.yaml`](config/llama-swap-qwen38-obliterated.yaml)
+for the backend fragment. See
+[`docs/obliterated-variant.md`](docs/obliterated-variant.md) for the mainline
+MTP trap, A/B conditions, correctness control, VRAM limit, and open leads.
+
 ## llama.cpp results
 
 Conditions: temp 0, warm, `/completion` timings, `--spec-draft-n-max 5`,
@@ -290,6 +303,7 @@ tools/                      draft-vocab pipeline, GGUF surgery + validation, ben
 tools/bench/                shared GPU lock, quiesce, health, and result-posting helpers
 data/                       keep-sets (32k/40k/48k), ranked token frequencies, coverage evidence
 config/                     llama-swap model block (flags + env couplings, commented)
+config/llama-swap-qwen38-obliterated.yaml  standalone OBLITERATED Q4_K_M backend fragment
 experiments/                measured but unshipped patches (see experiments/README.md)
 docs/PERFORMANCE.md         full campaign write-up (waves, kernels, rejects, methodology)
 docs/mmq-small-batch-analysis.md       MMQ verify-path analysis behind the wave-8 work
@@ -299,6 +313,7 @@ docs/truncated-draft-vocab-design.md   design doc for patch 0007 (data flow, cor
 docs/thermals-and-oc.md     fan-curve dead zone, NVML offset convention, OC ladder, thermal ceiling
 docs/dflash2-findings.md    DFlash2 (llama.cpp PR #27342) vs our MTP drafter: env-cap effect, caveats
 docs/quant-selection.md     main-quant sweep: why UD-Q4_K_XL, the rejected 3.7bpw extreme, cost model
+docs/obliterated-variant.md OBLITERATED Q4_K_M MTP findings, controls, and open leads
 docs/vllm-companion.md      current vLLM profile, Club 3090 bundle, arms, quality gates
 vllm/                       reproducible local overlay + Club 3090 local-layer bundle
 ```

@@ -6,11 +6,12 @@
         # calling, 10/10 vision, and a 90,040-token retrieval; re-run those
         # behavioral gates after changing this file or the model bytes.
         # The hybrid DeltaNet
-        # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 131k fits
-        # the 24 GB 3090 with everything resident (23,350 MiB peak observed
-        # at draft-n 4). Native 262k would need ~4.6 GB KV — doesn't fit
-        # alongside the drafter + mmproj; drop both to trade speed/vision
-        # for context.
+        # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 160k fits
+        # the 24 GB 3090 with everything resident (23,592 MiB peak measured
+        # at draft-n 5, 984 MiB headroom). 175k also loads but leaves only
+        # 554 MiB free — too tight for unattended production. Native 262k
+        # would need ~4.6 GB KV — doesn't fit alongside the drafter + mmproj;
+        # drop both to trade speed/vision for context.
         # 2026-08-16 tuning (image v6): GGML_CUDA_MMVQ_NE11_MAX=3 routes this
         # model's 4-8-token speculative verify batches onto the tiled MMQ path
         # (measured crossover N≈3.4 on the 3090; KLD vs stock 0.0063), which
@@ -49,8 +50,8 @@
           -m /models/Qwen3.8-27B-UD-Q4_K_XL.gguf
           --mmproj /models/mmproj-Qwen3.8-27B-Q8_0.gguf
           --host 0.0.0.0 --port ${PORT}
-          --ctx-size 131072
-          --predict 131072
+          --ctx-size 160000
+          --predict 160000
           --threads 8 --threads-batch 8 --parallel 1
           --batch-size 512 --ubatch-size 512
           --no-mmap -fa on --jinja

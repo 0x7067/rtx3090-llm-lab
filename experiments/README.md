@@ -15,3 +15,13 @@ for the next attempt, not for production use.
   GEMM shapes to `test-backend-ops`. Upstream has no coverage for them. Apply
   this before benching any MMQ change.
 - `testcov-fattn-wide-verify-widths.patch` — FA test cases for verify widths 16–64 at 32k/64k KV depth (D=256, GQA 6, q4_0 KV). This crossover region of a shipped kernel had zero upstream coverage, which is how the inline-path bound went unmeasured for two waves. Apply before benching any FA change.
+
+## vLLM experiments
+
+- [`mtp-suffix-lookup-plan.md`](mtp-suffix-lookup-plan.md) and the
+  `mtp-suffix-vllm*` directories contain the rejected MTP plus suffix-lookup
+  prototypes from the 2026-08-28 campaign.
+- [`gdn-fused-sm86/`](gdn-fused-sm86/) contains the isolated Ampere fused GDN
+  kernel. Its operator tests passed, but end-to-end MTP acceptance collapsed.
+- [`vllm-pr51812/`](vllm-pr51812/) contains a clean 0.27.1 backport and analysis
+  for the speculative GDN gate-indexing fix. It has not been promoted.

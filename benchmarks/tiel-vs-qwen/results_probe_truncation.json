@@ -1,0 +1,128 @@
+[
+  {
+    "mode": "nonstream",
+    "max_tokens": 64,
+    "tools": false,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 238,
+    "tool_calls": 0,
+    "completion_tokens": 64,
+    "content_head": "",
+    "reasoning_head": "We need answer user: \"Prove or disprove: every positive integer can be written a"
+  },
+  {
+    "mode": "stream",
+    "max_tokens": 64,
+    "tools": false,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 238,
+    "completion_tokens": 64
+  },
+  {
+    "mode": "nonstream",
+    "max_tokens": 64,
+    "tools": true,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 238,
+    "tool_calls": 0,
+    "completion_tokens": 64,
+    "content_head": "",
+    "reasoning_head": "We need answer user: \"Prove or disprove: every positive integer can be written a"
+  },
+  {
+    "mode": "stream",
+    "max_tokens": 64,
+    "tools": true,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 238,
+    "completion_tokens": 64
+  },
+  {
+    "mode": "nonstream",
+    "max_tokens": 512,
+    "tools": false,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 1864,
+    "tool_calls": 0,
+    "completion_tokens": 512,
+    "content_head": "",
+    "reasoning_head": "We need answer user: \"Prove or disprove: every positive integer can be written a"
+  },
+  {
+    "mode": "stream",
+    "max_tokens": 512,
+    "tools": false,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 1864,
+    "completion_tokens": 512
+  },
+  {
+    "mode": "nonstream",
+    "max_tokens": 512,
+    "tools": true,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 1506,
+    "tool_calls": 0,
+    "completion_tokens": 512,
+    "content_head": "",
+    "reasoning_head": "We need answer user: \"Prove or disprove: every positive integer can be written a"
+  },
+  {
+    "mode": "stream",
+    "max_tokens": 512,
+    "tools": true,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 1506,
+    "completion_tokens": 512
+  },
+  {
+    "mode": "nonstream",
+    "max_tokens": 2048,
+    "tools": false,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 7431,
+    "tool_calls": 0,
+    "completion_tokens": 2048,
+    "content_head": "",
+    "reasoning_head": "We need answer user: \"Prove or disprove: every positive integer can be written a"
+  },
+  {
+    "mode": "stream",
+    "max_tokens": 2048,
+    "tools": false,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 7431,
+    "completion_tokens": 2048
+  },
+  {
+    "mode": "nonstream",
+    "max_tokens": 2048,
+    "tools": true,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 5006,
+    "tool_calls": 0,
+    "completion_tokens": 2048,
+    "content_head": "",
+    "reasoning_head": "We need answer user: \"Prove or disprove: every positive integer can be written a"
+  },
+  {
+    "mode": "stream",
+    "max_tokens": 2048,
+    "tools": true,
+    "finish_reason": "length",
+    "content_len": 0,
+    "reasoning_len": 5006,
+    "completion_tokens": 2048
+  }
+]

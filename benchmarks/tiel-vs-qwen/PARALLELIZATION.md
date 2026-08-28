@@ -11,8 +11,45 @@ That premise is true for the setting the manifest uses, and false in general.
 The pinned build has a second mode.
 
 **Recommendation: stay on llama.cpp and add `--kv-unified` with `--parallel 4`.**
-Measured numbers are in "What the sweep measured" below. Do not move to vLLM or
-SGLang; no checkpoint of this model both fits 24 GB and runs on Ampere.
+Do not move to vLLM or SGLang; no checkpoint of this model both fits 24 GB and
+runs on Ampere.
+
+**Shipped 2026-08-26** as docker-services `d9b6f83` at four slots, then cut to
+**two** in `00dcf03` once the pool limit below was measured. Four slots leave
+only ~46k tokens per session when all four are deep at once; two leave ~92k,
+which is the range coding-agent sessions actually work in.
+
+Final config, measured on the deployment:
+
+| | `--parallel 1` (before) | `--parallel 2` (shipped) | `--parallel 4` (rejected) |
+|---|---|---|---|
+| single stream | 133.7 tok/s | 134.5 | 135.6, 122.5 |
+| aggregate, matched to slots | — | **208.9** (2/2) | 257.2, 271.0 (4/4) |
+| four requests offered | 140.7 (4/4) | 203.7 (**4/4**, queued) | 257-271 (4/4) |
+| per-session budget when all deep | 184,320 | **~92,000** | ~46,000 |
+| VRAM at load | 23,404 MiB | 23,466 | 23,592 |
+| peak under a worst-case image | 23,820 | 23,882 (694 spare) | 24,018 (558 spare) |
+
+Two slots give up about 20-25% of peak aggregate against four, and buy back
+double the per-session context. Over-subscribing two slots is safe: four
+requests against two slots all completed, queueing rather than failing.
+
+Verified end to end: two sessions of ~85k tokens each, 170,948 live tokens
+against the 184,320 pool, both HTTP 200 with `truncated = 0`. The same shape at
+four slots is what produced the 500s described below.
+
+The earlier four-slot before/after, kept for the record:
+
+| | before (`--parallel 1`) | after (`--parallel 4 --kv-unified`) |
+|---|---|---|
+| single stream | 133.7 tok/s | 135.6, 122.5 |
+| four concurrent, aggregate | 140.7 tok/s | **257.2, 271.0** |
+| completions | 4/4 | 4/4 |
+| `n_ctx_slot` | 184,320 | 184,320 |
+| VRAM at rest | 23,404 MiB | 23,592 MiB |
+
+About 1.9x on four-way aggregate, with single-stream decode unchanged inside the
+run-to-run spread and no loss of depth. Two runs each, `measure_aggregate.sh`.
 
 ## Why the runtime cannot change
 
@@ -98,6 +135,25 @@ request can still reach the full depth while short requests run beside it. The
 constraint becomes the sum: total live tokens across all sequences must fit the
 pool, instead of each caller being capped at `ctx/N`.
 
+**That sum is a hard limit, and it fails loudly.** Measured 2026-08-26
+(`test_pool_limit.sh`): four concurrent 66k-token requests against the 184,320
+pool. The prefills ran strictly one at a time, and each slot kept holding its KV
+while the next prefilled. When the running total crossed the pool —
+66,200 + 66,234 + 52,363 + 179 = **184,976 against 184,320, over by 656** — the
+server returned HTTP 500 `Context size has been exceeded.` to **all four**
+requests. Not just the one that crossed the line: the slot that had already
+finished prefilling 66k tokens and the slot that had only reached 179 both died
+with it. The server itself stayed up.
+
+So the practical budget with four slots is about **46k tokens per session** if
+all four are deep at once, and going over does not degrade — it drops every
+request in flight.
+
+An earlier attempt at 4 x 50k appeared to pass. It did not exercise the limit:
+those requests asked for 16 output tokens, so each slot released almost as soon
+as it finished prefilling and the four were never resident together. Overlap has
+to be forced with a long generation, which is what `test_pool_limit.sh` does.
+
 Unified works on this architecture. llama.cpp routes hybrid models through
 `llama_memory_hybrid`, which wraps a `llama_kv_cache` for the attention layers
 and a `llama_memory_recurrent` for the Gated-DeltaNet layers and names Qwen3.5
@@ -119,6 +175,12 @@ slot exists.
 
 Measured 2026-08-26 on the idle card, all with the projector loaded and
 `K=q8_0 V=q4_0`. Raw data in `results_parallel.json`.
+
+**Read the throughput columns as history, not as current figures.** This sweep
+ran at `V=q4_0 / 262144`, a configuration that no longer exists and that was
+later found to prefill at 188 tok/s against the current 2815. The `n_ctx_slot`
+column is the finding and it transfers; the absolute rates do not. The measured
+before/after on the shipped config is in the table at the top.
 
 | slots | KV | n_ctx_slot | load | peak | 1 stream | 4 concurrent |
 |---|---|---|---|---|---|---|
@@ -173,18 +235,37 @@ and it is clean.
 - "--kv-unified"
 ```
 
-Everything else stays. Expect 23,238 MiB at load against 23,050 MiB today, so
-the vision headroom drops from 1,110 MiB to about 920 MiB — still above the
-+416 MiB a 3000x2000 image costs at one slot, but that margin has not been
-re-measured at four slots and is the thing most likely to break.
+Everything else stays. This is what shipped, against the `184320 / V=q8_0`
+config rather than the `262144 / V=q4_0` one the table above was measured on:
+23,592 MiB at load against 23,404, so 188 MiB for the four slots, exactly as
+predicted.
 
 ## What this does not cover
 
-- Vision. The projector is loaded in every configuration measured here, and its
-  peak allocation is per-image work on top of the numbers above. The manifest
-  records +416 MiB for a 3000x2000 image at one slot; that has not been
-  re-measured at higher slot counts, and it is the most likely cause of an OOM
-  after a config change.
+- ~~Vision.~~ **Measured 2026-08-26** (`results_vision_slots.json`), because it
+  was the gate on this change. The +416 MiB cost of a 3000x2000 image holds
+  exactly at 1, 2 and 4 slots, and it does not multiply with concurrent images:
+  four simultaneous image requests peaked 10 MiB above one, and all four
+  returned.
+
+  | slots | load | one image | N concurrent images |
+  |---|---|---|---|
+  | 1 | 23,404 | 23,820 | 23,824 |
+  | 2 | 23,466 | 23,882 | 23,886 |
+  | 4 | 23,592 | 24,008 | **24,018** |
+
+  Four slots therefore peak at 24,018 MiB of 24,576 under the worst case, about
+  558 MiB spare, down from about 732 at one slot. Nothing establishes where the
+  safe floor lies, so that is the number to weigh before raising `-c` or
+  `--parallel` again.
+
+  **Confirmed on the live deployment 2026-08-26**
+  (`verify_vision_concurrency.sh`): four concurrent requests went 23,618 ->
+  24,020 MiB, 402 MiB for all four, 4/4 replies, no pod restart. The encodes
+  overlapped — all four slots launched within 527 ms and released within 6 ms,
+  each held for about 20 seconds — so this is genuine concurrency, not
+  serialised encodes. The allocation persists after completion, so 556 MiB free
+  is the steady state once any image has been served.
 - Quality. Slot count does not change weights, but batching changes numerics
   slightly. REPORT.md records about +/-3pp of run-to-run movement on HumanEval
   at n=164, which is wide enough to hide any effect this would have.

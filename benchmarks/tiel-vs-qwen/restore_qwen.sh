@@ -12,7 +12,17 @@
 set -euo pipefail
 
 echo "== removing benchmark containers"
-docker rm -f qwenbench sweep tt sp tielv tiel 2>/dev/null || true
+docker rm -f qwenbench oblitbench sweep tt sp tielv tiel 2>/dev/null || true
+
+# Container removal can finish before the GPU driver releases its VRAM.
+echo "== waiting for VRAM to free"
+for _ in $(seq 1 60); do
+  u=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
+  [ "$u" -lt 500 ] && break
+  sleep 3
+done
+nvidia-smi --query-gpu=memory.used --format=csv,noheader
+[ "$u" -ge 500 ] && echo "WARNING: VRAM did not drop below 500 MiB; continuing production restore" >&2
 
 echo "== scaling up apps/llama and resuming flux"
 kubectl -n apps scale deploy llama --replicas=1
@@ -20,7 +30,7 @@ flux resume kustomization apps --timeout 5m || true
 
 echo "== waiting for health"
 for i in $(seq 1 120); do
-  code=$(curl -s -o /dev/null -w '%{http_code}' -m 2 ${LLAMA_URL:-http://127.0.0.1:8080}/health || true)
+  code=$(curl -s -o /dev/null -w '%{http_code}' -m 2 http://llama.apps.svc.cluster.local:8080/health || true)
   [ "$code" = "200" ] && { echo "deployment restored"; exit 0; }
   sleep 5
 done

@@ -1,0 +1,43 @@
+{
+  "base_url": "http://llama.apps.svc.cluster.local:8080",
+  "model": "tiel-coder-35b-a3b",
+  "single_stream_decode": [
+    {
+      "ttft_s": 0.111,
+      "completion_tokens": 512,
+      "gen_tok_s": 150.24
+    },
+    {
+      "ttft_s": 1.033,
+      "completion_tokens": 512,
+      "gen_tok_s": 150.66
+    },
+    {
+      "ttft_s": 0.386,
+      "completion_tokens": 512,
+      "gen_tok_s": 150.27
+    }
+  ],
+  "prefill": [
+    {
+      "prompt_tokens": 6876,
+      "ttft_s": 2.334,
+      "prefill_tok_s": 2946.1
+    },
+    {
+      "prompt_tokens": 6878,
+      "ttft_s": 2.404,
+      "prefill_tok_s": 2861.2
+    },
+    {
+      "prompt_tokens": 6878,
+      "ttft_s": 2.406,
+      "prefill_tok_s": 2858.7
+    }
+  ],
+  "concurrent_4": {
+    "wall_s": 7.58,
+    "completion_tokens": 1024,
+    "aggregate_gen_tok_s": 135.16
+  }
+}

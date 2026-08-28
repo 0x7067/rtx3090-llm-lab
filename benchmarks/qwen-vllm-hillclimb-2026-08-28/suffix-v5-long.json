@@ -1,0 +1,84 @@
+{
+  "tag": "suffix-v5-long",
+  "base": "http://127.0.0.1:8094",
+  "ctx": 94000,
+  "max_tokens": 512,
+  "reps": 1,
+  "task_median_decode_tok_s": {
+    "copy": 100.7251279821133,
+    "code": 90.42228483525122,
+    "edit": 97.78903846696744,
+    "quote": 68.28251887407954,
+    "summary": 66.67508579451051,
+    "qa": 67.41705365560955
+  },
+  "geomean_decode_tok_s": 80.56091575080805,
+  "rows": [
+    {
+      "rep": 1,
+      "task": "copy",
+      "prompt_tokens": 88624,
+      "output_tokens": 512,
+      "ttft_s": 101.43939315900207,
+      "decode_s": 5.073212715011323,
+      "decode_tok_s": 100.7251279821133,
+      "steps": 137.0,
+      "tokens_per_step": 3.7445255474452557
+    },
+    {
+      "rep": 1,
+      "task": "code",
+      "prompt_tokens": 88621,
+      "output_tokens": 512,
+      "ttft_s": 2.3745779439923353,
+      "decode_s": 5.651261754013831,
+      "decode_tok_s": 90.42228483525122,
+      "steps": 153.0,
+      "tokens_per_step": 3.3398692810457518
+    },
+    {
+      "rep": 1,
+      "task": "edit",
+      "prompt_tokens": 88624,
+      "output_tokens": 512,
+      "ttft_s": 2.3765081799938343,
+      "decode_s": 5.2255345589946955,
+      "decode_tok_s": 97.78903846696744,
+      "steps": 139.0,
+      "tokens_per_step": 3.6906474820143886
+    },
+    {
+      "rep": 1,
+      "task": "quote",
+      "prompt_tokens": 88622,
+      "output_tokens": 512,
+      "ttft_s": 2.3670107599755283,
+      "decode_s": 7.48361379202106,
+      "decode_tok_s": 68.28251887407954,
+      "steps": 198.0,
+      "tokens_per_step": 2.580808080808081
+    },
+    {
+      "rep": 1,
+      "task": "summary",
+      "prompt_tokens": 88617,
+      "output_tokens": 512,
+      "ttft_s": 2.361094988998957,
+      "decode_s": 7.664032133005094,
+      "decode_tok_s": 66.67508579451051,
+      "steps": 208.0,
+      "tokens_per_step": 2.456730769230769
+    },
+    {
+      "rep": 1,
+      "task": "qa",
+      "prompt_tokens": 88618,
+      "output_tokens": 512,
+      "ttft_s": 2.3570722639851738,
+      "decode_s": 7.57968455000082,
+      "decode_tok_s": 67.41705365560955,
+      "steps": 206.0,
+      "tokens_per_step": 2.4854368932038833
+    }
+  ]
+}

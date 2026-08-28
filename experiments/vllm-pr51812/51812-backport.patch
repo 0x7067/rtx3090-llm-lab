@@ -1,0 +1,53 @@
+vLLM PR #51812 (merged 2026-08-11, released in v0.28.0): align the Qwen GDN
+gate tensors with the gathered speculative tokens.
+
+In a mixed batch under speculative decoding, _forward_core gathers mixed_qkv
+with spec_token_indx but passed the ungathered a/b gate tensors to
+fused_sigmoid_gating_delta_rule_update. The kernel consumes the first T_spec
+gate rows, so whenever a non-speculative token sorts before the speculative
+ones the gates belong to different tokens than the Q/K/V rows. Gather a and b
+with the same indices; the pure-spec fast path (num_prefills == 0 and
+num_decodes == 0, where spec_token_indx is an arange and the gather is the
+identity) keeps its unsorted tensors.
+
+Reachable here on SPEC=mtp, which runs the V1 model runner: the GDN metadata
+builder sorts non-spec tokens first, so any step that mixes an MTP decode with
+a prefill chunk or a non-speculative decode pairs the wrong gates. The V2
+runner (SPEC=dflash2) ordered spec tokens first and was already unaffected.
+Upstream measured mean chosen-logprob error 0.002755 -> 0.000208 on
+Qwen3.5-2B; greedy ids were unchanged there, sampling is affected.
+
+Apply from the installed vllm package directory:
+  patch -p1 -d venv/lib/python3.12/site-packages/vllm < patches/vllm-pr51812-gdn-spec-gates.patch
+
+Written against vLLM 0.27.1.
+
+Source: https://github.com/vllm-project/vllm/pull/51812 (Apache-2.0).
+
+--- a/model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py
++++ b/model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py
+@@ -1249,9 +1249,13 @@
+         if spec_sequence_masks is not None:
+             if attn_metadata.num_prefills == 0 and attn_metadata.num_decodes == 0:
+                 mixed_qkv_spec = mixed_qkv
++                a_spec = a
++                b_spec = b
+                 mixed_qkv_non_spec = None
+             else:
+                 mixed_qkv_spec = mixed_qkv.index_select(0, spec_token_indx)
++                a_spec = a.index_select(0, spec_token_indx)
++                b_spec = b.index_select(0, spec_token_indx)
+                 mixed_qkv_non_spec = mixed_qkv.index_select(0, non_spec_token_indx)
+         else:
+             mixed_qkv_spec = None
+@@ -1376,8 +1380,8 @@
+             core_attn_out_spec, last_recurrent_state = (
+                 fused_sigmoid_gating_delta_rule_update(
+                     A_log=self.A_log,
+-                    a=a,
+-                    b=b,
++                    a=a_spec,
++                    b=b_spec,
+                     dt_bias=self.dt_bias,
+                     q=query_spec,
+                     k=key_spec,

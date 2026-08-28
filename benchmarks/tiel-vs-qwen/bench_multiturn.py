@@ -12,7 +12,7 @@ whether a model uses feedback or thrashes.
 
 Usage: bench_multiturn.py BASE_URL MODEL mutants.jsonl out.json workdir [conc]
 """
-import asyncio, json, os, re, subprocess, sys
+import asyncio, os, json, os, re, subprocess, sys
 import httpx
 
 BASE, MODEL, MUTANTS, OUT, WORK = (sys.argv[1].rstrip("/"), sys.argv[2],
@@ -56,7 +56,11 @@ async def ask(client, sem, convo):
                                       # a reply that runs out of budget arrives
                                       # with no code block and costs a turn.
                                       json={"model": MODEL, "temperature": 0,
-                                            "max_tokens": 12288, "messages": convo},
+                                            "max_tokens": 12288, "messages": convo,
+                                            # EFFORT env: see bench_quality.py
+                                            **({"chat_template_kwargs":
+                                                {"reasoning_effort": os.environ["EFFORT"]}}
+                                               if os.environ.get("EFFORT") else {})},
                                       timeout=900)
                 r.raise_for_status()
                 choice = r.json()["choices"][0]
@@ -65,7 +69,7 @@ async def ask(client, sem, convo):
                 # reply that never leaves the reasoning block arrives with
                 # content empty. Reported alongside finish_reason so a no-code
                 # turn can be attributed rather than guessed at.
-                if not (msg.get("content") or "") and (msg.get("reasoning_content") or ""):
+                if not (msg.get("content") or "") and (msg.get("reasoning") or msg.get("reasoning_content") or ""):
                     return ("", f"{choice.get('finish_reason')}/reasoning-only")
                 return (msg.get("content") or "", choice.get("finish_reason"))
             except Exception as e:

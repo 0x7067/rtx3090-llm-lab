@@ -1,0 +1,23 @@
+{
+  "visionmix": {
+    "statuses": {
+      "200": 12
+    },
+    "n": 12,
+    "errors_sample": [],
+    "max_s": 281.92
+  },
+  "health": {
+    "visionmix": 200,
+    "soak": 200
+  },
+  "soak": {
+    "statuses": {
+      "aborted": 12,
+      "200": 42
+    },
+    "n": 54,
+    "errors_sample": [],
+    "max_s": 218.11
+  }
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "cycle": 0,
+    "restore": {
+      "content": "\n\n6442",
+      "reasoning_len": 185,
+      "finish": "stop",
+      "prompt_tokens": 50403,
+      "completion_tokens": 70
+    },
+    "empty": false
+  },
+  {
+    "cycle": 1,
+    "restore": {
+      "content": "\n\n6449",
+      "reasoning_len": 124,
+      "finish": "stop",
+      "prompt_tokens": 50436,
+      "completion_tokens": 57
+    },
+    "empty": false
+  },
+  {
+    "cycle": 2,
+    "restore": {
+      "content": "\n\n6456",
+      "reasoning_len": 192,
+      "finish": "stop",
+      "prompt_tokens": 50469,
+      "completion_tokens": 70
+    },
+    "empty": false
+  },
+  {
+    "cycle": 3,
+    "restore": {
+      "content": "\n\n6463",
+      "reasoning_len": 146,
+      "finish": "stop",
+      "prompt_tokens": 50502,
+      "completion_tokens": 63
+    },
+    "empty": false
+  },
+  {
+    "cycle": 4,
+    "restore": {
+      "content": "\n\n6470",
+      "reasoning_len": 146,
+      "finish": "stop",
+      "prompt_tokens": 50535,
+      "completion_tokens": 63
+    },
+    "empty": false
+  },
+  {
+    "cycle": 5,
+    "restore": {
+      "content": "\n\n6477",
+      "reasoning_len": 146,
+      "finish": "stop",
+      "prompt_tokens": 50568,
+      "completion_tokens": 63
+    },
+    "empty": false
+  }
+]

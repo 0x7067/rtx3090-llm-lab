@@ -1,0 +1,7 @@
+[
+{"tag":"A","ctx":262144,"cache_k":"q8_0","cache_v":"q4_0","vision":"vision","status":"ok","vram_mib":23050,"decode_tok_s":121.8,"prefill_tok_s":200.2},
+{"tag":"B","ctx":262144,"cache_k":"q8_0","cache_v":"q4_0","vision":"novision","status":"ok","vram_mib":21938,"decode_tok_s":121.8,"prefill_tok_s":199.1},
+{"tag":"C","ctx":65536,"cache_k":"q8_0","cache_v":"q4_0","vision":"vision","status":"ok","vram_mib":21490,"decode_tok_s":120.8,"prefill_tok_s":188.4},
+{"tag":"D","ctx":65536,"cache_k":"f16","cache_v":"f16","vision":"novision","status":"ok","vram_mib":21198,"decode_tok_s":151.7,"prefill_tok_s":2757.4},
+{"tag":"E","ctx":131072,"cache_k":"q8_0","cache_v":"q8_0","vision":"vision","status":"ok","vram_mib":22694,"decode_tok_s":149.1,"prefill_tok_s":2792.5}
+]

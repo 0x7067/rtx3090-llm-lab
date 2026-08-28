@@ -1,0 +1,350 @@
+diff --git a/v1/spec_decode/llm_base_proposer.py b/v1/spec_decode/llm_base_proposer.py
+--- a/v1/spec_decode/llm_base_proposer.py
++++ b/v1/spec_decode/llm_base_proposer.py
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
+ import dataclasses
++import os
+ from importlib.util import find_spec
+ from typing import TYPE_CHECKING, Any, cast
+ 
+@@ -38,6 +39,7 @@
+ from vllm.v1.attention.backend import CommonAttentionMetadata
+ from vllm.v1.attention.backends.registry import AttentionBackendEnum
+ from vllm.v1.attention.backends.triton_attn import TritonAttentionMetadata
++from vllm.v1.worker.gpu.buffer_utils import UvaBufferPool
+ from vllm.v1.cudagraph_dispatcher import CudagraphDispatcher
+ from vllm.v1.kv_cache_interface import KVCacheConfig, UniformTypeKVCacheSpecs
+ from vllm.v1.sample.metadata import SamplingMetadata
+@@ -74,6 +76,7 @@
+         runner=None,
+     ):
+         self.vllm_config = vllm_config
++        self.runner = runner
+         assert vllm_config.speculative_config is not None
+         self.speculative_config = vllm_config.speculative_config
+         self.draft_model_config = self.speculative_config.draft_model_config
+@@ -88,6 +91,45 @@
+         self.eplb_state: EplbState | None = None
+         self.num_speculative_tokens = self.speculative_config.num_speculative_tokens
+ 
++        # Phase-2 experiment for the legacy v1 runner used by v9. The earlier
++        # derivative patched the V2 AutoRegressiveSpeculator, but this image's
++        # Qwen3_5MTP path instantiates DraftModelProposer here instead.
++        self._mtp_suffix_requested = (
++            self.method == "mtp"
++            and os.environ.get("VLLM_MTP_SUFFIX_LOOKUP", "0") == "1"
++        )
++        self._mtp_suffix_active = self._mtp_suffix_requested and not (
++            runner is not None and getattr(runner, "use_async_scheduling", False)
++        )
++        self._mtp_suffix_draft_steps = 3 if self._mtp_suffix_active else None
++        self._mtp_suffix_next_tokens = self.num_speculative_tokens
++        self._mtp_suffix_history_pool = None
++        self._mtp_suffix_req_states = None
++        self._mtp_suffix_sampled_tokens = None
++        self._mtp_suffix_sampled_counts = None
++        self._mtp_suffix_diag_steps = 0
++        self._mtp_suffix_total_len_gpu = None
++        self._mtp_suffix_idx_mapping = None
++        self._mtp_suffix_lookup_hits = None
++        self._mtp_suffix_lookup_use = None
++        self._mtp_suffix_take_flags = None
++        self._mtp_suffix_tokens = None
++        self._mtp_suffix_len = None
++        self._mtp_suffix_valid = None
++        if self._mtp_suffix_requested:
++            logger.warning(
++                "MTP_SUFFIX_LOOKUP_ACTIVE legacy proposer: requested=%s active=%s "
++                "drafts=3 max_verify=7 async=%s",
++                True,
++                self._mtp_suffix_active,
++                getattr(runner, "use_async_scheduling", None),
++            )
++            if not self._mtp_suffix_active:
++                logger.warning(
++                    "MTP_SUFFIX_LOOKUP_DISABLED_ASYNC: legacy proposer needs "
++                    "synchronous scheduling for committed CPU token history"
++                )
++
+         # We need to get the hidden size from the draft model config because
+         # the draft model's hidden size can be different from the target model's
+         # hidden size (e.g., Llama 3.3 70B).
+@@ -499,6 +541,222 @@
+     def take_last_draft_probs(self) -> torch.Tensor | None:
+         return self._last_draft_probs
+ 
++    def set_req_states(self, req_states) -> None:
++        """Receive the legacy runner's InputBatch history without copying it."""
++        self._mtp_suffix_req_states = req_states
++
++    def set_lookup_sampled_tokens(
++        self,
++        sampled_token_ids: torch.Tensor,
++        valid_sampled_tokens_count: torch.Tensor,
++    ) -> None:
++        """Stage this step's accepted target tokens for the legacy lookup.
++
++        The legacy runner invokes the proposer before bookkeeping, so its CPU
++        history is one step behind. The lookup overlays these contiguous valid
++        tokens on a temporary UVA copy before scanning it.
++        """
++        self._mtp_suffix_sampled_tokens = sampled_token_ids
++        self._mtp_suffix_sampled_counts = valid_sampled_tokens_count
++
++    def _apply_mtp_suffix_lookup(
++        self, draft_token_ids: torch.Tensor
++    ) -> torch.Tensor:
++        """Fuse the three MTP tokens with a complete local continuation.
++
++        The legacy runner keeps its accepted history in InputBatch on the CPU.
++        Copy the current matrix into a small UVA pool rather than moving the
++        whole history to device memory. This is intentionally synchronous in
++        phase 2: v9's async scheduler stores -1 placeholders until the next
++        iteration, so it cannot safely drive a text lookup.
++        """
++        if not self._mtp_suffix_active:
++            return draft_token_ids
++        if self.runner is None:
++            logger.warning(
++                "MTP_SUFFIX_LOOKUP_DISABLED_NO_RUNNER: legacy proposer has no runner"
++            )
++            return draft_token_ids
++
++        from vllm.v1.worker.gpu.spec_decode.dflash2.lookup import (
++            fuse_draft,
++            suffix_lookup,
++        )
++
++        batch_size = draft_token_ids.shape[0]
++        verify_steps = self.speculative_config.num_speculative_tokens
++        draft_steps = self._mtp_suffix_draft_steps
++        assert verify_steps == 7 and draft_steps == 3
++
++        input_batch = self._mtp_suffix_req_states or self.runner.input_batch
++        if self._mtp_suffix_history_pool is None:
++            self._mtp_suffix_history_pool = UvaBufferPool(
++                (self.max_batch_size, self.max_model_len),
++                torch.int32,
++                max_concurrency=2,
++            )
++            self._mtp_suffix_idx_mapping = torch.arange(
++                self.max_batch_size, dtype=torch.int32, device=self.device
++            )
++            self._mtp_suffix_lookup_hits = torch.zeros(
++                (), dtype=torch.int64, device=self.device
++            )
++            self._mtp_suffix_lookup_use = torch.zeros(
++                self.max_batch_size,
++                verify_steps,
++                dtype=torch.int32,
++                device=self.device,
++            )
++            self._mtp_suffix_take_flags = torch.zeros(
++                self.max_batch_size, dtype=torch.int32, device=self.device
++            )
++            self._mtp_suffix_tokens = torch.zeros(
++                self.max_batch_size,
++                verify_steps,
++                dtype=torch.int32,
++                device=self.device,
++            )
++            self._mtp_suffix_len = torch.zeros(
++                self.max_batch_size, dtype=torch.int32, device=self.device
++            )
++            self._mtp_suffix_valid = torch.zeros(
++                self.max_batch_size, dtype=torch.int32, device=self.device
++            )
++
++        assert self._mtp_suffix_idx_mapping is not None
++        assert self._mtp_suffix_lookup_hits is not None
++        assert self._mtp_suffix_lookup_use is not None
++        assert self._mtp_suffix_take_flags is not None
++        assert self._mtp_suffix_tokens is not None
++        assert self._mtp_suffix_len is not None
++        assert self._mtp_suffix_valid is not None
++        if self._mtp_suffix_total_len_gpu is None:
++            self._mtp_suffix_total_len_gpu = torch.zeros(
++                self.max_batch_size, dtype=torch.int32, device=self.device
++            )
++        history_uva = self._mtp_suffix_history_pool.copy_to_uva(
++            input_batch.token_ids_cpu_tensor
++        )
++        # propose_draft_token_ids runs before _bookkeeping_sync on the legacy
++        # GPU-model-forward path. Overlay every accepted current token, not
++        # merely the bonus/last token, or the terminal suffix can never match
++        # on a multi-token rejection-sampler result.
++        if (
++            self._mtp_suffix_sampled_tokens is not None
++            and self._mtp_suffix_sampled_counts is not None
++        ):
++            history_cpu = self._mtp_suffix_history_pool._uva_bufs[
++                self._mtp_suffix_history_pool._curr
++            ].cpu
++            sampled_cpu = self._mtp_suffix_sampled_tokens.detach().cpu()
++            counts_cpu = self._mtp_suffix_sampled_counts.detach().cpu()
++            lengths_cpu = input_batch.num_tokens_no_spec_cpu_tensor.clone()
++            for req_idx in range(batch_size):
++                count = int(counts_cpu[req_idx].item())
++                if count <= 0:
++                    continue
++                start = int(lengths_cpu[req_idx].item())
++                history_cpu[req_idx, start : start + count].copy_(
++                    sampled_cpu[req_idx, :count]
++                )
++                lengths_cpu[req_idx] = start + count
++            total_len = lengths_cpu
++        else:
++            total_len = input_batch.num_tokens_no_spec_cpu_tensor
++        self._mtp_suffix_total_len_gpu[:batch_size].copy_(total_len[:batch_size])
++        _, match_len, valid = suffix_lookup(
++            history_uva,
++            self._mtp_suffix_total_len_gpu,
++            self._mtp_suffix_idx_mapping,
++            batch_size,
++            verify_steps,
++            nmax=int(os.environ.get("VLLM_MTP_SUFFIX_NMAX", "12")),
++            nmin=int(os.environ.get("VLLM_MTP_SUFFIX_NMIN", "4")),
++            search_max=int(
++                os.environ.get("VLLM_MTP_SUFFIX_SEARCH", str(1 << 30))
++            ),
++            out_tokens=self._mtp_suffix_tokens[:batch_size],
++            out_len=self._mtp_suffix_len[:batch_size],
++            out_valid=self._mtp_suffix_valid[:batch_size],
++        )
++
++        full_tokens = torch.zeros(
++            batch_size,
++            verify_steps,
++            dtype=draft_token_ids.dtype,
++            device=draft_token_ids.device,
++        )
++        full_tokens[:, :draft_steps] = draft_token_ids
++        self._mtp_suffix_lookup_hits.zero_()
++        fuse_draft(
++            full_tokens,
++            self._mtp_suffix_tokens[:batch_size],
++            match_len,
++            valid,
++            self._mtp_suffix_lookup_use[:batch_size],
++            self._mtp_suffix_idx_mapping,
++            self._mtp_suffix_lookup_hits,
++            batch_size,
++            verify_steps,
++            draft_block=draft_steps,
++            nmin=4,
++            nstrong=6,
++            agree_min=2,
++            nmin_tail=4,
++            long_min=6,
++            take_flags=self._mtp_suffix_take_flags[:batch_size],
++        )
++
++        long_rows = (self._mtp_suffix_take_flags[:batch_size] > 0) & (
++            valid >= verify_steps
++        )
++        take_long = bool(long_rows.all().item())
++        if self._last_draft_probs is not None:
++            if take_long:
++                draft_probs = torch.zeros(
++                    batch_size,
++                    verify_steps,
++                    self._last_draft_probs.shape[-1],
++                    dtype=self._last_draft_probs.dtype,
++                    device=self._last_draft_probs.device,
++                )
++                draft_probs[:, :draft_steps] = self._last_draft_probs
++                self._last_draft_probs = draft_probs
++            for step in range(self._last_draft_probs.shape[1]):
++                req_rows = torch.nonzero(
++                    self._mtp_suffix_lookup_use[:batch_size, step], as_tuple=False
++                ).flatten()
++                if req_rows.numel() == 0:
++                    continue
++                probs = self._last_draft_probs[:, step]
++                probs[req_rows] = 0.0
++                probs[req_rows, full_tokens[req_rows, step].long()] = 1.0
++
++        hits = int(self._mtp_suffix_lookup_hits.item())
++        if self._mtp_suffix_diag_steps < 10:
++            logger.info(
++                "MTP_SUFFIX_LOOKUP_DIAG legacy: step=%d max_match=%d max_valid=%d",
++                self._mtp_suffix_diag_steps,
++                int(match_len[:batch_size].max().item()),
++                int(valid[:batch_size].max().item()),
++            )
++            self._mtp_suffix_diag_steps += 1
++        self._mtp_suffix_next_tokens = verify_steps if take_long else draft_steps
++        if hits:
++            logger.info(
++                "MTP_SUFFIX_LOOKUP_HIT legacy: hits=%d batch=%d verify_tokens=%d",
++                hits,
++                batch_size,
++                self._mtp_suffix_next_tokens,
++            )
++        else:
++            logger.debug(
++                "MTP_SUFFIX_LOOKUP_SCAN legacy: hits=0 batch=%d verify_tokens=%d",
++                batch_size,
++                self._mtp_suffix_next_tokens,
++            )
++        return full_tokens if take_long else full_tokens[:, :draft_steps]
++
+     def propose(
+         self,
+         num_speculative_tokens,
+@@ -522,6 +780,11 @@
+         self.num_speculative_tokens = num_speculative_tokens
+         self._last_draft_probs = None
+         batch_size = common_attn_metadata.batch_size()
++        num_draft_steps = (
++            self._mtp_suffix_draft_steps
++            if self._mtp_suffix_active
++            else self.num_speculative_tokens
++        )
+ 
+         if self.method in ("eagle3", "dflash"):
+             model = self.model
+@@ -679,7 +942,7 @@
+ 
+         block_size = self.block_size
+         assert block_size > 0, "block_size has not been initialized."
+-        for token_index in range(self.num_speculative_tokens - 1):
++        for token_index in range(num_draft_steps - 1):
+             # Update the inputs.
+             # cast to int32 is crucial when eagle model is compiled.
+             # tensor.argmax() returns int64 by default.
+@@ -764,6 +1027,8 @@
+         draft_token_ids = torch.stack(draft_token_ids_list, dim=1)
+         if draft_probs_list is not None:
+             self._last_draft_probs = torch.stack(draft_probs_list, dim=1).contiguous()
++        if self._mtp_suffix_active:
++            draft_token_ids = self._apply_mtp_suffix_lookup(draft_token_ids)
+         return draft_token_ids
+ 
+     def _update_positions_dependent_metadata(
+diff --git a/v1/worker/gpu_model_runner.py b/v1/worker/gpu_model_runner.py
+--- a/v1/worker/gpu_model_runner.py
++++ b/v1/worker/gpu_model_runner.py
+@@ -729,6 +729,9 @@
+             reasoning_config=self.vllm_config.reasoning_config,
+             use_replayssm=self.cache_config.use_replayssm,
+         )
++        if hasattr(self, "drafter") and hasattr(self.drafter, "set_req_states"):
++            # Legacy runner equivalent of the V2 RequestState injection hook.
++            self.drafter.set_req_states(self.input_batch)
+ 
+         # Separate cuda stream for overlapping transfer of sampled token ids from
+         # GPU to CPU when async scheduling is enabled.
+@@ -5194,6 +5197,10 @@
+                 self._copy_valid_sampled_token_count(
+                     next_token_ids, valid_sampled_tokens_count
+                 )
++                if hasattr(self.drafter, "set_lookup_sampled_tokens"):
++                    self.drafter.set_lookup_sampled_tokens(
++                        sampled_token_ids, valid_sampled_tokens_count
++                    )
+ 
+             # Let the target override the hidden state fed to the drafter
+             # (e.g. DeepSeek V4 MTP needs the pre-hc_head residual). Safe to

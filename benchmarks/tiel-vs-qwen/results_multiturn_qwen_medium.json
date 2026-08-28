@@ -1,0 +1,22 @@
+{
+  "model": "qwen3.8-27b",
+  "n_tasks": 125,
+  "solved_total": 125,
+  "solve_rate": 100.0,
+  "newly_solved_per_turn": {
+    "1": 124,
+    "2": 1,
+    "3": 0
+  },
+  "cumulative_solve_rate_per_turn": {
+    "1": 99.2,
+    "2": 100.0,
+    "3": 100.0
+  },
+  "mean_turns_to_solve": 1.01,
+  "solved_first_try": 124,
+  "no_code_replies": 0,
+  "tasks_with_no_code": 0,
+  "unsolved": [],
+  "no_code_detail": {}
+}

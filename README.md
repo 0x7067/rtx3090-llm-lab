@@ -1,13 +1,32 @@
-# Qwen3.8-27B on one RTX 3090: llama.cpp patches and a truncated MTP draft vocabulary
+# RTX 3090 LLM Lab
 
-This repo contains the llama.cpp optimization stack for Qwen3.8-27B (hybrid
-Gated-DeltaNet, 27B) on one RTX 3090 (24 GB, Ampere cc 8.6). The full 131k
-context stays resident: main model, MTP drafter, and vision projector together
-use about 22.9 GiB. Speculative decoding runs on the model's native MTP head.
+This repository collects the measured runtime, model, and benchmark work for
+running coding models on one 24 GB RTX 3090. Qwen3.8-27B is the main deployment.
+Tiel-Coder-35B-A3B is retained as a deployment-fit comparison and llama.cpp
+alternative.
 
-It also contains the exact overlay and Club 3090 local bundle for the current
-vLLM deployment. The two runtimes use different model formats, caches, and
-benchmark harnesses, so their results are reported separately.
+## Repository map
+
+- [`benchmarks/tiel-vs-qwen/`](benchmarks/tiel-vs-qwen/) contains the public
+  Tiel-versus-Qwen comparison, corrected harnesses, and later qualification
+  evidence.
+- [`benchmarks/qwen-vllm-hillclimb-2026-08-28/`](benchmarks/qwen-vllm-hillclimb-2026-08-28/)
+  contains the frozen control, 16 optimization decisions, and measured results
+  from the vLLM slowdown campaign.
+- [`vllm/`](vllm/) contains the exact overlay and Club 3090 bundle for the
+  current vLLM deployment.
+- [`research/vllm/`](research/vllm/) records upstream findings that still need
+  a local A/B before promotion.
+- [`experiments/`](experiments/) contains rejected or unfinished implementation
+  work. Nothing there is a production default.
+
+## Qwen3.8-27B llama.cpp stack
+
+The llama.cpp stack targets Qwen3.8-27B, a 27B hybrid Gated-DeltaNet model. The
+full 131k context stays resident with the main model, MTP drafter, and vision
+projector at about 22.9 GiB. Speculative decoding uses the model's native MTP
+head. The vLLM and llama.cpp lanes use different model formats, caches, and
+benchmark harnesses, so their results remain separate.
 
 Results on the target workload (54k-token-deep agentic decode, temp 0). The
 patch/drafter campaign used the former Q4_K_L target; the last promoted

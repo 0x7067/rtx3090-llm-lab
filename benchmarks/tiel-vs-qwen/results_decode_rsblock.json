@@ -1,0 +1,118 @@
+{
+  "base": "http://127.0.0.1:8094",
+  "n_per_class": 6,
+  "greedy": false,
+  "code": {
+    "runs": [
+      {
+        "gen_tok_s": 91.14,
+        "completion_tokens": 512,
+        "ttft_s": 0.109
+      },
+      {
+        "gen_tok_s": 66.92,
+        "completion_tokens": 512,
+        "ttft_s": 0.108
+      },
+      {
+        "gen_tok_s": 84.6,
+        "completion_tokens": 512,
+        "ttft_s": 0.108
+      },
+      {
+        "gen_tok_s": 102.39,
+        "completion_tokens": 512,
+        "ttft_s": 0.108
+      },
+      {
+        "gen_tok_s": 94.32,
+        "completion_tokens": 512,
+        "ttft_s": 0.109
+      },
+      {
+        "gen_tok_s": 89.03,
+        "completion_tokens": 512,
+        "ttft_s": 0.11
+      }
+    ],
+    "median": 90.08500000000001,
+    "min": 66.92,
+    "max": 102.39
+  },
+  "prose": {
+    "runs": [
+      {
+        "gen_tok_s": 75.44,
+        "completion_tokens": 512,
+        "ttft_s": 0.11
+      },
+      {
+        "gen_tok_s": 59.8,
+        "completion_tokens": 512,
+        "ttft_s": 0.11
+      },
+      {
+        "gen_tok_s": 75.57,
+        "completion_tokens": 512,
+        "ttft_s": 0.112
+      },
+      {
+        "gen_tok_s": 77.68,
+        "completion_tokens": 512,
+        "ttft_s": 0.11
+      },
+      {
+        "gen_tok_s": 76.5,
+        "completion_tokens": 512,
+        "ttft_s": 0.108
+      },
+      {
+        "gen_tok_s": 75.19,
+        "completion_tokens": 512,
+        "ttft_s": 0.108
+      }
+    ],
+    "median": 75.505,
+    "min": 59.8,
+    "max": 77.68
+  },
+  "repair": {
+    "runs": [
+      {
+        "gen_tok_s": 89.41,
+        "completion_tokens": 512,
+        "ttft_s": 0.167
+      },
+      {
+        "gen_tok_s": 66.75,
+        "completion_tokens": 512,
+        "ttft_s": 0.166
+      },
+      {
+        "gen_tok_s": 87.88,
+        "completion_tokens": 512,
+        "ttft_s": 0.17
+      },
+      {
+        "gen_tok_s": 81.08,
+        "completion_tokens": 512,
+        "ttft_s": 0.167
+      },
+      {
+        "gen_tok_s": 90.86,
+        "completion_tokens": 512,
+        "ttft_s": 0.165
+      },
+      {
+        "gen_tok_s": 85.87,
+        "completion_tokens": 512,
+        "ttft_s": 0.166
+      }
+    ],
+    "median": 86.875,
+    "min": 66.75,
+    "max": 90.86
+  },
+  "draft_acceptance": 0.4616,
+  "overall_median": 82.84
+}

@@ -9,7 +9,7 @@ that sandbox_runner.py executes inside a network-less docker container.
 
 Usage: bench_quality.py BASE_URL MODEL HumanEval.jsonl candidates_out.jsonl [concurrency]
 """
-import asyncio, json, re, sys
+import asyncio, os, json, re, sys
 import httpx
 
 BASE, MODEL, DATA, OUT = sys.argv[1].rstrip("/"), sys.argv[2], sys.argv[3], sys.argv[4]
@@ -40,7 +40,18 @@ async def gen(client, sem, problem):
                     # invalidated the first pass@1 comparison. bench_mmlu.py hit
                     # the same wall and doubled its limit; this is that fix,
                     # applied here on 2026-08-26.
+                    # THINK_BUDGET env (vLLM thinking_token_budget): caps the
+                    # reasoning phase so the model always exits <think> and
+                    # emits an answer. Unset = the committed runs' behavior.
                     json={"model": MODEL, "temperature": 0, "max_tokens": 12288,
+                          **({"thinking_token_budget": int(os.environ["THINK_BUDGET"])}
+                             if os.environ.get("THINK_BUDGET") else {}),
+                          # EFFORT env: chat_template_kwargs reasoning_effort
+                          # (template default is xhigh; production candidate
+                          # pins medium server-side).
+                          **({"chat_template_kwargs":
+                              {"reasoning_effort": os.environ["EFFORT"]}}
+                             if os.environ.get("EFFORT") else {}),
                           "messages": [{"role": "user",
                                         "content": PROMPT_TMPL.format(prompt=problem["prompt"])}]},
                     timeout=900)
@@ -53,13 +64,14 @@ async def gen(client, sem, problem):
                 # reply that never leaves the reasoning block therefore arrives
                 # with content empty and scores zero. Captured for diagnosis
                 # only - scoring still reads content, as the committed runs did.
-                reasoning = msg.get("reasoning_content") or ""
+                reasoning = msg.get("reasoning") or msg.get("reasoning_content") or ""
                 return {"task_id": problem["task_id"],
                         "code": extract_code(content),
                         "reply": content,
                         "raw_len": len(content),
                         "reasoning_len": len(reasoning),
-                        "finish_reason": choice.get("finish_reason")}
+                        "finish_reason": choice.get("finish_reason"),
+                        "completion_tokens": r.json().get("usage", {}).get("completion_tokens")}
             except Exception as e:
                 if attempt == 2:
                     return {"task_id": problem["task_id"], "code": "", "error": str(e)}

@@ -1,0 +1,6 @@
+[
+{"tag":"F","ctx":163840,"cache_k":"q8_0","cache_v":"q8_0","vision":"vision","status":"ok","vram_mib":23130,"decode_tok_s":151.0,"prefill_tok_s":2833.1},
+{"tag":"G","ctx":184320,"cache_k":"q8_0","cache_v":"q8_0","vision":"vision","status":"ok","vram_mib":23404,"decode_tok_s":149.7,"prefill_tok_s":2815.0},
+{"tag":"H","ctx":196608,"cache_k":"q8_0","cache_v":"q8_0","vision":"vision","status":"ok","vram_mib":23566,"decode_tok_s":148.8,"prefill_tok_s":2780.2},
+{"tag":"I","ctx":212992,"cache_k":"q8_0","cache_v":"q8_0","vision":"vision","status":"ok","vram_mib":23784,"decode_tok_s":149.2,"prefill_tok_s":2785.8}
+]

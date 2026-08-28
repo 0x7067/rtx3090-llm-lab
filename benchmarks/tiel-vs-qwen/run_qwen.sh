@@ -4,16 +4,14 @@
 # env, same host paths. The Flux-managed llama Deployment is only scaled to 0,
 # never edited, so restoring is a scale back to 1.
 set -euo pipefail
-# Path to the llama workload directory in your cluster manifests repo; only
-# the chat_template.jinja beside the Deployment is read.
-REPO=${CLUSTER_REPO:-../cluster}/k8s/workloads/apps/llama
+REPO=/data/development/projects/docker-services/k8s/workloads/apps/llama
 
 docker rm -f qwenbench >/dev/null 2>&1 || true
 docker run -d --name qwenbench --gpus all --user 1000:1000 \
   -p 127.0.0.1:8094:8080 \
   --shm-size 27g \
-  -v ${MODELS_DIR:-$PWD/models}:/app/models \
-  -v ${CACHE_DIR:-$PWD/cache}:/cache \
+  -v /data/buttercup_6tb/k3s/vllm-trial/models:/app/models \
+  -v /data/buttercup_6tb/k3s/vllm-trial/cache:/cache \
   -v "$REPO/chat_template.jinja:/app/config/chat_template.jinja:ro" \
   -e TZ=America/Sao_Paulo -e PORT=8080 -e CTX=long -e VISION=1 \
   -e MAX_LEN=140000 -e GPU_UTIL=0.95 -e PREFIX_CACHE=1 \

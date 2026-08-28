@@ -1,0 +1,57 @@
+{
+  "base": "http://127.0.0.1:8095",
+  "n_per_class": 2,
+  "greedy": false,
+  "code": {
+    "runs": [
+      {
+        "gen_tok_s": 64.84,
+        "completion_tokens": 512,
+        "ttft_s": 0.326
+      },
+      {
+        "gen_tok_s": 65.82,
+        "completion_tokens": 512,
+        "ttft_s": 0.336
+      }
+    ],
+    "median": 65.33,
+    "min": 64.84,
+    "max": 65.82
+  },
+  "prose": {
+    "runs": [
+      {
+        "gen_tok_s": 60.74,
+        "completion_tokens": 509,
+        "ttft_s": 0.344
+      },
+      {
+        "gen_tok_s": 57.2,
+        "completion_tokens": 512,
+        "ttft_s": 0.339
+      }
+    ],
+    "median": 58.97,
+    "min": 57.2,
+    "max": 60.74
+  },
+  "repair": {
+    "runs": [
+      {
+        "gen_tok_s": 63.73,
+        "completion_tokens": 512,
+        "ttft_s": 0.408
+      },
+      {
+        "gen_tok_s": 66.0,
+        "completion_tokens": 512,
+        "ttft_s": 0.385
+      }
+    ],
+    "median": 64.865,
+    "min": 63.73,
+    "max": 66.0
+  },
+  "overall_median": 64.285
+}

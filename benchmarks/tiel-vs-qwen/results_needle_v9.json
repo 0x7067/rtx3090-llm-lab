@@ -1,0 +1,188 @@
+[
+  {
+    "arm": "cold",
+    "rep": 0,
+    "recall": "3/3",
+    "ok": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-prefill",
+    "rep": 0,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-gen",
+    "rep": 0,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "tools-hit",
+    "rep": 0,
+    "t1_calls": 1,
+    "t2_calls": 1,
+    "t2_leak_in_content": false,
+    "finish": "tool_calls"
+  },
+  {
+    "arm": "cold",
+    "rep": 1,
+    "recall": "3/3",
+    "ok": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-prefill",
+    "rep": 1,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-gen",
+    "rep": 1,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "tools-hit",
+    "rep": 1,
+    "t1_calls": 1,
+    "t2_calls": 1,
+    "t2_leak_in_content": false,
+    "finish": "tool_calls"
+  },
+  {
+    "arm": "cold",
+    "rep": 2,
+    "recall": "3/3",
+    "ok": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-prefill",
+    "rep": 2,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-gen",
+    "rep": 2,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "tools-hit",
+    "rep": 2,
+    "t1_calls": 1,
+    "t2_calls": 1,
+    "t2_leak_in_content": false,
+    "finish": "tool_calls"
+  },
+  {
+    "arm": "cold",
+    "rep": 3,
+    "recall": "3/3",
+    "ok": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-prefill",
+    "rep": 3,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-gen",
+    "rep": 3,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "tools-hit",
+    "rep": 3,
+    "t1_calls": 1,
+    "t2_calls": 1,
+    "t2_leak_in_content": false,
+    "finish": "tool_calls"
+  },
+  {
+    "arm": "cold",
+    "rep": 4,
+    "recall": "3/3",
+    "ok": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-prefill",
+    "rep": 4,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-gen",
+    "rep": 4,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "tools-hit",
+    "rep": 4,
+    "t1_calls": 1,
+    "t2_calls": 1,
+    "t2_leak_in_content": false,
+    "finish": "tool_calls"
+  },
+  {
+    "arm": "cold",
+    "rep": 5,
+    "recall": "3/3",
+    "ok": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-prefill",
+    "rep": 5,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "hit-gen",
+    "rep": 5,
+    "recall": "3/3",
+    "ok": true,
+    "hits_moved": true,
+    "finish": "stop"
+  },
+  {
+    "arm": "tools-hit",
+    "rep": 5,
+    "t1_calls": 1,
+    "t2_calls": 1,
+    "t2_leak_in_content": false,
+    "finish": "tool_calls"
+  }
+]

@@ -1,0 +1,244 @@
+diff --git a/v1/worker/gpu/spec_decode/autoregressive/speculator.py b/v1/worker/gpu/spec_decode/autoregressive/speculator.py
+--- a/v1/worker/gpu/spec_decode/autoregressive/speculator.py
++++ b/v1/worker/gpu/spec_decode/autoregressive/speculator.py
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++import os
+ from typing import Any
+ 
+ import torch
+@@ -48,6 +49,59 @@
+         self.prefill_cudagraph_manager: SpeculatorCudaGraphManager | None = None
+         self.decode_cudagraph_manager: SpeculatorCudaGraphManager | None = None
+ 
++        # Experimental MTP + local suffix lookup. The target block is configured
++        # for seven tokens, while this drafter still runs exactly three MTP
++        # passes; lookup owns the optional four-token tail.
++        self._suffix_lookup_enabled = (
++            os.environ.get("VLLM_MTP_SUFFIX_LOOKUP", "0") == "1"
++        )
++        self._mtp_draft_steps = self.num_speculative_steps
++        self._next_num_draft_tokens = self.num_speculative_steps
++        self._req_states = None
++        if self._suffix_lookup_enabled:
++            if self.num_speculative_steps != 7:
++                raise ValueError(
++                    "VLLM_MTP_SUFFIX_LOOKUP requires num_speculative_tokens=7"
++                )
++            self._mtp_draft_steps = 3
++            self._lookup_nmin = int(os.environ.get("VLLM_MTP_SUFFIX_NMIN", "4"))
++            self._lookup_nmax = int(os.environ.get("VLLM_MTP_SUFFIX_NMAX", "12"))
++            self._lookup_nstrong = int(
++                os.environ.get("VLLM_MTP_SUFFIX_NSTRONG", "6")
++            )
++            self._lookup_agree = int(
++                os.environ.get("VLLM_MTP_SUFFIX_AGREE", "2")
++            )
++            self._lookup_search = int(
++                os.environ.get("VLLM_MTP_SUFFIX_SEARCH", str(1 << 30))
++            )
++            self._lookup_tokens = torch.zeros(
++                self.max_num_reqs,
++                self.num_speculative_steps,
++                dtype=torch.int32,
++                device=device,
++            )
++            self._lookup_len = torch.zeros(
++                self.max_num_reqs, dtype=torch.int32, device=device
++            )
++            self._lookup_valid = torch.zeros(
++                self.max_num_reqs, dtype=torch.int32, device=device
++            )
++            self._lookup_use = torch.zeros(
++                self.max_num_reqs,
++                self.num_speculative_steps,
++                dtype=torch.int32,
++                device=device,
++            )
++            self._lookup_hits = torch.zeros((), dtype=torch.int64, device=device)
++            self._lookup_take_flags = torch.zeros(
++                self.max_num_reqs, dtype=torch.int32, device=device
++            )
++            logger.warning(
++                "VLLM_MTP_SUFFIX_LOOKUP enabled: MTP drafts=3, max verify=7; "
++                "this derivative requires GPU validation"
++            )
++
+     @property
+     def advance_draft_positions(self) -> bool:
+         """
+@@ -58,6 +112,98 @@
+         """
+         return True
+ 
++    def set_req_states(self, req_states) -> None:
++        """Inject RequestState for the opt-in lookup path without copying history."""
++        self._req_states = req_states
++
++    def next_num_draft_tokens(self) -> int | None:
++        """Return the scheduler-visible width for the next verification step."""
++        if not self._suffix_lookup_enabled:
++            return None
++        return self._next_num_draft_tokens
++
++    def _rewrite_lookup_logits(self, num_reqs: int) -> None:
++        """Make each lookup-owned q row an exact point mass.
++
++        MTP stores dense, temperature-processed logits.  Rewriting only the
++        rows marked by fuse_draft keeps ordinary MTP q untouched while making
++        the probabilistic rejection sampler exact for lookup proposals.
++        """
++        if self.draft_logits is None:
++            return
++        idx_mapping = self.idx_mapping[:num_reqs].to(dtype=torch.long)
++        for step in range(self.num_speculative_steps):
++            req_rows = torch.nonzero(
++                self._lookup_use[:num_reqs, step], as_tuple=False
++            ).flatten()
++            if req_rows.numel() == 0:
++                continue
++            state_rows = idx_mapping[req_rows]
++            step_logits = self.draft_logits[:, step]
++            step_logits.index_fill_(0, state_rows, -float("inf"))
++            step_logits[state_rows, self.draft_tokens[req_rows, step]] = 0.0
++
++    def _apply_suffix_lookup(self, num_reqs: int) -> None:
++        """Fuse a context continuation after the three MTP draft passes."""
++        self._next_num_draft_tokens = self._mtp_draft_steps
++        if not self._suffix_lookup_enabled or self._req_states is None:
++            return
++
++        # Import lazily: dflash2/lookup.py uses Triton constexprs at module
++        # import time, and CPU-only workers intentionally disable Triton.
++        from vllm.v1.worker.gpu.spec_decode.dflash2.lookup import (
++            fuse_draft,
++            suffix_lookup,
++        )
++
++        # Never expose stale/uninitialised tail rows if the scheduler falls
++        # back to the three-token MTP proposal.
++        self.draft_tokens[:num_reqs, self._mtp_draft_steps :].zero_()
++        _, match_len, valid = suffix_lookup(
++            self._req_states.all_token_ids.gpu,
++            self._req_states.total_len.gpu,
++            self.idx_mapping,
++            num_reqs,
++            self.num_speculative_steps,
++            nmax=self._lookup_nmax,
++            nmin=self._lookup_nmin,
++            search_max=self._lookup_search,
++            out_tokens=self._lookup_tokens[:num_reqs],
++            out_len=self._lookup_len[:num_reqs],
++            out_valid=self._lookup_valid[:num_reqs],
++        )
++        fuse_draft(
++            self.draft_tokens[:num_reqs],
++            self._lookup_tokens[:num_reqs],
++            match_len,
++            valid,
++            self._lookup_use[:num_reqs],
++            self.idx_mapping,
++            self._lookup_hits,
++            num_reqs,
++            self.num_speculative_steps,
++            draft_block=self._mtp_draft_steps,
++            nmin=self._lookup_nmin,
++            nstrong=self._lookup_nstrong,
++            agree_min=self._lookup_agree,
++            nmin_tail=self._lookup_nmin,
++            long_min=self._lookup_nstrong,
++            take_flags=self._lookup_take_flags[:num_reqs],
++        )
++        self._rewrite_lookup_logits(num_reqs)
++
++        # The existing v9 fuse kernel reports a fillable tail for valid > 3.
++        # Require all seven tokens before changing scheduler width; otherwise
++        # the tail contains no MTP fallback and must not be verified.
++        long_rows = (self._lookup_take_flags[:num_reqs] > 0) & (
++            valid >= self.num_speculative_steps
++        )
++        # Phase-2 deliberately uses a synchronous read. A future optimization
++        # may borrow DFlash2's pinned, one-step-stale flag copy after measuring
++        # scheduler and batch-order correctness for MTP/GDN.
++        if bool(long_rows.all().item()):
++            self._next_num_draft_tokens = self.num_speculative_steps
++
+     def init_cudagraph_manager(self, cudagraph_mode: CUDAGraphMode) -> None:
+         # Initialize cudagraph manager for draft prefill (draft position 0).
+         self.prefill_cudagraph_manager = SpeculatorCudaGraphManager(
+@@ -271,6 +417,8 @@
+             input_batch.seq_lens_cpu_upper_bound,
+         )
+ 
++        self._apply_suffix_lookup(num_reqs)
++
+         return self.draft_tokens[:num_reqs]
+ 
+     @torch.inference_mode()
+@@ -385,7 +533,7 @@
+ 
+         attn_metadata = None
+         slot_mappings_by_layer = None
+-        for step in range(1, self.num_speculative_steps):
++        for step in range(1, self._mtp_draft_steps):
+             # Rebuild every step when positions advance, or just once
+             # on the first step when positions are constant (Gemma4 MTP).
+             if not skip_attn and (self.advance_draft_positions or step == 1):
+@@ -473,7 +621,7 @@
+             self.input_buffers,
+             num_reqs,
+             self.max_model_len,
+-            self.num_speculative_steps,
++            self._mtp_draft_steps,
+             advance_draft_positions=self.advance_draft_positions,
+         )
+ 
+diff --git a/v1/worker/gpu/cudagraph_utils.py b/v1/worker/gpu/cudagraph_utils.py
+--- a/v1/worker/gpu/cudagraph_utils.py
++++ b/v1/worker/gpu/cudagraph_utils.py
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++import os as _os
+ from collections import defaultdict
+ from collections.abc import Callable
+ from dataclasses import dataclass
+@@ -223,8 +224,6 @@
+             # (v1/worker/gpu/spec_decode/dflash2/lookup.py fills the rest from the request's
+             # own context) schedules either length, so both need a decode graph. Without
+             # this the short step -- the one taken on ordinary prose -- runs piecewise.
+-            import os as _os
+-
+             if (
+                 speculative_config is not None
+                 and _os.environ.get("VLLM_DFLASH2_GRAPH_BOTH", "1") == "1"
+@@ -247,6 +246,28 @@
+                         decode_query_lens,
+                     )
+ 
++            if (
++                speculative_config is not None
++                and speculative_config.method == "mtp"
++                and _os.environ.get("VLLM_MTP_SUFFIX_LOOKUP", "0") == "1"
++            ):
++                # MTP emits three drafts normally, while a confirmed suffix
++                # supplies a four-token tail. Capture both target widths:
++                # sampled token + 3 drafts, and sampled token + 7 drafts.
++                _draft_steps = 3
++                _short = (
++                    self.decode_query_len
++                    - self.vllm_config.num_speculative_tokens
++                    + _draft_steps
++                )
++                if 0 < _short < self.decode_query_len:
++                    decode_query_lens.append(_short)
++                    logger.info(
++                        "Capturing MTP suffix-lookup decode graphs for query "
++                        "lengths %s.",
++                        decode_query_lens,
++                    )
++
+         for num_tokens, num_active_loras in product(
+             capture_sizes, self.lora_capture_cases
+         ):

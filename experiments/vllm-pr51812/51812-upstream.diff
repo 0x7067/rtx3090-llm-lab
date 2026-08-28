@@ -1,0 +1,29 @@
+diff --git a/vllm/model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py b/vllm/model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py
+index 60879f8fb1eb..f3ebcd63255b 100644
+--- a/vllm/model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py
++++ b/vllm/model_executor/layers/mamba/gdn/qwen_gdn_linear_attn.py
+@@ -1252,9 +1252,13 @@ def _forward_core(
+         if spec_sequence_masks is not None:
+             if attn_metadata.num_prefills == 0 and attn_metadata.num_decodes == 0:
+                 mixed_qkv_spec = mixed_qkv
++                a_spec = a
++                b_spec = b
+                 mixed_qkv_non_spec = None
+             else:
+                 mixed_qkv_spec = mixed_qkv.index_select(0, spec_token_indx)
++                a_spec = a.index_select(0, spec_token_indx)
++                b_spec = b.index_select(0, spec_token_indx)
+                 mixed_qkv_non_spec = mixed_qkv.index_select(0, non_spec_token_indx)
+         else:
+             mixed_qkv_spec = None
+@@ -1379,8 +1383,8 @@ def _forward_core(
+             core_attn_out_spec, last_recurrent_state = (
+                 fused_sigmoid_gating_delta_rule_update(
+                     A_log=self.A_log,
+-                    a=a,
+-                    b=b,
++                    a=a_spec,
++                    b=b_spec,
+                     dt_bias=self.dt_bias,
+                     q=query_spec,
+                     k=key_spec,

@@ -1,5 +1,5 @@
 {
-  "base_url": "http://llama.internal:8080",
+  "base_url": "http://llama.apps.svc.cluster.local:8080",
   "model": "qwen3.8-27b",
   "single_stream_decode": [
     {

@@ -1,0 +1,6 @@
+decision.tsv
+.pytest_cache/
+__pycache__/
+*.pyc
+*.so
+build/

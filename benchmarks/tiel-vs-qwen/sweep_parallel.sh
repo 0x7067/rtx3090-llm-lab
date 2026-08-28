@@ -22,7 +22,7 @@
 
 set -uo pipefail
 OUT="${1:-results_parallel.json}"
-MODELS=${MODELS_DIR:-$PWD/models}
+MODELS=/data/buttercup_6tb/k3s/vllm-trial/models
 IMG=ghcr.io/ggml-org/llama.cpp@sha256:851b3b87f89bda98f2ad416e71ab91b6e88be1807502a963937f1d21f3b8555d
 PORT=8095
 NAME=sweep

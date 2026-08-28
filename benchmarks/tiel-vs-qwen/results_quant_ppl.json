@@ -1,0 +1,1 @@
+{"ctx":512,"corpus_bytes":222785,"results":[{"model":"Tiel-Coder-35B-A3B-MTP-UD-IQ4_XS.gguf","bytes":18629540384,"ppl":2.7655},{"model":"Tiel-Coder-35B-A3B-MTP-UD-Q4_K_S.gguf","bytes":21792045600,"ppl":2.6985}]}

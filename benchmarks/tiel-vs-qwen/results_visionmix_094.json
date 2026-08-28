@@ -1,0 +1,13 @@
+{
+  "visionmix": {
+    "statuses": {
+      "200": 12
+    },
+    "n": 12,
+    "errors_sample": [],
+    "max_s": 281.43
+  },
+  "health": {
+    "visionmix": 200
+  }
+}

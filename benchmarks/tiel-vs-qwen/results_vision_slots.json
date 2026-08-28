@@ -1,0 +1,35 @@
+[
+  {
+    "parallel": 1,
+    "status": "ok",
+    "n_ctx_slot": 184320,
+    "load_mib": 23404,
+    "peak_1_image_mib": 23820,
+    "peak_n_images_mib": 23824,
+    "replies_ok": 1,
+    "replies_expected": 1,
+    "alive_after": "true"
+  },
+  {
+    "parallel": 2,
+    "status": "ok",
+    "n_ctx_slot": 184320,
+    "load_mib": 23466,
+    "peak_1_image_mib": 23882,
+    "peak_n_images_mib": 23886,
+    "replies_ok": 2,
+    "replies_expected": 2,
+    "alive_after": "true"
+  },
+  {
+    "parallel": 4,
+    "status": "ok",
+    "n_ctx_slot": 184320,
+    "load_mib": 23592,
+    "peak_1_image_mib": 24008,
+    "peak_n_images_mib": 24018,
+    "replies_ok": 4,
+    "replies_expected": 4,
+    "alive_after": "true"
+  }
+]

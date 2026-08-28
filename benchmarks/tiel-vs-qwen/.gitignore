@@ -1,11 +1,17 @@
-# 20 GB of GGUF weights; re-download from the model repo instead.
+# 20 GB of GGUF weights; re-download from the HF repo instead.
 models/
 # 4 MB dataset, re-fetchable from TIGER-Lab/MMLU-Pro.
 *.parquet
 # Per-run scratch: model output and sandbox scoring dirs.
+.pytest_cache/
+__pycache__/
+*.py[cod]
 work_*/
 cand_*.jsonl
 candidates_*.jsonl
 mutants*.jsonl
 he_subset.jsonl
 smoke.json
+
+# Machine-local permission rules for the benchmark window.
+.claude/settings.local.json

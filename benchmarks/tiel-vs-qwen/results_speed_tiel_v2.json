@@ -1,5 +1,5 @@
 {
-  "base_url": "http://llama.internal:8080",
+  "base_url": "http://llama.apps.svc.cluster.local:8080",
   "model": "tiel-coder-35b-a3b",
   "single_stream_decode": [
     {

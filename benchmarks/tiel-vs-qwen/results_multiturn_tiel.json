@@ -1,0 +1,21 @@
+{
+  "model": "/models/Tiel-Coder-35B-A3B-UD-Q4_K_S.gguf",
+  "n_tasks": 125,
+  "solved_total": 125,
+  "solve_rate": 100.0,
+  "newly_solved_per_turn": {
+    "1": 118,
+    "2": 7,
+    "3": 0
+  },
+  "cumulative_solve_rate_per_turn": {
+    "1": 94.4,
+    "2": 100.0,
+    "3": 100.0
+  },
+  "mean_turns_to_solve": 1.06,
+  "solved_first_try": 118,
+  "no_code_replies": 3,
+  "tasks_with_no_code": 3,
+  "unsolved": []
+}

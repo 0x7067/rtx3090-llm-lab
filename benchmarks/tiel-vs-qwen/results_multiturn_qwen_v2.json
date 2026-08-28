@@ -1,0 +1,197 @@
+{
+  "model": "qwen3.8-27b",
+  "n_tasks": 125,
+  "solved_total": 120,
+  "solve_rate": 96.0,
+  "newly_solved_per_turn": {
+    "1": 113,
+    "2": 5,
+    "3": 2
+  },
+  "cumulative_solve_rate_per_turn": {
+    "1": 90.4,
+    "2": 94.4,
+    "3": 96.0
+  },
+  "mean_turns_to_solve": 1.07,
+  "solved_first_try": 113,
+  "no_code_replies": 24,
+  "tasks_with_no_code": 12,
+  "unsolved": [
+    "HumanEval/76",
+    "HumanEval/99",
+    "HumanEval/124",
+    "HumanEval/132",
+    "HumanEval/146"
+  ],
+  "no_code_detail": {
+    "HumanEval/39": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/71": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/75": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 2,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/76": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 2,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 3,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/99": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 2,
+        "finish_reason": "stop",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 3,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/102": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/105": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/124": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 2,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 3,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/132": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 2,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 3,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/134": [
+      {
+        "turn": 1,
+        "finish_reason": "stop",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/145": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 381,
+        "reply": "\n\n```python\ndef order_by_points(nums):\n    \"\"\"\n    Write a function which sorts the given list of integers\n    in ascending order according to the sum of their digits.\n    Note: if there are several items with similar sum of their digits,\n    order them based on their index in original list.\n\n    For example:\n    >>> order_by_points([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11"
+      },
+      {
+        "turn": 2,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ],
+    "HumanEval/146": [
+      {
+        "turn": 1,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 2,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      },
+      {
+        "turn": 3,
+        "finish_reason": "length",
+        "raw_len": 0,
+        "reply": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "model": "qwen3.8-27b",
+  "n_tasks": 125,
+  "solved_total": 120,
+  "solve_rate": 96.0,
+  "newly_solved_per_turn": {
+    "1": 107,
+    "2": 9,
+    "3": 4
+  },
+  "cumulative_solve_rate_per_turn": {
+    "1": 85.6,
+    "2": 92.8,
+    "3": 96.0
+  },
+  "mean_turns_to_solve": 1.14,
+  "solved_first_try": 107,
+  "no_code_replies": 32,
+  "tasks_with_no_code": 18,
+  "unsolved": [
+    "HumanEval/76",
+    "HumanEval/99",
+    "HumanEval/124",
+    "HumanEval/129",
+    "HumanEval/132"
+  ]
+}

@@ -1,0 +1,77 @@
+vLLM 0.27.1: stop xgrammar token batches at grammar termination.
+
+MTP speculative decoding can return a token batch whose grammar stop token is
+followed by unused draft tokens. The matcher terminates on the stop token. The
+old accept_tokens loop then feeds the following token to the terminated matcher,
+which logs "Failed to advance FSM". validate_tokens has the same problem while
+simulating draft tokens. Refresh the wrapper state immediately, treat calls on
+an already-satisfied grammar as successful, and stop both loops at termination.
+At a mid-window reasoning boundary, prevalidate old draft tokens quietly before
+advancing the grammar because rejection is explicitly expected in that branch.
+
+This is the v0.27.1 form of the defect tracked in:
+  https://github.com/vllm-project/vllm/issues/42619
+  https://github.com/vllm-project/vllm/issues/49210
+
+Apply from the installed vllm package directory:
+  patch -p1 -d venv/lib/python3.12/site-packages/vllm < xgrammar-terminated-batch.patch
+
+--- a/v1/structured_output/backend_xgrammar.py
++++ b/v1/structured_output/backend_xgrammar.py
+@@ -158,14 +158,23 @@ class XgrammarGrammar(StructuredOutputGrammar):
+         if self._is_terminated:
+-            return False
++            return True
+         for token in tokens:
++            # An accepted stop token ends this speculative token batch.
+             if not self.matcher.accept_token(token):
++                self._is_terminated = self.matcher.is_terminated()
++                if self._is_terminated:
++                    # validate_tokens may have reached the stop token while
++                    # simulating a draft window. xgrammar can retain that
++                    # terminal state after rollback; the grammar is satisfied.
++                    return True
+                 logger.error(
+                     "Failed to advance FSM for request %s "
+                     "for tokens %s. Please file an issue.",
+                     request_id,
+                     token,
+                 )
+                 return False
+             self.num_processed_tokens += 1
+-        self._is_terminated = self.matcher.is_terminated()
++            self._is_terminated = self.matcher.is_terminated()
++            if self._is_terminated:
++                break
+         return True
+@@ -180,6 +189,9 @@ class XgrammarGrammar(StructuredOutputGrammar):
+         for token in tokens:
+             if self.matcher.accept_token(token):
+                 accepted_tokens.append(token)
++                # Do not offer unused draft tokens after the grammar stop.
++                if self.matcher.is_terminated():
++                    break
+             else:
+                 break
+         if len(accepted_tokens) > 0:
+
+--- a/v1/structured_output/__init__.py
++++ b/v1/structured_output/__init__.py
+@@ -321,8 +321,16 @@ class StructuredOutputManager:
+                             apply_bitmask = True
+                             advance_grammar = False
+                             post_reasoning_end_in_window = True
+                     if advance_grammar and not grammar.is_terminated():
+-                        accepted = grammar.accept_tokens(req_id, [token])
++                        # Drafts after a mid-window reasoning marker predate
++                        # the grammar bitmask and may be invalid. Validate
++                        # quietly before advancing so expected rejection does
++                        # not emit a server ERROR from accept_tokens.
++                        accepted = not post_reasoning_end_in_window or bool(
++                            grammar.validate_tokens([token])
++                        )
++                        if accepted:
++                            accepted = grammar.accept_tokens(req_id, [token])
+                         if accepted:
+                             state_advancements += 1
+                         elif not post_reasoning_end_in_window:

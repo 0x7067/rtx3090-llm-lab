@@ -13,8 +13,8 @@ alternative.
 - [`benchmarks/qwen-vllm-hillclimb-2026-08-28/`](benchmarks/qwen-vllm-hillclimb-2026-08-28/)
   contains the frozen control, 16 optimization decisions, and measured results
   from the vLLM slowdown campaign.
-- [`vllm/`](vllm/) contains the exact overlay and Club 3090 bundle for the
-  current vLLM deployment.
+- [`vllm/`](vllm/) contains the syv-ai overlay, the v9 image overlay actually
+  deployed ([`vllm/image-v9/`](vllm/image-v9/)), and the Club 3090 bundle.
 - [`research/vllm/`](research/vllm/) records upstream findings that still need
   a local A/B before promotion.
 - [`experiments/`](experiments/) contains rejected or unfinished implementation
@@ -49,9 +49,10 @@ cold start, it hot-swaps models through llama-swap, and decode holds up at
 ## Current deployment
 
 The home deployment moved to vLLM on 2026-08-20. Its qualified profile uses
-vLLM 0.27.1 with the syv-ai patch stack and this repo's v4 overlay, prepared
-W4A16 weights, FP8 KV, prefix caching, vision, a 140,000-token limit, and
-three-token MTP speculation. The retained MTP-3 / 2,048-token batch arm
+vLLM 0.27.1 with the syv-ai patch stack and this repo's v4 overlay (deployed as
+image `qwen38-27b-3090:v9`, two patches further on), prepared W4A16 weights,
+FP8 KV, prefix caching, vision, a 140,000-token limit, three-token MTP
+speculation, `GPU_UTIL=0.94` (177,282 GPU KV tokens), and a 24 GiB CPU KV tier. The retained MTP-3 / 2,048-token batch arm
 measured 104.02 tok/s shallow, 95.69 tok/s at 60k, and 70.41 tok/s at 100k.
 Four concurrent requests reached 358.41 tok/s aggregate.
 
@@ -310,7 +311,10 @@ environment variables or edit the paths before reuse:
   `tools/make_payloads.py` takes `QWEN_TOKENIZER_JSON` and `CORPUS_DIR`.
   Avoid chat transcripts as corpus: at temp 0 they can make the model emit
   EOS at position 0.
-- `config/llama-swap-qwen38.yaml` assumes llama-swap and this image.
+- `config/llama-swap-qwen38.yaml` assumes llama-swap and this image. It is kept
+  byte-identical to the `qwen3.8-27b` block in the cluster's retained
+  llama-swap ConfigMap, which is the rollback path off vLLM — not what serves
+  today.
 
 ## Layout
 
@@ -322,6 +326,7 @@ tools/                      draft-vocab pipeline, GGUF surgery + validation, ben
 tools/bench/                shared GPU lock, quiesce, health, and result-posting helpers
 data/                       keep-sets (32k/40k/48k), ranked token frequencies, coverage evidence
 config/                     llama-swap model block (flags + env couplings, commented)
+                            mirrors the cluster's retained llama-swap rollback block
 config/llama-swap-qwen38-obliterated.yaml  standalone OBLITERATED Q4_K_M backend fragment
 experiments/                measured but unshipped patches (see experiments/README.md)
 docs/PERFORMANCE.md         full campaign write-up (waves, kernels, rejects, methodology)
@@ -335,6 +340,7 @@ docs/quant-selection.md     main-quant sweep: why UD-Q4_K_XL, the rejected 3.7bp
 docs/obliterated-variant.md OBLITERATED Q4_K_M MTP findings, controls, and open leads
 docs/vllm-companion.md      current vLLM profile, Club 3090 bundle, arms, quality gates
 vllm/                       reproducible local overlay + Club 3090 local-layer bundle
+vllm/image-v9/              the v8->v9 overlay actually deployed (2 vLLM patches + lineage)
 ```
 
 ## License and credits

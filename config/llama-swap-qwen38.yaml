@@ -1,17 +1,14 @@
       "qwen3.8-27b":
-        # Unsloth UD-Q4_K_XL is the promoted quality quant. A same-harness
-        # KLD-to-Q6_K sweep scored it at 0.787x the prior bartowski Q4_K_L
-        # divergence (lower is better), for ~3.4% pooled-step-time cost and
-        # ~190 MiB less VRAM. The prior Q4_K_L passed exact output, tool
-        # calling, 10/10 vision, and a 90,040-token retrieval; re-run those
-        # behavioral gates after changing this file or the model bytes.
-        # The hybrid DeltaNet
-        # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 160k fits
-        # the 24 GB 3090 with everything resident (23,592 MiB peak measured
-        # at draft-n 5, 984 MiB headroom). 175k also loads but leaves only
-        # 554 MiB free — too tight for unattended production. Native 262k
-        # would need ~4.6 GB KV — doesn't fit alongside the drafter + mmproj;
-        # drop both to trade speed/vision for context.
+        # unsloth UD-Q4_K_XL, Dynamic v3.0 calibration (the -v3 suffix is local;
+        # upstream re-uploaded the same filename with v3 content 2026-08-19).
+        # Measured: KLD-to-Q6K 0.663x of Q4_K_L (v2 file was 0.787x), speed and
+        # VRAM equal-or-better (v3-sweep report). Rollback ladder: v2 file
+        # Qwen3.8-27B-UD-Q4_K_XL.gguf, then Qwen3.8-27B-Q4_K_L.gguf. The hybrid DeltaNet
+        # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 131k fits
+        # the 24 GB 3090 with everything resident (23,350 MiB peak observed
+        # at draft-n 4). Native 262k would need ~4.6 GB KV — doesn't fit
+        # alongside the drafter + mmproj; drop both to trade speed/vision
+        # for context.
         # 2026-08-16 tuning (image v6): GGML_CUDA_MMVQ_NE11_MAX=3 routes this
         # model's 4-8-token speculative verify batches onto the tiled MMQ path
         # (measured crossover N≈3.4 on the 3090; KLD vs stock 0.0063), which
@@ -32,6 +29,12 @@
         # clients can override per request with reasoning_effort (v9+ maps the
         # OpenAI field) or chat_template_kwargs. This is a quality/latency
         # trade, not lossless — raise to xhigh per request for hard problems.
+        # 150k ctx (was 131k) since 2026-08-18: wave 7's d48k drafter freed
+        # 546 MiB; the extra 19k tokens of q4_0 KV cost ~350 MiB. Validated
+        # with a 144.5k-token request on v12: peak 23,594 MiB (~970 MiB
+        # free), prefill 691 t/s, decode 56.4 t/s at that depth. Rollback:
+        # 131072. NEVER put comments inside the cmd folded block — YAML `>`
+        # makes them literal argv words and llama-server dies at spawn.
         # COUPLED SETTINGS: draft-n 5 is only a win BECAUSE of the env cap.
         # With the env unset or mistyped, n-max 4 is SLOWER than n-max 2
         # (60.8 vs 63.7 t/s at 1k) and nothing fails loudly — never change
@@ -40,18 +43,28 @@
         #     'tr "\0" "\n" < /proc/$(pgrep -x llama-server|head -1)/environ | grep MMVQ'
         env:
           - "GGML_CUDA_MMVQ_NE11_MAX=3"
-          # Patch 0008 couples n5 with the m=1024 stream-k/double-buffer gate.
+          # v12 (patch 0008): MMQ small-batch composite — arm-G stream-k grid
+          # multiplier + type-agnostic y-tile double buffer + m=1024 shape
+          # gate. Measured: mid-1k +6.9-7.3%, 54k +5.4-6.4% decode at constant
+          # acceptance; KLD 0.00617 (same family as the MMVQ cap's 0.0063);
+          # gemma4 bit-identical, muse within 0.3% (neither reaches the J<=8
+          # MMQ path). COUPLING: part of patch 0008 (the config-table change)
+          # is compile-time and unconditional, and is safe ONLY while qwen3.8
+          # is the sole backend that both sets GGML_CUDA_MMVQ_NE11_MAX and
+          # drafts <= 7. Any future backend meeting both conditions with this
+          # env unset silently pays ~5% (wave-6 arm B). Levels: 1=grid only,
+          # 2=+y-buffer, 3=+shape gate (shipped).
           - "GGML_CUDA_MMQ_SMALLN=3"
           # JSON via env, not a cmd flag: llama-swap's shell-word splitting
           # strips the quotes from a --chat-template-kwargs argument.
           - 'LLAMA_ARG_CHAT_TEMPLATE_KWARGS={"reasoning_effort":"medium"}'
         cmd: >
           /usr/local/bin/llama-server
-          -m /models/Qwen3.8-27B-UD-Q4_K_XL.gguf
+          -m /models/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf
           --mmproj /models/mmproj-Qwen3.8-27B-Q8_0.gguf
           --host 0.0.0.0 --port ${PORT}
-          --ctx-size 160000
-          --predict 160000
+          --ctx-size 153600
+          --predict 153600
           --threads 8 --threads-batch 8 --parallel 1
           --batch-size 512 --ubatch-size 512
           --no-mmap -fa on --jinja

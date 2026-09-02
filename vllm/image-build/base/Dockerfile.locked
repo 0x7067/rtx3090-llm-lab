@@ -1,0 +1,34 @@
+FROM nvidia/cuda:13.0.1-base-ubuntu24.04@sha256:f8ef28f579ea42a44b415d2c5d46f788e6a9b395c6c83f2929416e1fc192c143
+
+ENV DEBIAN_FRONTEND=noninteractive PIP_NO_CACHE_DIR=1 PYTHONUNBUFFERED=1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      python3.12=3.12.3-1ubuntu0.16 \
+      python3.12-venv=3.12.3-1ubuntu0.16 \
+      python3.12-dev=3.12.3-1ubuntu0.16 \
+      cuda-nvcc-13-0=13.0.88-1 \
+      cuda-cudart-dev-13-0=13.0.96-1 \
+      build-essential=12.10ubuntu1 \
+      patch=2.7.6-7build3 \
+      curl=8.5.0-2ubuntu10.13 \
+      ca-certificates=20260601~24.04.1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+RUN python3.12 -m venv venv && venv/bin/pip install pip==26.2.1
+COPY docker/requirements.lock docker/requirements.lock
+RUN venv/bin/pip install --require-hashes -r docker/requirements.lock
+
+COPY . .
+RUN bash docker/patch_flashinfer_pageable_buffers.sh
+RUN set -e; SP=$(venv/bin/python -c 'import vllm, os; print(os.path.dirname(vllm.__file__))' | tail -n1); \
+    for p in patches/*.patch; do echo "== $p"; patch -p1 -d "$SP" < "$p"; done; \
+    bash kvarn/install.sh; \
+    bash verify.sh --install
+
+RUN chmod -R a+rX /app
+RUN mkdir -p /cache /app/models && chmod 1777 /cache
+ENV HOME=/cache VLLM_NO_USAGE_STATS=1 DO_NOT_TRACK=1 HF_HUB_ENABLE_HF_TRANSFER=1
+VOLUME ["/cache", "/app/models"]
+EXPOSE 18020
+ENTRYPOINT ["bash", "docker/entrypoint.sh"]
+CMD ["single"]

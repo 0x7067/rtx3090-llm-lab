@@ -1,108 +1,125 @@
-      "qwen3.8-27b":
-        # unsloth UD-Q4_K_XL, Dynamic v3.0 calibration (the -v3 suffix is local;
-        # upstream re-uploaded the same filename with v3 content 2026-08-19).
-        # Measured: KLD-to-Q6K 0.663x of Q4_K_L (v2 file was 0.787x), speed and
-        # VRAM equal-or-better (v3-sweep report). Rollback ladder: v2 file
-        # Qwen3.8-27B-UD-Q4_K_XL.gguf, then Qwen3.8-27B-Q4_K_L.gguf. The hybrid DeltaNet
-        # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 131k fits
-        # the 24 GB 3090 with everything resident (23,350 MiB peak observed
-        # at draft-n 4). Native 262k would need ~4.6 GB KV — doesn't fit
-        # alongside the drafter + mmproj; drop both to trade speed/vision
-        # for context.
-        # 2026-08-16 tuning (image v6): GGML_CUDA_MMVQ_NE11_MAX=3 routes this
-        # model's 4-8-token speculative verify batches onto the tiled MMQ path
-        # (measured crossover N≈3.4 on the 3090; KLD vs stock 0.0063), which
-        # with the v7+ inline-dequant FA kernel makes larger drafts nearly
-        # free to verify (MMQ's J=8 tile: a batch-8 verify costs 1.7% more
-        # than batch-2). draft-n 5 measured 2026-08-17 on v10, same-block
-        # ABAB: mid1k 70.5→84.1 (+19%), 54k 66.8→69.3, short 68.4→72.4,
-        # 7k prose 68.7→69.5 — wins everywhere. n6/n7 lose (acceptance
-        # economics); n≥8 would cross the J=16 MMQ tile (+9%). The env is per-backend on purpose — a blanket
-        # cap cost gemma4-A4B 34% of its decode. p-min was DROPPED after a
-        # same-block A/B with the cap active: −10.8% on 1k prose with
-        # non-overlapping rep ranges, and it makes per-request latency
-        # nondeterministic (±8% swings from variable draft length); plain
-        # n-max 4 is bit-deterministic at temp 0 (t/s within 0.12%).
-        # reasoning_effort: the model's chat template defaults to xhigh, which
-        # overthinks wildly (community-measured 22k reasoning tokens on trivial
-        # tasks). Server default is set to medium via --chat-template-kwargs;
-        # clients can override per request with reasoning_effort (v9+ maps the
-        # OpenAI field) or chat_template_kwargs. This is a quality/latency
-        # trade, not lossless — raise to xhigh per request for hard problems.
-        # 150k ctx (was 131k) since 2026-08-18: wave 7's d48k drafter freed
-        # 546 MiB; the extra 19k tokens of q4_0 KV cost ~350 MiB. Validated
-        # with a 144.5k-token request on v12: peak 23,594 MiB (~970 MiB
-        # free), prefill 691 t/s, decode 56.4 t/s at that depth. Rollback:
-        # 131072. NEVER put comments inside the cmd folded block — YAML `>`
-        # makes them literal argv words and llama-server dies at spawn.
-        # COUPLED SETTINGS: draft-n 5 is only a win BECAUSE of the env cap.
-        # With the env unset or mistyped, n-max 4 is SLOWER than n-max 2
-        # (60.8 vs 63.7 t/s at 1k) and nothing fails loudly — never change
-        # one without the other. Verify after any change (model loaded):
-        #   kubectl -n apps exec deploy/llama -c llama-swap -- sh -c \
-        #     'tr "\0" "\n" < /proc/$(pgrep -x llama-server|head -1)/environ | grep MMVQ'
-        env:
-          - "GGML_CUDA_MMVQ_NE11_MAX=3"
-          # v12 (patch 0008): MMQ small-batch composite — arm-G stream-k grid
-          # multiplier + type-agnostic y-tile double buffer + m=1024 shape
-          # gate. Measured: mid-1k +6.9-7.3%, 54k +5.4-6.4% decode at constant
-          # acceptance; KLD 0.00617 (same family as the MMVQ cap's 0.0063);
-          # gemma4 bit-identical, muse within 0.3% (neither reaches the J<=8
-          # MMQ path). COUPLING: part of patch 0008 (the config-table change)
-          # is compile-time and unconditional, and is safe ONLY while qwen3.8
-          # is the sole backend that both sets GGML_CUDA_MMVQ_NE11_MAX and
-          # drafts <= 7. Any future backend meeting both conditions with this
-          # env unset silently pays ~5% (wave-6 arm B). Levels: 1=grid only,
-          # 2=+y-buffer, 3=+shape gate (shipped).
-          - "GGML_CUDA_MMQ_SMALLN=3"
-          # JSON via env, not a cmd flag: llama-swap's shell-word splitting
-          # strips the quotes from a --chat-template-kwargs argument.
-          - 'LLAMA_ARG_CHAT_TEMPLATE_KWARGS={"reasoning_effort":"medium"}'
-        cmd: >
-          /usr/local/bin/llama-server
-          -m /models/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf
-          --mmproj /models/mmproj-Qwen3.8-27B-Q8_0.gguf
-          --host 0.0.0.0 --port ${PORT}
-          --ctx-size 153600
-          --predict 153600
-          --threads 8 --threads-batch 8 --parallel 1
-          --batch-size 512 --ubatch-size 512
-          --no-mmap -fa on --jinja
-          --cache-type-k q4_0 --cache-type-v q4_0
-          --cache-type-k-draft q4_0 --cache-type-v-draft q4_0
-          --temp 1.0 --top-k 20 --top-p 0.95 --min-p 0.0 --repeat-penalty 1.0
-          --model-draft /models/mtp-Qwen3.8-27B-Q4_0-d48k.gguf
-          --spec-type draft-mtp,ngram-mod --spec-draft-n-max 5
-          --spec-ngram-mod-n-match 32
-          -ngl 99 -ngld 99
-        ttl: 3600
-        # n-match 32 (was default 24), swept 2026-08-17: a longer match key
-        # cuts false fires everywhere — 8-turn session 198.6 -> 260.8 t/s
-        # overall vs the default, and the pathological-54k worst case
-        # improves 61.1 -> 61.8 (vs 62.9 without ngram). n-match 48 starts
-        # sessions too slowly; n-max 32 gives up half the copy win.
-        # 2026-08-17 ngram-mod stacking (no image change needed): ngram-mod
-        # drafts long verbatim copies from a host-RAM lookup table (zero VRAM)
-        # and PREEMPTS the MTP drafter on rounds where it finds a >=48-token
-        # chain (its --spec-ngram-mod-n-min discard gate); MTP handles all
-        # other rounds. Defaults (n-min 48 / n-max 64 / n-match 24) measured
-        # best; capping n-max at 16 gave up half the win. Measured on v11:
-        # 8-turn cumulative file-editing session 108.8 -> 237.2 t/s (+118%);
-        # repeated queries +~50%; prose7k +7%; worst case 54k one-shot with a
-        # repetitive prompt -2.9% (long matches that bait rejected drafts).
-        # Verify batches can reach 64 wide on copy rounds - outside patch
-        # 0005's 2..16 FA range (falls back to full-cache-dequant MMA), still
-        # a large net win because one wide accepted batch replaces ~12 cycles.
-        # Lossless: same verify contract as MTP (near-tie argmax flips at
-        # temp 0 are numerics-level, same class as changing draft-n).
-        # 2026-08-17 wave 7 (image v11, patch 0007): the drafter is the Q4_0 MTP
-        # file with its 248,320-row output head truncated to the 49,152 tokens
-        # covering 98.5% of held-out traffic (d2t tensor maps rows back to
-        # target ids; requires image >= v11 — older images fail the tensor
-        # shape check at load). Measured same-payload A/B: mid1k 75.0->79.6,
-        # 7k 64.7->68.2, 54k 59.4->62.9 t/s, output sha-identical, -546 MiB.
-        # The d48k file is NOT downloaded by fetch-models.sh — it is generated
-        # locally (tools in the private qwen38-27b-rtx3090-llamacpp repo, or
-        # rebuild from mtp-Qwen3.8-27B-Q4_0.gguf + draft_vocab_48k.json).
-        # Rollback: point --model-draft back at mtp-Qwen3.8-27B-Q4_0.gguf
-        # (works on any image; the d2t path is a no-op without the tensor).
+# Mirror of the production llama-swap stanza for qwen3.8-27b (GitOps:
+# docker-services k8s/workloads/apps/llama/configmap.yaml, ConfigMap llama-config).
+# The GitOps ConfigMap is what Flux deploys; this copy is for benchmarks and
+# reproduction outside the cluster. Synced 2026-09-02 (image llama:cuda-swap-v14).
+models:
+  "qwen3.8-27b":
+    # unsloth UD-Q4_K_XL, Dynamic v3.0 calibration (the -v3 suffix is local;
+    # upstream re-uploaded the same filename with v3 content 2026-08-19).
+    # Measured: KLD-to-Q6K 0.663x of Q4_K_L (v2 file was 0.787x), speed and
+    # VRAM equal-or-better (v3-sweep report). Rollback ladder: v2 file
+    # Qwen3.8-27B-UD-Q4_K_XL.gguf, then Qwen3.8-27B-Q4_K_L.gguf. The hybrid DeltaNet
+    # arch keeps KV to 16 of 64 layers (~18 KB/token at q4_0), so 131k fits
+    # the 24 GB 3090 with everything resident (23,350 MiB peak observed
+    # at draft-n 4). Native 262k would need ~4.6 GB KV — doesn't fit
+    # alongside the drafter + mmproj; drop both to trade speed/vision
+    # for context.
+    # 2026-08-16 tuning (image v6): GGML_CUDA_MMVQ_NE11_MAX=3 routes this
+    # model's 4-8-token speculative verify batches onto the tiled MMQ path
+    # (measured crossover N≈3.4 on the 3090; KLD vs stock 0.0063), which
+    # with the v7+ inline-dequant FA kernel makes larger drafts nearly
+    # free to verify (MMQ's J=8 tile: a batch-8 verify costs 1.7% more
+    # than batch-2). draft-n 5 measured 2026-08-17 on v10, same-block
+    # ABAB: mid1k 70.5→84.1 (+19%), 54k 66.8→69.3, short 68.4→72.4,
+    # 7k prose 68.7→69.5 — wins everywhere. n6/n7 lose (acceptance
+    # economics); n≥8 would cross the J=16 MMQ tile (+9%). The env is per-backend on purpose — a blanket
+    # cap cost gemma4-A4B 34% of its decode. p-min was DROPPED after a
+    # same-block A/B with the cap active: −10.8% on 1k prose with
+    # non-overlapping rep ranges, and it makes per-request latency
+    # nondeterministic (±8% swings from variable draft length); plain
+    # n-max 4 is bit-deterministic at temp 0 (t/s within 0.12%).
+    # reasoning_effort: the model's chat template defaults to xhigh, which
+    # overthinks wildly (community-measured 22k reasoning tokens on trivial
+    # tasks). Server default is set to medium via --chat-template-kwargs;
+    # clients can override per request with reasoning_effort (v9+ maps the
+    # OpenAI field) or chat_template_kwargs. This is a quality/latency
+    # trade, not lossless — raise to xhigh per request for hard problems.
+    # 150k ctx (was 131k) since 2026-08-18: wave 7's d48k drafter freed
+    # 546 MiB; the extra 19k tokens of q4_0 KV cost ~350 MiB. Validated
+    # with a 144.5k-token request on v12: peak 23,594 MiB (~970 MiB
+    # free), prefill 691 t/s, decode 56.4 t/s at that depth. Rollback:
+    # 131072. NEVER put comments inside the cmd folded block — YAML `>`
+    # makes them literal argv words and llama-server dies at spawn.
+    # COUPLED SETTINGS: draft-n 5 is only a win BECAUSE of the env cap.
+    # With the env unset or mistyped, n-max 4 is SLOWER than n-max 2
+    # (60.8 vs 63.7 t/s at 1k) and nothing fails loudly — never change
+    # one without the other. Verify after any change (model loaded):
+    #   kubectl -n apps exec deploy/llama -c llama-swap -- sh -c \
+    #     'tr "\0" "\n" < /proc/$(pgrep -x llama-server|head -1)/environ | grep MMVQ'
+    env:
+      - "GGML_CUDA_MMVQ_NE11_MAX=3"
+      # v12 (patch 0008): MMQ small-batch composite — arm-G stream-k grid
+      # multiplier + type-agnostic y-tile double buffer + m=1024 shape
+      # gate. Measured: mid-1k +6.9-7.3%, 54k +5.4-6.4% decode at constant
+      # acceptance; KLD 0.00617 (same family as the MMVQ cap's 0.0063);
+      # gemma4 bit-identical, muse within 0.3% (neither reaches the J<=8
+      # MMQ path). COUPLING: part of patch 0008 (the config-table change)
+      # is compile-time and unconditional, and is safe ONLY while qwen3.8
+      # is the sole backend that both sets GGML_CUDA_MMVQ_NE11_MAX and
+      # drafts <= 7. Any future backend meeting both conditions with this
+      # env unset silently pays ~5% (wave-6 arm B). Levels: 1=grid only,
+      # 2=+y-buffer, 3=+shape gate (shipped).
+      - "GGML_CUDA_MMQ_SMALLN=3"
+      # JSON via env, not a cmd flag: llama-swap's shell-word splitting
+      # strips the quotes from a --chat-template-kwargs argument.
+      - 'LLAMA_ARG_CHAT_TEMPLATE_KWARGS={"reasoning_effort":"medium"}'
+    # 2026-09-02 (image v14 = llama.cpp master 0f3a71be1 + rebased patches):
+    # drafter switched from the d48k MTP head to the z-lab DFlash2 Q8_0 block
+    # drafter, n-max 7, still stacked with ngram-mod. Measured in the engine
+    # trial (same harness, reasoning medium, 131k ctx): single-request decode
+    # 122 vs 108 tok/s, sustained 6k-token generation 113 vs 102, edit
+    # sessions 240/210/210 vs 230/194/219 (8t shallow / 6t @50k / 20t @20k),
+    # quality 4/4 both. DFlash2 alone (n4, no ngram) was the slowest drafter
+    # (99 decode, 105 session) - the stack is the win, not the drafter.
+    # VRAM: 23,600 MiB at 131072 with the mmproj loaded (d48k MTP: 22,374).
+    # ctx 153600 -> 131072 because the Q8 drafter is +0.95 GB over d48k;
+    # 140k would leave <800 MiB. Rollback: previous cmd in git (d48k MTP,
+    # n-max 5, ctx 153600). NEVER put comments inside the folded cmd block.
+    cmd: >
+      /usr/local/bin/llama-server
+      -m /models/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf
+      --mmproj /models/mmproj-Qwen3.8-27B-Q8_0.gguf
+      --host 0.0.0.0 --port ${PORT}
+      --ctx-size 131072
+      --predict 131072
+      --threads 8 --threads-batch 8 --parallel 1
+      --batch-size 512 --ubatch-size 512
+      --no-mmap -fa on --jinja
+      --cache-type-k q4_0 --cache-type-v q4_0
+      --cache-type-k-draft q4_0 --cache-type-v-draft q4_0
+      --temp 1.0 --top-k 20 --top-p 0.95 --min-p 0.0 --repeat-penalty 1.0
+      --model-draft /models/Qwen3.8-27B-DFlash2-Q8_0.gguf
+      --spec-type draft-dflash,ngram-mod --spec-draft-n-max 7
+      --spec-ngram-mod-n-match 32
+      -ngl 99 -ngld 99
+    ttl: 3600
+    # n-match 32 (was default 24), swept 2026-08-17: a longer match key
+    # cuts false fires everywhere — 8-turn session 198.6 -> 260.8 t/s
+    # overall vs the default, and the pathological-54k worst case
+    # improves 61.1 -> 61.8 (vs 62.9 without ngram). n-match 48 starts
+    # sessions too slowly; n-max 32 gives up half the copy win.
+    # 2026-08-17 ngram-mod stacking (no image change needed): ngram-mod
+    # drafts long verbatim copies from a host-RAM lookup table (zero VRAM)
+    # and PREEMPTS the MTP drafter on rounds where it finds a >=48-token
+    # chain (its --spec-ngram-mod-n-min discard gate); MTP handles all
+    # other rounds. Defaults (n-min 48 / n-max 64 / n-match 24) measured
+    # best; capping n-max at 16 gave up half the win. Measured on v11:
+    # 8-turn cumulative file-editing session 108.8 -> 237.2 t/s (+118%);
+    # repeated queries +~50%; prose7k +7%; worst case 54k one-shot with a
+    # repetitive prompt -2.9% (long matches that bait rejected drafts).
+    # Verify batches can reach 64 wide on copy rounds - outside patch
+    # 0005's 2..16 FA range (falls back to full-cache-dequant MMA), still
+    # a large net win because one wide accepted batch replaces ~12 cycles.
+    # Lossless: same verify contract as MTP (near-tie argmax flips at
+    # temp 0 are numerics-level, same class as changing draft-n).
+    # 2026-08-17 wave 7 (image v11, patch 0007): the drafter is the Q4_0 MTP
+    # file with its 248,320-row output head truncated to the 49,152 tokens
+    # covering 98.5% of held-out traffic (d2t tensor maps rows back to
+    # target ids; requires image >= v11 — older images fail the tensor
+    # shape check at load). Measured same-payload A/B: mid1k 75.0->79.6,
+    # 7k 64.7->68.2, 54k 59.4->62.9 t/s, output sha-identical, -546 MiB.
+    # The d48k file is NOT downloaded by fetch-models.sh — it is generated
+    # locally (tools in the private qwen38-27b-rtx3090-llamacpp repo, or
+    # rebuild from mtp-Qwen3.8-27B-Q4_0.gguf + draft_vocab_48k.json).
+    # Rollback: point --model-draft back at mtp-Qwen3.8-27B-Q4_0.gguf
+    # (works on any image; the d2t path is a no-op without the tensor).

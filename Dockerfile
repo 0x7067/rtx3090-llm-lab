@@ -1,6 +1,10 @@
 FROM nvidia/cuda:12.8.1-devel-ubuntu24.04 AS build
 
-ARG LLAMA_CPP_REF=4df29be4f4c3673f428170fda944a5b19f743bb8
+# v14 (2026-09-02): master 0f3a71be1 "mtmd: Fix Qwen3-tts-0.6b (#28231)". Brings
+# upstream DFlash2 (#27342), DSpark (#25173), EAGLE-3 for qwen3.5/3.6 (#24593),
+# the hybrid checkpoint-restore fixes (#24411 et al.) and backend draft sampling.
+# Patch rebase notes: patches-v14/REBASE-2026-09-02.md. Previous: 4df29be4 (2026-08-16).
+ARG LLAMA_CPP_REF=0f3a71be1
 # llama-swap: OpenAI-compatible proxy that hot-swaps llama-server backends so a
 # single GPU can serve multiple models (one resident at a time).
 ARG LLAMA_SWAP_VERSION=v230
@@ -21,10 +25,15 @@ WORKDIR /src/llama.cpp
 RUN git clone https://github.com/ggml-org/llama.cpp.git . \
     && git checkout "${LLAMA_CPP_REF}"
 
-# Vendored performance patches over the pinned ref (see patches/*.patch):
-# 0001: DFlash draft-side greedy fast path + LLAMA_SPEC_PROF instrumentation
+# Vendored performance patches over the pinned ref (see patches-v14/*.patch):
+# 0001/0006 dropped in v14: superseded by upstream backend draft sampling (#26958)
 # 0002: Ampere MMQ small-batch (J=16) tile config — 128x64 tiles for Q4_K/Q5_K
-COPY patches/ /src/llama.cpp/patches/
+# 0003: GQA-batched small-batch FA vector kernel
+# 0004: env-gated dense MMVQ batch cap (GGML_CUDA_MMVQ_NE11_MAX)
+# 0005: inline-q4-dequant FA MMA path (GGML_CUDA_FATTN_MMA_Q), swizzle-aware since v14
+# 0007: qwen35 MTP truncated draft vocab via d2t tensor
+# 0008: env-gated small-batch MMQ grid + y-tile double buffer (GGML_CUDA_MMQ_SMALLN)
+COPY patches-v14/ /src/llama.cpp/patches/
 RUN git apply --stat --apply patches/*.patch
 
 ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs

@@ -17,13 +17,19 @@ alternative.
   is the trial that promoted llama.cpp v14 back over vLLM v10 in production:
   llama.cpp master + four drafters, SGLang, and the vLLM baseline, on one
   harness.
-- [`patches-v14/`](patches-v14/) is the **current production** llama.cpp patch
-  set (base `0f3a71be1`). [`patches/`](patches/) /
-  [`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/) is the
-  superseded set behind images v9–v12 (base `4df29be4f`); both names hold the
-  same eight files, kept so the base commit is unambiguous.
-- [`vllm/`](vllm/) contains the syv-ai overlay, the v9 image overlay once
-  deployed ([`vllm/image-v9/`](vllm/image-v9/)), the exported pre-v10, v10 and
+- [`Dockerfile`](Dockerfile) + [`patches-v14/`](patches-v14/) build the
+  **current production** llama.cpp image (`llama:cuda-swap-v14`, base
+  `0f3a71be1`). [`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/)
+  is the superseded eight-patch set behind images v9–v12 (base `4df29be4f`).
+  [`PROMOTE.md`](PROMOTE.md) is the build / promote / rollback runbook for both
+  engines.
+- [`vllm/`](vllm/) contains the full vLLM build source:
+  [`vllm/syv-ai/`](vllm/syv-ai/) is a squashed subtree of
+  `syv-ai/qwen38-27b-rtx3090` at our k8s-deploy-v10 overlay (so the stack is
+  buildable from this repo alone, no separate checkout),
+  [`vllm/image-build/`](vllm/image-build/) holds the locked base environment
+  and the patch overlay the k8s images were built from, plus the v9 image
+  overlay once deployed ([`vllm/image-v9/`](vllm/image-v9/)), the exported pre-v10, v10 and
   v11 branch diffs ([`vllm/image-v9-k8s-deploy/`](vllm/image-v9-k8s-deploy/),
   [`vllm/image-v10/`](vllm/image-v10/),
   [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)), and the Club 3090
@@ -68,11 +74,12 @@ The GitOps repo is a different case and stays where it is:
 
 - `/data/docker-services` `k8s/workloads/apps/llama/` in the GitOps repo holds
   the actual Kubernetes deployment manifests (`deployment.yaml`,
-  `configmap.yaml`, the built `image/`) and their running change log
+  `configmap.yaml`, the SOPS secret) and their running change log
   (`k8s/MIGRATION_LOG.md`). Those stay in the GitOps repo because Flux
-  reconciles from there directly; this lab mirrors the parts worth keeping
-  reproducible outside that repo (patches, benchmarks, design docs) and
-  cross-links rather than duplicating the manifests wholesale. The
+  reconciles from there directly. Everything else (engine build recipes and
+  patches, the vendored vLLM stack, serving-profile mirrors, harnesses,
+  results, design docs) lives here, and the GitOps build scripts read from
+  this submodule; promotion is an image-tag bump there (see `PROMOTE.md`). The
   `PERFORMANCE.md` and `JOURNEY.md` that used to live beside those manifests
   moved here on 2026-09-02; what remains there are one-paragraph stubs pointing
   at `docs/PERFORMANCE.md` and `docs/journey-2026-08-15-to-17.md`.

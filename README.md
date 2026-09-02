@@ -409,7 +409,7 @@ docs/thermals-and-oc.md     fan-curve dead zone, NVML offset convention, OC ladd
 docs/dflash2-findings.md    DFlash2 (llama.cpp PR #27342) vs our MTP drafter: env-cap effect, caveats
 docs/quant-selection.md     main-quant sweep: why UD-Q4_K_XL, the rejected 3.7bpw extreme, cost model
 docs/obliterated-variant.md OBLITERATED Q4_K_M MTP findings, controls, and open leads
-docs/vllm-companion.md      current vLLM profile, Club 3090 bundle, arms, quality gates
+docs/vllm-companion.md      the vLLM profile that served 2026-08-20 to 2026-09-02, Club 3090 bundle, arms, quality gates
 vllm/                       reproducible local overlay + Club 3090 local-layer bundle
 vllm/image-v9/              the v8->v9 overlay actually deployed (2 vLLM patches + lineage)
 vllm/image-v10/             exported k8s-deploy-v10 branch diff + last-deployed k8s manifest

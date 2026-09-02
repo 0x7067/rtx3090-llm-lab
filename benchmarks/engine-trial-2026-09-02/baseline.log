@@ -1,0 +1,68 @@
+== [vllm-prod-v10] warm-up request ==
+[decode] run 1/1 ttft=0.789s tok_s=130.56 tokens=512
+[decode] SUMMARY median_tok_s=130.56 median_ttft_s=0.789
+== [vllm-prod-v10] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=0.694 tokens=81
+[quality] PASS portuguese_json    finish=stop wall=1.32 tokens=122
+[quality] PASS python_fix         finish=stop wall=1.533 tokens=126
+[quality] PASS required_tool      finish=stop wall=1.056 tokens=64
+[quality] SUMMARY 4/4 passed
+== [vllm-prod-v10] decode ==
+[decode] run 1/5 ttft=0.779s tok_s=126.9 tokens=512
+[decode] run 2/5 ttft=0.766s tok_s=128.11 tokens=512
+[decode] run 3/5 ttft=0.771s tok_s=132.1 tokens=512
+[decode] run 4/5 ttft=0.772s tok_s=129.34 tokens=512
+[decode] run 5/5 ttft=0.775s tok_s=128.62 tokens=512
+[decode] SUMMARY median_tok_s=128.62 median_ttft_s=0.772
+== [vllm-prod-v10] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=109.64 ttft=0.204s
+[sustained] windows=4 first_window_tok_s=33.72 last_window_tok_s=32.45 decay=3.8%
+[sustained]   window 1: 500 tokens @ 15.03s -> 33.72 tok/s
+[sustained]   window 2: 500 tokens @ 28.8s -> 36.33 tok/s
+[sustained]   window 3: 500 tokens @ 42.66s -> 36.06 tok/s
+[sustained]   window 4: 398 tokens @ 54.93s -> 32.45 tok/s
+== [vllm-prod-v10] prefill (30000 tokens) ==
+[prefill] tokens=14769 (usage) ttft=12.154s prefill_tok_s=1215.1
+== [vllm-prod-v10] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=0.87s tok_s=136.59 tokens=1277
+[session] turn 2/8 applied=True ttft=1.717s tok_s=118.11 tokens=1255
+[session] turn 3/8 applied=True ttft=1.978s tok_s=133.72 tokens=1199
+[session] turn 4/8 applied=True ttft=1.627s tok_s=129.4 tokens=1433
+[session] turn 5/8 applied=True ttft=1.985s tok_s=116.99 tokens=1536
+[session] turn 6/8 applied=True ttft=2.419s tok_s=131.46 tokens=1524
+[session] turn 7/8 applied=True ttft=2.223s tok_s=130.61 tokens=1449
+[session] turn 8/8 applied=True ttft=2.047s tok_s=123.94 tokens=1536
+[session] SUMMARY cumulative_tok_s=127.05 applied_rate=1.0 wall=103.09s
+== [vllm-prod-v10] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=74.64s tok_s=111.08 tokens=1270
+[session] turn 2/6 applied=True ttft=2.912s tok_s=103.28 tokens=1222
+[session] turn 3/6 applied=True ttft=3.411s tok_s=110.36 tokens=1200
+[session] turn 4/6 applied=True ttft=3.805s tok_s=105.48 tokens=1430
+[session] turn 5/6 applied=True ttft=3.314s tok_s=108.24 tokens=1400
+[session] turn 6/6 applied=True ttft=4.094s tok_s=108.59 tokens=1523
+[session] SUMMARY cumulative_tok_s=107.76 applied_rate=1.0 wall=166.83s
+== [vllm-prod-v10] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=261.7 wall=7.83s
+== [vllm-prod-v10] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=25.136s tok_s=112.99 tokens=1270
+[session] turn 2/20 applied=True ttft=2.185s tok_s=121.87 tokens=1224
+[session] turn 3/20 applied=True ttft=2.533s tok_s=121.85 tokens=1208
+[session] turn 4/20 applied=True ttft=2.911s tok_s=108.87 tokens=1514
+[session] turn 5/20 applied=True ttft=2.534s tok_s=120.6 tokens=1412
+[session] turn 6/20 applied=True ttft=3.077s tok_s=112.39 tokens=1528
+[session] turn 7/20 applied=True ttft=2.825s tok_s=120.61 tokens=1470
+[session] turn 8/20 applied=True ttft=2.547s tok_s=116.63 tokens=1536
+[session] turn 9/20 applied=False ttft=3.206s tok_s=113.03 tokens=1536
+[session] turn 10/20 applied=True ttft=2.741s tok_s=115.69 tokens=1536
+[session] turn 11/20 applied=True ttft=3.212s tok_s=109.69 tokens=1536
+[session] turn 12/20 applied=True ttft=2.817s tok_s=115.78 tokens=1536
+[session] turn 13/20 applied=False ttft=3.557s tok_s=108.44 tokens=1536
+[session] turn 14/20 applied=True ttft=2.226s tok_s=108.96 tokens=1536
+[session] turn 15/20 applied=True ttft=2.346s tok_s=109.77 tokens=1536
+[session] turn 16/20 applied=True ttft=2.843s tok_s=115.66 tokens=1536
+[session] turn 17/20 applied=True ttft=3.319s tok_s=108.38 tokens=1536
+[session] turn 18/20 applied=True ttft=2.736s tok_s=115.3 tokens=1536
+[session] turn 19/20 applied=True ttft=3.185s tok_s=111.65 tokens=1536
+[session] turn 20/20 applied=True ttft=2.986s tok_s=112.74 tokens=1536
+[session] SUMMARY cumulative_tok_s=113.69 applied_rate=0.9 wall=339.24s
+== [vllm-prod-v10] done: results appended to results.jsonl ==

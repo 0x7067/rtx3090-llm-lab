@@ -1,0 +1,2270 @@
+diff --git a/Dockerfile b/Dockerfile
+index 30220f4..5c71f66 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -24,11 +24,16 @@ COPY docker/requirements.txt docker/requirements.txt
+ RUN venv/bin/pip install -r docker/requirements.txt
+ 
+ COPY . .
++RUN bash docker/patch_flashinfer_pageable_buffers.sh
+ RUN set -e; SP=$(venv/bin/python -c 'import vllm, os; print(os.path.dirname(vllm.__file__))' | tail -n1); \
+     for p in patches/*.patch; do echo "== $p"; patch -p1 -d "$SP" < "$p"; done; \
+     bash kvarn/install.sh; \
+     bash verify.sh --install
+ 
++# k8s runs this image as uid 1000; COPY preserves restrictive host modes, so
++# make the app tree world-readable regardless of build-context permissions.
++RUN chmod -R a+rX /app
++
+ # HOME is a volume: torch.compile cache (~/.cache/vllm), Triton (~/.triton),
+ # FlashInfer JIT (~/.cache/flashinfer), HF hub cache.
+ RUN mkdir -p /cache /app/models && chmod 1777 /cache
+diff --git a/README.md b/README.md
+index fdf0a7f..e3546d9 100644
+--- a/README.md
++++ b/README.md
+@@ -454,18 +454,10 @@ kernel, which the drafter's 8-row draft block needs
+ The trade: the Triton attention backend plus the per-step int4 unpack cost
+ about 20% of decode against the shipped config on short prompts (~86 vs ~104
+ tok/s e2e on the same probe), and — unlike KVarN, which has GSM8K and
+-100k-needle numbers above — int4-KV quality at depth now reads:
+-
+-| metric | result |
+-|---|---|
+-| GSM8K exact-match (200 questions, greedy, thinking off) | **96.0%** |
+-| 100k-token needle at 90% depth (`bench/needle_test.py`) | **retrieved** |
+-
+-Measured on an RTX 4090 (24 GB) with `bench/quality_battery.py int4kv --gsm-only
+---gsm-n 200` and `bench/needle_test.py 100000 0.9`; the 96.0% sits inside the band
+-the other configurations read (95.0-96.5%, docs/quality.md). Tool calling
+-round-trips correctly and the lookup lane works; the rest of this configuration
+-is still experimental.
++100k-needle numbers above — **int4-KV quality at depth is unmeasured here**.
++Tool calling round-trips correctly and the lookup lane works; treat the rest
++as experimental until someone runs the quality harness on it, which is a
++contribution this README will gladly take.
+ 
+ ### More than one GPU
+ 
+@@ -572,16 +564,6 @@ tables: [docs/quality.md](docs/quality.md).
+ Community reproductions of the single-user headline number, harness runs first.
+ `bench/run_benchmarks.sh single`, greedy, second run (the first reads low):
+ 
+-**Set the power limit before you compare anything.** Every number in this repo
+-is an RTX 3090 at 250 W, and on this card that is not a soft preference. A
+-sustained-load ladder from [#62](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/62)
+-(14 minutes per cell, same service): 200 W gives 57.5 tok/s at 781 MHz, 250 W
+-gives 85.6 at 978 MHz, and 280 W gives 86.7 — it hits 90 °C within two minutes,
+-pins the fan at 100% and throttles back to the same throughput. Prefill loses
+-about the same third at 200 W. So a quiet home box capped at 200 W is measuring
+-its power cap rather than this stack, and nothing above 250 W is worth the
+-noise.
+-
+ | card | power | C1 decode | notes | source |
+ |---|---|---|---|---|
+ | RTX 3090 (reference) | 250 W | 133 tok/s | pool 57,669 tok, ppl 8.09 | this README |
+@@ -604,17 +586,6 @@ other only loosely, and not rows for the table above:
+   changes; CTX ladder incl. huge's pool byte-identical to the 3090 reference
+   (268,169), concurrency ladder to N=8, and a measured both-ways case for
+   leaving the `KV_MEM` pin alone — [docs/wsl2-4090.md](docs/wsl2-4090.md).
+-- **RTX 4090, Windows 11 / WSL2, second box**: all three single-user profiles
+-  plus the experimental int4 one (230,830-token pool at 160k), and 135k
+-  real-task numbers on the MTP + FP8 daily-driver profile — 62 tok/s decode on
+-  QA over the document, TTFT 5.4 s → 0.33 s on a repeat turn. Also the
+-  `nvidia-smi dmon` detector for WSL2 host-backed memory now in gotcha 43 —
+-  [#61](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/61).
+-- **RTX 3090, Windows 11 / WSL2**: independent confirmation of the int8 prefill
+-  stack on Ampere — `INT8_ACT=int8` +59%/+57%/+37% at 5k/21k/66k, the int8-QK
+-  attention adding +1.8% at 21k and +6.3% at 66k on top, against this repo's
+-  +2.7% at 16k and +5.3% at 51k. Plus the power-limit ladder quoted above —
+-  [#62](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/62).
+ - **Dual-GPU reports**: the controlled 1-vs-2×3090 A/B in
+   [#40](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/40) (+16–35%,
+   161.6 C1 greedy at 275 W, PCIe x8 without NVLink; independently reproduced
+diff --git a/batch/start_qwen.sh b/batch/start_qwen.sh
+index 3451640..1e59ca4 100755
+--- a/batch/start_qwen.sh
++++ b/batch/start_qwen.sh
+@@ -105,17 +105,11 @@ fi
+ # 0.27.1, which is the tool-side adapter of the same parser engine that
+ # --reasoning-parser qwen3 already uses (vllm/parser/qwen3.py).
+ TOOL_PARSER=${TOOL_PARSER:-qwen3_coder}
+-# Array, not $( [ ] && echo ): exits 1 when TOOLS is off (the shape #59 fixed)
+-# and word-splits $TOOL_PARSER; the array keeps the parser as one element.
+-TOOL_ARGS=()
+-[ "${TOOLS:-1}" = 1 ] && TOOL_ARGS=(--enable-auto-tool-choice --tool-call-parser "$TOOL_PARSER")
++TOOL_ARGS=$([ "${TOOLS:-1}" = 1 ] && echo --enable-auto-tool-choice --tool-call-parser $TOOL_PARSER)
+ 
+ # REQ_METRICS=1: per-request timing fields + usage on every response (issue #51).
+ # Not with --disable-log-stats (the timing fields need the engine-stats path).
+-# Array, not $( [ ] && echo ): the command substitution exits 1 when the test
+-# is false, which under `set -e` killed this script silently (#59).
+-METRICS_ARGS=()
+-[ "${REQ_METRICS:-0}" = 1 ] && METRICS_ARGS=(--enable-per-request-metrics --enable-force-include-usage)
++METRICS_ARGS=$([ "${REQ_METRICS:-0}" = 1 ] && echo --enable-per-request-metrics --enable-force-include-usage)
+ 
+ # Vision. --language-model-only drops the vision tower cleanly -- no weights loaded,
+ # 0.858 GiB on this checkpoint (gotcha 9) -- and stays the default. VISION=1 keeps
+@@ -194,6 +188,6 @@ exec venv/bin/vllm serve "$MODEL" \
+   --compilation-config "{\"max_cudagraph_capture_size\":64,\"custom_ops\":[\"+rms_norm\",\"+silu_and_mul\"]}" \
+   --reasoning-parser qwen3 \
+   --enable-prompt-tokens-details \
+-  "${METRICS_ARGS[@]}" \
+-  "${TOOL_ARGS[@]}" \
++  ${METRICS_ARGS} \
++  ${TOOL_ARGS} \
+   ${EXTRA_ARGS}
+diff --git a/bench/mq3d_capacity_property.py b/bench/mq3d_capacity_property.py
+deleted file mode 100755
+index 471d790..0000000
+--- a/bench/mq3d_capacity_property.py
++++ /dev/null
+@@ -1,135 +0,0 @@
+-#!/usr/bin/env python3
+-"""Property test for the int4 3D scratch capacity derivation (spec-decode-scratch-token-units.patch).
+-
+-THE PROPERTY: for every batch the 3D policy declares eligible, the total query tokens
+-in that batch fit in the derived scratch capacity.
+-
+-    capacity = min(max_num_batched_tokens,
+-                   min(max_num_seqs, seq_threshold_3D) * max_query_len_3d)
+-
+-This is the invariant the shipped patch relies on. If it can be violated by any config
+-the engine accepts, the runtime guard becomes reachable in production -- which is the
+-defect the patch exists to remove, not a safety net it is allowed to lean on.
+-
+-Pure arithmetic: no GPU, no engine, no server. Runs in a second, so it can cover config
+-space that a live boot never will -- including max_num_seqs above the sequence threshold
+-and max_num_batched_tokens as the active limiter, neither of which the single-user
+-launcher can produce (it hardcodes max_num_seqs=1).
+-"""
+-import argparse
+-import itertools
+-import random
+-import sys
+-
+-
+-def derived_capacity(max_num_batched_tokens, max_num_seqs, seq_threshold_3d, max_query_len_3d):
+-    return min(max_num_batched_tokens,
+-               min(max_num_seqs, seq_threshold_3d) * max_query_len_3d)
+-
+-
+-def policy_eligible(q_lens, max_num_seqs, seq_threshold_3d, max_query_len_3d,
+-                    max_num_batched_tokens):
+-    """The 3D policy's own eligibility rules, stated once."""
+-    n = len(q_lens)
+-    return (
+-        n >= 1
+-        and n <= seq_threshold_3d               # the num_seqs threshold check
+-        and n <= max_num_seqs                   # the scheduler cannot exceed its own cap
+-        and max(q_lens) <= max_query_len_3d     # the query-length policy cap
+-        and sum(q_lens) <= max_num_batched_tokens  # the scheduler's token budget
+-    )
+-
+-
+-def main():
+-    ap = argparse.ArgumentParser(description=__doc__,
+-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+-    ap.add_argument('--random-vectors', type=int, default=20000,
+-                    help='ragged query-length vectors sampled per config tuple')
+-    ap.add_argument('--seed', type=int, default=20260901)
+-    ap.add_argument('--mutate', choices=['seq-rows', 'snapped-rows'],
+-                    help="NEGATIVE CONTROL. Replace the derivation with a known-broken one "
+-                         "and require the property to FAIL. A property test that has never "
+-                         "been shown to go red is a decoration: 'seq-rows' is the pre-patch "
+-                         "bug (capacity = the SEQUENCE threshold, in the wrong unit); "
+-                         "'snapped-rows' additionally snaps that threshold to the nearest "
+-                         "capture size, which is what shipped.")
+-    a = ap.parse_args()
+-    rng = random.Random(a.seed)
+-
+-    # seq thresholds that 128 // num_heads_kv can actually produce, plus the snapped
+-    # capture sizes the capture path selects.
+-    SEQ_THRESHOLDS = [1, 2, 4, 8, 16, 32, 64, 128]
+-    # deliberately spans below / equal / above every seq threshold
+-    MAX_NUM_SEQS = [1, 2, 4, 7, 8, 9, 16, 31, 32, 33, 64, 256]
+-    # small values make max_num_batched_tokens the ACTIVE limiter
+-    MAX_BATCHED = [8, 16, 64, 128, 2048, 8192, 131072]
+-    MAX_QLEN = [1, 2, 8, 16, 17, 32]
+-
+-    checked = violations = eligible_seen = 0
+-    limiter = {"batched": 0, "product": 0}
+-    failures = []
+-
+-    for mnbt, mns, thr, mql in itertools.product(MAX_BATCHED, MAX_NUM_SEQS,
+-                                                 SEQ_THRESHOLDS, MAX_QLEN):
+-        if a.mutate == 'seq-rows':
+-            cap = thr                       # the original defect: rows sized in SEQUENCES
+-        elif a.mutate == 'snapped-rows':
+-            cap = min([1, 2, 4, 8, 16, 24, 32], key=lambda x: abs(x - thr))
+-        else:
+-            cap = derived_capacity(mnbt, mns, thr, mql)
+-        limiter["batched" if mnbt <= min(mns, thr) * mql else "product"] += 1
+-
+-        # 1. exhaustive corners: every-sequence-at-max, single sequence at max, ones
+-        corners = []
+-        n_max = min(mns, thr)
+-        if n_max >= 1:
+-            corners += [[mql] * n_max, [mql], [1] * n_max,
+-                        [mql] * max(1, n_max - 1) + [1]]
+-            if n_max >= 2:
+-                corners.append([mql] + [1] * (n_max - 1))
+-        # 2. ragged random vectors
+-        for _ in range(max(0, a.random_vectors // (len(MAX_BATCHED) * len(MAX_NUM_SEQS)))):
+-            n = rng.randint(1, max(1, min(mns, thr) + 2))     # +2 probes ABOVE the cap
+-            corners.append([rng.randint(1, mql + 2) for _ in range(n)])
+-
+-        for q_lens in corners:
+-            checked += 1
+-            if not policy_eligible(q_lens, mns, thr, mql, mnbt):
+-                continue
+-            eligible_seen += 1
+-            if sum(q_lens) > cap:
+-                violations += 1
+-                if len(failures) < 5:
+-                    failures.append((mnbt, mns, thr, mql, cap, q_lens, sum(q_lens)))
+-
+-    print(f"  config tuples : {len(MAX_BATCHED)*len(MAX_NUM_SEQS)*len(SEQ_THRESHOLDS)*len(MAX_QLEN):,}")
+-    print(f"  vectors tested: {checked:,}   policy-eligible: {eligible_seen:,}")
+-    print(f"  active limiter: max_num_batched_tokens in {limiter['batched']:,} tuples, "
+-          f"the seq x qlen product in {limiter['product']:,}")
+-    if eligible_seen == 0:
+-        print("\n  REFUSING TO PASS: zero eligible vectors were exercised.")
+-        return 2
+-    if violations and a.mutate:
+-        print(f"\n  NEGATIVE CONTROL OK: mutation '{a.mutate}' violates the property in "
+-              f"{violations:,} case(s), e.g.")
+-        for mnbt, mns, thr, mql, cap, q, tot in failures[:3]:
+-            print(f"    max_num_seqs={mns} thr={thr} max_qlen={mql} -> capacity={cap}, "
+-                  f"but eligible {q} sums to {tot}")
+-        return 0
+-    if violations:
+-        print(f"\n  PROPERTY VIOLATED in {violations:,} case(s):")
+-        for mnbt, mns, thr, mql, cap, q, tot in failures:
+-            print(f"    max_num_batched_tokens={mnbt} max_num_seqs={mns} thr={thr} "
+-                  f"max_qlen={mql} -> capacity={cap}, but eligible {q} sums to {tot}")
+-        return 1
+-    if a.mutate:
+-        print(f"\n  NEGATIVE CONTROL FAILED: mutation '{a.mutate}' did NOT violate the "
+-              f"property. The test cannot detect the bug it was written for.")
+-        return 3
+-    print(f"\n  PROPERTY HOLDS: every one of {eligible_seen:,} policy-eligible batches "
+-          f"fits the derived capacity.")
+-    return 0
+-
+-
+-if __name__ == '__main__':
+-    sys.exit(main())
+diff --git a/bench/mq3d_layer2_oracle.py b/bench/mq3d_layer2_oracle.py
+deleted file mode 100644
+index d5b50df..0000000
+--- a/bench/mq3d_layer2_oracle.py
++++ /dev/null
+@@ -1,511 +0,0 @@
+-"""Layer-2 operator oracle for the int4 3D scratch unit-split patch (Patch A).
+-
+-Registered spec (the registered spec and the 3090 box's scope notes, recorded before the patch was received):
+-  - IMPORTS the production dispatch/capacity implementation. Layer 1 tests the
+-    formula; Layer 2 tests the PATH: the real TritonAttentionMetadataBuilder
+-    allocation code and the real _launch_packed_attn dispatch, entered through
+-    unified_attention() exactly as the backend enters it.
+-  - Matrix: [16] boundary . [17] policy rejection . [8,8] . [16,1] .
+-    ragged [1,8,3] . padded zero-length row . total-over-capacity mutation.
+-    [17] vs [16,1] both total 17: if [16,1] rejects on "17" the units are
+-    still conflated.
+-  - Forced 2D (VLLM_INT4_MQ_3D=0) and forced 3D (=1) through the patched
+-    launcher for every row; NaN-prefilled scratch before every call; 2D must
+-    leave scratch untouched, 3D must write it; outputs finite both legs and
+-    allclose across legs.
+-  - Exact reason bits under VLLM_INT4_MQ_3D_DEBUG=1.
+-  - Breach row asserts mq3d_breach_state() (count, sticky degraded, first
+-    specimen) -- state, not log lines.
+-  - Reached-production proof: _launch_packed_attn is call-counted per row; a
+-    green that never touched the path is structurally impossible.
+-  - Declared config recorded beside every verdict: MAX_SEQS=2 =>
+-    capacity 32 so [16,1]=17 is admissible (agreed with the 3090 box).
+-
+-Geometry is REAL (read this session from the served model's config.json,
+-Qwen3.8-27B-W4A16-AutoRound-fast): 24 q heads, 4 kv heads, head_dim 256.
+-Config VALUES are declared; the capacity/allocation CODE is production.
+-"""
+-
+-import contextlib
+-import hashlib
+-import io
+-import json
+-import math
+-import os
+-import sys
+-import types
+-
+-import torch
+-
+-DEV = torch.device("cuda:0")
+-torch.manual_seed(0)
+-
+-# Resolve the installed vllm package; VLLM_ROOT overrides. (The original hardcoded a
+-# container venv path.)
+-VLLM_ROOT = os.environ.get("VLLM_ROOT") or os.path.dirname(__import__("vllm").__file__)
+-# Verdicts are written beside this script by default; ORACLE_OUT overrides. (The original
+-# ran in a container and wrote to /work, which does not exist on a native checkout.)
+-OUT_PATH = os.environ.get(
+-    "ORACLE_OUT",
+-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "mq3d_layer2_verdicts.jsonl"),
+-)
+-
+-# ---------------------------------------------------------------- provenance
+-def sha256(path):
+-    h = hashlib.sha256()
+-    with open(path, "rb") as f:
+-        h.update(f.read())
+-    return h.hexdigest()
+-
+-PROVENANCE = {
+-    "surface": {
+-        p: sha256(os.path.join(VLLM_ROOT, p))
+-        for p in (
+-            "v1/attention/backends/triton_attn.py",
+-            "v1/attention/ops/int4_per_token_head.py",
+-            "v1/attention/ops/triton_unified_attention.py",
+-        )
+-    },
+-    "patch_sha256": sha256(os.environ.get("ORACLE_PATCH", os.path.join(
+-        os.path.dirname(os.path.abspath(__file__)), "..", "patches",
+-        "spec-decode-scratch-token-units.patch"))),
+-}
+-
+-# ---------------------------------------------------------------- prod imports
+-import vllm.v1.attention.ops.int4_per_token_head as ipth
+-from vllm.v1.attention.ops.int4_per_token_head import (
+-    mq3d_breach_state,
+-    reshape_and_cache_int4,
+-)
+-from vllm.v1.attention.ops.triton_unified_attention import unified_attention
+-from vllm.v1.kv_cache_interface import KVQuantMode
+-import vllm.v1.attention.backends.triton_attn as ta
+-
+-# ----------------------------------------------------- declared configuration
+-# REAL geometry (config.json, read this session); DECLARED scheduler limits.
+-NUM_HEADS_Q = 24
+-NUM_HEADS_KV = 4
+-HEAD_DIM = 256
+-BLOCK_SIZE = 16
+-MAX_NUM_SEQS = 2          # DECLARED: makes capacity 32 so [16,1]=17 admissible
+-MAX_NUM_BATCHED_TOKENS = 8192
+-KV_HISTORY = 48           # decode-verify shape: history + current queries
+-
+-DECLARED = {
+-    "max_num_seqs": MAX_NUM_SEQS,
+-    "max_num_batched_tokens": MAX_NUM_BATCHED_TOKENS,
+-    "num_heads_q": NUM_HEADS_Q,
+-    "num_heads_kv": NUM_HEADS_KV,
+-    "head_dim": HEAD_DIM,
+-    "block_size": BLOCK_SIZE,
+-    "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)",
+-}
+-
+-# ------------------------------------------- production builder, stub config
+-# The capacity derivation, buffer allocation, boot log, and construction
+-# assert are executed from the PRODUCTION class __init__. Only the config
+-# OBJECT is a stub carrying the declared values above.
+-def build_production_builder():
+-    mc = types.SimpleNamespace(
+-        get_num_attention_heads=lambda pc: NUM_HEADS_Q,
+-        get_num_kv_heads=lambda pc: NUM_HEADS_KV,
+-        get_head_size=lambda: HEAD_DIM,
+-        rswa_window=None,
+-    )
+-    vc = types.SimpleNamespace(
+-        model_config=mc,
+-        parallel_config=types.SimpleNamespace(),
+-        scheduler_config=types.SimpleNamespace(
+-            max_num_seqs=MAX_NUM_SEQS,
+-            max_num_batched_tokens=MAX_NUM_BATCHED_TOKENS,
+-        ),
+-        compilation_config=types.SimpleNamespace(
+-            cudagraph_mode=ta.CUDAGraphMode.NONE,
+-            cudagraph_capture_sizes=[],
+-            static_forward_context={},
+-        ),
+-        cache_config=types.SimpleNamespace(block_size=BLOCK_SIZE),
+-        speculative_config=None,
+-    )
+-    spec = types.SimpleNamespace(block_size=BLOCK_SIZE)
+-    return ta.TritonAttentionMetadataBuilder(spec, [], vc, DEV)
+-
+-
+-builder = build_production_builder()
+-CAPACITY = builder.scratch_token_capacity_3d
+-SEQ_THRESHOLD = builder.seq_threshold_3D
+-QLEN_CAP = builder.max_query_len_3d
+-SEGM = builder.num_par_softmax_segments
+-BUFS = (
+-    builder.softmax_segm_output,
+-    builder.softmax_segm_max,
+-    builder.softmax_segm_expsum,
+-)
+-print(
+-    f"[oracle] production builder: capacity={CAPACITY} "
+-    f"seq_threshold_3D={SEQ_THRESHOLD} qlen_cap={QLEN_CAP} segments={SEGM} "
+-    f"buf_rows={[b.shape[0] for b in BUFS]}"
+-)
+-if os.environ.get("ORACLE_SKIP_FORMULA_CHECK") != "1":
+-    assert CAPACITY == min(
+-        MAX_NUM_BATCHED_TOKENS, min(MAX_NUM_SEQS, SEQ_THRESHOLD) * QLEN_CAP
+-    ), "builder capacity disagrees with its own declared formula"
+-
+-# ------------------------------------------------------------- KV cache build
+-NUM_BLOCKS = 96
+-PACKED_HS = HEAD_DIM // 2
+-
+-kv_raw = torch.zeros(
+-    NUM_BLOCKS, NUM_HEADS_KV, BLOCK_SIZE, 2 * PACKED_HS,
+-    dtype=torch.uint8, device=DEV,
+-)
+-key_cache, value_cache = kv_raw.transpose(1, 2).split(PACKED_HS, dim=-1)
+-k_scale_cache = torch.zeros(
+-    NUM_BLOCKS, BLOCK_SIZE, NUM_HEADS_KV, dtype=torch.float32, device=DEV
+-)
+-v_scale_cache = torch.zeros_like(k_scale_cache)
+-
+-
+-def populate_seq(seq_idx, kv_len, block_table_row):
+-    """Write kv_len tokens of fresh K/V for one sequence via the production
+-    write path (reshape_and_cache_int4), into this sequence's blocks.
+-    Returns the RHT'd source so the reference's dequant math can be
+-    CALIBRATED against what was actually stored (format-reading check)."""
+-    k = torch.randn(kv_len, NUM_HEADS_KV, HEAD_DIM, dtype=torch.float16, device=DEV)
+-    v = torch.randn(kv_len, NUM_HEADS_KV, HEAD_DIM, dtype=torch.float16, device=DEV)
+-    slots = torch.tensor(
+-        [
+-            int(block_table_row[t // BLOCK_SIZE]) * BLOCK_SIZE + t % BLOCK_SIZE
+-            for t in range(kv_len)
+-        ],
+-        dtype=torch.int64, device=DEV,
+-    )
+-    reshape_and_cache_int4(
+-        k, v, key_cache, value_cache, slots,
+-        k_scale_cache=k_scale_cache, v_scale_cache=v_scale_cache,
+-    )
+-    from vllm.v1.attention.ops.int4_per_token_head import single_rht
+-    return (single_rht(k.float()).to(k.dtype), single_rht(v.float()).to(v.dtype))
+-
+-
+-# --------------------------------------------------- reached-production proof
+-CALLS = {"n": 0}
+-CAPTURE = {"last": None}
+-_orig_launch = ipth._launch_packed_attn
+-
+-
+-def _counting_launch(**kw):
+-    CALLS["n"] += 1
+-    r = _orig_launch(**kw)
+-    torch.cuda.synchronize()
+-    # Capture at the LAUNCHER layer: q here is post-RHT and out is pre-inverse-
+-    # RHT, so the reference compare involves no RHT at all -- the property
+-    # under test is the attention kernel, and the transform cancels by layer.
+-    CAPTURE["last"] = {
+-        "q": kw["q"].detach().clone(),
+-        "out": kw["out"].detach().clone(),
+-        "cu": kw["cu_seqlens_q"].detach().clone(),
+-        "seqused": kw["seqused_k"].detach().clone(),
+-        "bt": kw["block_table"].detach().clone(),
+-        "scale": float(kw["softmax_scale"]),
+-    }
+-    return r
+-
+-
+-ipth._launch_packed_attn = _counting_launch
+-
+-
+-# ------------------------------------------------- independent reference leg
+-# Sol's hold (#1640): inter-arm agreement cannot prove both arms right. This
+-# reference shares NOTHING with the kernel but the cache bytes and their
+-# documented format: nibble unpack (byte b -> elements 2b low, 2b+1 high),
+-# zero-point recovery from the scale float's low 4 mantissa bits
+-# ((bits & -16) | zp -- read from the pack kernel this session), dequant
+-# (nibble - zp) * scale, then plain fp32 torch attention with an explicit
+-# causal mask. Computed at the launcher layer where RHT cancels.
+-def _dequant_tokens(cache, scale_cache, bt_row, kv_len):
+-    t = torch.arange(kv_len, device=DEV)
+-    blk = bt_row[(t // BLOCK_SIZE)].long()
+-    slot = (t % BLOCK_SIZE).long()
+-    packed = cache[blk, slot].contiguous()          # [kv_len, kvh, PACKED_HS] u8
+-    low = (packed & 0xF).to(torch.float32)
+-    high = (packed >> 4).to(torch.float32)
+-    nib = torch.stack((low, high), dim=-1).reshape(kv_len, NUM_HEADS_KV, HEAD_DIM)
+-    sbits = scale_cache[blk, slot].contiguous().view(torch.int32)
+-    zp = (sbits & 0xF).to(torch.float32)
+-    scale = (sbits & -16).view(torch.float32)
+-    return (nib - zp.unsqueeze(-1)) * scale.unsqueeze(-1)
+-
+-
+-def reference_attn(kcap, q_lens):
+-    """fp32 reference from the cache bytes; zero-length rows have NO output
+-    rows by construction (cu adjacency) -- the declared/ignored value."""
+-    ref = torch.zeros_like(kcap["out"], dtype=torch.float32)
+-    gqa = NUM_HEADS_Q // NUM_HEADS_KV
+-    for i, ql in enumerate(q_lens):
+-        if ql == 0:
+-            continue
+-        lo, hi = int(kcap["cu"][i]), int(kcap["cu"][i + 1])
+-        kv_len = int(kcap["seqused"][i])
+-        kd = _dequant_tokens(key_cache, k_scale_cache, kcap["bt"][i], kv_len)
+-        vd = _dequant_tokens(value_cache, v_scale_cache, kcap["bt"][i], kv_len)
+-        qf = kcap["q"][lo:hi].to(torch.float32)      # [ql, hq, hd]
+-        kf = kd.repeat_interleave(gqa, dim=1)        # [kv, hq, hd]
+-        vf = vd.repeat_interleave(gqa, dim=1)
+-        scores = torch.einsum("qhd,khd->hqk", qf, kf) * kcap["scale"]
+-        qpos = kv_len - ql + torch.arange(ql, device=DEV)
+-        mask = torch.arange(kv_len, device=DEV)[None, :] > qpos[:, None]
+-        scores.masked_fill_(mask[None, :, :], float("-inf"))
+-        probs = torch.softmax(scores, dim=-1)
+-        ref[lo:hi] = torch.einsum("hqk,khd->qhd", probs, vf)
+-    return ref
+-
+-# ------------------------------------------------------------------ one call
+-def run_case(q_lens, force_3d, seed):
+-    """Build the row's batch, call unified_attention through the production
+-    entry, and return the observation record. Both legs of a row share a seed
+-    so the 2D-vs-3D compare sees IDENTICAL inputs (first run's harness bug:
+-    per-leg randn made even 2D-vs-2D 'differ' by 1.5)."""
+-    torch.manual_seed(seed)
+-    num_seqs = len(q_lens)
+-    tokens = sum(q_lens)
+-    max_q = max(q_lens) if q_lens else 0
+-
+-    blocks_per_seq = math.ceil((KV_HISTORY + max(q_lens or [0])) / BLOCK_SIZE) + 1
+-    block_table = torch.zeros(num_seqs, blocks_per_seq, dtype=torch.int32, device=DEV)
+-    next_block = 1  # block 0 stays a zero-filled dummy
+-    seqused = []
+-    rht_src = []
+-    for s, ql in enumerate(q_lens):
+-        kv_len = KV_HISTORY + ql
+-        nb = math.ceil(kv_len / BLOCK_SIZE)
+-        row = list(range(next_block, next_block + nb))
+-        next_block += nb
+-        block_table[s, :nb] = torch.tensor(row, dtype=torch.int32, device=DEV)
+-        rht_src.append(populate_seq(s, kv_len, row))
+-        seqused.append(kv_len)
+-    assert next_block <= NUM_BLOCKS
+-
+-    q = torch.randn(tokens, NUM_HEADS_Q, HEAD_DIM, dtype=torch.float16, device=DEV)
+-    out = torch.zeros_like(q)
+-    cu = torch.zeros(num_seqs + 1, dtype=torch.int32, device=DEV)
+-    cu[1:] = torch.cumsum(torch.tensor(q_lens, device=DEV), 0)
+-    seqused_k = torch.tensor(seqused, dtype=torch.int32, device=DEV)
+-
+-    # NaN-prefill the production scratch: 2D must leave it untouched, 3D must
+-    # overwrite what it reads back, and an unwritten-row read leaks NaN into
+-    # the output where the finite check catches it.
+-    for b in BUFS:
+-        b.fill_(float("nan"))
+-
+-    os.environ["VLLM_INT4_MQ_3D"] = "1" if force_3d else "0"
+-    os.environ["VLLM_INT4_MQ_3D_DEBUG"] = "1"
+-
+-    breach_before = mq3d_breach_state()
+-    calls_before = CALLS["n"]
+-    cap = io.StringIO()
+-    with contextlib.redirect_stdout(cap):
+-        unified_attention(
+-            q=q,
+-            k=key_cache,
+-            v=value_cache,
+-            out=out,
+-            cu_seqlens_q=cu,
+-            max_seqlen_q=max_q,
+-            seqused_k=seqused_k,
+-            max_seqlen_k=max(seqused) if seqused else 0,
+-            softmax_scale=HEAD_DIM ** -0.5,
+-            causal=True,
+-            window_size=(-1, -1),
+-            block_table=block_table,
+-            softcap=0.0,
+-            q_descale=None,
+-            k_descale=None,
+-            v_descale=None,
+-            seq_threshold_3D=SEQ_THRESHOLD,
+-            max_query_len_3d=QLEN_CAP,
+-            scratch_token_capacity_3d=CAPACITY,
+-            num_par_softmax_segments=SEGM,
+-            softmax_segm_output=BUFS[0],
+-            softmax_segm_max=BUFS[1],
+-            softmax_segm_expsum=BUFS[2],
+-            kv_quant_mode=KVQuantMode.INT4_PER_TOKEN_HEAD,
+-            k_scale_cache=k_scale_cache,
+-            v_scale_cache=v_scale_cache,
+-        )
+-    torch.cuda.synchronize()
+-
+-    # Reference leg: my dequant + fp32 attention vs the captured kernel out,
+-    # plus dequant calibration against the RHT'd source actually stored.
+-    kcap = CAPTURE["last"]
+-    ref = reference_attn(kcap, q_lens)
+-    ref_delta = (
+-        float((kcap["out"].to(torch.float32) - ref).abs().max().item())
+-        if sum(q_lens) else 0.0
+-    )
+-    calib = 0.0
+-    for i, ql in enumerate(q_lens):
+-        kv_len = KV_HISTORY + ql
+-        kd = _dequant_tokens(key_cache, k_scale_cache, block_table[i], kv_len)
+-        calib = max(calib, float(
+-            (kd - rht_src[i][0].to(torch.float32)).abs().max().item()))
+-
+-    reason_lines = [
+-        ln for ln in cap.getvalue().splitlines() if "reasons=" in ln
+-    ]
+-    reasons = (
+-        reason_lines[-1].split("reasons=")[-1].strip() if reason_lines else "NO-DEBUG-LINE"
+-    )
+-    scratch_touched = not bool(torch.isnan(BUFS[1][:max(tokens, 1)]).all().item())
+-    return {
+-        "calls_delta": CALLS["n"] - calls_before,
+-        "reasons": reasons,
+-        "scratch_touched": scratch_touched,
+-        "out_finite": bool(torch.isfinite(out).all().item()),
+-        "breach_delta": mq3d_breach_state()["count"] - breach_before["count"],
+-        "ref_max_abs": ref_delta,
+-        "out_max_abs": float(kcap["out"].abs().max().item()),
+-        "dequant_calib_max_abs": calib,
+-        "out": out,
+-    }
+-
+-
+-# ---------------------------------------------------------------- the matrix
+-MATRIX = [
+-    ("row0-decode-[1]", [1], "informational: q=1 decode, units coincide"),
+-    ("row1-boundary-[16]", [16], "positive boundary: qlen==cap, 3D expected"),
+-    ("row2-policy-[17]", [17], "policy rejection: qlen>cap, capacity never asked"),
+-    ("row3-even-[8,8]", [8, 8], "3D expected"),
+-    ("row4-units-[16,1]", [16, 1], "17 TOKENS admissible: the units discriminator"),
+-    ("row5-ragged-[1,8,3]", [1, 8, 3],
+-     "ragged reducer (operator-level construction: num_seqs exceeds declared MAX_SEQS=2)"),
+-    ("row6-zerorow-[4,0,3]", [4, 0, 3],
+-     "padded zero-length row: reducer hazard (operator-level: num_seqs>MAX_SEQS=2)"),
+-    ("row7-hist-[9]", [9], "informational: the original bug's shape"),
+-    ("row9-wild-[848]", [848],
+-     "policy in the wild: the 3090 box's organic q=848 shape, 2D both legs"),
+-]
+-# row8 (breach mutation) runs last: [16,16,16] = 48 tokens > capacity 32,
+-# policy-eligible, so it must breach, fall back 2D, and mark DEGRADED.
+-
+-EXPECT_3D = {  # under force_3d=1
+-    "row0-decode-[1]": True,
+-    "row1-boundary-[16]": True,
+-    "row2-policy-[17]": False,
+-    "row3-even-[8,8]": True,
+-    "row4-units-[16,1]": True,
+-    "row5-ragged-[1,8,3]": True,
+-    "row6-zerorow-[4,0,3]": True,
+-    "row7-hist-[9]": True,
+-    "row9-wild-[848]": False,
+-}
+-
+-verdicts = []
+-FAIL = 0
+-
+-for name, q_lens, note in MATRIX:
+-    seed = 100 + MATRIX.index((name, q_lens, note))
+-    r2d = run_case(q_lens, force_3d=False, seed=seed)
+-    r3d = run_case(q_lens, force_3d=True, seed=seed)
+-    mq = (max(q_lens) if q_lens else 0) > 1
+-
+-    checks = {
+-        "reached_production_2d": r2d["calls_delta"] == 1,
+-        "reached_production_3d": r3d["calls_delta"] == 1,
+-        # q=1 rows go 3D regardless of the flag (stock behavior: the flag only
+-        # gates multi-query), so untouched-scratch applies to mq rows only.
+-        "2d_scratch_untouched": (not mq) or (not r2d["scratch_touched"]),
+-        "3d_path_taken": r3d["scratch_touched"] == EXPECT_3D[name],
+-        "2d_out_finite": r2d["out_finite"],
+-        "3d_out_finite": r3d["out_finite"],
+-        "no_breach": r2d["breach_delta"] == 0 and r3d["breach_delta"] == 0,
+-        "2d_reason_flag_off": (not mq) or ("mq_but_flag_off" in r2d["reasons"]),
+-    }
+-    if name == "row2-policy-[17]":
+-        checks["policy_reason_exact"] = "max_query_len_policy>16" in r3d["reasons"]
+-        checks["not_capacity_reason"] = "q_token_capacity_failed" not in r3d["reasons"]
+-    if name == "row4-units-[16,1]":
+-        checks["units_not_conflated"] = r3d["reasons"].startswith("NONE")
+-    if EXPECT_3D[name] and mq:
+-        checks["3d_reason_none"] = r3d["reasons"].startswith("NONE")
+-
+-    d = (r2d["out"] - r3d["out"]).abs()
+-    maxdiff = float(d.max().item()) if d.numel() else 0.0
+-    checks["2d_vs_3d_close"] = maxdiff < 5e-2
+-    # advisory harness-sanity bound only; numerical ACCEPTANCE is Gate 3's call.
+-    checks["ref_sane_advisory"] = max(r2d["ref_max_abs"], r3d["ref_max_abs"]) < 0.1
+-
+-    ok = all(checks.values())
+-    FAIL += 0 if ok else 1
+-    verdicts.append({
+-        "row": name, "q_lens": q_lens, "note": note,
+-        "configured_capacity": CAPACITY, "seq_threshold_3D": SEQ_THRESHOLD,
+-        "declared": DECLARED,
+-        "reasons_2d": r2d["reasons"], "reasons_3d": r3d["reasons"],
+-        "max_abs_diff_2d_vs_3d": maxdiff,
+-        "ref_max_abs_2d": r2d["ref_max_abs"], "ref_max_abs_3d": r3d["ref_max_abs"],
+-        "out_max_abs": r3d["out_max_abs"],
+-        "dequant_calib_max_abs": max(
+-            r2d["dequant_calib_max_abs"], r3d["dequant_calib_max_abs"]),
+-        "reference": ("independent fp32 torch attention over own-math dequant "
+-                      "of the cache bytes (nibble + mantissa-zp), "
+-                      "launcher-layer compare (RHT cancels)"),
+-        "checks": checks, "ok": ok,
+-    })
+-    print(f"[oracle] {name}: {'OK' if ok else 'FAIL'} "
+-          f"maxdiff={maxdiff:.4g} ref2d={r2d['ref_max_abs']:.4g} "
+-          f"ref3d={r3d['ref_max_abs']:.4g} "
+-          f"calib={r2d['dequant_calib_max_abs']:.4g} "
+-          f"r3d.reasons={r3d['reasons']}")
+-
+-# ------------------------------------------------------- row8: breach mutation
+-pre = mq3d_breach_state()
+-r_breach = run_case([16, 16, 16], force_3d=True, seed=200)
+-post1 = mq3d_breach_state()
+-# Second breach uses a DIFFERENT shape (64 tokens): if "first" were being
+-# overwritten instead of kept, tokens would read 64 -- same-shape re-breach
+-# could never falsify the sticky-first claim (anti-vacuous, ledger #10).
+-r_breach2 = run_case([16, 16, 16, 16], force_3d=True, seed=201)
+-post2 = mq3d_breach_state()
+-
+-bchecks = {
+-    "reached_production": r_breach["calls_delta"] == 1,
+-    "fell_back_2d": not r_breach["scratch_touched"],
+-    "out_finite": r_breach["out_finite"],
+-    "count_incremented": post1["count"] == pre["count"] + 1,
+-    "degraded_sticky": post1["degraded"] is True and post2["degraded"] is True,
+-    "count_increments_again": post2["count"] == post1["count"] + 1,
+-    "first_specimen_kept": (
+-        post1["first"] is not None
+-        and post1["first"]["tokens"] == 48
+-        and post1["first"]["declared"] == CAPACITY
+-        and post2["first"]["tokens"] == 48  # NOT 64: first survived breach 2
+-    ),
+-    "reason_exact": "q_token_capacity_failed" in r_breach["reasons"],
+-    "policy_reason_absent": "max_query_len_policy" not in r_breach["reasons"],
+-}
+-bok = all(bchecks.values())
+-FAIL += 0 if bok else 1
+-verdicts.append({
+-    "row": "row8-breach-[16,16,16]", "q_lens": [16, 16, 16],
+-    "note": "deliberate scheduler-contract violation under MAX_SEQS=2, exercising the runtime invariant wall (48 tokens > capacity 32, policy-eligible)",
+-    "configured_capacity": CAPACITY, "seq_threshold_3D": SEQ_THRESHOLD,
+-    "declared": DECLARED,
+-    "reasons_3d": r_breach["reasons"],
+-    "breach_state_after": {k: v for k, v in post2.items()},
+-    "checks": bchecks, "ok": bok,
+-})
+-print(f"[oracle] row8-breach: {'OK' if bok else 'FAIL'} state={post2}")
+-
+-# --------------------------------------------------------------------- emit
+-with open(OUT_PATH, "w") as f:
+-    f.write(json.dumps({"provenance": PROVENANCE, "declared": DECLARED,
+-                        "capacity": CAPACITY, "seq_threshold_3D": SEQ_THRESHOLD}) + "\n")
+-    for v in verdicts:
+-        v.pop("out", None)
+-        f.write(json.dumps(v) + "\n")
+-
+-total = len(verdicts)
+-print(f"[oracle] === {total - FAIL}/{total} rows OK; "
+-      f"launch calls total={CALLS['n']}; verdicts -> {OUT_PATH} ===")
+-sys.exit(1 if FAIL else 0)
+diff --git a/bench/mq3d_layer2_verdicts-3090.jsonl b/bench/mq3d_layer2_verdicts-3090.jsonl
+deleted file mode 100644
+index 11d0be9..0000000
+--- a/bench/mq3d_layer2_verdicts-3090.jsonl
++++ /dev/null
+@@ -1,11 +0,0 @@
+-{"provenance": {"surface": {"v1/attention/backends/triton_attn.py": "aa3fa23692a2904de0acd7ed6c0585eff2510610bf28189941ee92fb27c776f7", "v1/attention/ops/int4_per_token_head.py": "f2a02c58efa7097cc6dd7d6f16f8d76ca0de8eb70866f1d664e74f0a4ed08c40", "v1/attention/ops/triton_unified_attention.py": "24ec41175a5818c8421e011e0cbb05b54860d90777e65dbbe6d983c960ce85d1"}, "patch_sha256": "562f7e28ec7d17d802c0fcfdf3e3f49b5b5234d94c946acfb72495497beb8b7b"}, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "capacity": 32, "seq_threshold_3D": 32}
+-{"row": "row0-decode-[1]", "q_lens": [1], "note": "informational: q=1 decode, units coincide", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "NONE(3d eligible)", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0, "ref_max_abs_2d": 0.03124523162841797, "ref_max_abs_3d": 0.03124523162841797, "out_max_abs": 21.8125, "dequant_calib_max_abs": 3.8041610717773438, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row1-boundary-[16]", "q_lens": [16], "note": "positive boundary: qlen==cap, 3D expected", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.030782699584960938, "ref_max_abs_3d": 0.0308837890625, "out_max_abs": 22.0, "dequant_calib_max_abs": 4.225006103515625, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row2-policy-[17]", "q_lens": [17], "note": "policy rejection: qlen>cap, capacity never asked", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off,max_query_len_policy>16", "reasons_3d": "max_query_len_policy>16", "max_abs_diff_2d_vs_3d": 0.0, "ref_max_abs_2d": 0.03720283508300781, "ref_max_abs_3d": 0.03720283508300781, "out_max_abs": 20.125, "dequant_calib_max_abs": 3.875, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "policy_reason_exact": true, "not_capacity_reason": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row3-even-[8,8]", "q_lens": [8, 8], "note": "3D expected", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0087890625, "ref_max_abs_2d": 0.030649185180664062, "ref_max_abs_3d": 0.03401374816894531, "out_max_abs": 20.5, "dequant_calib_max_abs": 4.039581298828125, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row4-units-[16,1]", "q_lens": [16, 1], "note": "17 TOKENS admissible: the units discriminator", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.031360626220703125, "ref_max_abs_3d": 0.031360626220703125, "out_max_abs": 24.453125, "dequant_calib_max_abs": 4.36248779296875, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "units_not_conflated": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row5-ragged-[1,8,3]", "q_lens": [1, 8, 3], "note": "ragged reducer (operator-level construction: num_seqs exceeds declared MAX_SEQS=2)", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.03363800048828125, "ref_max_abs_3d": 0.029348373413085938, "out_max_abs": 26.40625, "dequant_calib_max_abs": 4.1749725341796875, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row6-zerorow-[4,0,3]", "q_lens": [4, 0, 3], "note": "padded zero-length row: reducer hazard (operator-level: num_seqs>MAX_SEQS=2)", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.03436279296875, "ref_max_abs_3d": 0.03223419189453125, "out_max_abs": 22.046875, "dequant_calib_max_abs": 3.984375, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row7-hist-[9]", "q_lens": [9], "note": "informational: the original bug's shape", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.005859375, "ref_max_abs_2d": 0.028600692749023438, "ref_max_abs_3d": 0.028470993041992188, "out_max_abs": 16.78125, "dequant_calib_max_abs": 4.091644287109375, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row9-wild-[848]", "q_lens": [848], "note": "policy in the wild: the 3090 box's organic q=848 shape, 2D both legs", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off,max_query_len_policy>16", "reasons_3d": "max_query_len_policy>16", "max_abs_diff_2d_vs_3d": 0.0, "ref_max_abs_2d": 0.03200817108154297, "ref_max_abs_3d": 0.03200817108154297, "out_max_abs": 20.140625, "dequant_calib_max_abs": 4.3499755859375, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row8-breach-[16,16,16]", "q_lens": [16, 16, 16], "note": "deliberate scheduler-contract violation under MAX_SEQS=2, exercising the runtime invariant wall (48 tokens > capacity 32, policy-eligible)", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_3d": "q_token_capacity_failed", "breach_state_after": {"count": 2, "degraded": true, "first": {"max_seqlen_q": 16, "qlen_cap": 16, "num_seqs": 3, "tokens": 48, "declared": 32, "rows": [32, 32, 32]}}, "checks": {"reached_production": true, "fell_back_2d": true, "out_finite": true, "count_incremented": true, "degraded_sticky": true, "count_increments_again": true, "first_specimen_kept": true, "reason_exact": true, "policy_reason_absent": true}, "ok": true}
+diff --git a/bench/mq3d_layer2_verdicts.jsonl b/bench/mq3d_layer2_verdicts.jsonl
+deleted file mode 100644
+index 08e6cf4..0000000
+--- a/bench/mq3d_layer2_verdicts.jsonl
++++ /dev/null
+@@ -1,11 +0,0 @@
+-{"provenance": {"surface": {"v1/attention/backends/triton_attn.py": "aa3fa23692a2904de0acd7ed6c0585eff2510610bf28189941ee92fb27c776f7", "v1/attention/ops/int4_per_token_head.py": "cf2bf54178d2e58e5f633c61c695924043547272e45deee4b4e3f79683026fd6", "v1/attention/ops/triton_unified_attention.py": "24ec41175a5818c8421e011e0cbb05b54860d90777e65dbbe6d983c960ce85d1"}, "patch_sha256": "c2b5a002e74374b098ebdb3ce8558f3b9e22eb66d73ab0c72f221b1059ccf7fe"}, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "capacity": 32, "seq_threshold_3D": 32}
+-{"row": "row0-decode-[1]", "q_lens": [1], "note": "informational: q=1 decode, units coincide", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "NONE(3d eligible)", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0, "ref_max_abs_2d": 0.031244277954101562, "ref_max_abs_3d": 0.031244277954101562, "out_max_abs": 21.8125, "dequant_calib_max_abs": 3.8041610717773438, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row1-boundary-[16]", "q_lens": [16], "note": "positive boundary: qlen==cap, 3D expected", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.03078460693359375, "ref_max_abs_3d": 0.0308837890625, "out_max_abs": 22.0, "dequant_calib_max_abs": 4.225006103515625, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row2-policy-[17]", "q_lens": [17], "note": "policy rejection: qlen>cap, capacity never asked", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off,max_query_len_policy>16", "reasons_3d": "max_query_len_policy>16", "max_abs_diff_2d_vs_3d": 0.0, "ref_max_abs_2d": 0.03720283508300781, "ref_max_abs_3d": 0.03720283508300781, "out_max_abs": 20.125, "dequant_calib_max_abs": 3.875, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "policy_reason_exact": true, "not_capacity_reason": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row3-even-[8,8]", "q_lens": [8, 8], "note": "3D expected", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0087890625, "ref_max_abs_2d": 0.030649185180664062, "ref_max_abs_3d": 0.03401374816894531, "out_max_abs": 20.5, "dequant_calib_max_abs": 4.039581298828125, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row4-units-[16,1]", "q_lens": [16, 1], "note": "17 TOKENS admissible: the units discriminator", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.03136253356933594, "ref_max_abs_3d": 0.03136253356933594, "out_max_abs": 24.453125, "dequant_calib_max_abs": 4.36248779296875, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "units_not_conflated": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row5-ragged-[1,8,3]", "q_lens": [1, 8, 3], "note": "ragged reducer (operator-level construction: num_seqs exceeds declared MAX_SEQS=2)", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.03363800048828125, "ref_max_abs_3d": 0.029348373413085938, "out_max_abs": 26.40625, "dequant_calib_max_abs": 4.1749725341796875, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row6-zerorow-[4,0,3]", "q_lens": [4, 0, 3], "note": "padded zero-length row: reducer hazard (operator-level: num_seqs>MAX_SEQS=2)", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.0078125, "ref_max_abs_2d": 0.03436279296875, "ref_max_abs_3d": 0.03223419189453125, "out_max_abs": 22.046875, "dequant_calib_max_abs": 3.984375, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row7-hist-[9]", "q_lens": [9], "note": "informational: the original bug's shape", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off", "reasons_3d": "NONE(3d eligible)", "max_abs_diff_2d_vs_3d": 0.005859375, "ref_max_abs_2d": 0.028600692749023438, "ref_max_abs_3d": 0.028470993041992188, "out_max_abs": 16.78125, "dequant_calib_max_abs": 4.091644287109375, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "3d_reason_none": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row9-wild-[848]", "q_lens": [848], "note": "policy in the wild: the 3090 box's organic q=848 shape, 2D both legs", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_2d": "mq_but_flag_off,max_query_len_policy>16", "reasons_3d": "max_query_len_policy>16", "max_abs_diff_2d_vs_3d": 0.0, "ref_max_abs_2d": 0.03200817108154297, "ref_max_abs_3d": 0.03200817108154297, "out_max_abs": 20.140625, "dequant_calib_max_abs": 4.3499755859375, "reference": "independent fp32 torch attention over own-math dequant of the cache bytes (nibble + mantissa-zp), launcher-layer compare (RHT cancels)", "checks": {"reached_production_2d": true, "reached_production_3d": true, "2d_scratch_untouched": true, "3d_path_taken": true, "2d_out_finite": true, "3d_out_finite": true, "no_breach": true, "2d_reason_flag_off": true, "2d_vs_3d_close": true, "ref_sane_advisory": true}, "ok": true}
+-{"row": "row8-breach-[16,16,16]", "q_lens": [16, 16, 16], "note": "deliberate scheduler-contract violation under MAX_SEQS=2, exercising the runtime invariant wall (48 tokens > capacity 32, policy-eligible)", "configured_capacity": 32, "seq_threshold_3D": 32, "declared": {"max_num_seqs": 2, "max_num_batched_tokens": 8192, "num_heads_q": 24, "num_heads_kv": 4, "head_dim": 256, "block_size": 16, "cudagraph": "NONE (eager; capture-snap is a separate change per the patch)"}, "reasons_3d": "q_token_capacity_failed", "breach_state_after": {"count": 2, "degraded": true, "first": {"max_seqlen_q": 16, "qlen_cap": 16, "num_seqs": 3, "tokens": 48, "declared": 32, "rows": [32, 32, 32]}}, "checks": {"reached_production": true, "fell_back_2d": true, "out_finite": true, "count_incremented": true, "degraded_sticky": true, "count_increments_again": true, "first_specimen_kept": true, "reason_exact": true, "policy_reason_absent": true}, "ok": true}
+diff --git a/bench/needle_test.py b/bench/needle_test.py
+deleted file mode 100644
+index dfdbee2..0000000
+--- a/bench/needle_test.py
++++ /dev/null
+@@ -1,68 +0,0 @@
+-#!/usr/bin/env python3
+-"""Needle-in-a-haystack probe against the running server.
+-
+-Builds a ~TARGET_TOKENS filler context, hides a secret passcode at a given
+-fractional depth, asks the model for it, and reports whether the answer
+-contains the passcode. Complements quality_battery.py's GSM8K lane for the
+-"quality at depth" question on long-context KV configs.
+-
+-Usage:
+-    python bench/needle_test.py [target_tokens] [depth]
+-    # default: 100000 tokens, needle at 90% depth
+-"""
+-import json
+-import os
+-import sys
+-import time
+-import urllib.request
+-
+-HERE = os.path.dirname(os.path.abspath(__file__))
+-
+-
+-def _key(path):  # same convention as quality_battery.py
+-    try:
+-        return open(path).read().strip()
+-    except OSError:
+-        return ""
+-
+-
+-KEY = os.environ.get("VLLM_API_KEY") or _key(os.path.join(HERE, "..", "api_key.txt"))
+-API = os.environ.get("VLLM_API", "http://127.0.0.1:18020/v1")
+-
+-TARGET_TOKENS = int(sys.argv[1]) if len(sys.argv) > 1 else 100_000
+-DEPTH = float(sys.argv[2]) if len(sys.argv) > 2 else 0.9
+-
+-NEEDLE = "ZXCVBNM12345"
+-needle_line = f"The secret passcode is {NEEDLE}. Remember it exactly."
+-
+-# "All work and no play makes Jack a dull boy. " is ~46 chars, ~11 tokens.
+-unit = "All work and no play makes Jack a dull boy. "
+-filler = unit * int(TARGET_TOKENS / 11)
+-
+-depth = int(len(filler) * DEPTH)
+-context = filler[:depth] + "\n\n" + needle_line + "\n\n" + filler[depth:]
+-
+-prompt = context + "\n\nQuestion: what is the secret passcode? Reply with the passcode only."
+-
+-
+-def post(payload, timeout=1800):
+-    req = urllib.request.Request(
+-        API + "/chat/completions",
+-        data=json.dumps(payload).encode(),
+-        headers={"Content-Type": "application/json", "Authorization": "Bearer " + KEY},
+-    )
+-    return json.load(urllib.request.urlopen(req, timeout=timeout))
+-
+-
+-t0 = time.perf_counter()
+-resp = post({
+-    "model": "qwen3.8-27b",
+-    "messages": [{"role": "user", "content": prompt}],
+-    "max_tokens": 32,
+-})
+-elapsed = time.perf_counter() - t0
+-
+-answer = (resp["choices"][0]["message"].get("content") or "")
+-print(f"context ~{TARGET_TOKENS} tokens, needle at {DEPTH:.0%} depth")
+-print(f"elapsed {elapsed:.1f}s, answer: {answer[:120]!r}")
+-print("RETRIEVED" if NEEDLE in answer else "MISSED")
+diff --git a/bench/quality_battery.py b/bench/quality_battery.py
+index daacbff..012a1ae 100644
+--- a/bench/quality_battery.py
++++ b/bench/quality_battery.py
+@@ -10,15 +10,6 @@ Data (once):
+   hf download HuggingFaceFW/fineweb-2 --repo-type dataset --include "data/dan_Latn/test/000_00000.parquet" --local-dir bench/quality-data/fineweb2
+ Perplexity needs prompt_logprobs, which needs memory headroom: run the server with
+ GPU_UTIL=0.93 for this (gotcha 10 in the README).
+-
+-On CTX=huge (KVarN) with SPEC=mtp, measure perplexity with PREFIX_CACHE=0. That
+-combination corrupts prompt_logprobs: some requests 400 with "Out of range float
+-values are not JSON compliant: nan", and the batteries that do complete read
+-~23% high on English (12.6-13.7 against 10.76) and drift run to run. Setting
+-PREFIX_CACHE=0 makes the same server exact and stable to four decimals. SPEC=off
+-and SPEC=dflash2 on KVarN are unaffected, at the same pool size, and so is
+-CTX=fast on all three settings, so the published quality tables are not
+-implicated. Measured in #64 (gotcha 51).
+ Usage: python bench/quality_battery.py <tag> [--ppl-only] [--gsm-only] [--gsm-n 200]
+ """
+ import json, os, sys, glob, re, math, time, random
+diff --git a/clients/README.md b/clients/README.md
+new file mode 100644
+index 0000000..ba97a47
+--- /dev/null
++++ b/clients/README.md
+@@ -0,0 +1,45 @@
++# Client configs with dynamically discovered parameters
++
++`sync-agent-models.py` configures the pi and prime-agent CLIs against this
++stack's OpenAI-compatible endpoint without hand-maintained parameters. It
++interrogates the running server and rewrites the `home-vllm` provider entry
++in `~/.pi/agent/models.json` and `~/.prime/agent/models.json`, preserving
++every other provider and each file's local conventions.
++
++## What is discovered, and from where
++
++| parameter | source |
++|---|---|
++| model id, `contextWindow` | `GET /v1/models` (vLLM reports `max_model_len`) |
++| `reasoning_effort` levels | probe with an invalid effort; the chat template's `raise_exception` message enumerates the valid levels in its 400 body |
++| vision (`input: ["text","image"]`) | a 1x1-pixel PNG probe: HTTP 200 = multimodal, 400 = text-only |
++| `maxTokens` | policy: `min(--max-tokens, contextWindow // 2)`, default cap 32768 |
++
++Neither CLI discovers custom-provider parameters natively (their catalog
++refresh covers SaaS providers only), so this script is the discovery layer.
++
++## Usage
++
++```bash
++clients/sync-agent-models.py                 # discover + write both configs
++clients/sync-agent-models.py --dry-run       # show what would change
++clients/sync-agent-models.py --base http://host:port/v1 --provider home-vllm
++BEARER=<token> clients/sync-agent-models.py  # via the Caddy-gated public path
++```
++
++Re-run after any deployment change — a different `MAX_LEN`, a model swap, or
++a chat-template change — instead of editing the JSON by hand. Timestamped
++`.bak-*` backups are written next to each config before any change; writes
++are atomic.
++
++Total probe cost: three requests, 3 output tokens.
++
++## Notes
++
++- `thinkingLevelMap` styles differ by agent and are preserved: pi fills
++  aliases (`high -> xhigh`, `minimal -> low`), prime-agent maps only exact
++  levels and nulls the rest.
++- The default endpoint is the in-cluster service (`llama.apps.svc.cluster.local:8080`). The
++  public path is bearer-gated by Caddy; pass `BEARER`.
++- vLLM 0.27.1 returns the CoT in `message.reasoning` (not
++  `reasoning_content`); both CLIs already read the right field.
+diff --git a/clients/sync-agent-models.py b/clients/sync-agent-models.py
+new file mode 100755
+index 0000000..0e5de71
+--- /dev/null
++++ b/clients/sync-agent-models.py
+@@ -0,0 +1,140 @@
++#!/usr/bin/env python3
++"""Sync pi and prime-agent model configs from the live vLLM endpoint.
++
++Discovers, from the server itself:
++  - model id and context window   (GET /v1/models: id, max_model_len)
++  - reasoning-effort levels       (probe with an invalid effort; the chat
++                                   template's 400 message enumerates them,
++                                   e.g. "Supported types are xhigh (default),
++                                   medium, and low.")
++  - vision support                (1x1-pixel image probe: 200 = multimodal,
++                                   400 = text-only)
++
++Then rewrites the target provider entry in ~/.pi/agent/models.json and
++~/.prime/agent/models.json, preserving every other provider and each file's
++local conventions (headers, apiKey, authHeader). A timestamped .bak of each
++file is written first; writes are atomic. Re-run after any deployment change
++(MAX_LEN, model swap, template change) instead of editing configs by hand.
++
++Usage:
++  clients/sync-agent-models.py [--base http://llama.apps.svc.cluster.local:8080/v1]
++                               [--provider home-vllm] [--dry-run]
++  BEARER=<token> for the Caddy-gated public path.
++"""
++import argparse, base64, json, os, re, shutil, sys, time, urllib.request
++
++def _png_1px():
++    import struct, zlib
++    def chunk(t, d):
++        c = t + d
++        return struct.pack(">I", len(d)) + c + struct.pack(">I", zlib.crc32(c))
++    ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
++    idat = zlib.compress(b"\x00\xff\x00\x00")
++    return base64.b64encode(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr)
++                            + chunk(b"IDAT", idat) + chunk(b"IEND", b"")).decode()
++
++PNG_1PX = _png_1px()
++
++def call(base, path, payload=None, bearer=None, timeout=60):
++    req = urllib.request.Request(base + path,
++        data=json.dumps(payload).encode() if payload else None,
++        headers={"Content-Type": "application/json",
++                 **({"Authorization": f"Bearer {bearer}"} if bearer else {})},
++        method="POST" if payload else "GET")
++    try:
++        with urllib.request.urlopen(req, timeout=timeout) as r:
++            return r.status, json.load(r)
++    except urllib.error.HTTPError as e:
++        try: return e.code, json.load(e)
++        except Exception: return e.code, {"raw": e.read().decode(errors="replace")[:400]}
++
++def discover(base, bearer):
++    st, j = call(base, "/models", bearer=bearer)
++    if st != 200 or not j.get("data"):
++        sys.exit(f"cannot list models at {base}/models: HTTP {st} {j}")
++    m = j["data"][0]
++    model_id, ctx = m["id"], m.get("max_model_len")
++    if not ctx:
++        sys.exit(f"/models did not report max_model_len: {m}")
++    # effort levels: the template's raise_exception enumerates them on a bad value
++    st, j = call(base, "/chat/completions", {
++        "model": model_id, "max_tokens": 1,
++        "messages": [{"role": "user", "content": "hi"}],
++        "chat_template_kwargs": {"reasoning_effort": "___invalid___"}}, bearer)
++    msg = json.dumps(j)
++    levels = None
++    if st == 400:
++        found = re.findall(r"\b(xhigh|high|medium|low|minimal)\b", msg)
++        levels = sorted(set(found), key=found.index) or None
++    # vision probe
++    st, _ = call(base, "/chat/completions", {
++        "model": model_id, "max_tokens": 1, "messages": [{"role": "user", "content": [
++            {"type": "text", "text": "hi"},
++            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{PNG_1PX}"}}]}]},
++        bearer, timeout=300)
++    vision = st == 200
++    return model_id, ctx, levels, vision
++
++def thinking_map(levels, style):
++    """pi fills aliases; prime-agent nulls non-native levels."""
++    if not levels:
++        return None
++    have = set(levels)
++    alias = {"off": "off",
++             "minimal": "minimal" if "minimal" in have else ("low" if "low" in have else None),
++             "low": "low" if "low" in have else None,
++             "medium": "medium" if "medium" in have else None,
++             "high": "high" if "high" in have else ("xhigh" if "xhigh" in have else None),
++             "xhigh": "xhigh" if "xhigh" in have else None,
++             "max": "xhigh" if "xhigh" in have else ("high" if "high" in have else None)}
++    if style == "prime":  # exact levels only, keep off
++        return {k: (v if (v in have or (k == v == "off")) and k in (*have, "off") else None)
++                for k, v in alias.items()}
++    return alias
++
++def update_file(path, provider, model_id, ctx, levels, vision, max_tokens, dry):
++    if not os.path.exists(path):
++        print(f"skip {path}: not found"); return
++    cfg = json.load(open(path))
++    prov = cfg.setdefault("providers", {}).setdefault(provider, {})
++    models = prov.get("models") or [{}]
++    entry = models[0]
++    style = "prime" if "/.prime/" in path else "pi"
++    old = json.dumps(entry, sort_keys=True)
++    entry.update({
++        "id": model_id,
++        "name": entry.get("name") or f"{model_id} (home vLLM)",
++        "reasoning": bool(levels),
++        "input": ["text", "image"] if vision else ["text"],
++        "contextWindow": ctx,
++        "maxTokens": min(max_tokens, ctx // 2),
++        "cost": entry.get("cost") or {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
++    })
++    tm = thinking_map(levels, style)
++    if tm:
++        entry["thinkingLevelMap"] = tm
++        entry.setdefault("compat", {})["supportsReasoningEffort"] = True
++    prov["models"] = [entry]
++    changed = old != json.dumps(entry, sort_keys=True)
++    if dry:
++        print(f"{path}: {'WOULD update' if changed else 'up to date'}"); return
++    if changed:
++        shutil.copy2(path, f"{path}.bak-{time.strftime('%Y%m%dT%H%M%S')}")
++        tmp = path + ".tmp"
++        json.dump(cfg, open(tmp, "w"), indent=2)
++        os.replace(tmp, path)
++    print(f"{path}: {'updated' if changed else 'up to date'} "
++          f"(id={model_id} ctx={ctx} levels={levels} vision={vision})")
++
++if __name__ == "__main__":
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--base", default="http://llama.apps.svc.cluster.local:8080/v1")
++    ap.add_argument("--provider", default="home-vllm")
++    ap.add_argument("--max-tokens", type=int, default=32768)
++    ap.add_argument("--dry-run", action="store_true")
++    a = ap.parse_args()
++    model_id, ctx, levels, vision = discover(a.base.rstrip("/"), os.environ.get("BEARER"))
++    print(f"discovered: id={model_id} max_model_len={ctx} effort_levels={levels} vision={vision}")
++    for p in ("~/.pi/agent/models.json", "~/.prime/agent/models.json"):
++        update_file(os.path.expanduser(p), a.provider, model_id, ctx, levels, vision,
++                    a.max_tokens, a.dry_run)
+diff --git a/docker-compose.override.yml b/docker-compose.override.yml
+new file mode 100644
+index 0000000..46b124b
+--- /dev/null
++++ b/docker-compose.override.yml
+@@ -0,0 +1,5 @@
++# Local override: bind-mount the patched launcher (VISION=1 keeps the vision tower)
++services:
++  single:
++    volumes:
++      - ./single-user/start_qwen.sh:/app/single-user/start_qwen.sh:ro
+diff --git a/docker/patch_flashinfer_pageable_buffers.sh b/docker/patch_flashinfer_pageable_buffers.sh
+new file mode 100644
+index 0000000..51f9f72
+--- /dev/null
++++ b/docker/patch_flashinfer_pageable_buffers.sh
+@@ -0,0 +1,25 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++flashinfer_dir=$(/app/venv/bin/python -c 'import flashinfer, os; print(os.path.dirname(flashinfer.__file__))' | tail -n1)
++files=("$flashinfer_dir/prefill.py" "$flashinfer_dir/decode.py")
++
++# FlashInfer reuses these CPU planning workspaces across plan calls. Pageable
++# memory makes the subsequent H2D copy synchronous with respect to the host,
++# preventing the next MTP draft step from rewriting a pinned buffer whose copy
++# is still in flight. Keep the patch narrow: sparse/MLA/POD buffers are outside
++# the Qwen target/draft path under test.
++matches=$(grep -h -c 'pin_memory=True' "${files[@]}" | awk '{sum += $1} END {print sum + 0}')
++if [ "$matches" -ne 8 ]; then
++  echo "expected 8 FlashInfer prefill/decode pinned planning buffers, found $matches" >&2
++  exit 1
++fi
++
++sed -i 's/pin_memory=True/pin_memory=False/g' "${files[@]}"
++
++if grep -q 'pin_memory=True' "${files[@]}"; then
++  echo "FlashInfer planning-buffer patch is incomplete" >&2
++  exit 1
++fi
++
++echo "patched 8 FlashInfer prefill/decode planning buffers to pageable memory"
+diff --git a/docs/gotchas.md b/docs/gotchas.md
+index 86be896..53fcf36 100644
+--- a/docs/gotchas.md
++++ b/docs/gotchas.md
+@@ -514,14 +514,7 @@ Things that each cost us hours, in rough order of pain. Worth skimming before yo
+     transfer to the other in either direction. The detector is the one that found it: a
+     prompt-length ladder against a known-good rate. On WSL, ladder any `KV_MEM` above
+     stock before trusting it; the launcher now prints a warning when the pin exceeds
+-    the profile default. A cheaper live check, from a second WSL2 box in
+-    [#61](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/61): `nvidia-smi dmon`
+-    while it generates. Healthy decode on a 24 GB card is high SM occupancy *and*
+-    high power draw; host-backed memory shows as **SM near 100% at only 100-200 W**,
+-    because the SMs are stalled on PCIe rather than doing work. That reporter's rule
+-    of thumb — keep ~2 GB of VRAM free by lowering `GPU_UTIL`, and do not chase the
+-    context back with `MAX_LEN`, since the pool is sized by `GPU_UTIL` — matches the
+-    two boxes above.
++    the profile default.
+ 
+     The launcher warns above 12 seats rather than clamping, because unlike `CG` this is
+     a VRAM budget rather than a shape: a card bigger than 24 GiB has room where this
+@@ -804,46 +797,3 @@ Things that each cost us hours, in rough order of pain. Worth skimming before yo
+     but truncates the specialisation attributes at 120 characters, which is
+     why it could name the kernel and not the cause. `KVARN_LOOKUP_BLOCKS`
+     pins the lookup size if a deployment ever needs to.
+-
+-51. **`prompt_logprobs` is wrong on `CTX=huge` + `SPEC=mtp` + prefix caching, and
+-    the NaN 400s are only its visible half.** Reported as
+-    [#64](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/64) from a WSL2
+-    3090 — `bench/quality_battery.py --ppl-only` failing with
+-    `{"message":"Out of range float values are not JSON compliant: nan"}` on
+-    some documents, and perplexity drifting 3.7% between identical runs.
+-    Reproduced here on bare metal, on the reporter's own document indices, so
+-    it is not a WSL2 effect. What it actually takes is all three of KVarN, MTP
+-    and `PREFIX_CACHE=1`; the same 106-document battery, same checkpoint, two
+-    concurrent workers:
+-
+-    | profile | NaN batteries | en perplexity |
+-    |---|---|---|
+-    | `CTX=huge` `SPEC=mtp` `PREFIX_CACHE=1` | 4 of 5 | 12.6-13.7, drifting |
+-    | `CTX=huge` `SPEC=mtp` `PREFIX_CACHE=0` | 0 of 5 | **10.7628**, identical across runs |
+-    | `CTX=huge` `SPEC=off` `PREFIX_CACHE=1` | 0 of 5 | 10.7646 |
+-    | `CTX=huge` `SPEC=dflash2` `PREFIX_CACHE=1` | 0 of 5 | 10.7643 |
+-    | `CTX=fast`, `off` / `mtp` / `dflash2` | 0 of 6 | 10.7614 / 10.7659 / 10.7633 |
+-
+-    So the inflated perplexity and the NaN are one bug, not two: in the broken
+-    combination the logprobs that come back are ~23% worse on English than the
+-    same server produces with prefix caching off, and the requests whose
+-    corruption reaches a non-finite float are the ones that 400. Every clean
+-    configuration agrees to four decimals, which is also what makes the broken
+-    one unmistakable.
+-
+-    Two things that look like the cause and are not. **The documents**: sent one
+-    at a time on a single thread, all of them return clean logprobs — it needs
+-    co-scheduled requests, and the failures land on adjacent index pairs, which
+-    under two workers are exactly the pairs that share a prefill batch. **The
+-    pool size**: within MTP it is geometry-dependent (failed at 299k and 312k
+-    tokens of pool, clean at 265k, 352k, 359k and 390k), which is what makes it
+-    look intermittent across boots — but `SPEC=dflash2` pinned to 312,242
+-    tokens, matching the failing MTP geometry to 0.02%, is clean, so the
+-    speculator is the variable and the geometry only decides whether it fires.
+-    `MAX_LEN` is not involved: 240000 and the 245760 default both fail and both
+-    pass depending on the rest.
+-
+-    Practical rule until the read path is fixed: measure perplexity or anything
+-    else using `prompt_logprobs` on KVarN with `PREFIX_CACHE=0`, or on a
+-    non-MTP speculator. Ordinary generation is not implicated — needle
+-    retrieval and decode rates are normal on the same server.
+diff --git a/docs/optimizations.md b/docs/optimizations.md
+index 19f81b3..8fa228f 100644
+--- a/docs/optimizations.md
++++ b/docs/optimizations.md
+@@ -152,17 +152,6 @@ gathered and quantized once per layer-chunk into contiguous int8 scratch;
+ Q rows carry per-row scales; P.V stays bf16. On the attention itself it is
+ 1.27x FA2 at 4k rising to 1.35x at 51k; end-to-end with `INT8_ACT` it adds
+ +2.7% at 16k and +5.3% at 51k (1,839 / 1,498 tok/s), decode unchanged.
+-Alone it adds almost nothing, and that is structural rather than a defect:
+-prefill without the int8 GEMMs is GEMM-dominated, so a faster attention has
+-less to win. Measured standalone on the reference box (`bench/prefill_ab.sh`,
+-two interleaved arms per condition, each reproducing to 0.1%): 1,167 / 1,126 /
+-1,012 tok/s at 4k / 16k / 51k against 1,164 / 1,114 / 980 stock — +0.3%,
+-+1.1%, +3.3%, the gain growing with context exactly as the attention share
+-does. A WSL2 3090 measured the same standalone cell 1-6% negative
+-([#62](https://github.com/syv-ai/qwen38-27b-rtx3090/issues/62)), so treat
+-`PREFILL_ATTN` alone as noise-to-slightly-positive and pair it with
+-`INT8_ACT`, where the same kernel is worth +1.8% at 16k and +4.5% at 51k on
+-top (1,826 / 1,491 against 1,793 / 1,427).
+ Prefill-only by construction: the branch fires for single-request prefill
+ chunks on the exact serving geometry and falls through to FA2 otherwise.
+ 
+diff --git a/docs/spec-decode-scratch-token-units.md b/docs/spec-decode-scratch-token-units.md
+deleted file mode 100644
+index a9c9f23..0000000
+--- a/docs/spec-decode-scratch-token-units.md
++++ /dev/null
+@@ -1,221 +0,0 @@
+-# The scratch-buffer sizing fix for #46's int4 speculative attention: measurements and verification
+-
+-Companion to `patches/spec-decode-scratch-token-units.patch` and the pull request that
+-carries it. The PR description says what changed and why; this file carries the conditions
+-behind every number and the detail of how it was checked.
+-
+-Terms used below. vLLM's Triton attention has a serial decode kernel that walks the whole KV
+-cache in one pass (2D) and a split-KV one that divides the walk into segments and reduces
+-them (3D); the 3D kernel keeps partial results in three scratch buffers indexed by query
+-token, so "token rows" means rows of those buffers. DFlash2 is the draft model this repo
+-ships; at draft depth `d` it proposes `d` tokens per step and the verify batch is `d + 1`
+-tokens per sequence (multi-query). A "breach" is an accepted batch that exceeded the scratch
+-capacity.
+-
+-## Conditions
+-
+-Qwen3.8-27B-W4A16-AutoRound with its DFlash2 drafter (`Qwen3.8-27B-DFlash2-W4A16`), int4
+-per-token-head KV cache (`single-user/alternative.sh`), draft depth 7, `max_num_seqs=1`,
+-`max_num_batched_tokens=2048`, CUDA graphs on, `--prefix-match-unit 848` (not required on current
+-main, where the engine derives the same unit; passed for parity with earlier runs), temperature 0,
+-thinking off, context limit 262,144. RTX 3090, native Ubuntu 26.04, Python 3.14, vLLM 0.27.1,
+-torch 2.13.0+cu130, CUDA 13.0, driver 610.43.02. Nothing else ran on the box during the
+-throughput runs (each boot waited for load average below 1.3). The independent numerical
+-check ran on an RTX 4090 under WSL2.
+-
+-## The defect, in numbers
+-
+-`seq_threshold_3D` is `128 // num_heads_kv`; this model has 4 KV heads, so 32. With CUDA
+-graphs on, that 32 is replaced by the entry of the graph capture list closest to it by
+-absolute difference, which at `max_num_seqs=1` is `[1, 2, 4, 8]`: the buffers get 8 rows. The
+-dispatch log for one 6,747-token request, with the multi-query kernel enabled and debug
+-output on:
+-
+-| batch size (query tokens) | CUDA graphs on | fully eager | cause |
+-|---|---|---|---|
+-| 1, 2, 4, 8 | 3D kernel | 3D kernel | |
+-| 9 | **2D kernel** | 3D kernel | 9 tokens, 8 rows |
+-| 24 and larger | 2D kernel | 2D kernel | over the 16-token per-sequence limit (intended) |
+-
+-Only 9-token batches occurred in our runs; 10 to 16 were not observed live. The same request,
+-same config; only the graph mode differs. Holding the mode fixed and moving only the row
+-count flips the 9-token batch in both directions (eager with 8 rows falls back; graph mode
+-with 16 rows serves it), so the row count is the deciding predicate, and the graph mode is
+-what shrinks the row count at this configuration. At larger `max_num_seqs` the sequence-unit
+-sizing is short even without CUDA graphs, since `max_num_seqs x 16` tokens exceeds
+-`seq_threshold_3D` rows.
+-
+-## Cost
+-
+-One token row is `heads x 16 segments x 256 (padded head dim) x fp32` plus two small
+-max/expsum buffers: 396,288 bytes for the target model (24 query heads) and 528,384 bytes for
+-the drafter (32 query heads). There are 4 live allocations: one attention backend instance
+-per attention shape, two shapes, two instances each. Not one per layer (the model has 64
+-layers, 16 of them full attention).
+-
+-| `max_num_seqs` | token rows | total across 4 allocations | source |
+-|---|---|---|---|
+-| 1 (this repo's default) | 16 | 28.22 MiB (14.11 MiB more than the 8-row allocation) | boot log |
+-| 8 | 128 | 225.76 MiB | boot log |
+-| 32 (the `seq_threshold_3D` ceiling) | 512 | about 903 MiB | arithmetic from the per-row cost |
+-
+-The boot log prints the derived capacity with its inputs, so the cost is auditable per
+-deployment; there is no silent cap.
+-
+-## Throughput: a null result, and why it is expected
+-
+-Metric: decode-only tokens per second, `usage.completion_tokens` divided by the time from the
+-first content token to the last (one SSE chunk is one speculative step, not one token, so
+-chunk counts are not used). 384 tokens generated after a NASA history prompt. Boots alternate
+-patched and unpatched so drift cannot align with the arm. The timed runs below have the
+-dispatch instrumentation off; which kernel served the 9-token batches was proven in separate
+-boots with it on (the table above), because the patch adds a debug line and an instrument
+-that runs during the measurement is part of the measurement. Arm identity in the timed runs
+-comes from the patch's boot-record line, which prints only on the patched arm. Nothing else
+-ran on the box; each boot waited for load average below 1.3.
+-
+-| prompt | boots per arm | patched | unpatched | difference |
+-|---|---|---|---|---|
+-| 6,747 tokens, instrumentation off | 2 | 110.88 tok/s | 110.67 tok/s | +0.18% |
+-| 6,747 tokens, instrumentation on | 3 | 110.77 tok/s | 110.63 tok/s | +0.13% |
+-| 68,013 tokens, instrumentation on | 2 | 44.6 tok/s | 44.6 tok/s | within 0.2% (the reporting resolution) |
+-
+-Spreads within an arm: 0.36% and 0.09% (off), 0.54% (on, three boots); the 68k arm has too few
+-boots for a spread estimate of its own. The reason for the null is arithmetic. At draft depth
+-7 the ordinary verify batch is 8 tokens, 8 is a capture size that already ran the 3D kernel,
+-and the band this fixes occurred in 1 of 152 decode steps in the 68k run (a 9-token batch,
+-hitting all 16 int4 attention layers of that step). Those batches occur because the drafter's
+-n-gram chain extension, which lengthens a draft when recent tokens match an earlier n-gram,
+-occasionally proposes more than the base 7 tokens. So #46's gain on 8-token batches is
+-unaffected, and only the 9 to 16 band was falling back.
+-
+-**RTX 4090, and a method finding.** The first attempt on that card produced decode rates
+-between 48 and 144 tok/s across boots with no code change. The cause was one artifact in
+-the shared torch.compile cache: an ahead-of-time compile artifact written by an earlier boot
+-from stock code, in an unusually short compile, ran at full speed in the process that produced
+-it and about 2.6x slower in every process that later loaded it, on both cards, with identical
+-output. The cache does not distinguish boots, so every later boot, stock or patched, inherited
+-it (same card, empty cache: 148 tok/s; shared cache thirteen minutes earlier: 80). Dropping
+-that one artifact restored the original rates to the decimal. The affected artifact is the one a
+-boot writes when it loads one compiled module from the cache and recompiles another; a boot
+-that compiles everything, or loads everything, does not produce or hit it. The patched boot's
+-own artifact was harmless. To reproduce the numbers here, use an empty compile cache per boot
+-or `VLLM_DISABLE_COMPILE_CACHE=1`. Redone with a fresh, empty cache for every
+-boot, the card quiet and the other card idle, stock/patched/stock/patched: fresh compiles of
+-the same code give different generated text and different draft acceptance at temperature 0
+-(steps to generate 512 tokens at 6,747 tokens of prompt: 133 and 153 for the two stock boots,
+-143 and 152 for the two patched), so two stock boots differ in tok/s as much as stock differs
+-from patched, and tok/s is not an arm metric on that card. Milliseconds per decode step is,
+-with a spread of at most 0.9% over all four boots.
+-
+-| prompt, RTX 4090, fresh cache per boot, 512 tokens generated | boots per arm | stock | difference per step, patched vs stock, each pair |
+-|---|---|---|---|
+-| 6,747 tokens | 2 | 26.0 ms per step | 0.08% and 0.07% |
+-| 68,013 tokens | 2 | 38.1 ms per step | 0.44% and 0.20% |
+-
+-So there is no throughput effect at draft depth 7 on either card. The 3090 result above is in
+-tokens per second because every one of its boots shared one compile lineage (the cache was
+-not cleared between arms), which is fine for the difference between arms and means the
+-absolute tok/s figures belong to that lineage rather than to the hardware.
+-
+-A deeper draft would put that band in the common case, and it is not reachable with this
+-drafter on this card. The checkpoint is trained at depth 7; at depth 11 its own log reads
+-"drafting 7 tokens per step (the block the checkpoint was trained for); the remaining 4 of 11
+-verify positions are filled from context", so the extra positions are padding, not draft. The
+-engine also failed to boot at depth 11 in all eight attempts: at 262,144 context, out of
+-device memory during graph capture; at 98,304 context, patched and unpatched, with no
+-prefix-match unit and with `--prefix-match-unit 888` (the depth-11 block size is 1,776, which
+-848 does not divide), on the KV-cache coordinator's block-divisibility assert
+-(`kv_cache_coordinator.py`, `scheduler_block_size % hash_block_size == 0`) or out of device
+-memory. That regime, and multi-sequence serving, are untested for throughput here.
+-
+-## Verification
+-
+-**Property test**, `bench/mq3d_capacity_property.py` (run with `python`): every accepted batch
+-must fit the derived allocation. It takes the full grid of `max_num_seqs` in {1, 2, 4, 7, 8,
+-9, 16, 31, 32, 33, 64, 256}, `seq_threshold_3D` in {1, 2, 4, 8, 16, 32, 64, 128},
+-`max_num_batched_tokens` in {8, 16, 64, 128, 2048, 8192, 131072} and per-sequence query
+-length in {1, 2, 8, 16, 17, 32}, and for each configuration the corner vectors plus ragged
+-random query-length vectors from a fixed seed (20260901): 238,276 accepted batches over 4,032
+-configurations, 0 violations. `--mutate seq-rows` (sequence-unit sizing, the eager-mode
+-pre-fix allocation) fails 129,498 of them; `--mutate snapped-rows` (sequence-unit sizing after
+-the capture-list substitution, what #46 ran under CUDA graphs) fails 140,008.
+-
+-**Independent numerical check**, `bench/mq3d_layer2_oracle.py`, with its verdict records in
+-`bench/mq3d_layer2_verdicts.jsonl`. Written on the 4090 box without reference to this patch's
+-code, it imports the production allocation and dispatch (the real
+-`TritonAttentionMetadataBuilder` and `_launch_packed_attn`, entered through
+-`unified_attention()` as the backend enters it), runs every case through the multi-query
+-kernel disabled (`VLLM_INT4_MQ_3D=0`, the 2D leg) and enabled (the 3D leg) with NaN-prefilled
+-scratch, and compares both legs against a separate fp32 attention over its own
+-dequantisation of the cached bytes. `_launch_packed_attn` is call-counted per case, so a
+-green that never reached the production path cannot occur. Declared configuration:
+-`max_num_seqs=2`, `max_num_batched_tokens=8192`, eager (no CUDA graphs; the capture-list
+-substitution is a separate change), which gives capacity 32 so that the 17-token
+-`[16, 1]` case is admissible. Real geometry from the served model (24 query heads, 4 KV
+-heads, head dim 256). Run with `python bench/mq3d_layer2_oracle.py` on a machine with the
+-patched stack and a CUDA device; it locates the installed vLLM and the patch file from the
+-checkout (`VLLM_ROOT`, `ORACLE_PATCH` and `ORACLE_OUT` override), rewrites the verdict file
+-beside itself, and exits non-zero if any case fails. The original wrote to container paths;
+-those three lines are the only change from the 4090 author's version besides four wording
+-edits that removed machine names.
+-
+-| case | query lengths | 3D-leg reason | 2D vs 3D, max abs diff | vs reference, max abs (2D / 3D) |
+-|---|---|---|---|---|
+-| row0-decode-[1] | `[1]` | `NONE(3d eligible)` | 0.0000 | 0.0312 / 0.0312 |
+-| row1-boundary-[16] | `[16]` | `NONE(3d eligible)` | 0.0078 | 0.0308 / 0.0309 |
+-| row2-policy-[17] | `[17]` | `max_query_len_policy>16` | 0.0000 | 0.0372 / 0.0372 |
+-| row3-even-[8,8] | `[8, 8]` | `NONE(3d eligible)` | 0.0088 | 0.0306 / 0.0340 |
+-| row4-units-[16,1] | `[16, 1]` | `NONE(3d eligible)` | 0.0078 | 0.0314 / 0.0314 |
+-| row5-ragged-[1,8,3] | `[1, 8, 3]` | `NONE(3d eligible)` | 0.0078 | 0.0336 / 0.0293 |
+-| row6-zerorow-[4,0,3] | `[4, 0, 3]` | `NONE(3d eligible)` | 0.0078 | 0.0344 / 0.0322 |
+-| row7-hist-[9] | `[9]` | `NONE(3d eligible)` | 0.0059 | 0.0286 / 0.0285 |
+-| row9-wild-[848] | `[848]` | `max_query_len_policy>16` | 0.0000 | 0.0320 / 0.0320 |
+-| row8-breach-[16,16,16] | `[16, 16, 16]` | `q_token_capacity_failed` |  |  /  |
+-
+-All 10 cases: both legs finite, the 3D leg writes the scratch and the 2D leg leaves it
+-untouched, the two legs agree to within 0.0088 (fp16 reduction order), and both are within
+-0.0372 of the reference on outputs of magnitude 17 to 26 (relative 1.9e-3). The 2D leg's
+-`mq_but_flag_off` reason is the forced-off flag, as intended; the case under test is the 3D
+-leg. The 17-token single sequence is rejected by the per-sequence limit and never reaches the
+-capacity question; the `[16, 1]` batch, the same 17 tokens, is accepted. The padded
+-zero-length case `[4, 0, 3]` leaks nothing. The breach cases assert `mq3d_breach_state()`
+-(count incremented, sticky flag, first specimen kept across a second breach). Reverting the
+-production file to sequence-unit sizing makes every multi-query case breach and leaves
+-exactly the one-token and 17-token cases green, which is the original defect's signature;
+-restoring the file returns 10 of 10.
+-
+-**Rerun on the 3090** from this branch, unchanged apart from the path fixes below, after the
+-patch's header text was rewritten: 10 of 10 cases, 20 of 20 launch calls counted, and every
+-case's reason bit and 2D-vs-3D difference identical to the 4090 run. Its verdict file is
+-`bench/mq3d_layer2_verdicts-3090.jsonl`, and it records the shipped patch's sha. So the
+-independent check holds on both architectures, and the run instruction above is the one that
+-produced it.
+-
+-Provenance recorded in the 4090 verdict file: the three surface files by sha256
+-(`triton_attn.py` aa3fa23692a2…, `int4_per_token_head.py`
+-cf2bf54178d2…, `triton_unified_attention.py`
+-24ec41175a58…) and the patch file at c2b5a002e743…, which is
+-this patch's content before its header text was rewritten; the diff hunks are identical to
+-the shipped file. Scope: the reference reads the cached bytes the production write path
+-produced, so it bounds the attention and dispatch, not the cache write.
+-
+-**Live at `max_num_seqs=8`** (function check only; pre-fix not run at this setting, no
+-throughput measured): capacity 128 rows, and a batch of 64 tokens across 8 sequences is
+-served by the 3D kernel.
+-
+-**Mutations**, on the 6,747-token request above. Allocation re-expressed in sequence units:
+-the construction assert fires and the engine refuses to boot. Declared capacity shrunk to 8:
+-the 9-token batch breaches, the counter reads 1 after the first and 16 at the end of the run,
+-one diagnostic line is written, and the first specimen is unchanged by later breaches.
+-
+-**Patch application.** The full patch set, this one included, applies without failure or
+-fuzz to the stock vLLM 0.27.1 wheel in the Dockerfile's order. That is an apply check, not a
+-build; the same set booted and served on the 3090 for every measurement above.
+-
+-## Known nit
+-
+-The boot log states the capacity formula as a sentence. The inputs and the result are printed
+-and can be recomputed, which is how the second mutation was caught, but the sentence could go
+-stale relative to the code. Left as a follow-up rather than folded in because the independent
+-check verified these exact bytes.
+diff --git a/patches/_check_applied.py b/patches/_check_applied.py
+index 4a36521..255ee25 100644
+--- a/patches/_check_applied.py
++++ b/patches/_check_applied.py
+@@ -4,52 +4,30 @@ verify.sh checks patches with a reverse dry-run, which is exact but cannot see a
+ hunks were disturbed by a second patch touching the same file (the DFlash2 pair does that).
+ This is the fallback: take the substantial lines a patch adds and look for them in the tree.
+ 
+-Per file, not tree-wide. The tree-wide version passed a patch whose hunks had been rejected
+-outright, because the lines it adds to one file also occur in a sibling file the patch does
+-not touch (PR #43: a patch that failed every hunk still cleared an 80% tree-wide threshold).
+-A patch's added lines must be in the files that patch claims to change.
+-
+   python patches/_check_applied.py <patch> <site-packages/vllm>   # exit 0 = present
+ """
+ import os
+ import sys
+ 
+ patch, root = sys.argv[1], sys.argv[2]
+-
+-# {path relative to the vllm package: [substantial added lines]}
+-per_file: "dict[str, list[str]]" = {}
+-current = None
++added = []
+ for line in open(patch, errors="replace").read().splitlines():
+-    if line.startswith("+++ "):
+-        p = line[4:].split("\t")[0].strip()
+-        if p == "/dev/null":
+-            current = None
+-            continue
+-        # patches here are -p1 against the vllm package: strip a leading a/ or b/
+-        parts = p.split("/")
+-        if parts and parts[0] in ("a", "b"):
+-            parts = parts[1:]
+-        current = "/".join(parts)
+-        per_file.setdefault(current, [])
+-        continue
+-    if current and line.startswith("+") and not line.startswith("+++"):
++    if line.startswith("+") and not line.startswith("+++"):
+         text = line[1:].strip()
+         if len(text) > 24 and not text.startswith(("#", '"', "'")):
+-            per_file[current].append(text)
+-
+-per_file = {f: lines[:400] for f, lines in per_file.items() if lines}
+-if not per_file:
++            added.append(text)
++if not added:
+     sys.exit(1)
++added = added[:400]
+ 
+-for rel, added in per_file.items():
+-    path = os.path.join(root, rel)
+-    try:
+-        blob = open(path, errors="replace").read()
+-    except OSError:
+-        sys.exit(1)
+-    hits = sum(1 for a in added if a in blob)
+-    # ceil(0.8 * n), so a file contributing one or two substantial lines still has to
+-    # have them -- the old max(3, ...) floor would have failed such a file outright.
+-    if hits < -(-8 * len(added) // 10):
+-        sys.exit(1)
+-sys.exit(0)
++blob = []
++for dirpath, _dirs, files in os.walk(root):
++    for f in files:
++        if f.endswith(".py"):
++            try:
++                blob.append(open(os.path.join(dirpath, f), errors="replace").read())
++            except OSError:
++                pass
++blob = "\n".join(blob)
++hits = sum(1 for a in added if a in blob)
++sys.exit(0 if hits >= max(3, int(0.8 * len(added))) else 1)
+diff --git a/patches/spec-decode-scratch-token-units.patch b/patches/spec-decode-scratch-token-units.patch
+deleted file mode 100644
+index 594d197..0000000
+--- a/patches/spec-decode-scratch-token-units.patch
++++ /dev/null
+@@ -1,420 +0,0 @@
+-int4 3D scratch: split the sequence policy from the token allocation
+-
+-WHAT THIS FIXES, AND WHOSE DEFECT IT IS
+-
+-This corrects a defect in the multi-query 3D extension WE contributed in #46
+-(spec-decode-int4-kv-mq3d.patch, syv-fork fermion 2026-08-27). It is not a
+-bug in upstream vLLM. Upstream sizes the three softmax_segm_* scratch buffers
+-by seq_threshold_3D -- a SEQUENCE count -- and snaps that threshold to the
+-nearest decode capture size when CUDA graphs are on. In upstream that is
+-correct, because upstream's own dispatch rule sends every multi-query batch
+-to 2D (`or max_seqlen_q > 1`): on the 3D path, tokens == sequences by
+-construction, so a buffer sized in sequences holds every token it will see.
+-
+-Our #46 extension opened the 3D path to multi-query verify batches
+-(max_seqlen_q <= 16) for DFlash2, and knew the buffers were token-indexed --
+-its own comment says the q=1 equivalence "is what the old num_seqs check
+-silently relied on for scratch-buffer capacity". It added a runtime capacity
+-CHECK (_capacity_ok) rather than resizing the ALLOCATION. The check made the
+-path memory-safe. It also made the failure silent: the extension promised 3D
+-for batches up to 16 tokens while the buffers held seq_threshold_3D rows,
+-which the capture snap had reduced 32 -> 8 on this config. Every eligible
+-batch of 9..16 tokens quietly took the 2D path, in capture-enabled mode --
+-the only mode that ships. Nothing logged it.
+-
+-Found by the gate campaign built to vet this kernel before asking for
+-default-on. Measured on an RTX 3090 (sm86), Qwen3.8-27B W4A16, DFlash2:
+-  capture-enabled  q=9 -> 2D, q_token_capacity_failed
+-  fully eager      q=9 -> 3D
+-Same config, same request. Forcings both ways (hold engine mode fixed, move
+-only the scratch rows) flip q=9 in each direction: capacity is the deciding
+-predicate; mode is what shrinks the capacity in stock.
+-
+-WHAT THIS DOES NOT DO
+-
+-It does not make anything measurably faster at the default draft depth of 7.
+-Ten interleaved boots at 6.7k and 68k context, every number carrying its own
+-dispatch census: +0.13% and 0.0%, inside a 0.54% same-config spread. At depth
+-7 the ordinary verify batch is 8 tokens, 8 is a capture size that already ran
+-3D, and the 9..16 band this fixes is 0.66% of attention calls. The extension's
+-headline win was never broken; its edge was. Deeper speculation would put the
+-band in the common case, but the drafter checkpoint is trained for 7 and
+-depth 11 does not fit this card, so that arm is untested here. This patch
+-stands on correctness: the policy and the allocation now agree, and any
+-future disagreement is visible instead of silent.
+-
+-It also does not touch the capture-size snap itself. Which topology an
+-already-captured graph replays is a separate change with its own gate.
+-
+-THE CHANGE
+-
+-  seq_threshold_3D           SEQUENCES, policy -- unchanged
+-  MAX_QUERY_LEN_3D           QUERY TOKENS PER SEQUENCE; one source for both
+-                             eligibility and allocation
+-  scratch_token_capacity_3d  TOTAL QUERY TOKENS, allocation:
+-    min(max_num_batched_tokens,
+-        min(max_num_seqs, seq_threshold_3D) * MAX_QUERY_LEN_3D)
+-
+-derived from the engine's config objects at construction, printed with its
+-inputs and byte cost in the boot record. Construction asserts all three
+-buffers carry the declared capacity, so an oversized buffer cannot mask an
+-undersized sibling. A capacity failure on policy-eligible work marks the
+-backend DEGRADED, increments an observable counter (mq3d_breach_state()),
+-and emits ONE rate-limited diagnostic with the first specimen; 2D remains
+-the safe fallback.
+-
+-Cost here: 16 rows, 28.22 MiB across 4 live allocations (+14.11 MiB over
+-stock). Allocation is per attention-backend instance, not per layer (64
+-layers, 4 allocations). The formula scales with max_num_seqs -- 903 MiB at
+-32 -- and that is stated rather than silently capped, because a silent cap
+-would recreate exactly the accidental fallback this removes.
+-
+-The reason-bit debug line replaces the earlier debug line rather than adding to it, so
+-VLLM_INT4_MQ_3D_DEBUG=1 prints once per attention call as before.
+-
+-VERIFICATION
+-
+-  property test    238,276 policy-eligible batches over 4,032 config tuples,
+-                   0 violations; the pre-fix formula fails it 129,498 times
+-  operator oracle  9/9 rows incl. [17] vs [16,1] (both total 17: the first
+-                   rejects on POLICY, the second is ADMITTED), padded
+-                   zero-length row, over-capacity breach; independent fp32
+-                   reference; mutating back to sequence units breaches every
+-                   multi-query row and leaves exactly q=1 and [17] green --
+-                   the defect's own signature. Built and run by a second seat
+-                   that did not write this patch.
+-  live             max_num_seqs=8: tokens=64 across 8 sequences dispatches 3D
+-  mutation         rows back to sequence units refuses boot at the assert;
+-                   declared capacity shrunk to 8 -> q=9 red, count exact
+-                   (first=1, final=16), one diagnostic
+-  CI order         applies clean on the stock 0.27.1 wheel with all 27
+-                   patches in Dockerfile glob order (0 failed, 0 fuzzy)
+-
+----
+-
+---- a/v1/attention/backends/triton_attn.py
+-+++ b/v1/attention/backends/triton_attn.py
+-@@ -59,6 +59,10 @@
+- # constants
+- MIN_LAUNCH_GRID_SIZE_2D = 128  # Minimum launch grid size of 2D kernel
+- NUM_PAR_SOFTMAX_SEGMENTS = 16  # Number of parallel tiled softmax segments
+-+# Max query tokens PER SEQUENCE eligible for the 3D path. ONE source: it bounds both
+-+# eligibility (max_seqlen_q) and allocation (scratch_token_capacity_3d), so the two can
+-+# never drift apart the way a literal in the dispatch site did.
+-+MAX_QUERY_LEN_3D = 16
+- 
+- 
+- @dataclass
+-@@ -79,7 +83,9 @@
+-     block_table: torch.Tensor
+-     slot_mapping: torch.Tensor
+- 
+--    seq_threshold_3D: int
+-+    seq_threshold_3D: int          # SEQUENCES  (policy)
+-+    max_query_len_3d: int          # QUERY TOKENS PER SEQUENCE  (eligibility)
+-+    scratch_token_capacity_3d: int  # TOTAL QUERY TOKENS  (allocation)
+-     num_par_softmax_segments: int
+-     softmax_segm_output: torch.Tensor
+-     softmax_segm_max: torch.Tensor
+-@@ -158,9 +164,53 @@
+- 
+-         self.num_par_softmax_segments = NUM_PAR_SOFTMAX_SEGMENTS
+-         headdim_padded = next_power_of_2(self.headdim)
+-+
+-+        # ---- UNIT SPLIT ------------------------------------------------------------
+-+        # These three quantities were one variable, in three different units. The
+-+        # scratch buffers are indexed by QUERY TOKEN, but were sized by
+-+        # seq_threshold_3D, a SEQUENCE policy -- and in capture-enabled mode that
+-+        # policy is snapped to the nearest decode capture size, which on this config
+-+        # shrinks it 32 -> 8. The result was a silent 2D fallback for every
+-+        # multi-query batch of 9..16 tokens, in capture-enabled mode only, i.e. the
+-+        # only mode that ships. Measured: q=9 falls back with q_token_capacity_failed
+-+        # in capture-enabled and runs 3D fully eager, same config, same request.
+-+        #
+-+        #   self.seq_threshold_3D        -- SEQUENCES.  Policy. Unchanged here (the
+-+        #                                   capture-snap question is a separate change).
+-+        #   self.max_query_len_3d        -- QUERY TOKENS PER SEQUENCE. Eligibility.
+-+        #   self.scratch_token_capacity_3d -- TOTAL QUERY TOKENS. Allocation.
+-+        #
+-+        # The bound is derived from the engine's own config objects, not from an
+-+        # observed run, the environment, or a launcher default. Eligibility already
+-+        # requires num_seqs <= seq_threshold_3D, and no batch can carry more query
+-+        # tokens than the scheduler will place in one, so this is the smallest
+-+        # capacity that can hold every policy-eligible batch.
+-+        self.max_query_len_3d = MAX_QUERY_LEN_3D
+-+        _sched = self.vllm_config.scheduler_config
+-+        self.scratch_token_capacity_3d = min(
+-+            _sched.max_num_batched_tokens,
+-+            min(_sched.max_num_seqs, self.seq_threshold_3D) * self.max_query_len_3d,
+-+        )
+-+
+-+        _rows = self.scratch_token_capacity_3d
+-+        _row_bytes = 4 * (
+-+            self.num_heads_q * self.num_par_softmax_segments * headdim_padded
+-+            + 2 * self.num_heads_q * self.num_par_softmax_segments
+-+        )
+-+        # Bind the inputs and the resulting cost into the boot record: a capacity that
+-+        # cannot be read back at boot is a capacity nobody can audit later.
+-+        logger.info(
+-+            "int4 3D scratch: capacity=%d query tokens (min of max_num_batched_tokens=%d, "
+-+            "min(max_num_seqs=%d, seq_threshold_3D=%d) * max_query_len_3d=%d); "
+-+            "%d B/row, %.2f MiB for this instance",
+-+            _rows, _sched.max_num_batched_tokens, _sched.max_num_seqs,
+-+            self.seq_threshold_3D, self.max_query_len_3d,
+-+            _row_bytes, _row_bytes * _rows / 2**20,
+-+        )
+-+
+-         self.softmax_segm_output = torch.empty(
+-             (
+--                self.seq_threshold_3D,
+-+                _rows,
+-                 self.num_heads_q,
+-                 self.num_par_softmax_segments,
+-                 headdim_padded,
+-@@ -169,15 +219,24 @@
+-             device=device,
+-         )
+-         self.softmax_segm_max = torch.empty(
+--            (self.seq_threshold_3D, self.num_heads_q, self.num_par_softmax_segments),
+-+            (_rows, self.num_heads_q, self.num_par_softmax_segments),
+-             dtype=torch.float32,
+-             device=device,
+-         )
+-         self.softmax_segm_expsum = torch.empty(
+--            (self.seq_threshold_3D, self.num_heads_q, self.num_par_softmax_segments),
+-+            (_rows, self.num_heads_q, self.num_par_softmax_segments),
+-             dtype=torch.float32,
+-             device=device,
+-         )
+-+        # All three buffers must agree with the DECLARED capacity. One oversized
+-+        # buffer can otherwise mask another undersized one until a different reducer
+-+        # path is taken.
+-+        assert (
+-+            self.softmax_segm_output.shape[0]
+-+            == self.softmax_segm_max.shape[0]
+-+            == self.softmax_segm_expsum.shape[0]
+-+            == self.scratch_token_capacity_3d
+-+        ), "int4 3D scratch buffers disagree with the declared token capacity"
+-         self.rswa_window = model_config.rswa_window
+-         self.persistent_rswa_prefix_lens: torch.Tensor | None = None
+-         if self.rswa_window is not None:
+-@@ -246,6 +305,8 @@
+-             suffix_kv_lens=suffix_kv_lens,
+-             prefix_scheduler_metadata=prefix_scheduler_metadata,
+-             seq_threshold_3D=self.seq_threshold_3D,
+-+            max_query_len_3d=self.max_query_len_3d,
+-+            scratch_token_capacity_3d=self.scratch_token_capacity_3d,
+-             num_par_softmax_segments=self.num_par_softmax_segments,
+-             softmax_segm_output=self.softmax_segm_output,
+-             softmax_segm_max=self.softmax_segm_max,
+-@@ -686,6 +747,8 @@
+-         block_table = attn_metadata.block_table
+- 
+-         seq_threshold_3D = attn_metadata.seq_threshold_3D
+-+        max_query_len_3d = attn_metadata.max_query_len_3d
+-+        scratch_token_capacity_3d = attn_metadata.scratch_token_capacity_3d
+-         num_par_softmax_segments = attn_metadata.num_par_softmax_segments
+-         softmax_segm_output = attn_metadata.softmax_segm_output
+-         softmax_segm_max = attn_metadata.softmax_segm_max
+-@@ -751,6 +814,8 @@
+-             k_descale=k_descale,
+-             v_descale=v_descale,
+-             seq_threshold_3D=seq_threshold_3D,
+-+            max_query_len_3d=max_query_len_3d,
+-+            scratch_token_capacity_3d=scratch_token_capacity_3d,
+-             num_par_softmax_segments=num_par_softmax_segments,
+-             softmax_segm_output=softmax_segm_output,
+-             softmax_segm_max=softmax_segm_max,
+---- a/v1/attention/ops/int4_per_token_head.py
+-+++ b/v1/attention/ops/int4_per_token_head.py
+-@@ -13,6 +13,29 @@
+- from __future__ import annotations
+- 
+- import os
+-+
+-+from vllm.logger import init_logger
+-+
+-+logger = init_logger(__name__)
+-+
+-+# Observable breach state for the int4 3D scratch capacity invariant.
+-+# Sixteen identical error lines per request are not loud, they are floodable -- and a
+-+# flood is how an operator learns to filter the message out. So: a durable counter, a
+-+# DEGRADED marker, and exactly ONE diagnostic carrying the first specimen. Tests assert
+-+# the counter and the state, not the logger call, because a repaired log line can still
+-+# fail silently at operator level.
+-+MQ3D_CAPACITY_BREACH = {
+-+    "count": 0,          # total policy-eligible batches that exceeded declared capacity
+-+    "degraded": False,   # sticky: the derived capacity is wrong for this configuration
+-+    "first": None,       # the first specimen, kept for diagnosis
+-+}
+-+
+-+
+-+def mq3d_breach_state():
+-+    """Read the int4 3D capacity-breach state. Non-zero count means the derived
+-+    scratch capacity is too small for work the policy declared eligible: correctness
+-+    is preserved by the 2D fallback, performance is not."""
+-+    return dict(MQ3D_CAPACITY_BREACH)
+- from typing import Any
+- 
+- import torch
+-@@ -694,6 +717,8 @@
+-     k_scale_cache,
+-     v_scale_cache,
+-     seq_threshold_3D,
+-+    max_query_len_3d,
+-+    scratch_token_capacity_3d,
+-     num_par_softmax_segments,
+-     softmax_segm_output,
+-     softmax_segm_max,
+-@@ -752,10 +777,33 @@
+-     # buffers directly. Opt-in via VLLM_INT4_MQ_3D=1 (promotion gates open).
+-     _mq = max_seqlen_q > 1
+-     _mq_3d_enabled = os.environ.get("VLLM_INT4_MQ_3D", "0") == "1"
+--    _capacity_ok = (
+-+
+-+    # The eligibility bound and the allocation bound now come from ONE source (see
+-+    # MAX_QUERY_LEN_3D / scratch_token_capacity_3d in triton_attn.py). The literal 16
+-+    # that used to sit here could not be changed without silently desynchronising the
+-+    # two. Falling back to the old literal keeps callers that predate the split working.
+-+    _qlen_cap = max_query_len_3d if max_query_len_3d is not None else 16
+-+    _qlen_ok = max_seqlen_q <= _qlen_cap
+-+    _scratch_present = (
+-         softmax_segm_output is not None
+-         and softmax_segm_max is not None
+-         and softmax_segm_expsum is not None
+-+    )
+-+    # Defense in depth: the declared capacity is authoritative, but still verify the
+-+    # buffers actually carry it. An oversized buffer must not be allowed to mask an
+-+    # undersized sibling until some other reducer path dereferences it.
+-+    _declared = scratch_token_capacity_3d
+-+    _buffers_agree = _scratch_present and (
+-+        _declared is None
+-+        or (
+-+            softmax_segm_output.shape[0] == _declared
+-+            and softmax_segm_max.shape[0] == _declared
+-+            and softmax_segm_expsum.shape[0] == _declared
+-+        )
+-+    )
+-+    _capacity_ok = (
+-+        _scratch_present
+-+        and _buffers_agree
+-         and q.shape[0] <= softmax_segm_output.shape[0]
+-         and q.shape[0] <= softmax_segm_max.shape[0]
+-         and q.shape[0] <= softmax_segm_expsum.shape[0]
+-@@ -763,21 +811,73 @@
+-     use_3d = not (
+-         seq_threshold_3D is None
+-         or num_par_softmax_segments is None
+--        or softmax_segm_output is None
+--        or softmax_segm_max is None
+--        or softmax_segm_expsum is None
+--        or (_mq and not (_mq_3d_enabled and max_seqlen_q <= 16 and _capacity_ok))
+-+        or not _scratch_present
+-+        or (_mq and not (_mq_3d_enabled and _qlen_ok and _capacity_ok))
+-         or num_seqs > seq_threshold_3D
+-         or is_batch_invariant
+-     )
+-+
+-+    # A capacity failure on work the POLICY declared eligible is an internal invariant
+-+    # breach, not a runtime condition: capacity is sized so this cannot happen. 2D is
+-+    # still the correct and safe fallback, so we do not raise -- but silence here is
+-+    # exactly how the seq-vs-token bug stayed invisible, so it is logged loudly and
+-+    # names the numbers that disagree. Query lengths above the policy cap are NOT this:
+-+    # they are rejected by policy first and never reach the capacity question.
+-+    if _mq and _mq_3d_enabled and _qlen_ok and not _capacity_ok:
+-+        _specimen = {
+-+            "max_seqlen_q": int(max_seqlen_q),
+-+            "qlen_cap": int(_qlen_cap),
+-+            "num_seqs": int(num_seqs),
+-+            "tokens": int(q.shape[0]),
+-+            "declared": _declared,
+-+            "rows": [
+-+                None if t is None else int(t.shape[0])
+-+                for t in (softmax_segm_output, softmax_segm_max, softmax_segm_expsum)
+-+            ],
+-+        }
+-+        MQ3D_CAPACITY_BREACH["count"] += 1
+-+        if not MQ3D_CAPACITY_BREACH["degraded"]:
+-+            MQ3D_CAPACITY_BREACH["degraded"] = True
+-+            MQ3D_CAPACITY_BREACH["first"] = _specimen
+-+            # ONE diagnostic, with the first specimen. Subsequent breaches only move
+-+            # the counter -- the state is the signal, not the log volume.
+-+            logger.error(
+-+                "int4 3D DEGRADED: derived scratch capacity is too small for "
+-+                "policy-eligible work. First specimen: %s. Falling back to 2D, which is "
+-+                "correct but slower. This is a configuration/derivation defect, not a "
+-+                "runtime condition; further breaches increment the counter silently.",
+-+                _specimen,
+-+            )
+-+    # The reason bit: which predicate said no. Kept because "it fell back" was the whole
+-+    # defect -- the seq-vs-token bug was invisible for as long as the fallback had no
+-+    # stated cause. Off unless explicitly enabled.
+-     if os.environ.get("VLLM_INT4_MQ_3D_DEBUG") == "1":
+-+        _why = []
+-+        if seq_threshold_3D is None: _why.append("no_seq_threshold")
+-+        if num_par_softmax_segments is None: _why.append("no_segments")
+-+        if not _scratch_present: _why.append("scratch_absent")
+-+        if _mq and not _mq_3d_enabled: _why.append("mq_but_flag_off")
+-+        if _mq and not _qlen_ok: _why.append(f"max_query_len_policy>{_qlen_cap}")
+-+        if _mq and _mq_3d_enabled and _qlen_ok and not _buffers_agree:
+-+            _why.append("buffers_disagree_with_declared_capacity")
+-+        if _mq and _mq_3d_enabled and _qlen_ok and _buffers_agree and not _capacity_ok:
+-+            _why.append("q_token_capacity_failed")
+-+        if seq_threshold_3D is not None and num_seqs > seq_threshold_3D:
+-+            _why.append("num_seqs_threshold_failed")
+-+        if is_batch_invariant: _why.append("batch_invariant_guard")
+-         print(
+-             f"[int4-mq3d] tokens={q.shape[0]} num_seqs={num_seqs} "
+-             f"max_seqlen_q={max_seqlen_q} use_3d={use_3d} "
+--            f"segments={num_par_softmax_segments if use_3d else 1}",
+-+            f"declared_capacity={scratch_token_capacity_3d} "
+-+            f"qlen_cap={_qlen_cap} seq_threshold_3D={seq_threshold_3D} "
+-+            f"rows={None if softmax_segm_output is None else softmax_segm_output.shape[0]} "
+-+            f"| breach_count={MQ3D_CAPACITY_BREACH['count']} "
+-+            f"degraded={MQ3D_CAPACITY_BREACH['degraded']} "
+-+            f"| reasons={','.join(_why) if _why else 'NONE(3d eligible)'}",
+-             flush=True,
+-         )
+- 
+-+
+-     # 3D never reads ``output_ptr`` and 2D never reads the segm tensors,
+-     # but Triton needs a non-null pointer everywhere; reuse ``out`` as
+-     # the placeholder for the unused side.
+-@@ -938,6 +1038,8 @@
+-     k_scale_cache: torch.Tensor,
+-     v_scale_cache: torch.Tensor,
+-     seq_threshold_3D: int | None = None,
+-+    max_query_len_3d: int | None = None,
+-+    scratch_token_capacity_3d: int | None = None,
+-     num_par_softmax_segments: int | None = None,
+-     softmax_segm_output: torch.Tensor | None = None,
+-     softmax_segm_max: torch.Tensor | None = None,
+-@@ -977,6 +1079,8 @@
+-         k_scale_cache=k_scale_cache,
+-         v_scale_cache=v_scale_cache,
+-         seq_threshold_3D=seq_threshold_3D,
+-+        max_query_len_3d=max_query_len_3d,
+-+        scratch_token_capacity_3d=scratch_token_capacity_3d,
+-         num_par_softmax_segments=num_par_softmax_segments,
+-         softmax_segm_output=softmax_segm_output,
+-         softmax_segm_max=softmax_segm_max,
+---- a/v1/attention/ops/triton_unified_attention.py
+-+++ b/v1/attention/ops/triton_unified_attention.py
+-@@ -838,6 +838,8 @@
+-     k_descale,
+-     v_descale,
+-     seq_threshold_3D=None,
+-+    max_query_len_3d=None,
+-+    scratch_token_capacity_3d=None,
+-     num_par_softmax_segments=None,
+-     softmax_segm_output=None,
+-     softmax_segm_max=None,
+-@@ -905,6 +907,8 @@
+-             k_scale_cache=k_scale_cache,
+-             v_scale_cache=v_scale_cache,
+-             seq_threshold_3D=seq_threshold_3D,
+-+            max_query_len_3d=max_query_len_3d,
+-+            scratch_token_capacity_3d=scratch_token_capacity_3d,
+-             num_par_softmax_segments=num_par_softmax_segments,
+-             softmax_segm_output=softmax_segm_output,
+-             softmax_segm_max=softmax_segm_max,
+diff --git a/patches/xgrammar-spec-terminated.patch b/patches/xgrammar-spec-terminated.patch
+deleted file mode 100644
+index 148cf41..0000000
+--- a/patches/xgrammar-spec-terminated.patch
++++ /dev/null
+@@ -1,80 +0,0 @@
+-Structured output + speculative decoding: tokens accepted past the grammar's
+-termination point must be ignored, not fatal (issue #31).
+-
+-A speculative verify window can legally accept tokens past the point where the
+-xgrammar matcher terminates: the matcher completes at the grammar's own end (a
+-tool call's closing tag, a JSON schema's final brace, or the stop token), and
+-the same step's remaining accepted tokens -- a newline after </tool_call>, the
+-stop token itself, anything after it under ignore_eos -- arrive at
+-accept_tokens() anyway. 0.27.1 treats both arrivals as failure:
+-
+-  - a post-termination token inside one call fails matcher.accept_token()
+-    ("Failed to advance FSM ... Please file an issue", plus xgrammar's
+-    grammar_matcher.cc:612 warning), and returns False;
+-  - any call after a terminating call hits the _is_terminated early-return,
+-    which also returns False.
+-
+-The scheduler turns that False into "Unexpected: grammar rejected tokens ...
+-Terminating request" -> FINISHED_ERROR, and the client gets an HTTP error for a
+-request whose output was completely valid. With DFLASH_TOKENS=15 the verify
+-window nearly always covers the tokens around the stop, so tool-calling under
+-SPEC=dflash2 hits this reliably (issue #31); reproduced here on the shipped
+-config with a json_schema + ignore_eos request:
+-
+-  ERROR [backend_xgrammar.py:162] Failed to advance FSM ... for tokens 198.
+-  ERROR [scheduler.py:1835] Unexpected: grammar rejected tokens
+-        [16, 22, 198, 92, 248046, 198] ... Terminating request.
+-
+-(16, 22 close the JSON, 92 is the brace that completes the grammar, 248046 is
+-the stop token that terminates the matcher, and the trailing 198 -- one newline
+--- kills the request.)
+-
+-Upstream vLLM has since changed accept_tokens to exactly the semantics below
+-("Tokens after termination are ignored"): break out of the loop the moment the
+-matcher terminates and report success, and report success (not failure) when
+-called on an already-terminated grammar. This is a straight backport. The rest
+-of the machinery is already consistent with it: _fill_bitmasks() masks nothing
+-for a terminated grammar, so a request that outlives its grammar decodes
+-unconstrained to its natural stop; the guidance backend already returns True
+-when its matcher is stopped; and validate_tokens() trims drafts against the
+-matcher without touching this path.
+-
+-Genuine mid-grammar rejections (a token the FSM cannot accept before
+-termination) still log and still return False, so real integration bugs stay
+-loud.
+-
+-Applies to the vLLM tree:
+-  patch -p1 -d venv/lib/python3.12/site-packages/vllm < patches/xgrammar-spec-terminated.patch
+-
+---- a/v1/structured_output/backend_xgrammar.py
+-+++ b/v1/structured_output/backend_xgrammar.py
+-@@ -152,11 +152,15 @@
+-     def accept_tokens(self, request_id: str, tokens: list[int]) -> bool:
+-         """Accepts a list of tokens and advances the FSM.
+- 
+--        Returns True if the FSM was advanced successfully.
+--        Returns False if the FSM failed to advance.
+-+        Returns True if all grammar-constrained tokens were accepted.
+-+        Tokens after termination are ignored. Returns False if the FSM
+-+        failed to advance.
+-         """
+-         if self._is_terminated:
+--            return False
+-+            # Spec decode can accept tokens past the grammar's end (the
+-+            # newline after a closing tag, the stop token, anything under
+-+            # ignore_eos). They are not grammar content; ignore them.
+-+            return True
+-         for token in tokens:
+-             if not self.matcher.accept_token(token):
+-                 logger.error(
+-@@ -167,7 +171,9 @@
+-                 )
+-                 return False
+-             self.num_processed_tokens += 1
+--        self._is_terminated = self.matcher.is_terminated()
+-+            self._is_terminated = self.matcher.is_terminated()
+-+            if self._is_terminated:
+-+                break
+-         return True
+- 
+-     def validate_tokens(self, tokens: list[int]) -> list[int]:
+diff --git a/patches/xgrammar-terminated-batch.patch b/patches/xgrammar-terminated-batch.patch
+new file mode 100644
+index 0000000..af666be
+--- /dev/null
++++ b/patches/xgrammar-terminated-batch.patch
+@@ -0,0 +1,77 @@
++vLLM 0.27.1: stop xgrammar token batches at grammar termination.
++
++MTP speculative decoding can return a token batch whose grammar stop token is
++followed by unused draft tokens. The matcher terminates on the stop token. The
++old accept_tokens loop then feeds the following token to the terminated matcher,
++which logs "Failed to advance FSM". validate_tokens has the same problem while
++simulating draft tokens. Refresh the wrapper state immediately, treat calls on
++an already-satisfied grammar as successful, and stop both loops at termination.
++At a mid-window reasoning boundary, prevalidate old draft tokens quietly before
++advancing the grammar because rejection is explicitly expected in that branch.
++
++This is the v0.27.1 form of the defect tracked in:
++  https://github.com/vllm-project/vllm/issues/42619
++  https://github.com/vllm-project/vllm/issues/49210
++
++Apply from the installed vllm package directory:
++  patch -p1 -d venv/lib/python3.12/site-packages/vllm < xgrammar-terminated-batch.patch
++
++--- a/v1/structured_output/backend_xgrammar.py
+++++ b/v1/structured_output/backend_xgrammar.py
++@@ -158,14 +158,23 @@ class XgrammarGrammar(StructuredOutputGrammar):
++         if self._is_terminated:
++-            return False
+++            return True
++         for token in tokens:
+++            # An accepted stop token ends this speculative token batch.
++             if not self.matcher.accept_token(token):
+++                self._is_terminated = self.matcher.is_terminated()
+++                if self._is_terminated:
+++                    # validate_tokens may have reached the stop token while
+++                    # simulating a draft window. xgrammar can retain that
+++                    # terminal state after rollback; the grammar is satisfied.
+++                    return True
++                 logger.error(
++                     "Failed to advance FSM for request %s "
++                     "for tokens %s. Please file an issue.",
++                     request_id,
++                     token,
++                 )
++                 return False
++             self.num_processed_tokens += 1
++-        self._is_terminated = self.matcher.is_terminated()
+++            self._is_terminated = self.matcher.is_terminated()
+++            if self._is_terminated:
+++                break
++         return True
++@@ -180,6 +189,9 @@ class XgrammarGrammar(StructuredOutputGrammar):
++         for token in tokens:
++             if self.matcher.accept_token(token):
++                 accepted_tokens.append(token)
+++                # Do not offer unused draft tokens after the grammar stop.
+++                if self.matcher.is_terminated():
+++                    break
++             else:
++                 break
++         if len(accepted_tokens) > 0:
++
++--- a/v1/structured_output/__init__.py
+++++ b/v1/structured_output/__init__.py
++@@ -321,8 +321,16 @@ class StructuredOutputManager:
++                             apply_bitmask = True
++                             advance_grammar = False
++                             post_reasoning_end_in_window = True
++                     if advance_grammar and not grammar.is_terminated():
++-                        accepted = grammar.accept_tokens(req_id, [token])
+++                        # Drafts after a mid-window reasoning marker predate
+++                        # the grammar bitmask and may be invalid. Validate
+++                        # quietly before advancing so expected rejection does
+++                        # not emit a server ERROR from accept_tokens.
+++                        accepted = not post_reasoning_end_in_window or bool(
+++                            grammar.validate_tokens([token])
+++                        )
+++                        if accepted:
+++                            accepted = grammar.accept_tokens(req_id, [token])
++                         if accepted:
++                             state_advancements += 1
++                         elif not post_reasoning_end_in_window:
+diff --git a/prepare/build_draft_vocab.py b/prepare/build_draft_vocab.py
+index 4908f57..2166557 100644
+--- a/prepare/build_draft_vocab.py
++++ b/prepare/build_draft_vocab.py
+@@ -18,9 +18,11 @@ Usage (from the repo root):
+   python prepare/build_draft_vocab.py /path/to/model --ids prepare/draft_vocab_ids.json  # shipped id list
+   python prepare/build_draft_vocab.py /path/to/model --n 40960 --corpus f1 f2 ...        # or count your own
+ Corpus files: .txt/.jsonl (uses "prompt"/"response"/"messages"/"text" fields)/.parquet(text)/.py
+-The shipped draft_vocab_ids.json was counted over Danish web text (fineweb-2),
+-English Wikipedia, Python source and the model's own chat outputs (8.8M tokens);
+-held-out coverage 95%.
++The shipped draft_vocab_ids.json is counted over the model's OWN outputs
++(gen_data.py); held-out coverage 97.5% (96% on code). An earlier list counted
++over Danish web text, Wikipedia and Python source (8.8M tokens, 95% held-out,
++92%/83% in production) was replaced in e964409 — every coverage miss is a
++forced rejection, and the own-outputs list measured 108 vs 98 tok/s greedy.
+ """
+ import glob, json, os, sys, shutil, collections
+ import torch
+diff --git a/single-user/alternative.sh b/single-user/alternative.sh
+index 9d01e89..76bc5a7 100755
+--- a/single-user/alternative.sh
++++ b/single-user/alternative.sh
+@@ -64,17 +64,11 @@ VISION_ARGS="--language-model-only"
+ PREFIX_ARGS=""
+ [ "$PREFIX_CACHE" = 1 ] && PREFIX_ARGS="--enable-prefix-caching --mamba-cache-mode align"
+ 
+-# Array, not $( ... || echo ... ): the fallback makes it errexit-safe, but an
+-# unquoted expansion still word-splits; match SPEC_ARGS/METRICS_ARGS.
+-ASYNC_ARGS=(--no-async-scheduling)
+-[ "$ASYNC_SCHED" = 1 ] && ASYNC_ARGS=(--async-scheduling)
++ASYNC_ARGS=$([ "$ASYNC_SCHED" = 1 ] && echo --async-scheduling || echo --no-async-scheduling)
+ 
+ # REQ_METRICS=1: per-request timing fields + usage on every response (issue #51).
+ # Not with --disable-log-stats (the timing fields need the engine-stats path).
+-# Array, not $( [ ] && echo ): the command substitution exits 1 when the test
+-# is false, which under `set -e` killed this script silently (#59).
+-METRICS_ARGS=()
+-[ "${REQ_METRICS:-0}" = 1 ] && METRICS_ARGS=(--enable-per-request-metrics --enable-force-include-usage)
++METRICS_ARGS=$([ "${REQ_METRICS:-0}" = 1 ] && echo --enable-per-request-metrics --enable-force-include-usage)
+ 
+ exec vllm serve "$MODEL" \
+   --served-model-name qwen3.8-27b \
+@@ -86,13 +80,13 @@ exec vllm serve "$MODEL" \
+   ${VISION_ARGS} \
+   ${ATTN_ARGS} \
+   --mamba-ssm-cache-dtype float16 \
+-  "${ASYNC_ARGS[@]}" \
++  ${ASYNC_ARGS} \
+   --max-num-batched-tokens 2048 \
+   "${SPEC_ARGS[@]}" \
+   --compilation-config "{\"max_cudagraph_capture_size\":$CG,\"custom_ops\":[\"+rms_norm\",\"+silu_and_mul\"]}" \
+   --reasoning-parser qwen3 \
+   --enable-prompt-tokens-details \
+-  "${METRICS_ARGS[@]}" \
++  ${METRICS_ARGS} \
+   --enable-auto-tool-choice --tool-call-parser qwen3_coder \
+   --default-chat-template-kwargs "{\"enable_thinking\": $ENABLE_THINKING}" \
+   ${PREFIX_ARGS} \
+diff --git a/single-user/start_qwen.sh b/single-user/start_qwen.sh
+index ac132cf..5b0d264 100755
+--- a/single-user/start_qwen.sh
++++ b/single-user/start_qwen.sh
+@@ -108,13 +108,7 @@ INT8_LAYERS=${INT8_LAYERS-mlp|linear_attn|self_attn}
+ # PREFILL_ATTN=int8: int8-QK Triton attention for the hd256 full-attention
+ # layers during prefill (patches/triton-prefill-attn-int8.patch): 1.27-1.35x FA2 on
+ # the attention itself, worth up to ~+5% end-to-end at 51k on top of INT8_ACT
+-# (1,839/1,498 tok/s at 16k/51k with both on). It is a companion to INT8_ACT, not
+-# a standalone switch: on its own it moves prefill +0.3/+1.1/+3.3% at 4k/16k/51k
+-# here (1,167/1,126/1,012 against 1,164/1,114/980 stock, two interleaved arms
+-# reproducing to 0.1%), because without the int8 GEMMs attention is a smaller
+-# share of prefill. A WSL2 3090 measured it 1-6% *negative* standalone (#62), so
+-# the honest range for PREFILL_ATTN alone is "within a few percent either way" --
+-# set INT8_ACT with it or leave it off. Prefill-only; decode and the
++# (1,839/1,498 tok/s at 16k/51k with both on). Prefill-only; decode and the
+ # split-KV verify keep their existing paths. fp16 selects the same kernel
+ # without quantization (a debugging mode); empty keeps FA2.
+ PREFILL_ATTN=${PREFILL_ATTN-}
+@@ -419,7 +413,13 @@ elif [ "$SPEC" = "off" ] || [ "$SPEC" = "none" ]; then
+   CG=${CG:-32}
+ elif [ "$SPEC" = "mtp" ]; then
+   MAX_SEQS=${MAX_SEQS:-8}
+-  SPEC_CFG="{\"method\":\"mtp\",\"num_speculative_tokens\":$DRAFT_TOKENS,\"draft_sample_method\":\"${DRAFT_SAMPLE:-probabilistic}\"}"
++  # Local: the MTP draft head can use a different attention backend and KV
++  # dtype from the target (DRAFT_ATTN_BACKEND / DRAFT_KV_DTYPE), so long mode
++  # can keep FlashInfer/FP8 for the target KV while routing only the drafter
++  # away from FlashInfer's repeated-plan path. Unset = upstream behaviour.
++  DRAFT_ATTN_JSON=${DRAFT_ATTN_BACKEND:+,\"attention_backend\":\"$DRAFT_ATTN_BACKEND\"}
++  DRAFT_KV_JSON=${DRAFT_KV_DTYPE:+,\"kv_cache_dtype\":\"$DRAFT_KV_DTYPE\"}
++  SPEC_CFG="{\"method\":\"mtp\",\"num_speculative_tokens\":$DRAFT_TOKENS,\"draft_sample_method\":\"${DRAFT_SAMPLE:-probabilistic}\"${DRAFT_ATTN_JSON}${DRAFT_KV_JSON}}"
+   CG=${CG:-32}
+ else
+   echo "SPEC=$SPEC is not a mode: mtp (default), dflash2, off. Refusing rather than" >&2
+@@ -524,10 +524,7 @@ fi
+ # synchronously, which is the only path on which vLLM lets the worker choose how many draft
+ # tokens to put up for verification. Note --async-scheduling is already the default in
+ # 0.27.1: --no-async-scheduling is what turns it off.
+-# Array, not $( ... || echo ... ): errexit-safe via the fallback, but the
+-# unquoted expansion word-splits; match METRICS_ARGS below.
+-ASYNC_ARGS=(--no-async-scheduling)
+-[ "${ASYNC_SCHED:-1}" = 1 ] && ASYNC_ARGS=(--async-scheduling)
++ASYNC_ARGS=$([ "${ASYNC_SCHED:-1}" = 1 ] && echo --async-scheduling || echo --no-async-scheduling)
+ 
+ # Tool / function calling. Without BOTH flags vLLM rejects any request carrying
+ # `tools` with tool_choice "auto": 400 '"auto" tool choice requires
+@@ -545,10 +542,7 @@ ASYNC_ARGS=(--no-async-scheduling)
+ # 0.27.1, which is the tool-side adapter of the same parser engine that
+ # --reasoning-parser qwen3 already uses (vllm/parser/qwen3.py).
+ TOOL_PARSER=${TOOL_PARSER:-qwen3_coder}
+-# Array, not $( [ ] && echo ): exits 1 when TOOLS is off (the shape #59 fixed)
+-# and word-splits $TOOL_PARSER; the array keeps the parser as one element.
+-TOOL_ARGS=()
+-[ "${TOOLS:-1}" = 1 ] && TOOL_ARGS=(--enable-auto-tool-choice --tool-call-parser "$TOOL_PARSER")
++TOOL_ARGS=$([ "${TOOLS:-1}" = 1 ] && echo --enable-auto-tool-choice --tool-call-parser $TOOL_PARSER)
+ 
+ # REQ_METRICS=1: per-request timing fields in every response plus usage on
+ # every request (--enable-per-request-metrics --enable-force-include-usage,
+@@ -556,10 +550,7 @@ TOOL_ARGS=()
+ # fields ride on the engine-stats path, so it cannot be paired with
+ # --disable-log-stats in EXTRA_ARGS. --enable-prompt-tokens-details is always
+ # on. vLLM's per-request *spec-decode* summary flag is nightly-only (not 0.27.1).
+-# Array, not $( [ ] && echo ): that substitution exits 1 when the test is
+-# false, which kills a launcher running under `set -e` silently (#59).
+-METRICS_ARGS=()
+-[ "${REQ_METRICS:-0}" = 1 ] && METRICS_ARGS=(--enable-per-request-metrics --enable-force-include-usage)
++METRICS_ARGS=$([ "${REQ_METRICS:-0}" = 1 ] && echo --enable-per-request-metrics --enable-force-include-usage)
+ 
+ # Vision. --language-model-only drops the vision tower cleanly -- no weights loaded,
+ # 0.858 GiB on this checkpoint (gotcha 9) -- and stays the default. VISION=1 keeps
+@@ -659,12 +650,12 @@ exec venv/bin/vllm serve "$MODEL" \
+   ${VISION_ARGS} \
+   $ATTN_ARGS \
+   --mamba-ssm-cache-dtype float16 \
+-  "${ASYNC_ARGS[@]}" \
++  ${ASYNC_ARGS} \
+   --max-num-batched-tokens 2048 \
+   "${SPEC_ARGS[@]}" \
+   --compilation-config "{\"max_cudagraph_capture_size\":$CG,\"custom_ops\":[\"+rms_norm\",\"+silu_and_mul\"]${CG_MODE}}" \
+   --reasoning-parser qwen3 \
+   --enable-prompt-tokens-details \
+-  "${METRICS_ARGS[@]}" \
+-  "${TOOL_ARGS[@]}" \
++  ${METRICS_ARGS} \
++  ${TOOL_ARGS} \
+   ${EXTRA_ARGS}

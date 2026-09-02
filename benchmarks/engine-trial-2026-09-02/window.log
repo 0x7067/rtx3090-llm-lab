@@ -1,0 +1,580 @@
+[15:02:59] PHASE takedown: suspend Flux, scale llama + canary to 0
+[15:03:04] PHASE validate: test-backend-ops in llama:trial-2026-09-02
+  Skipping
+3/3 backends passed
+[1;32mOK[0m
+  Skipping
+3/3 backends passed
+[1;32mOK[0m
+[15:05:00] ARM llama-mtp-ngram: starting llama-server --model-draft /models/mtp-Qwen3.8-27B-Q4_0-d48k.gguf --spec-type draft-mtp,ngram-mod --spec-draft-n-max 5 --spec-ngram-mod-n-match 32
+22374 MiB
+== [llama-mtp-ngram] warm-up request ==
+[decode] run 1/1 ttft=0.962s tok_s=108.36 tokens=512
+[decode] SUMMARY median_tok_s=108.36 median_ttft_s=0.962
+== [llama-mtp-ngram] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=0.979 tokens=81
+[quality] PASS portuguese_json    finish=stop wall=1.409 tokens=120
+[quality] PASS python_fix         finish=stop wall=1.565 tokens=134
+[quality] PASS required_tool      finish=tool_calls wall=1.047 tokens=52
+[quality] SUMMARY 4/4 passed
+== [llama-mtp-ngram] decode ==
+[decode] run 1/5 ttft=1.098s tok_s=334.84 tokens=512
+[decode] run 2/5 ttft=1.085s tok_s=208.63 tokens=512
+[decode] run 3/5 ttft=1.086s tok_s=409.56 tokens=512
+[decode] run 4/5 ttft=1.094s tok_s=383.03 tokens=512
+[decode] run 5/5 ttft=1.089s tok_s=412.34 tokens=512
+[decode] SUMMARY median_tok_s=383.03 median_ttft_s=1.089
+== [llama-mtp-ngram] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=102.17 ttft=0.45s
+[sustained] windows=12 first_window_tok_s=90.82 last_window_tok_s=111.26 decay=-22.5%
+[sustained]   window 1: 500 tokens @ 5.96s -> 90.82 tok/s
+[sustained]   window 2: 500 tokens @ 11.03s -> 98.69 tok/s
+[sustained]   window 3: 500 tokens @ 16.45s -> 92.22 tok/s
+[sustained]   window 4: 500 tokens @ 21.88s -> 92.09 tok/s
+[sustained]   window 5: 500 tokens @ 27.0s -> 97.79 tok/s
+[sustained]   window 6: 500 tokens @ 31.09s -> 122.21 tok/s
+[sustained]   window 7: 500 tokens @ 35.69s -> 108.79 tok/s
+[sustained]   window 8: 500 tokens @ 40.7s -> 99.69 tok/s
+[sustained]   window 9: 500 tokens @ 45.68s -> 100.46 tok/s
+[sustained]   window 10: 500 tokens @ 50.42s -> 105.67 tok/s
+[sustained]   window 11: 500 tokens @ 54.7s -> 116.77 tok/s
+[sustained]   window 12: 498 tokens @ 59.18s -> 111.26 tok/s
+== [llama-mtp-ngram] prefill (30000 tokens) ==
+[prefill] tokens=14767 (usage) ttft=12.563s prefill_tok_s=1175.4
+== [llama-mtp-ngram] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=1.307s tok_s=200.05 tokens=1277
+[session] turn 2/8 applied=True ttft=1.344s tok_s=263.2 tokens=1237
+[session] turn 3/8 applied=True ttft=1.242s tok_s=307.09 tokens=1211
+[session] turn 4/8 applied=True ttft=1.263s tok_s=188.03 tokens=1426
+[session] turn 5/8 applied=True ttft=1.346s tok_s=237.75 tokens=1511
+[session] turn 6/8 applied=True ttft=1.439s tok_s=278.1 tokens=1529
+[session] turn 7/8 applied=True ttft=1.491s tok_s=182.76 tokens=1536
+[session] turn 8/8 applied=True ttft=1.272s tok_s=252.57 tokens=1536
+[session] SUMMARY cumulative_tok_s=230.09 applied_rate=1.0 wall=59.66s
+== [llama-mtp-ngram] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=75.93s tok_s=177.58 tokens=1208
+[session] turn 2/6 applied=True ttft=2.106s tok_s=200.47 tokens=1211
+[session] turn 3/6 applied=True ttft=2.213s tok_s=232.19 tokens=1211
+[session] turn 4/6 applied=True ttft=2.21s tok_s=144.86 tokens=1536
+[session] turn 5/6 applied=True ttft=2.378s tok_s=221.61 tokens=1393
+[session] turn 6/6 applied=True ttft=2.535s tok_s=233.06 tokens=1390
+[session] SUMMARY cumulative_tok_s=194.29 applied_rate=1.0 wall=128.29s
+== [llama-mtp-ngram] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=159.56 wall=12.84s
+== [llama-mtp-ngram] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=25.924s tok_s=212.63 tokens=1272
+[session] turn 2/20 applied=True ttft=1.548s tok_s=236.08 tokens=1179
+[session] turn 3/20 applied=True ttft=1.623s tok_s=285.44 tokens=1211
+[session] turn 4/20 applied=True ttft=1.635s tok_s=196.87 tokens=1368
+[session] turn 5/20 applied=True ttft=1.753s tok_s=294.97 tokens=1389
+[session] turn 6/20 applied=True ttft=1.877s tok_s=272.54 tokens=1525
+[session] turn 7/20 applied=True ttft=1.93s tok_s=163.35 tokens=1536
+[session] turn 8/20 applied=True ttft=1.661s tok_s=187.64 tokens=1536
+[session] turn 9/20 applied=False ttft=1.872s tok_s=196.84 tokens=1536
+[session] turn 10/20 applied=True ttft=1.896s tok_s=211.52 tokens=1536
+[session] turn 11/20 applied=True ttft=2.036s tok_s=215.82 tokens=1536
+[session] turn 12/20 applied=True ttft=1.869s tok_s=230.63 tokens=1536
+[session] turn 13/20 applied=False ttft=2.063s tok_s=207.08 tokens=1536
+[session] turn 14/20 applied=True ttft=1.917s tok_s=192.93 tokens=1536
+[session] turn 15/20 applied=True ttft=1.959s tok_s=235.57 tokens=1536
+[session] turn 16/20 applied=True ttft=2.166s tok_s=236.18 tokens=1536
+[session] turn 17/20 applied=True ttft=1.954s tok_s=230.51 tokens=1536
+[session] turn 18/20 applied=True ttft=2.238s tok_s=230.02 tokens=1536
+[session] turn 19/20 applied=True ttft=1.991s tok_s=234.63 tokens=1536
+[session] turn 20/20 applied=True ttft=2.326s tok_s=212.74 tokens=1536
+[session] SUMMARY cumulative_tok_s=219.08 applied_rate=0.9 wall=196.66s
+== [llama-mtp-ngram] done: results appended to results.jsonl ==
+9.33.170.561 I slot print_timing: id  0 | task 4809 | draft acceptance = 0.88450 ( 1455 accepted /  1645 generated), mean len = 19.90
+9.41.790.367 I slot print_timing: id  0 | task 4895 | draft acceptance = 0.84933 ( 1460 accepted /  1719 generated), mean len = 22.16
+9.50.705.957 I slot print_timing: id  0 | task 4976 | draft acceptance = 0.86488 ( 1453 accepted /  1680 generated), mean len = 19.39
+9.59.244.035 I slot print_timing: id  0 | task 5064 | draft acceptance = 0.81945 ( 1466 accepted /  1789 generated), mean len = 24.27
+10.08.790.547 I slot print_timing: id  0 | task 5139 | draft acceptance = 0.82770 ( 1446 accepted /  1747 generated), mean len = 18.21
+[15:15:10] ARM llama-dflash2q8-n4: starting llama-server --model-draft /models/Qwen3.8-27B-DFlash2-Q8_0.gguf --spec-type draft-dflash --spec-draft-n-max 4
+23134 MiB
+== [llama-dflash2q8-n4] warm-up request ==
+[decode] run 1/1 ttft=1.109s tok_s=98.67 tokens=512
+[decode] SUMMARY median_tok_s=98.67 median_ttft_s=1.109
+== [llama-dflash2q8-n4] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=1.161 tokens=81
+[quality] PASS portuguese_json    finish=stop wall=1.658 tokens=125
+[quality] PASS python_fix         finish=stop wall=1.648 tokens=129
+[quality] PASS required_tool      finish=tool_calls wall=1.231 tokens=62
+[quality] SUMMARY 4/4 passed
+== [llama-dflash2q8-n4] decode ==
+[decode] run 1/5 ttft=1.16s tok_s=98.53 tokens=512
+[decode] run 2/5 ttft=1.149s tok_s=100.12 tokens=512
+[decode] run 3/5 ttft=1.155s tok_s=97.26 tokens=512
+[decode] run 4/5 ttft=1.157s tok_s=99.61 tokens=512
+[decode] run 5/5 ttft=1.153s tok_s=102.26 tokens=512
+[decode] SUMMARY median_tok_s=99.61 median_ttft_s=1.155
+== [llama-dflash2q8-n4] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=90.91 ttft=0.463s
+[sustained] windows=12 first_window_tok_s=77.06 last_window_tok_s=93.64 decay=-21.5%
+[sustained]   window 1: 500 tokens @ 6.95s -> 77.06 tok/s
+[sustained]   window 2: 500 tokens @ 12.99s -> 82.89 tok/s
+[sustained]   window 3: 500 tokens @ 18.73s -> 87.13 tok/s
+[sustained]   window 4: 500 tokens @ 24.0s -> 94.83 tok/s
+[sustained]   window 5: 500 tokens @ 29.68s -> 88.09 tok/s
+[sustained]   window 6: 500 tokens @ 34.98s -> 94.45 tok/s
+[sustained]   window 7: 500 tokens @ 40.23s -> 95.26 tok/s
+[sustained]   window 8: 500 tokens @ 45.26s -> 99.31 tok/s
+[sustained]   window 9: 500 tokens @ 50.87s -> 89.12 tok/s
+[sustained]   window 10: 500 tokens @ 56.53s -> 88.44 tok/s
+[sustained]   window 11: 500 tokens @ 61.14s -> 108.52 tok/s
+[sustained]   window 12: 498 tokens @ 66.46s -> 93.64 tok/s
+== [llama-dflash2q8-n4] prefill (30000 tokens) ==
+[prefill] tokens=14767 (usage) ttft=13.215s prefill_tok_s=1117.5
+== [llama-dflash2q8-n4] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=1.361s tok_s=108.88 tokens=1277
+[session] turn 2/8 applied=True ttft=1.415s tok_s=105.38 tokens=1237
+[session] turn 3/8 applied=True ttft=1.306s tok_s=107.46 tokens=1211
+[session] turn 4/8 applied=True ttft=1.324s tok_s=104.81 tokens=1430
+[session] turn 5/8 applied=True ttft=1.415s tok_s=100.65 tokens=1511
+[session] turn 6/8 applied=True ttft=1.486s tok_s=107.47 tokens=1483
+[session] turn 7/8 applied=True ttft=1.526s tok_s=102.93 tokens=1536
+[session] turn 8/8 applied=True ttft=1.431s tok_s=103.18 tokens=1536
+[session] SUMMARY cumulative_tok_s=104.87 applied_rate=1.0 wall=118.27s
+== [llama-dflash2q8-n4] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=78.321s tok_s=97.67 tokens=1208
+[session] turn 2/6 applied=True ttft=2.012s tok_s=97.31 tokens=1236
+[session] turn 3/6 applied=True ttft=2.119s tok_s=97.82 tokens=1214
+[session] turn 4/6 applied=True ttft=2.111s tok_s=94.48 tokens=1536
+[session] turn 5/6 applied=True ttft=2.28s tok_s=91.25 tokens=1536
+[session] turn 6/6 applied=True ttft=2.449s tok_s=97.12 tokens=1536
+[session] SUMMARY cumulative_tok_s=95.68 applied_rate=1.0 wall=175.68s
+== [llama-dflash2q8-n4] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=78.15 wall=26.21s
+== [llama-dflash2q8-n4] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=27.084s tok_s=103.8 tokens=1272
+[session] turn 2/20 applied=True ttft=1.547s tok_s=99.64 tokens=1234
+[session] turn 3/20 applied=True ttft=1.623s tok_s=103.96 tokens=1211
+[session] turn 4/20 applied=True ttft=1.633s tok_s=102.19 tokens=1369
+[session] turn 5/20 applied=True ttft=1.751s tok_s=100.84 tokens=1410
+[session] turn 6/20 applied=True ttft=1.885s tok_s=103.26 tokens=1526
+[session] turn 7/20 applied=True ttft=1.937s tok_s=97.78 tokens=1536
+[session] turn 8/20 applied=True ttft=1.618s tok_s=101.47 tokens=1536
+[session] turn 9/20 applied=False ttft=2.092s tok_s=99.14 tokens=1536
+[session] turn 10/20 applied=True ttft=1.999s tok_s=98.41 tokens=1536
+[session] turn 11/20 applied=True ttft=1.861s tok_s=100.36 tokens=1536
+[session] turn 12/20 applied=True ttft=2.154s tok_s=99.17 tokens=1536
+[session] turn 13/20 applied=True ttft=1.937s tok_s=98.95 tokens=1536
+[session] turn 14/20 applied=True ttft=2.15s tok_s=99.97 tokens=1536
+[session] turn 15/20 applied=True ttft=1.918s tok_s=94.95 tokens=1536
+[session] turn 16/20 applied=True ttft=1.666s tok_s=94.36 tokens=1536
+[session] turn 17/20 applied=True ttft=1.827s tok_s=97.84 tokens=1536
+[session] turn 18/20 applied=True ttft=2.194s tok_s=99.05 tokens=1536
+[session] turn 19/20 applied=False ttft=2.076s tok_s=97.69 tokens=1536
+[session] turn 20/20 applied=True ttft=2.194s tok_s=96.52 tokens=1536
+[session] SUMMARY cumulative_tok_s=99.29 applied_rate=0.9 wall=360.53s
+== [llama-dflash2q8-n4] done: results appended to results.jsonl ==
+12.33.253.350 I slot print_timing: id  0 | task 11747 | draft acceptance = 0.89820 ( 1200 accepted /  1336 generated), mean len =  4.59
+12.50.780.869 I slot print_timing: id  0 | task 12088 | draft acceptance = 0.94470 ( 1213 accepted /  1284 generated), mean len =  4.78
+13.08.482.664 I slot print_timing: id  0 | task 12416 | draft acceptance = 0.96133 ( 1218 accepted /  1267 generated), mean len =  4.84
+13.26.282.097 I slot print_timing: id  0 | task 12739 | draft acceptance = 0.94770 ( 1214 accepted /  1281 generated), mean len =  4.78
+13.44.390.418 I slot print_timing: id  0 | task 13066 | draft acceptance = 0.93077 ( 1210 accepted /  1300 generated), mean len =  4.72
+[15:28:55] ARM llama-dflash2q8-n7-ngram: starting llama-server --model-draft /models/Qwen3.8-27B-DFlash2-Q8_0.gguf --spec-type draft-dflash,ngram-mod --spec-draft-n-max 7 --spec-ngram-mod-n-match 32
+23600 MiB
+== [llama-dflash2q8-n7-ngram] warm-up request ==
+[decode] run 1/1 ttft=1.125s tok_s=122.41 tokens=512
+[decode] SUMMARY median_tok_s=122.41 median_ttft_s=1.125
+== [llama-dflash2q8-n7-ngram] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=0.922 tokens=81
+[quality] PASS portuguese_json    finish=stop wall=1.361 tokens=120
+[quality] PASS python_fix         finish=stop wall=1.442 tokens=125
+[quality] PASS required_tool      finish=tool_calls wall=1.085 tokens=59
+[quality] SUMMARY 4/4 passed
+== [llama-dflash2q8-n7-ngram] decode ==
+[decode] run 1/5 ttft=1.166s tok_s=267.84 tokens=512
+[decode] run 2/5 ttft=1.16s tok_s=291.54 tokens=512
+[decode] run 3/5 ttft=1.154s tok_s=315.89 tokens=512
+[decode] run 4/5 ttft=1.154s tok_s=269.17 tokens=512
+[decode] run 5/5 ttft=1.155s tok_s=376.04 tokens=512
+[decode] SUMMARY median_tok_s=291.54 median_ttft_s=1.155
+== [llama-dflash2q8-n7-ngram] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=112.85 ttft=0.462s
+[sustained] windows=12 first_window_tok_s=103.6 last_window_tok_s=117.16 decay=-13.1%
+[sustained]   window 1: 500 tokens @ 5.29s -> 103.6 tok/s
+[sustained]   window 2: 500 tokens @ 10.13s -> 103.27 tok/s
+[sustained]   window 3: 500 tokens @ 14.58s -> 112.59 tok/s
+[sustained]   window 4: 500 tokens @ 19.12s -> 110.11 tok/s
+[sustained]   window 5: 500 tokens @ 23.49s -> 114.32 tok/s
+[sustained]   window 6: 500 tokens @ 28.05s -> 109.73 tok/s
+[sustained]   window 7: 500 tokens @ 32.39s -> 115.43 tok/s
+[sustained]   window 8: 500 tokens @ 36.07s -> 135.62 tok/s
+[sustained]   window 9: 500 tokens @ 40.55s -> 111.64 tok/s
+[sustained]   window 10: 500 tokens @ 44.8s -> 117.69 tok/s
+[sustained]   window 11: 500 tokens @ 49.38s -> 109.38 tok/s
+[sustained]   window 12: 498 tokens @ 53.63s -> 117.16 tok/s
+== [llama-dflash2q8-n7-ngram] prefill (30000 tokens) ==
+[prefill] tokens=14767 (usage) ttft=13.24s prefill_tok_s=1115.3
+== [llama-dflash2q8-n7-ngram] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=1.364s tok_s=226.05 tokens=1277
+[session] turn 2/8 applied=True ttft=1.418s tok_s=285.14 tokens=1237
+[session] turn 3/8 applied=True ttft=1.307s tok_s=332.74 tokens=1211
+[session] turn 4/8 applied=True ttft=1.326s tok_s=201.17 tokens=1435
+[session] turn 5/8 applied=True ttft=1.416s tok_s=242.66 tokens=1506
+[session] turn 6/8 applied=True ttft=1.525s tok_s=301.11 tokens=1530
+[session] turn 7/8 applied=True ttft=1.568s tok_s=174.73 tokens=1536
+[session] turn 8/8 applied=True ttft=1.209s tok_s=252.76 tokens=1536
+[session] SUMMARY cumulative_tok_s=240.18 applied_rate=1.0 wall=58.05s
+== [llama-dflash2q8-n7-ngram] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=78.362s tok_s=183.33 tokens=1208
+[session] turn 2/6 applied=True ttft=2.013s tok_s=229.34 tokens=1236
+[session] turn 3/6 applied=True ttft=2.115s tok_s=243.08 tokens=1214
+[session] turn 4/6 applied=True ttft=2.115s tok_s=167.5 tokens=1536
+[session] turn 5/6 applied=True ttft=2.282s tok_s=222.14 tokens=1393
+[session] turn 6/6 applied=True ttft=2.44s tok_s=248.04 tokens=1533
+[session] SUMMARY cumulative_tok_s=210.39 applied_rate=1.0 wall=127.93s
+== [llama-dflash2q8-n7-ngram] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=157.74 wall=12.98s
+== [llama-dflash2q8-n7-ngram] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=27.047s tok_s=220.27 tokens=1272
+[session] turn 2/20 applied=True ttft=1.549s tok_s=258.33 tokens=1179
+[session] turn 3/20 applied=True ttft=1.626s tok_s=280.96 tokens=1211
+[session] turn 4/20 applied=True ttft=1.637s tok_s=201.45 tokens=1369
+[session] turn 5/20 applied=True ttft=1.747s tok_s=308.85 tokens=1386
+[session] turn 6/20 applied=True ttft=1.881s tok_s=292.2 tokens=1526
+[session] turn 7/20 applied=True ttft=1.929s tok_s=212.1 tokens=1536
+[session] turn 8/20 applied=True ttft=1.767s tok_s=213.56 tokens=1536
+[session] turn 9/20 applied=False ttft=1.866s tok_s=199.3 tokens=1536
+[session] turn 10/20 applied=True ttft=1.915s tok_s=222.94 tokens=1536
+[session] turn 11/20 applied=True ttft=1.929s tok_s=208.41 tokens=1536
+[session] turn 12/20 applied=True ttft=1.842s tok_s=242.08 tokens=1536
+[session] turn 13/20 applied=False ttft=1.953s tok_s=193.27 tokens=1536
+[session] turn 14/20 applied=True ttft=1.846s tok_s=132.64 tokens=1536
+[session] turn 15/20 applied=True ttft=1.101s tok_s=187.79 tokens=1536
+[session] turn 16/20 applied=True ttft=1.724s tok_s=200.02 tokens=1536
+[session] turn 17/20 applied=True ttft=1.918s tok_s=218.02 tokens=1536
+[session] turn 18/20 applied=True ttft=2.176s tok_s=197.19 tokens=1536
+[session] turn 19/20 applied=False ttft=1.892s tok_s=180.0 tokens=1536
+[session] turn 20/20 applied=True ttft=1.707s tok_s=203.31 tokens=1536
+[session] SUMMARY cumulative_tok_s=210.02 applied_rate=0.85 wall=201.27s
+== [llama-dflash2q8-n7-ngram] done: results appended to results.jsonl ==
+7.38.456.503 I slot print_timing: id  0 | task 4296 | draft acceptance = 0.77114 ( 1432 accepted /  1857 generated), mean len = 15.46
+7.47.419.360 I slot print_timing: id  0 | task 4405 | draft acceptance = 0.73390 ( 1459 accepted /  1988 generated), mean len = 22.46
+7.57.385.038 I slot print_timing: id  0 | task 4487 | draft acceptance = 0.73754 ( 1436 accepted /  1947 generated), mean len = 16.44
+8.07.812.976 I slot print_timing: id  0 | task 4592 | draft acceptance = 0.75548 ( 1412 accepted /  1869 generated), mean len = 12.87
+8.17.075.294 I slot print_timing: id  0 | task 4721 | draft acceptance = 0.75535 ( 1448 accepted /  1917 generated), mean len = 19.33
+[15:37:13] ARM llama-dspark-q8: starting llama-server --model-draft /models/Qwen3.8-27B-DSpark-Q8_0.gguf --spec-type draft-dspark --spec-draft-n-max 5
+23918 MiB
+== [llama-dspark-q8] warm-up request ==
+[decode] run 1/1 ttft=1.089s tok_s=102.1 tokens=512
+[decode] SUMMARY median_tok_s=102.1 median_ttft_s=1.089
+== [llama-dspark-q8] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=1.163 tokens=81
+[quality] PASS portuguese_json    finish=stop wall=1.857 tokens=117
+[quality] PASS python_fix         finish=stop wall=1.463 tokens=99
+[quality] PASS required_tool      finish=tool_calls wall=1.535 tokens=65
+[quality] SUMMARY 4/4 passed
+== [llama-dspark-q8] decode ==
+[decode] run 1/5 ttft=1.158s tok_s=96.21 tokens=512
+[decode] run 2/5 ttft=1.15s tok_s=97.03 tokens=512
+[decode] run 3/5 ttft=1.152s tok_s=100.17 tokens=512
+[decode] run 4/5 ttft=1.158s tok_s=102.13 tokens=512
+[decode] run 5/5 ttft=1.151s tok_s=102.26 tokens=512
+[decode] SUMMARY median_tok_s=100.17 median_ttft_s=1.152
+== [llama-dspark-q8] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=78.86 ttft=0.462s
+[sustained] windows=12 first_window_tok_s=69.33 last_window_tok_s=85.37 decay=-23.1%
+[sustained]   window 1: 500 tokens @ 7.68s -> 69.33 tok/s
+[sustained]   window 2: 500 tokens @ 15.2s -> 66.47 tok/s
+[sustained]   window 3: 500 tokens @ 21.45s -> 79.97 tok/s
+[sustained]   window 4: 500 tokens @ 26.84s -> 92.88 tok/s
+[sustained]   window 5: 500 tokens @ 32.91s -> 82.39 tok/s
+[sustained]   window 6: 500 tokens @ 39.76s -> 73.02 tok/s
+[sustained]   window 7: 500 tokens @ 46.03s -> 79.83 tok/s
+[sustained]   window 8: 500 tokens @ 51.62s -> 89.39 tok/s
+[sustained]   window 9: 500 tokens @ 57.86s -> 80.14 tok/s
+[sustained]   window 10: 500 tokens @ 65.05s -> 69.61 tok/s
+[sustained]   window 11: 500 tokens @ 70.71s -> 88.28 tok/s
+[sustained]   window 12: 498 tokens @ 76.55s -> 85.37 tok/s
+== [llama-dspark-q8] prefill (30000 tokens) ==
+[prefill] tokens=14765 (usage) ttft=13.256s prefill_tok_s=1113.8
+== [llama-dspark-q8] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=1.432s tok_s=129.33 tokens=1277
+[session] turn 2/8 applied=True ttft=1.424s tok_s=121.6 tokens=1237
+[session] turn 3/8 applied=True ttft=1.311s tok_s=126.37 tokens=1211
+[session] turn 4/8 applied=True ttft=1.335s tok_s=119.56 tokens=1430
+[session] turn 5/8 applied=True ttft=1.448s tok_s=118.75 tokens=1484
+[session] turn 6/8 applied=True ttft=1.554s tok_s=126.91 tokens=1526
+[session] turn 7/8 applied=True ttft=1.617s tok_s=105.74 tokens=1536
+[session] turn 8/8 applied=True ttft=1.34s tok_s=118.32 tokens=1536
+[session] SUMMARY cumulative_tok_s=120.03 applied_rate=1.0 wall=105.08s
+== [llama-dspark-q8] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=78.791s tok_s=106.02 tokens=1208
+[session] turn 2/6 applied=True ttft=2.541s tok_s=103.45 tokens=1236
+[session] turn 3/6 applied=True ttft=2.671s tok_s=105.27 tokens=1214
+[session] turn 4/6 applied=True ttft=2.672s tok_s=98.79 tokens=1536
+[session] turn 5/6 applied=True ttft=2.852s tok_s=95.27 tokens=1536
+[session] turn 6/6 applied=True ttft=3.042s tok_s=106.24 tokens=1536
+[session] SUMMARY cumulative_tok_s=102.05 applied_rate=1.0 wall=173.58s
+== [llama-dspark-q8] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=78.2 wall=26.19s
+== [llama-dspark-q8] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=27.326s tok_s=119.9 tokens=1272
+[session] turn 2/20 applied=True ttft=1.75s tok_s=111.32 tokens=1230
+[session] turn 3/20 applied=True ttft=1.841s tok_s=117.13 tokens=1211
+[session] turn 4/20 applied=True ttft=1.86s tok_s=111.09 tokens=1369
+[session] turn 5/20 applied=True ttft=1.985s tok_s=114.3 tokens=1410
+[session] turn 6/20 applied=True ttft=2.13s tok_s=117.93 tokens=1526
+[session] turn 7/20 applied=True ttft=2.192s tok_s=109.45 tokens=1536
+[session] turn 8/20 applied=True ttft=2.009s tok_s=107.91 tokens=1536
+[session] turn 9/20 applied=True ttft=2.139s tok_s=107.96 tokens=1536
+[session] turn 10/20 applied=True ttft=2.289s tok_s=110.84 tokens=1536
+[session] turn 11/20 applied=True ttft=2.328s tok_s=97.86 tokens=1536
+[session] turn 12/20 applied=True ttft=2.049s tok_s=110.28 tokens=1536
+[session] turn 13/20 applied=False ttft=2.267s tok_s=105.8 tokens=1536
+[session] turn 14/20 applied=True ttft=2.301s tok_s=91.23 tokens=1536
+[session] turn 15/20 applied=True ttft=1.994s tok_s=109.08 tokens=1536
+[session] turn 16/20 applied=True ttft=2.557s tok_s=104.42 tokens=1536
+[session] turn 17/20 applied=True ttft=2.245s tok_s=106.48 tokens=1536
+[session] turn 18/20 applied=True ttft=2.571s tok_s=105.42 tokens=1536
+[session] turn 19/20 applied=False ttft=2.413s tok_s=103.31 tokens=1536
+[session] turn 20/20 applied=True ttft=2.441s tok_s=105.06 tokens=1536
+[session] SUMMARY cumulative_tok_s=107.66 applied_rate=0.9 wall=342.9s
+== [llama-dspark-q8] done: results appended to results.jsonl ==
+12.08.539.606 I slot print_timing: id  0 | task 11226 | draft acceptance = 0.84296 ( 1240 accepted /  1471 generated), mean len =  5.20
+12.25.209.940 I slot print_timing: id  0 | task 11527 | draft acceptance = 0.86778 ( 1247 accepted /  1437 generated), mean len =  5.33
+12.42.351.597 I slot print_timing: id  0 | task 11821 | draft acceptance = 0.85862 ( 1245 accepted /  1450 generated), mean len =  5.29
+12.59.632.188 I slot print_timing: id  0 | task 12117 | draft acceptance = 0.84296 ( 1240 accepted /  1471 generated), mean len =  5.20
+13.16.693.760 I slot print_timing: id  0 | task 12418 | draft acceptance = 0.86528 ( 1246 accepted /  1440 generated), mean len =  5.33
+[15:50:31] ARM llama-mtp-only: starting llama-server --model-draft /models/mtp-Qwen3.8-27B-Q4_0-d48k.gguf --spec-type draft-mtp --spec-draft-n-max 5
+22392 MiB
+== [llama-mtp-only] warm-up request ==
+[decode] run 1/1 ttft=0.975s tok_s=101.12 tokens=512
+[decode] SUMMARY median_tok_s=101.12 median_ttft_s=0.975
+== [llama-mtp-only] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=1.027 tokens=83
+[quality] PASS portuguese_json    finish=stop wall=1.503 tokens=125
+[quality] PASS python_fix         finish=stop wall=1.536 tokens=140
+[quality] PASS required_tool      finish=tool_calls wall=1.058 tokens=52
+[quality] SUMMARY 4/4 passed
+== [llama-mtp-only] decode ==
+[decode] run 1/5 ttft=1.108s tok_s=102.67 tokens=512
+[decode] run 2/5 ttft=1.099s tok_s=106.58 tokens=512
+[decode] run 3/5 ttft=1.102s tok_s=107.5 tokens=512
+[decode] run 4/5 ttft=1.099s tok_s=105.37 tokens=512
+[decode] run 5/5 ttft=1.098s tok_s=104.6 tokens=512
+[decode] SUMMARY median_tok_s=105.37 median_ttft_s=1.099
+== [llama-mtp-only] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=96.78 ttft=0.449s
+[sustained] windows=12 first_window_tok_s=91.85 last_window_tok_s=94.15 decay=-2.5%
+[sustained]   window 1: 500 tokens @ 5.89s -> 91.85 tok/s
+[sustained]   window 2: 500 tokens @ 11.4s -> 90.92 tok/s
+[sustained]   window 3: 500 tokens @ 16.05s -> 107.58 tok/s
+[sustained]   window 4: 500 tokens @ 21.78s -> 87.28 tok/s
+[sustained]   window 5: 500 tokens @ 26.89s -> 97.72 tok/s
+[sustained]   window 6: 500 tokens @ 32.15s -> 95.17 tok/s
+[sustained]   window 7: 500 tokens @ 36.92s -> 104.85 tok/s
+[sustained]   window 8: 500 tokens @ 41.37s -> 112.4 tok/s
+[sustained]   window 9: 500 tokens @ 46.11s -> 105.45 tok/s
+[sustained]   window 10: 500 tokens @ 51.27s -> 96.89 tok/s
+[sustained]   window 11: 500 tokens @ 57.15s -> 85.07 tok/s
+[sustained]   window 12: 498 tokens @ 62.45s -> 94.15 tok/s
+== [llama-mtp-only] prefill (30000 tokens) ==
+[prefill] tokens=14766 (usage) ttft=12.614s prefill_tok_s=1170.6
+== [llama-mtp-only] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=1.315s tok_s=131.43 tokens=1277
+[session] turn 2/8 applied=True ttft=1.347s tok_s=125.43 tokens=1237
+[session] turn 3/8 applied=True ttft=1.247s tok_s=129.0 tokens=1211
+[session] turn 4/8 applied=True ttft=1.267s tok_s=123.57 tokens=1430
+[session] turn 5/8 applied=True ttft=1.357s tok_s=118.16 tokens=1536
+[session] turn 6/8 applied=True ttft=1.415s tok_s=129.56 tokens=1528
+[session] turn 7/8 applied=True ttft=1.499s tok_s=114.1 tokens=1536
+[session] turn 8/8 applied=True ttft=1.16s tok_s=125.49 tokens=1536
+[session] SUMMARY cumulative_tok_s=124.03 applied_rate=1.0 wall=101.64s
+== [llama-mtp-only] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=76.228s tok_s=112.26 tokens=1208
+[session] turn 2/6 applied=True ttft=2.115s tok_s=108.25 tokens=1236
+[session] turn 3/6 applied=True ttft=2.22s tok_s=112.72 tokens=1214
+[session] turn 4/6 applied=True ttft=2.224s tok_s=106.93 tokens=1536
+[session] turn 5/6 applied=True ttft=2.403s tok_s=109.42 tokens=1413
+[session] turn 6/6 applied=True ttft=2.549s tok_s=111.29 tokens=1531
+[session] SUMMARY cumulative_tok_s=110.0 applied_rate=1.0 wall=161.73s
+== [llama-mtp-only] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=82.71 wall=24.76s
+== [llama-mtp-only] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=26.027s tok_s=122.24 tokens=1272
+[session] turn 2/20 applied=True ttft=1.549s tok_s=118.4 tokens=1234
+[session] turn 3/20 applied=True ttft=1.633s tok_s=123.29 tokens=1211
+[session] turn 4/20 applied=True ttft=1.645s tok_s=118.65 tokens=1369
+[session] turn 5/20 applied=True ttft=1.76s tok_s=118.8 tokens=1410
+[session] turn 6/20 applied=True ttft=1.885s tok_s=121.07 tokens=1526
+[session] turn 7/20 applied=True ttft=1.94s tok_s=111.1 tokens=1536
+[session] turn 8/20 applied=True ttft=1.643s tok_s=118.64 tokens=1536
+[session] turn 9/20 applied=True ttft=2.11s tok_s=115.27 tokens=1536
+[session] turn 10/20 applied=True ttft=2.071s tok_s=114.69 tokens=1536
+[session] turn 11/20 applied=True ttft=2.032s tok_s=110.83 tokens=1536
+[session] turn 12/20 applied=True ttft=1.737s tok_s=120.28 tokens=1536
+[session] turn 13/20 applied=True ttft=2.231s tok_s=117.47 tokens=1536
+[session] turn 14/20 applied=True ttft=2.173s tok_s=107.25 tokens=1536
+[session] turn 15/20 applied=True ttft=1.5s tok_s=112.54 tokens=1536
+[session] turn 16/20 applied=True ttft=1.937s tok_s=112.24 tokens=1536
+[session] turn 17/20 applied=True ttft=1.909s tok_s=113.89 tokens=1536
+[session] turn 18/20 applied=True ttft=2.231s tok_s=114.41 tokens=1536
+[session] turn 19/20 applied=False ttft=2.117s tok_s=113.52 tokens=1536
+[session] turn 20/20 applied=True ttft=2.202s tok_s=112.75 tokens=1536
+[session] SUMMARY cumulative_tok_s=115.53 applied_rate=0.95 wall=317.92s
+== [llama-mtp-only] done: results appended to results.jsonl ==
+11.05.066.111 I slot print_timing: id  0 | task 10672 | draft acceptance = 0.88028 ( 1250 accepted /  1420 generated), mean len =  5.40
+11.20.461.839 I slot print_timing: id  0 | task 10963 | draft acceptance = 0.89643 ( 1255 accepted /  1400 generated), mean len =  5.48
+11.36.117.872 I slot print_timing: id  0 | task 11249 | draft acceptance = 0.90562 ( 1257 accepted /  1388 generated), mean len =  5.52
+11.51.766.921 I slot print_timing: id  0 | task 11533 | draft acceptance = 0.89900 ( 1255 accepted /  1396 generated), mean len =  5.48
+12.07.592.700 I slot print_timing: id  0 | task 11819 | draft acceptance = 0.89571 ( 1254 accepted /  1400 generated), mean len =  5.48
+[16:02:40] ARM llama-mtp-ngram-ctrl: starting llama-server --model-draft /models/mtp-Qwen3.8-27B-Q4_0-d48k.gguf --spec-type draft-mtp,ngram-mod --spec-draft-n-max 5 --spec-ngram-mod-n-match 32
+22392 MiB
+== [llama-mtp-ngram-ctrl] warm-up request ==
+[decode] run 1/1 ttft=0.984s tok_s=103.29 tokens=512
+[decode] SUMMARY median_tok_s=103.29 median_ttft_s=0.984
+== [llama-mtp-ngram-ctrl] quality ==
+[quality] PASS arithmetic_exact   finish=stop wall=0.989 tokens=81
+[quality] PASS portuguese_json    finish=stop wall=1.419 tokens=118
+[quality] PASS python_fix         finish=stop wall=1.118 tokens=100
+[quality] PASS required_tool      finish=tool_calls wall=1.058 tokens=55
+[quality] SUMMARY 4/4 passed
+== [llama-mtp-ngram-ctrl] decode ==
+[decode] run 1/5 ttft=1.111s tok_s=306.97 tokens=512
+[decode] run 2/5 ttft=1.101s tok_s=470.15 tokens=512
+[decode] run 3/5 ttft=1.101s tok_s=268.28 tokens=512
+[decode] run 4/5 ttft=1.1s tok_s=422.46 tokens=512
+[decode] run 5/5 ttft=1.101s tok_s=250.51 tokens=512
+[decode] SUMMARY median_tok_s=306.97 median_ttft_s=1.101
+== [llama-mtp-ngram-ctrl] sustained (long generation, windowed decode tok/s) ==
+[sustained] tokens=6000 finish=length overall_tok_s=103.11 ttft=0.451s
+[sustained] windows=12 first_window_tok_s=89.27 last_window_tok_s=103.09 decay=-15.5%
+[sustained]   window 1: 500 tokens @ 6.05s -> 89.27 tok/s
+[sustained]   window 2: 500 tokens @ 11.83s -> 86.53 tok/s
+[sustained]   window 3: 500 tokens @ 17.3s -> 91.45 tok/s
+[sustained]   window 4: 500 tokens @ 22.17s -> 102.83 tok/s
+[sustained]   window 5: 500 tokens @ 27.25s -> 98.46 tok/s
+[sustained]   window 6: 500 tokens @ 31.72s -> 111.78 tok/s
+[sustained]   window 7: 500 tokens @ 36.78s -> 98.83 tok/s
+[sustained]   window 8: 500 tokens @ 41.56s -> 104.7 tok/s
+[sustained]   window 9: 500 tokens @ 45.08s -> 142.21 tok/s
+[sustained]   window 10: 500 tokens @ 49.07s -> 125.37 tok/s
+[sustained]   window 11: 500 tokens @ 53.81s -> 105.52 tok/s
+[sustained]   window 12: 498 tokens @ 58.64s -> 103.09 tok/s
+== [llama-mtp-ngram-ctrl] prefill (30000 tokens) ==
+[prefill] tokens=14766 (usage) ttft=12.613s prefill_tok_s=1170.7
+== [llama-mtp-ngram-ctrl] session (8 turns, no preamble) ==
+[session] turn 1/8 applied=True ttft=1.322s tok_s=200.57 tokens=1277
+[session] turn 2/8 applied=True ttft=1.357s tok_s=262.46 tokens=1237
+[session] turn 3/8 applied=True ttft=1.248s tok_s=306.44 tokens=1211
+[session] turn 4/8 applied=True ttft=1.268s tok_s=186.43 tokens=1426
+[session] turn 5/8 applied=True ttft=1.357s tok_s=237.75 tokens=1511
+[session] turn 6/8 applied=True ttft=1.447s tok_s=277.1 tokens=1529
+[session] turn 7/8 applied=True ttft=1.498s tok_s=179.57 tokens=1536
+[session] turn 8/8 applied=True ttft=1.269s tok_s=256.03 tokens=1536
+[session] SUMMARY cumulative_tok_s=229.36 applied_rate=1.0 wall=59.87s
+== [llama-mtp-ngram-ctrl] session (6 turns, 50000-token preamble) ==
+[session] turn 1/6 applied=True ttft=76.094s tok_s=177.21 tokens=1208
+[session] turn 2/6 applied=True ttft=2.118s tok_s=200.61 tokens=1211
+[session] turn 3/6 applied=True ttft=2.225s tok_s=231.51 tokens=1211
+[session] turn 4/6 applied=True ttft=2.227s tok_s=144.59 tokens=1536
+[session] turn 5/6 applied=True ttft=2.392s tok_s=220.93 tokens=1393
+[session] turn 6/6 applied=True ttft=2.552s tok_s=232.57 tokens=1390
+[session] SUMMARY cumulative_tok_s=193.93 applied_rate=1.0 wall=128.6s
+== [llama-mtp-ngram-ctrl] concurrent (n=4) ==
+[concurrent] n=4 aggregate_tok_s=157.45 wall=13.01s
+== [llama-mtp-ngram-ctrl] session (20 turns, 20000-token preamble) ==
+[session] turn 1/20 applied=True ttft=25.979s tok_s=212.46 tokens=1272
+[session] turn 2/20 applied=True ttft=1.557s tok_s=235.75 tokens=1179
+[session] turn 3/20 applied=True ttft=1.634s tok_s=284.04 tokens=1211
+[session] turn 4/20 applied=True ttft=1.65s tok_s=196.16 tokens=1368
+[session] turn 5/20 applied=True ttft=1.763s tok_s=297.96 tokens=1389
+[session] turn 6/20 applied=True ttft=1.884s tok_s=273.05 tokens=1525
+[session] turn 7/20 applied=True ttft=1.94s tok_s=163.86 tokens=1536
+[session] turn 8/20 applied=True ttft=1.662s tok_s=186.94 tokens=1536
+[session] turn 9/20 applied=False ttft=1.881s tok_s=198.72 tokens=1536
+[session] turn 10/20 applied=True ttft=1.897s tok_s=212.46 tokens=1536
+[session] turn 11/20 applied=True ttft=2.039s tok_s=214.31 tokens=1536
+[session] turn 12/20 applied=True ttft=1.869s tok_s=231.51 tokens=1536
+[session] turn 13/20 applied=False ttft=2.066s tok_s=208.04 tokens=1536
+[session] turn 14/20 applied=True ttft=1.918s tok_s=192.12 tokens=1536
+[session] turn 15/20 applied=True ttft=1.959s tok_s=233.49 tokens=1536
+[session] turn 16/20 applied=True ttft=2.172s tok_s=234.22 tokens=1536
+[session] turn 17/20 applied=True ttft=1.957s tok_s=230.55 tokens=1536
+[session] turn 18/20 applied=True ttft=2.24s tok_s=229.7 tokens=1536
+[session] turn 19/20 applied=True ttft=1.989s tok_s=234.63 tokens=1536
+[session] turn 20/20 applied=True ttft=2.323s tok_s=215.35 tokens=1536
+[session] SUMMARY cumulative_tok_s=219.16 applied_rate=0.9 wall=196.75s
+== [llama-mtp-ngram-ctrl] done: results appended to results.jsonl ==
+7.43.414.455 I slot print_timing: id  0 | task 4768 | draft acceptance = 0.88121 ( 1454 accepted /  1650 generated), mean len = 19.64
+7.52.035.899 I slot print_timing: id  0 | task 4855 | draft acceptance = 0.84933 ( 1460 accepted /  1719 generated), mean len = 22.16
+8.00.963.593 I slot print_timing: id  0 | task 4936 | draft acceptance = 0.86488 ( 1453 accepted /  1680 generated), mean len = 19.39
+8.09.499.851 I slot print_timing: id  0 | task 5024 | draft acceptance = 0.81945 ( 1466 accepted /  1789 generated), mean len = 24.27
+8.18.956.276 I slot print_timing: id  0 | task 5099 | draft acceptance = 0.83362 ( 1448 accepted /  1737 generated), mean len = 18.66
+[16:11:00] PHASE sglang (time-boxed: nospec 40 min, stock 30 min, hybrid 40 min)
+[16:11:00] SGLANG sglang-nospec (nospec): launching
+
+=== waiting for http://127.0.0.1:18030/health (up to 1800s) ===
+healthy after 411s
+
+=== server metadata ===
+{"model_path":"/models/qwen38","served_model_name":"qwen3.8-27b","tokenizer_path":"/models/qwen38","is_generation":true,"preferred_sampling_params":null,"weight_version":"default","load_format":"auto","reasoning_parser":"qwen3","tool_call_parser":"qwen3_coder","has_image_understanding":true,"has_audio_understanding":false,"model_type":"qwen3_5","architectures":["Qwen3_5ForConditionalGeneration"],"embedding":{"family":"none","task":"none","execution":"none","attention":"none","pooling":"model_defined","normalize":false,"postprocessor":"none","tokenizer_special_tokens":"model_default","supports_dimensions":false,"supports_token_embeddings":false,"supports_multimodal":false,"requires_embedding_flag":false,"auto_enable_embedding":false,"bcg_eligibility":"disabled","safe_disable_kv_cache":false,"safe_disable_radix_cache":false,"safe_disable_chunked_prefill":false,"enabled":false,"matryoshka_dimensions":[],"bcg":{"prefill_backend":"disabled","enabled":false,"capture_token_budget":1024,"capture_batch_sizes":[4,8,12,16,20,24,28,32,48,64,80,96,112,128,144,160,176,192,208,224,240,256,288,320,352,384,416,448,480,512,576,640,704,768,832,896,960,1024]},"cache":{"kv_cache_disabled":false,"radix_cache_disabled":true,"chunked_prefill_disabled":false}}}
+
+=== chat completion ===
+content (134 chars): Autumn paints the trees in shades of gold and crimson. Crisp air and falling leaves mark the season's gentle transition toward winter.
+reasoning_content (304 chars) -> the qwen3 reasoning parser is live
+usage: prompt=59 completion=94
+wall=2.0s  decode=47.4 tok/s
+
+47.4 tok/s -- above the eager regime, so a fast path is engaged.
+CHAT OK
+
+=== tool call (qwen3_coder parser) ===
+finish_reason: tool_calls
+tool name: get_weather
+arguments: {"city": "Sao Paulo"}
+TOOL CALL OK
+
+=== result ===
+SMOKE PASSED
+[decode] run 1/3 ttft=0.789s tok_s=50.22 tokens=512
+[decode] run 2/3 ttft=0.791s tok_s=50.18 tokens=512
+[decode] run 3/3 ttft=0.792s tok_s=50.17 tokens=512
+[decode] SUMMARY median_tok_s=50.18 median_ttft_s=0.791
+[session] turn 1/6 applied=True ttft=1.112s tok_s=50.05 tokens=1207
+[session] turn 2/6 applied=True ttft=1.736s tok_s=49.7 tokens=1244
+[session] turn 3/6 applied=True ttft=2.651s tok_s=49.49 tokens=1293
+[session] turn 4/6 applied=True ttft=3.585s tok_s=49.28 tokens=1424
+[session] turn 5/6 applied=True ttft=4.624s tok_s=49.12 tokens=1442
+[session] turn 6/6 applied=True ttft=5.815s tok_s=49.02 tokens=1390
+[session] SUMMARY cumulative_tok_s=49.42 applied_rate=1.0 wall=181.4s
+[16:21:30] SGLANG sglang-mtp (stock): launching
+
+=== waiting for http://127.0.0.1:18030/health (up to 1800s) ===
+[16:36:30] SGLANG sglang-mtp: smoke failed
+[2026-09-02 16:22:09] Scheduler hit an exception: Traceback (most recent call last):
+  File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 5375, in run_scheduler_process
+    scheduler = Scheduler(
+                ^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 539, in __init__
+    self.init_model_worker()
+  File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 1036, in init_model_worker
+    self.init_memory_pools()
+  File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 1002, in init_memory_pools
+    self.init_target_memory_pool()
+  File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 998, in init_target_memory_pool
+    self.tp_worker.alloc_memory_pool()
+  File "/sgl-workspace/sglang/python/sglang/srt/managers/tp_worker.py", line 416, in alloc_memory_pool
+    self.model_runner.alloc_memory_pool(memory_pool_config)
+  File "/sgl-workspace/sglang/python/sglang/srt/model_executor/model_runner.py", line 868, in alloc_memory_pool
+    result = self.kv_cache_configurator.configure(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/mem_cache/kv_cache_configurator.py", line 280, in configure
+    config = self._resolve_memory_pool_config(pre_model_load_memory)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/mem_cache/kv_cache_configurator.py", line 1983, in _resolve_memory_pool_config
+    available_bytes = self._profile_available_bytes(pre_model_load_memory)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/mem_cache/kv_cache_configurator.py", line 1848, in _profile_available_bytes
+    raise ValueError(
+ValueError: Loaded weights leave no GPU memory for the KV cache under --mem-fraction-static=0.92. Raise --mem-fraction-static above 0.999 (minimum viable = 1 - available/pre = 0.9981). If using speculative decoding, draft weights are now counted.
+
+[2026-09-02 16:22:09] Received sigquit from a child process. It usually means the child failed.
+[2026-09-02 16:22:09] kill_process_tree called: parent_pid=1, include_parent=True, pid=1
+[2026-09-02 16:22:09] kill_process_tree called: parent_pid=1, include_parent=False, pid=1
+[16:36:30] DONE arms; restoring production (trap)
+[16:36:30] RESTORE: resuming Flux and scaling llama back
+Waiting for deployment "llama" rollout to finish: 0 of 1 updated replicas are available...

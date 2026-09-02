@@ -1,0 +1,302 @@
+---
+# qwen3.8-27b on vLLM (syv-ai/qwen38-27b-rtx3090 stack, image built locally from
+# /data/buttercup_6tb/k3s/vllm-trial/df2-repo). Replaced llama-swap 2026-08-20:
+# CTX=long (fp8 KV, MTP-3) + vision tower, with a 140k context candidate. Four
+# fresh starts measured a 143,804-token KV pool; keep candidate wording until
+# extended uptime supplements the bounded mixed-depth soak. The 128k baseline
+# measured +15-25% over llama.cpp, with GSM8K-40 parity (39/40).
+# Rollback: git revert this commit (llama-swap image/configmaps still present).
+# Image rollback: v9 is still in containerd; flip the two image: lines back.
+#
+# v10 (2026-09-01): stack source rebased onto syv-ai main 453104e (branch
+# local/k8s-deploy-v10 in the df2-repo checkout), still vLLM 0.27.1 from the
+# same requirements.lock. What changes at runtime for this profile:
+#   - vision-tower-cpu-offload.patch, on by default (VISION_OFFLOAD=1): the
+#     0.86 GiB BF16 vision tower lives in pinned host RAM and is copied per
+#     image forward (+~36 ms/image), freeing that VRAM for the KV pool.
+#   - mamba-align-checkpoint-order.patch, opt-in via
+#     VLLM_MAMBA_ALIGN_KEEP_CHECKPOINTS=1 below: keeps the recurrent-state
+#     snapshots a multi-turn conversation resumes from alive until request
+#     end (upstream vllm#45238, syv-ai #52), so align-mode prefix caching
+#     stops dropping to 0% every 4-5 turns under interleaved traffic.
+#   - spec-sampler-prewarm.patch: the rejection sampler's Triton kernels
+#     compile at boot instead of inside the first real request.
+#   - entrypoint now runs docker/prepare.sh before serving unless PREPARE=0;
+#     the models hostPath is prepared out of band, so it is off here.
+#   - Opt-in and NOT enabled: INT8_ACT (W4A8 prefill, +19-30% prefill but
+#     PPL +2-4%, GSM8K 96.5 -> 95.0 upstream), PREFILL_ATTN=int8 (hooks the
+#     FLASH_ATTN backend only; this profile runs FlashInfer for fp8 KV).
+# The two apt pins python3.12 0.15 -> 0.16 and curl 10.12 -> 10.13 moved
+# because the Ubuntu archive dropped the old revisions; Python is still
+# 3.12.3 and the pip lock is byte-identical.
+# Models + torch.compile cache live on host paths, prepared by the repo's
+# docker-compose `prepare` profile — NOT by this pod.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama
+  labels: {app.kubernetes.io/name: llama}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app.kubernetes.io/name: llama}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: llama}
+    spec:
+      runtimeClassName: nvidia
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        # vLLM profiles free VRAM once at startup; starting onto a GPU that is
+        # still releasing memory silently shrinks the KV pool (~25%). Wait for
+        # the card to be actually free before the engine profiles it.
+        - name: gpu-free-gate
+          image: qwen38-27b-3090:v10
+          imagePullPolicy: Never
+          command: ["bash", "-ec", "for i in $(seq 1 60); do u=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null || echo 0); [ \"${u:-0}\" -lt 500 ] && exit 0; sleep 5; done; echo 'gpu still busy after 5m, starting anyway'"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+      containers:
+        - name: vllm
+          image: qwen38-27b-3090:v10
+          imagePullPolicy: Never
+          # entrypoint = docker/entrypoint.sh; "single" runs single-user/start_qwen.sh
+          args: ["single"]
+          env:
+            - {name: TZ, value: America/Sao_Paulo}
+            - {name: PORT, value: "8080"}
+            # The vision-enabled 140k profile needs a larger FP8 KV pool than
+            # GPU_UTIL=0.93 exposes (~129.5k tokens). GPU_UTIL=0.95 measured
+            # 143,804 tokens across four fresh starts. Keep 150k excluded: it
+            # leaves too little margin for the profiled activation swing.
+            #
+            # 0.95 -> 0.94 (2026-08-27): at 0.95, a large-image vision encode
+            # concurrent with deep GDN text prefills deterministically OOMs
+            # the engine (torch.empty_like in chunk_fwd_o needs 24 MiB; the
+            # vision path JIT-compiles _bilinear_pos_embed_kernel mid-
+            # inference, outside the startup profile). 2/2 fresh servers died
+            # on 3x 3000x2000 images + 3x 30k-token prompts; EngineCore dies,
+            # every in-flight request 500s, and the container exits status 0.
+            # 0.94 survived the same phase twice plus a 6-minute mixed soak
+            # with zero OOM. Cost: KV pool 187,282 -> 177,282 tokens (-5.3%),
+            # still >140k so a single max-length request fits. Repro:
+            # tiel-bench stress_qwen.py, PHASES=visionmix; stress_crash.log.
+            # v10 entrypoint runs docker/prepare.sh (download + requantize into
+            # /app/models) before serving unless PREPARE=0. The hostPath is
+            # prepared out of band; never let the pod try.
+            - {name: PREPARE, value: "0"}
+            # Retain the mamba state snapshots a running conversation can
+            # resume from (mamba-align-checkpoint-order.patch, default off
+            # upstream). Fixes align-mode prefix caching reporting 0% on a
+            # fully cached attention prefix every 4-5 turns when other
+            # traffic interleaves (vllm#45238). Measured no-harm upstream at
+            # two pool sizes; the win regime is exactly this deployment's
+            # (context comparable to the pool, many turns).
+            - {name: VLLM_MAMBA_ALIGN_KEEP_CHECKPOINTS, value: "1"}
+            - {name: CTX, value: "long"}
+            - {name: VISION, value: "1"}
+            - {name: MAX_LEN, value: "140000"}
+            - {name: GPU_UTIL, value: "0.94"}
+            # MTP-3 qualification candidate (2026-08-21): the v4 image makes
+            # the eight reusable FlashInfer planning buffers pageable, while
+            # synchronous scheduling avoids the separate GDN/spec-decode
+            # ordering window. Keep the qualified long-context feature set.
+            - {name: PREFIX_CACHE, value: "1"}
+            # STAYS AT 3. Tried 4 on 2026-08-26 with the local drafter split
+            # (DRAFT_ATTN_BACKEND=FLASH_ATTN, DRAFT_KV_DTYPE=bfloat16), which
+            # exists to route the MTP drafter off FlashInfer's repeated-plan
+            # path while the target keeps FlashInfer/fp8. It does not avoid the
+            # crash. The engine loaded and served a single request, then died
+            # on the first 4-concurrent measurement:
+            #   vllm.v1.engine.exceptions.EngineDeadError
+            #   POST /v1/chat/completions 500, EngineCore force-killed
+            # which is upstream's documented signature - k=4 dies as soon as
+            # one request finishes while another is mid-generation. The pod
+            # restarted itself; no data loss, about 3 minutes of downtime.
+            #
+            # It also cost pool even before crashing: 184,130 -> 157,912 KV
+            # tokens, because the extra draft slot is charged per sequence.
+            # So k=4 here is worse on both axes. Do not retry without a fix
+            # for the FlashInfer path itself.
+            - {name: DRAFT_TOKENS, value: "3"}
+            - {name: ASYNC_SCHED, value: "0"}
+            # Coding agents send tool_choice=auto. Qwen3.8 uses the same
+            # tool-call format as the current Qwen3-Coder family.
+            # kv-offloading-size 24 (GiB, CPU tier, native backend): the GPU
+            # pool holds ~140k tokens = 1.01x one 140k request, so parallel
+            # long sessions evict each other's prefixes and every turn becomes
+            # a multi-minute re-prefill (measured 125s avg warm turn at 0.1%
+            # prefix hit rate with 3 interleaved ~105k-token sessions). The
+            # CPU tier retains evicted blocks and restores over PCIe: with the
+            # working set fitting the tier, warm turns measured 3.9s at 61.5%
+            # hit rate (58,240 of ~79k tokens restored per turn). Sizing: each
+            # ~105k session costs ~7.8 GB in the tier (~74 KB/token across all
+            # offloaded groups), and LRU + first-miss-aborts lookup thrash
+            # near full occupancy: 3x105k (~23.4 GB, 91% of pool) measured 0
+            # restores even at 24 GiB, while ~70% occupancy hit 61.5%. So
+            # 24 GiB covers 2 heavy (~105k) or ~3 moderate (<=70k) parallel
+            # sessions; beyond that, turns degrade to full re-prefill (no
+            # errors). 3x105k would need ~32 GiB, which this host can't
+            # spare. enable-cumem-allocator is required with the
+            # image's expandable_segments:True (the offload connector pins KV
+            # memory, which VMM remapping would invalidate); it routes only KV
+            # allocations through the CuMemAllocator pool, costing ~3k GPU KV
+            # tokens (143,804 -> 140,760). offload_prompt_only defaults to
+            # true (no CLI flag) and skips decode-phase tokens: each turn's
+            # assistant output is never stored, the next turn's prompt misses
+            # at that block, and the chained lookup returns 0 — measured
+            # 105 GB stored, 0 restored. Multi-turn chat needs false. The
+            # JSON must stay space-free: start_qwen.sh expands EXTRA_ARGS
+            # unquoted, so a space would split the token.
+            # The startup line "EAGLE/MTP draft attention groups [0..64]
+            # detected, the trailing chunk of these groups will be excluded
+            # from offloading" is BENIGN. Investigated 2026-08-26 against the
+            # vLLM source in this image; do not patch it.
+            #
+            # vLLM only sets KVCacheGroupSpec.is_eagle_group for DeepSeek V4,
+            # so method=mtp hits a fallback that flags every group. Only one of
+            # the 65 is the MTP drafter's, which looks wasteful and is not:
+            #   - The volatility is real but drafter-specific. EAGLE/MTP shifts
+            #     the drafter input by one (llm_base_proposer.py:848), so
+            #     drafter KV at position p depends on token p+1; at the last
+            #     accepted position that is a draft token, rewritten if
+            #     rejected. The docstring at offloading/scheduler.py:346 says
+            #     exactly this, and that prefill trailing chunks are stable.
+            #   - Target-layer KV is NOT volatile. Rejection rolls back
+            #     counters only, but _calc_num_offloadable_tokens caps the
+            #     store range at req.num_tokens - verified tokens - so
+            #     unverified positions can never be offloaded in the first
+            #     place. Target trailing chunks inside the range are immutable.
+            #   - Narrowing would still gain nothing. The lookup takes a MIN
+            #     over all groups (scheduler.py:736), so the drafter's group
+            #     caps the usable prefix hit at the same boundary either way.
+            #     Unflagging the other 64 only makes them store one extra
+            #     trailing chunk each that can never be part of a hit.
+            #   - Copying upstream's dflash narrowing would be UNSAFE here: it
+            #     selects groups by SlidingWindowSpec, and Qwen's MTP layer is
+            #     not sliding-window, so it would unflag the one genuinely
+            #     volatile group and store it under a stable hash.
+            # Cost of leaving it: chunk = 1 block here (blocks_per_chunk
+            # defaults to 1 and nothing overrides it), stored once, one
+            # boundary later. Conservative and effectively optimal.
+            #
+            # Do NOT raise --max-num-batched-tokens. vLLM asks for it at
+            # startup ("consider increasing max_num_batched_tokens to
+            # accommodate the additional draft token slots"), and the launcher
+            # hardcodes 2048 in the exec line where EXTRA_ARGS could override
+            # it. Measured 2026-08-26 at 4096: cold prefill 975 tok/s against a
+            # 1007/957 baseline at 62-69k with a unique preamble - inside noise
+            # - while the KV pool fell 184,130 -> 171,956 and concurrency
+            # 1.32x -> 1.23x. Prefill here is not chunk-bound, so the larger
+            # chunk is pure cost. The warning is about decode scheduling slots,
+            # not prefill throughput.
+            #
+            # The two mm flags cap what the vision encoder is profiled at.
+            # VISION=1 in this image predates upstream's version of the same
+            # knob, and upstream ships these caps for a measured reason: vLLM
+            # profiles the encoder at the LARGEST image it will accept, and
+            # that peak comes out of the KV pool. Without a cap the processor
+            # default sets that peak. 2097152 px = 2048 image tokens, one image
+            # per prompt. Measured on this deployment, 2026-08-26:
+            #   without the caps  5.01 GiB  140,760 tokens  1.01x
+            #   with the caps     6.53 GiB  184,130 tokens  1.32x
+            # KNOWN LIMIT, tested 2026-08-27: count:1 means a prompt with two
+            # or more images is REJECTED, HTTP 400 "At most 1 image(s) may be
+            # provided in one prompt." One image is served normally. Raising
+            # the count is the fix if a client needs multi-image (before/after
+            # screenshots, say), but vLLM profiles the encoder at
+            # count x largest-image, so count:2 roughly doubles the image peak
+            # and takes it back out of the KV pool - re-measure if you change
+            # it. The longest-edge cap also silently downscales larger images.
+            # Which of the two flags did the work is unattributed.
+            #
+            # +43,370 tokens, 30.8%, for two flags and a restart. The 1.01x
+            # was the number behind the kv-offloading note below: a single
+            # 140k request filled the pool, so parallel long sessions evicted
+            # each other. Serving and tool calling verified after the change.
+            - {name: EXTRA_ARGS, value: '--kv-offloading-size 24 --kv-transfer-config {"kv_connector_extra_config":{"offload_prompt_only":false}} --enable-cumem-allocator --chat-template /app/config/chat_template.jinja --enable-auto-tool-choice --tool-call-parser qwen3_coder --limit-mm-per-prompt {"image":{"count":1}} --mm-processor-kwargs {"size":{"shortest_edge":65536,"longest_edge":2097152}}'}
+            # verify.sh needs api_key.txt; stack was validated at build/bench time.
+            # No API key: ClusterIP-internal like llama-swap was; the public path
+            # is bearer-gated by Caddy (llama.<your-domain>).
+            - {name: VERIFY, value: "0"}
+            - {name: HOME, value: /cache}
+          ports:
+            - {name: http, containerPort: 8080, protocol: TCP}
+          startupProbe:
+            httpGet: {path: /health, port: 8080}
+            periodSeconds: 10
+            # warm compile cache ≈3-5 min; a cold cache (JIT + torch.compile)
+            # can take 15+ min — do not tighten this.
+            failureThreshold: 120
+          readinessProbe:
+            httpGet: {path: /health, port: 8080}
+            periodSeconds: 10
+          # /health stays green if EngineCore livelocks in the structured-output
+          # path, so liveness must prove the scheduler makes progress. The
+          # former tiny real completion queued behind client traffic and timed
+          # out under concurrent sessions, so kubelet killed a healthy busy pod
+          # (exit 137, 2026-08-24). A fixed 20s /metrics window is also wrong:
+          # the frontend only updates Prometheus counters when EngineCore emits
+          # outputs, so a chunked 140k prefill freezes every counter (including
+          # iteration_tokens_total) for ~3+ min while healthy — verified live
+          # 2026-08-24, probe tripped at 18:22Z (Triton JIT) and 19:26Z (60k
+          # prefill). Instead persist the last counter movement in /dev/shm and
+          # fail only after 600s of zero progress with active requests: ~3x the
+          # worst-case 140k prefill, catches the livelock in about 12 min.
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - -ec
+                - |
+                  url=http://127.0.0.1:8080
+                  state=/dev/shm/liveness-progress
+                  tok() { grep -E '^vllm:(prompt|generation)_tokens_total\{' <<<"$1" | awk '{s+=$NF} END{printf "%.0f", s}'; }
+                  m=$(curl -fsS --max-time 5 "$url/metrics")
+                  act=$(grep -E '^vllm:num_requests_(running|waiting)\{' <<<"$m" | awk '{s+=$NF} END{printf "%.0f", s}')
+                  t=$(tok "$m")
+                  now=$(date +%s)
+                  if [ "$act" -eq 0 ] || [ ! -s "$state" ]; then echo "$t $now" > "$state"; exit 0; fi
+                  read -r prev prev_ts < "$state" || { echo "$t $now" > "$state"; exit 0; }
+                  if [ "$t" -ne "${prev:--1}" ]; then echo "$t $now" > "$state"; exit 0; fi
+                  stall=$((now - ${prev_ts:-$now}))
+                  [ "$stall" -lt 600 ] && exit 0
+                  echo "no token progress for ${stall}s with ${act} active requests"
+                  exit 1
+            periodSeconds: 60
+            # The exec itself can exceed 10s under peak prefill CPU
+            # contention (one timeout observed 2026-08-24 21:53Z).
+            timeoutSeconds: 20
+            failureThreshold: 3
+          resources:
+            requests: {cpu: "4", memory: 12Gi, "nvidia.com/gpu": "1"}
+            limits: {cpu: "12", memory: 44Gi, "nvidia.com/gpu": "1"}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - {name: vllm-models, mountPath: /app/models}
+            - {name: vllm-cache, mountPath: /cache}
+            - {name: chat-template, mountPath: /app/config, readOnly: true}
+            - {name: shm, mountPath: /dev/shm}
+      volumes:
+        - name: vllm-models
+          hostPath: {path: /data/buttercup_6tb/k3s/vllm-trial/models, type: Directory}
+        - name: vllm-cache
+          hostPath: {path: /data/buttercup_6tb/k3s/vllm-trial/cache, type: Directory}
+        - name: chat-template
+          configMap:
+            name: llama-chat-template
+        - name: shm
+          # The native KV offload backend mmaps its CPU tier in /dev/shm
+          # (24 GiB requested = 25.8 GB file); a too-small limit fails
+          # madvise with EFAULT at engine start. Counts against the pod
+          # memory limit.
+          emptyDir: {medium: Memory, sizeLimit: 27Gi}

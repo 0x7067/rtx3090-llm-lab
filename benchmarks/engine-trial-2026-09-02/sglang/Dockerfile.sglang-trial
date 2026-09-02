@@ -1,0 +1,78 @@
+# Overlay sgl-project/sglang PR #36783 ("Add hybrid MTP and N-gram retrieval")
+# onto the nightly image whose tree is the PR's merge-base minus 7 commits.
+#
+# Why this is a clean overlay rather than a rebase:
+#
+#   PR head       63ad1158953dd92a665eda71e21a45f072d2bfd5  (1 commit)
+#   merge-base    7088f21922edc633dbb38e7543ef2b33252dfcbf  2026-08-28 04:22 UTC
+#   image tree    daf631719                                 (base~7)
+#
+# The 7 commits between the image tree and the merge-base touch 18 files, all in
+# multimodal_gen/diffusion, AMD MoRI dispatch, HiCache mmap, DP-attention
+# metadata and docker/Dockerfile.cu134. The PR touches 25 files. The two sets do
+# not intersect, so replacing the image's python/sglang tree with the PR head's
+# yields exactly merge-base + PR for every code path this model exercises.
+#
+# The PR ships no sgl-kernel and no CUDA sources. Its 6 C++ files live under
+# python/sglang/kernels/jit/csrc/ngram_corpus/, which the runtime JIT/FFI layer
+# compiles on demand with the image's g++ 13.3.0. So no kernel rebuild is needed
+# and no prebuilt wheel is invalidated -- the whole overlay is source-level.
+#
+# Build with ./build-hybrid.sh (it sets the context to the PR worktree).
+
+ARG BASE=lmsysorg/sglang:nightly-dev-cu13-20260828-daf63171
+FROM ${BASE}
+
+# The image installs sglang editable from /sgl-workspace/sglang/python, so
+# dropping files in place is the whole install step. COPY merges rather than
+# replaces, which deliberately preserves the generated python/sglang/_version.py
+# that is absent from a git checkout (setuptools_scm writes it at build time).
+COPY python/sglang/ /sgl-workspace/sglang/python/sglang/
+
+# Fail the build, not the first request, if the overlay does not import or if
+# the new hybrid flags did not land on ServerArgs.
+RUN set -eu; \
+    python3 - <<'PY'
+import sglang
+from sglang.srt.server_args import ServerArgs
+print("sglang", sglang.__version__, "at", sglang.__file__)
+
+need = [
+    "speculative_hybrid_retrieval",
+    "speculative_hybrid_tau",
+    "speculative_hybrid_tau_per_pos",
+    "speculative_hybrid_tau_min",
+    "speculative_hybrid_dynamic_tau",
+    "speculative_hybrid_index_prompt",
+    "speculative_hybrid_full_cuda_graph",
+    "speculative_hybrid_overlap",
+    "speculative_hybrid_ragged",
+]
+missing = [n for n in need if n not in ServerArgs.__annotations__]
+assert not missing, f"overlay incomplete, missing ServerArgs fields: {missing}"
+print("hybrid server args present:", len(need))
+
+# The three new modules must import standalone (they pull in torch, the ngram
+# corpus binding and the ragged verify layout).
+from sglang.srt.speculative import hybrid_chain, hybrid_retrieval, hybrid_ragged
+from sglang.srt.speculative.hybrid_chain import parse_position_thresholds
+
+# Parse the exact per-position vector run-sglang.sh passes, so a malformed
+# default is caught here instead of after an 18 GiB weight load.
+print("tau vector:", parse_position_thresholds("off,off,0.40,0.55", 0.5, 3))
+print("OVERLAY OK")
+PY
+
+# Pre-compile the ngram corpus JIT extension the hybrid retrieval path needs.
+# It is host C++ only (no .cu), so it builds without a GPU. Non-fatal: if the
+# JIT layer insists on a live device it will simply build on first use instead.
+RUN python3 -c "\
+from sglang.srt.speculative.cpp_ngram.ngram_corpus import *; print('ngram corpus import OK')" \
+    || echo 'NOTE: ngram corpus not pre-built; it will JIT on first hybrid request'
+
+# Re-declare so the label below can interpolate it (ARGs do not cross FROM).
+ARG BASE
+LABEL sglang.overlay.pr="36783" \
+      sglang.overlay.pr_head="63ad1158953dd92a665eda71e21a45f072d2bfd5" \
+      sglang.overlay.merge_base="7088f21922edc633dbb38e7543ef2b33252dfcbf" \
+      sglang.overlay.base_image="${BASE}"

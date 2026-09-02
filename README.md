@@ -13,12 +13,48 @@ alternative.
 - [`benchmarks/qwen-vllm-hillclimb-2026-08-28/`](benchmarks/qwen-vllm-hillclimb-2026-08-28/)
   contains the frozen control, 16 optimization decisions, and measured results
   from the vLLM slowdown campaign.
-- [`vllm/`](vllm/) contains the syv-ai overlay, the v9 image overlay actually
-  deployed ([`vllm/image-v9/`](vllm/image-v9/)), and the Club 3090 bundle.
+- [`benchmarks/engine-trial-2026-09-02/`](benchmarks/engine-trial-2026-09-02/)
+  is the trial that promoted llama.cpp v14 back over vLLM v10 in production:
+  llama.cpp master + four drafters, SGLang, and the vLLM baseline, on one
+  harness.
+- [`patches-v14/`](patches-v14/) is the **current production** llama.cpp patch
+  set (base `0f3a71be1`). [`patches/`](patches/) /
+  [`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/) is the
+  superseded set behind images v9–v12 (base `4df29be4f`); both names hold the
+  same eight files, kept so the base commit is unambiguous.
+- [`vllm/`](vllm/) contains the syv-ai overlay, the v9 image overlay once
+  deployed ([`vllm/image-v9/`](vllm/image-v9/)), the exported v10 and v11
+  branch diffs ([`vllm/image-v10/`](vllm/image-v10/),
+  [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)), and the Club 3090
+  bundle. vLLM v10 was production from 2026-08-20 to 2026-09-02; llama.cpp v14
+  is production now.
 - [`research/vllm/`](research/vllm/) records upstream findings that still need
   a local A/B before promotion.
 - [`experiments/`](experiments/) contains rejected or unfinished implementation
   work. Nothing there is a production default.
+
+## Where things live
+
+This repo (`0x7067/rtx3090-llm-lab`) is canonical for benchmarks, llama.cpp
+patches, and the write-up docs — everything above and below this section.
+Two other repos hold adjacent pieces:
+
+- [`0x7067/qwen38-27b-rtx3090`](https://github.com/0x7067/qwen38-27b-rtx3090)
+  is a fork of [`syv-ai/qwen38-27b-rtx3090`](https://github.com/syv-ai/qwen38-27b-rtx3090),
+  kept only as the vehicle for upstreaming PRs to syv-ai. Its deploy branches
+  (`local/k8s-deploy-v10`, `local/k8s-deploy-v11-vllm028`, …) are not merged
+  anywhere upstream; they're exported here as diffs under `vllm/image-v10/`
+  and `vllm/image-v11-vllm028/` rather than lived in as a submodule.
+- [`0x7067/tiel-bench-rtx3090`](https://github.com/0x7067/tiel-bench-rtx3090)
+  is archived. Its content is already merged into this repo's
+  `benchmarks/tiel-vs-qwen/`.
+- `/data/docker-services` `k8s/workloads/apps/llama/` in the GitOps repo holds
+  the actual Kubernetes deployment manifests (`deployment.yaml`,
+  `configmap.yaml`, the built `image/`) and their running change log
+  (`k8s/MIGRATION_LOG.md`). Those stay in the GitOps repo because Flux
+  reconciles from there directly; this lab mirrors the parts worth keeping
+  reproducible outside that repo (patches, benchmarks, design docs) and
+  cross-links rather than duplicating the manifests wholesale.
 
 ## Qwen3.8-27B llama.cpp stack
 
@@ -48,13 +84,31 @@ cold start, it hot-swaps models through llama-swap, and decode holds up at
 
 ## Current deployment
 
-The home deployment moved to vLLM on 2026-08-20. Its qualified profile uses
-vLLM 0.27.1 with the syv-ai patch stack and this repo's v4 overlay (deployed as
-image `qwen38-27b-3090:v9`, two patches further on), prepared W4A16 weights,
-FP8 KV, prefix caching, vision, a 140,000-token limit, three-token MTP
-speculation, `GPU_UTIL=0.94` (177,282 GPU KV tokens), and a 24 GiB CPU KV tier. The retained MTP-3 / 2,048-token batch arm
-measured 104.02 tok/s shallow, 95.69 tok/s at 60k, and 70.41 tok/s at 100k.
-Four concurrent requests reached 358.41 tok/s aggregate.
+**As of 2026-09-02, the home deployment is llama.cpp again**, image
+`llama:cuda-swap-v14` (llama.cpp master `0f3a71be1` + the six
+[`patches-v14/`](patches-v14/) patches), promoted over the vLLM v10 profile
+below on the strength of
+[`benchmarks/engine-trial-2026-09-02/`](benchmarks/engine-trial-2026-09-02/):
+`draft-dflash,ngram-mod` is ~2x vLLM on the agentic edit workload at every
+depth (230/194/219 vs 127/108/114 tok/s), quality 4/4. Serving config:
+UD-Q4_K_XL main + mmproj, q4_0 KV, 131,072-token context, Q8_0 DFlash2 drafter
+(`--spec-draft-n-max 7 --spec-ngram-mod-n-match 32`), `GGML_CUDA_MMVQ_NE11_MAX=3`
+/ `GGML_CUDA_MMQ_SMALLN=3`. vLLM's own profile keeps single-request decode
+(129 vs 105–108 tok/s), prefill, and 4-way concurrency (262 vs 160 tok/s) — see
+the trial README for the full arm-by-arm table and the rollback path.
+
+**Between 2026-08-20 and 2026-09-02 the home deployment ran vLLM.** Its
+qualified profile used vLLM 0.27.1 with the syv-ai patch stack and this repo's
+v4 overlay (deployed as image `qwen38-27b-3090:v9`, two patches further on),
+prepared W4A16 weights, FP8 KV, prefix caching, vision, a 140,000-token limit,
+three-token MTP speculation, `GPU_UTIL=0.94` (177,282 GPU KV tokens), and a
+24 GiB CPU KV tier. The retained MTP-3 / 2,048-token batch arm measured 104.02
+tok/s shallow, 95.69 tok/s at 60k, and 70.41 tok/s at 100k. Four concurrent
+requests reached 358.41 tok/s aggregate. By 2026-09-01 the deployed source had
+moved on to v10 (rebased onto syv-ai `453104e`, vision-tower CPU offload on by
+default) — see [`vllm/image-v10/`](vllm/image-v10/) for that branch's diff and
+the last-deployed manifest; [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)
+is a vLLM-0.28 candidate branch that was exported but never deployed.
 
 The exact overlay and installable Club 3090 local bundle are under
 [`vllm/`](vllm/). The wrapper passed a target-3090 boot and generation canary
@@ -114,6 +168,19 @@ Full sweep, a rejected 3.7bpw extreme, and the corrected
 weight-bytes cost model: `docs/quant-selection.md`.
 
 ## The patches
+
+**Which set is current:** [`patches-v14/`](patches-v14/) is the set running in
+production today (image `llama:cuda-swap-v14`, promoted 2026-09-02), rebased
+onto llama.cpp master `0f3a71be1`. `patches/` (duplicated verbatim as
+[`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/) so the
+historical base is unambiguous) is the **superseded** set behind images v9–v12,
+against base `4df29be4f`. Every reference to `patches/` or `image/patches/`
+below this line, and everywhere in `docs/`, describes that historical
+4df29be4-based campaign, not the running v14 set — see
+[`patches-v14/REBASE-2026-09-02.md`](patches-v14/REBASE-2026-09-02.md) for what
+changed in the rebase (0001/0006 dropped as superseded by upstream backend
+draft sampling; 0003/0005/0008 rebased with behavioural notes; 0002/0004/0007
+applied clean).
 
 Apply the patches onto llama.cpp commit `4df29be4f`, in order, with
 `git apply`. Do not use `git am`: patches 0002 and 0006 are plain diffs
@@ -320,7 +387,11 @@ environment variables or edit the paths before reuse:
 
 ```
 Dockerfile                  build llama.cpp @4df29be4f + patches (CUDA sm_86) + llama-swap
-patches/0001..0008          the shipped patch stack (apply with git apply, in order)
+patches/0001..0008          historical patch stack (apply with git apply, in order); superseded by patches-v14/
+patches-v9-v12-base-4df29be4/  verbatim copy of patches/, named for the base commit and the image
+                            range it shipped in (v9-v12), kept alongside patches/ for clarity
+patches-v14/                the CURRENT production patch set (six patches, base 0f3a71be1,
+                            promoted 2026-09-02); see patches-v14/REBASE-2026-09-02.md
 tools/                      draft-vocab pipeline, GGUF surgery + validation, bench harnesses
                             (one-shot A/B, cumulative session, 12-turn episode metric)
 tools/bench/                shared GPU lock, quiesce, health, and result-posting helpers
@@ -341,6 +412,10 @@ docs/obliterated-variant.md OBLITERATED Q4_K_M MTP findings, controls, and open 
 docs/vllm-companion.md      current vLLM profile, Club 3090 bundle, arms, quality gates
 vllm/                       reproducible local overlay + Club 3090 local-layer bundle
 vllm/image-v9/              the v8->v9 overlay actually deployed (2 vLLM patches + lineage)
+vllm/image-v10/             exported k8s-deploy-v10 branch diff + last-deployed k8s manifest
+vllm/image-v11-vllm028/     exported k8s-deploy-v11-vllm028 branch diff (vLLM 0.28 candidate)
+benchmarks/engine-trial-2026-09-02/  llama.cpp master vs vLLM v10 vs SGLang trial that
+                            promoted llama.cpp v14 to production; see its README.md
 ```
 
 ## License and credits

@@ -3,9 +3,12 @@
 Everything needed to build a serving image for the RTX 3090 lives in this repo.
 The GitOps repo (`docker-services`, where this repo is the `rtx3090-llm-lab`
 submodule) holds only the Kubernetes manifests, and promotion is a tag bump
-there. Images are imported into k3s containerd directly (no registry), so a tag
-must be bumped on every rebuild: `imagePullPolicy: Never` will not re-import a
-same-tag rebuild.
+there. Images go through the host-local registry (`127.0.0.1:5000`, the
+`local-k3s-registry` container): `docker push` there, and containerd pulls the
+image itself when a manifest references `127.0.0.1:5000/<name>:<tag>`. No
+sudo, no `ctr images import`. Bump the tag on every rebuild:
+`imagePullPolicy: IfNotPresent` never re-pulls a same-tag image containerd
+already holds.
 
 ## llama.cpp (production since 2026-09-02)
 
@@ -16,7 +19,8 @@ when moving the base.
 
 ```bash
 # from the docker-services checkout
-IMAGE_NAME=llama:cuda-swap-v15 scripts/build-llama-image.sh   # builds from rtx3090-llm-lab/, imports into k3s
+IMAGE_NAME=llama:cuda-swap-v15 scripts/build-llama-image.sh   # builds from rtx3090-llm-lab/, pushes to 127.0.0.1:5000
+# manifest: image: 127.0.0.1:5000/llama:cuda-swap-v15
 ```
 
 Validate before serving (both must print `Backend CUDA0: OK`):
@@ -45,7 +49,7 @@ a built base).
 ```bash
 scripts/build-qwen38-vllm-base.sh qwen38-27b-3090:v12-base --check   # dry run of the context
 scripts/build-qwen38-vllm-base.sh qwen38-27b-3090:v12-base --publish
-scripts/build-qwen38-vllm-image.sh qwen38-27b-3090:v12 --import       # overlay patches on the base
+scripts/build-qwen38-vllm-image.sh qwen38-27b-3090:v12 --publish      # overlay patches on the base, push to 127.0.0.1:5000
 ```
 
 The last deployed vLLM manifest is
@@ -87,6 +91,6 @@ Flux, scale to zero, arms, restore).
 ## Roll back
 
 `git revert <promotion commit>` in the GitOps repo and reconcile. Previous
-images stay in containerd (`sudo k3s ctr images ls | grep -E 'llama:|qwen38'`),
+images stay in the local registry and in containerd (list tags: `curl -s http://127.0.0.1:5000/v2/llama/tags/list`),
 so a rollback needs no rebuild. If the previous engine was vLLM, set
 `llama-cache-canary` back to `replicas: 1`.

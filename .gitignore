@@ -1,0 +1,16 @@
+__pycache__/
+api_key.txt
+bench/quality-data/
+bench/results/
+models/
+profiles/
+qwen.log
+venv/
+drafter/data/
+drafter/runs/
+.env
+# local reproduction artifacts (symlinks here, so no trailing slash)
+venv
+models
+api_key.txt
+bench/results/

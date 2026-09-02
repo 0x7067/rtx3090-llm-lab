@@ -1,0 +1,4 @@
+# Everything in this repo executes on Linux (bash, patch, python inside the
+# container image via `COPY . .`), so CRLF working trees break it. Force LF
+# regardless of the cloning machine's core.autocrlf.
+* text=auto eol=lf

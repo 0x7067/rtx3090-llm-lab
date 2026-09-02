@@ -1,0 +1,163 @@
+vLLM PR #50021 (open at the time of writing): bound accepted-token state
+lookups in the Gated DeltaNet / Mamba speculative-decode kernels.
+
+The fused_recurrent / fused_sigmoid_gating / causal_conv1d / selective-scan
+kernels index the recurrent-state slot with (num_accepted_tokens - 1) without
+checking it against the row width; stale or oversized counts produce wild GPU
+addresses. Vendored here (kernel hunks only; the mamba_utils.py prefix-caching
+hunks of the PR do not apply to 0.27.1 and are not needed with prefix caching
+off) because we hit illegal-memory-access crashes with several concurrent MTP
+requests. Note: it does NOT fix the k=4 crash described in single-user/README.md.
+
+Apply from the installed vllm package directory:
+  patch -p1 -d venv/lib/python3.12/site-packages/vllm < patches/vllm-pr50021-gdn-spec-bounds.patch
+
+Source: https://github.com/vllm-project/vllm/pull/50021 (Apache-2.0).
+
+diff --git a/model_executor/layers/mamba/ops/causal_conv1d.py b/model_executor/layers/mamba/ops/causal_conv1d.py
+index 8335c849666d..e7387484cca6 100644
+--- a/model_executor/layers/mamba/ops/causal_conv1d.py
++++ b/model_executor/layers/mamba/ops/causal_conv1d.py
+@@ -871,9 +871,21 @@ def _causal_conv1d_update_kernel(
+         # - accept 1 tokens: [history2, ..., historyM, draft1]
+         # - accept 2 tokens: [history3, ..., historyM, draft1, draft2]
+         # - and so on.
+-        conv_state_token_offset = (
+-            tl.load(num_accepted_tokens_ptr + idx_seq).to(tl.int64) - 1
+-        )
++        num_accepted = tl.load(num_accepted_tokens_ptr + idx_seq).to(tl.int64)
++        if (num_accepted < 1) | (num_accepted > seqlen):
++            zero = tl.zeros((BLOCK_N,), dtype=tl.float32)
++            for idx_token in tl.range(seqlen):
++                o_ptrs = (
++                    o_ptr
++                    + o_offset
++                    + idx_token * stride_o_token
++                    + idx_feats * stride_o_dim
++                )
++                tl.store(o_ptrs, zero, mask=idx_feats < dim)
++            if launch_pdl:
++                tl.extra.cuda.gdc_launch_dependents()
++            return
++        conv_state_token_offset = num_accepted - 1
+     else:
+         conv_state_token_offset = 0
+ 
+diff --git a/model_executor/layers/mamba/ops/mamba_ssm.py b/model_executor/layers/mamba/ops/mamba_ssm.py
+index af45467886ea..73c892d67b5d 100644
+--- a/model_executor/layers/mamba/ops/mamba_ssm.py
++++ b/model_executor/layers/mamba/ops/mamba_ssm.py
+@@ -333,7 +333,15 @@ def _selective_scan_update_kernel(
+     if HAS_STATE_BATCH_INDICES:
+         if IS_SPEC_DECODING:
+             num_accepted = tl.load(num_accepted_tokens_ptr + pid_b).to(tl.int64)
++            # Preserve the existing zero-count clamp while bounding the
++            # accepted-token-derived state lookup to this request's row.
++            # The bound is the ROW stride (elements per batch row), matching
++            # fused_recurrent.py's i_t < stride_indices_seq: for a contiguous
++            # [batch, T] tensor stride(0) == T. stride(1) would be 1 there,
++            # which rejects every accepted count > 1 (and a padded row keeps
++            # any overshoot inside this request's allocated slack).
+             init_token_idx = tl.maximum(num_accepted - 1, 0)
++            valid_initial_token = init_token_idx < stride_state_indices_batch
+         else:
+             init_token_idx = 0
+ 
+@@ -347,9 +355,17 @@ def _selective_scan_update_kernel(
+                 dst_state_batch_idx * stride_state_batch + pid_h * stride_state_head
+             )
+ 
+-        state_batch_indices_ptr += (
+-            pid_b * stride_state_indices_batch + init_token_idx * stride_state_indices_T
+-        )
++        state_batch_indices_ptr += pid_b * stride_state_indices_batch
++        if IS_SPEC_DECODING and not valid_initial_token:
++            offs_m = pid_m * BLOCK_SIZE_M + tl.arange(0, BLOCK_SIZE_M)
++            zero = tl.zeros([BLOCK_SIZE_M], dtype=tl.float32)
++            out_ptr += bos * stride_out_batch + pid_h * stride_out_head
++            for _ in range(seq_len):
++                tl.store(out_ptr + offs_m * stride_out_dim, zero, mask=offs_m < dim)
++                out_ptr += stride_out_batch
++            return
++
++        state_batch_indices_ptr += init_token_idx * stride_state_indices_T
+         state_batch_idx = tl.load(state_batch_indices_ptr).to(tl.int64)
+         state_ptr += state_batch_idx * stride_state_batch + pid_h * stride_state_head
+     else:
+diff --git a/third_party/flash_linear_attention/ops/fused_recurrent.py b/third_party/flash_linear_attention/ops/fused_recurrent.py
+index c8004cb57173..02907c44588e 100644
+--- a/third_party/flash_linear_attention/ops/fused_recurrent.py
++++ b/third_party/flash_linear_attention/ops/fused_recurrent.py
+@@ -107,11 +107,29 @@ def fused_recurrent_gated_delta_rule_fwd_kernel(
+             else:
+                 i_t = 0
+             # Load state index and check for invalid entries
+-            state_idx = tl.load(ssm_state_indices + i_n * stride_indices_seq + i_t).to(
+-                tl.int64
+-            )
+-            # Skip if state index is invalid (NULL_BLOCK_ID=0)
++            # ``i_t`` is ``num_accepted_tokens - 1`` and is otherwise
++            # unbounded, while ``ssm_state_indices`` has only
++            # ``stride_indices_seq`` columns per request. A zero accepted
++            # count gives ``i_t == -1`` (a read before this request's row,
++            # and before the tensor for ``i_n == 0``); a stale or too-large
++            # count reads past the row. The ``state_idx <= 0`` guard below
++            # only rejects non-positive values, so an out-of-range read that
++            # returns a garbage positive int32 flows into
++            # ``h0 + state_idx * stride_init_state_token`` and is
++            # dereferenced, faulting the SM. Mask the load to the row and let
++            # ``other=0`` fall into the existing invalid-state path.
++            idx_in_row = (i_t >= 0) & (i_t < stride_indices_seq)
++            state_idx = tl.load(
++                ssm_state_indices + i_n * stride_indices_seq + i_t,
++                mask=idx_in_row,
++                other=0,
++            ).to(tl.int64)
++            # Skip invalid state indices without exposing uninitialized output.
+             if state_idx <= 0:
++                zero = tl.zeros([BV], dtype=tl.float32).to(p_o.dtype.element_ty)
++                for _ in range(0, T):
++                    tl.store(p_o, zero, mask=mask_v)
++                    p_o += HV * V
+                 return
+             p_h0 = h0 + state_idx * stride_init_state_token
+         else:
+diff --git a/third_party/flash_linear_attention/ops/fused_sigmoid_gating.py b/third_party/flash_linear_attention/ops/fused_sigmoid_gating.py
+index 7e0c7e05cab1..261befff8f9a 100644
+--- a/third_party/flash_linear_attention/ops/fused_sigmoid_gating.py
++++ b/third_party/flash_linear_attention/ops/fused_sigmoid_gating.py
+@@ -106,12 +106,29 @@ def fused_sigmoid_gating_delta_rule_update_kernel(
+                 i_t = tl.load(num_accepted_tokens + i_n).to(tl.int64) - 1
+             else:
+                 i_t = 0
+-            # Load state index and check for invalid entries
+-            state_idx = tl.load(ssm_state_indices + i_n * stride_indices_seq + i_t).to(
+-                tl.int64
+-            )
+-            # Skip if state index is invalid (NULL_BLOCK_ID=0)
++            # Load state index and check for invalid entries.
++            # ``i_t`` is ``num_accepted_tokens - 1`` and is otherwise unbounded
++            # against a ``stride_indices_seq``-column tensor: a zero accepted
++            # count gives ``i_t == -1`` (a read before this request's row, and
++            # before the tensor for ``i_n == 0``); a stale or too-large count
++            # reads past the row. The ``state_idx <= 0`` guard below only rejects
++            # non-positive values, so an out-of-range read returning a garbage
++            # positive int flows into ``h0 + state_idx * stride_init_state_token``
++            # and faults the SM. Mask the load to the row; ``other=0`` falls into
++            # the invalid-state path below, which also returns before the
++            # ``final_state_idx`` load later.
++            idx_in_row = (i_t >= 0) & (i_t < stride_indices_seq)
++            state_idx = tl.load(
++                ssm_state_indices + i_n * stride_indices_seq + i_t,
++                mask=idx_in_row,
++                other=0,
++            ).to(tl.int64)
++            # Skip invalid state indices without exposing uninitialized output.
+             if state_idx <= 0:
++                zero = tl.zeros([BV], dtype=tl.float32).to(p_o.dtype.element_ty)
++                for _ in range(0, T):
++                    tl.store(p_o, zero, mask=mask_v)
++                    p_o += HV * V
+                 return
+             p_h0 = h0 + state_idx * stride_init_state_token
+         else:

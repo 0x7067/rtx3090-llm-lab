@@ -1,0 +1,154 @@
+Give a draft model's sliding-window KV layers a usable block size when their page does not
+divide the primary page. Without this, a quantized KV cache costs a hybrid model with a
+DFlash2 drafter MORE memory than bf16, not less.
+
+`unify_kv_cache_spec_page_size` equalizes page sizes by scaling a layer's block size up by
+the integer ratio max_page / own_page, and falls back to padding the *page* when that ratio
+is not an integer. Sliding-window layers are born at the backend's smallest kernel block --
+16 -- because the code that picks it assumes unify will scale it (the comment at
+model_executor/layers/attention/attention.py reads "the smallest block is fine -- `unify`
+scales it up by an integer ratio"). When the ratio is not an integer, that assumption fails
+silently: the block stays 16 and every block pays a whole primary page.
+
+On this repo's target + DFlash2 drafter the divisibility holds at bf16 only by coincidence.
+The target has 4 KV heads x 256 head dim and the drafter 8 x 128, so both need 4096 B per
+token per layer and the ratio is exactly 28. A per-token-head quantized cache adds one fp32
+scale *per head*, which breaks it: 2*4*(256+4) = 2080 for the target against 2*8*(128+4) =
+2112 for the drafter, and 2112 = 2**6 * 3 * 11 shares no useful factor with the primary page,
+so no block size ever divides it. The drafter's 5 layers then took
+cdiv(2047 + 4096, 16) + 1 = 385 blocks of 1.71 MiB each -- 1.88% utilised, a constant
+5.155 GiB, 75.6% of the whole per-request budget. Measured: int8 needed 6.82 GiB to serve
+32,768 tokens where bf16 serves 69,758 in 5.2 GiB.
+
+The fix rounds such a layer's block size *up* to the smallest multiple of its own kernel
+granularity whose natural page covers the maximum, and lets that page become the new maximum
+so every other layer pads up by a percent or two instead. Those layers hold hundreds of
+blocks each, so paying 1.5% on them is far cheaper than 385 nearly-empty pages on the drafter.
+Guarded: it only fires when every other spec can actually accept padding (Mamba by
+construction, attention only if its backend indexes KV by block stride), so it never turns a
+configuration that starts today into a NotImplementedError.
+
+Measured on the 3090, SPEC=dflash2 DFLASH_TOKENS=7, --kv-cache-memory=5583457484:
+
+  int8_per_token_head, estimated max model length   3,536 -> 94,176
+  int8_per_token_head pool at max_model_len 131,072  would not start -> 138,696 tokens
+  bf16 (block size / needed / estimated max)         448 / 16.88 GiB / 46,592, unchanged,
+                                                     and zero promotions logged
+
+138,696 against bf16's 69,758 is 1.99x the context in the same pool. bf16 is untouched
+because its pages already divide.
+
+Apply from the repo root, after hybrid-kv-groups-v2-cudagraph.patch:
+  patch -p1 -d venv/lib/python3.12/site-packages/vllm < patches/hybrid-sw-block-promote.patch
+
+Written against vLLM 0.27.1. Reapply after upgrades.
+
+--- a/v1/core/kv_cache_utils.py
++++ b/v1/core/kv_cache_utils.py
+@@ -1067,6 +1067,93 @@
+     return len(page_sizes) == 1
+ 
+ 
++def _promote_indivisible_block_sizes(
++    kv_cache_spec: dict[str, KVCacheSpec], max_page_size: int
++) -> tuple[dict[str, KVCacheSpec], int]:
++    """(syv) Raise the block size of layers whose page does not divide the maximum.
++
++    ``unify_kv_cache_spec_page_size`` scales a small page up to the maximum by an
++    integer block-size ratio, and falls back to padding the *page* when the ratio is
++    not an integer. That fallback keeps the layer's block size, so a sliding-window
++    draft layer -- born at the backend's smallest kernel block, 16 -- pays a whole
++    primary page for every 16 tokens. On this repo's DFlash2 drafter that is a 53x
++    blow-up: 385 blocks of 1.71 MiB to hold 33 KB of useful KV, a constant 5.2 GiB.
++
++    It is invisible with a bf16 cache, where the target (4 KV heads x 256) and the
++    drafter (8 x 128) coincidentally both need 4096 B per token per layer, so the
++    ratio is the exact integer 28. A per-token-head quantized cache adds one fp32
++    scale *per head*, which breaks the coincidence (2080 vs 2112 B/token) -- and
++    2112 = 2**6 * 3 * 11 shares no useful factor with the primary page, so no block
++    size ever divides it.
++
++    Instead of padding such a layer's page, round its block size *up* to the smallest
++    multiple of its own kernel granularity whose natural page covers ``max_page_size``.
++    Its page then becomes the new maximum and every other layer pads up by a percent
++    or two -- which is what the padding branch is good at, and cheap, because those
++    layers hold hundreds of blocks each rather than 385 nearly-empty ones.
++
++    Only fires when every other spec can actually accept padding, so it never turns a
++    config that starts today into a NotImplementedError.
++    """
++    candidates = {
++        name: spec
++        for name, spec in kv_cache_spec.items()
++        if isinstance(spec, AttentionSpec)
++        and spec.page_size_bytes < max_page_size
++        and max_page_size % spec.page_size_bytes != 0
++        and spec.block_size > 0
++    }
++    if not candidates:
++        return kv_cache_spec, max_page_size
++
++    new_max = max_page_size
++    promoted: dict[str, KVCacheSpec] = {}
++    for name, spec in candidates.items():
++        per_block = spec.page_size_bytes // spec.block_size  # bytes per token, this layer
++        if per_block <= 0:
++            return kv_cache_spec, max_page_size
++        ratio = cdiv(max_page_size, spec.page_size_bytes)
++        new_block_size = spec.block_size * ratio
++        new_spec = replace(spec, block_size=new_block_size)
++        if new_spec.page_size_bytes < max_page_size:
++            return kv_cache_spec, max_page_size
++        promoted[name] = new_spec
++        new_max = max(new_max, new_spec.page_size_bytes)
++
++    # Everything not promoted must be able to reach new_max: Mamba pads by
++    # construction, attention only if its backend reads pages by block stride.
++    for name, spec in kv_cache_spec.items():
++        if name in promoted or spec.page_size_bytes == new_max:
++            continue
++        if isinstance(spec, MambaSpec):
++            continue
++        if new_max % spec.page_size_bytes == 0:
++            continue
++        if isinstance(spec, AttentionSpec) and spec.indexes_kv_by_block_stride:
++            continue
++        logger.info(
++            "Not promoting draft block sizes: layer %s can neither scale nor pad "
++            "to the resulting page size.",
++            name,
++        )
++        return kv_cache_spec, max_page_size
++
++    updated = dict(kv_cache_spec)
++    for name, spec in promoted.items():
++        logger.info(
++            "Raising block size of %s from %d to %d tokens so its page (%d B) covers "
++            "the maximum (%d B) instead of being padded to it at block %d.",
++            name,
++            kv_cache_spec[name].block_size,
++            spec.block_size,
++            spec.page_size_bytes,
++            max_page_size,
++            kv_cache_spec[name].block_size,
++        )
++        updated[name] = spec
++    return updated, new_max
++
++
+ def unify_kv_cache_spec_page_size(
+     kv_cache_spec: dict[str, KVCacheSpec],
+ ) -> dict[str, KVCacheSpec]:
+@@ -1094,6 +1181,12 @@
+         return kv_cache_spec
+ 
+     max_page_size = max(page_sizes)
++    # (syv) see _promote_indivisible_block_sizes: a draft layer whose page does not
++    # divide the maximum would otherwise keep its 16-token block and pad its page to
++    # the full maximum, costing a whole primary page per 16 tokens.
++    kv_cache_spec, max_page_size = _promote_indivisible_block_sizes(
++        kv_cache_spec, max_page_size
++    )
+     new_kv_cache_spec = {}
+     for layer_name, layer_spec in kv_cache_spec.items():
+         if layer_spec.page_size_bytes == max_page_size:

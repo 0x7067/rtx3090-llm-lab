@@ -1,0 +1,5 @@
+# Local override: bind-mount the patched launcher (VISION=1 keeps the vision tower)
+services:
+  single:
+    volumes:
+      - ./single-user/start_qwen.sh:/app/single-user/start_qwen.sh:ro

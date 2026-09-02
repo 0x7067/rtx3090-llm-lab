@@ -28,6 +28,13 @@ alternative.
   [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)), and the Club 3090
   bundle. vLLM v10 was production from 2026-08-20 to 2026-09-02; llama.cpp v14
   is production now.
+- [`docs/`](docs/) holds the write-ups: [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md)
+  is the full kernel-campaign record, and the two history documents sit beside it —
+  [`docs/journey-2026-08-15-to-17.md`](docs/journey-2026-08-15-to-17.md) is the
+  three-day narrative (quant comparison, kernel campaign, the decision not to
+  fine-tune) and [`docs/journal-2026-08-17.md`](docs/journal-2026-08-17.md) is the
+  single-day journal for the day that follows it. Both moved here from the GitOps
+  repo on 2026-09-02 and are canonical here.
 - [`research/vllm/`](research/vllm/) records upstream findings that still need
   a local A/B before promotion.
 - [`experiments/`](experiments/) contains rejected or unfinished implementation
@@ -37,24 +44,36 @@ alternative.
 
 This repo (`0x7067/rtx3090-llm-lab`) is canonical for benchmarks, llama.cpp
 patches, and the write-up docs — everything above and below this section.
-Two other repos hold adjacent pieces:
+**As of 2026-09-02 it is the only repo of this work that remains.** The two
+other repos that used to hold adjacent pieces are being deleted on 2026-09-02,
+their unique content having been exported here first:
 
-- [`0x7067/qwen38-27b-rtx3090`](https://github.com/0x7067/qwen38-27b-rtx3090)
-  is a fork of [`syv-ai/qwen38-27b-rtx3090`](https://github.com/syv-ai/qwen38-27b-rtx3090),
+- `0x7067/qwen38-27b-rtx3090` was a fork of
+  [`syv-ai/qwen38-27b-rtx3090`](https://github.com/syv-ai/qwen38-27b-rtx3090),
   kept only as the vehicle for upstreaming PRs to syv-ai. Its deploy branches
-  (`local/k8s-deploy-v10`, `local/k8s-deploy-v11-vllm028`, …) are not merged
-  anywhere upstream; they're exported here as diffs under `vllm/image-v10/`
-  and `vllm/image-v11-vllm028/` rather than lived in as a submodule.
-- [`0x7067/tiel-bench-rtx3090`](https://github.com/0x7067/tiel-bench-rtx3090)
-  is archived. Its content is already merged into this repo's
-  `benchmarks/tiel-vs-qwen/`.
+  (`local/k8s-deploy-v10`, `local/k8s-deploy-v11-vllm028`, …) were never merged
+  anywhere upstream. They are exported here as diffs under
+  [`vllm/image-v10/`](vllm/image-v10/) and
+  [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/), alongside the syv-ai
+  overlay and the Club 3090 bundle in [`vllm/`](vllm/). **Deleted 2026-09-02.**
+  Upstreaming to syv-ai now needs a fresh fork.
+- `0x7067/tiel-bench-rtx3090` held the public Tiel-versus-Qwen comparison. Its
+  content is merged into
+  [`benchmarks/tiel-vs-qwen/`](benchmarks/tiel-vs-qwen/) here, harnesses and
+  qualification evidence included. **Deleted 2026-09-02.**
+
+The GitOps repo is a different case and stays where it is:
+
 - `/data/docker-services` `k8s/workloads/apps/llama/` in the GitOps repo holds
   the actual Kubernetes deployment manifests (`deployment.yaml`,
   `configmap.yaml`, the built `image/`) and their running change log
   (`k8s/MIGRATION_LOG.md`). Those stay in the GitOps repo because Flux
   reconciles from there directly; this lab mirrors the parts worth keeping
   reproducible outside that repo (patches, benchmarks, design docs) and
-  cross-links rather than duplicating the manifests wholesale.
+  cross-links rather than duplicating the manifests wholesale. The
+  `PERFORMANCE.md` and `JOURNEY.md` that used to live beside those manifests
+  moved here on 2026-09-02; what remains there are one-paragraph stubs pointing
+  at `docs/PERFORMANCE.md` and `docs/journey-2026-08-15-to-17.md`.
 
 ## Qwen3.8-27B llama.cpp stack
 
@@ -403,6 +422,8 @@ experiments/                measured but unshipped patches (see experiments/READ
 docs/PERFORMANCE.md         full campaign write-up (waves, kernels, rejects, methodology)
 docs/mmq-small-batch-analysis.md       MMQ verify-path analysis behind the wave-8 work
 docs/journal-2026-08-17.md  day journal: what shipped, what was rejected, and why
+docs/journey-2026-08-15-to-17.md  three-day narrative (2026-08-15..17): quant comparison,
+                            the kernel campaign, and the decision not to fine-tune
 docs/sglang-claim-check.md  the "SGLang >100 tok/s" claim, checked against this GPU
 docs/truncated-draft-vocab-design.md   design doc for patch 0007 (data flow, correctness proof)
 docs/thermals-and-oc.md     fan-curve dead zone, NVML offset convention, OC ladder, thermal ceiling

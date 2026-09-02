@@ -400,8 +400,14 @@ come from an end-to-end server run.
 - **Q8_0 MTP head**: **+3.16 GB** against the embedded baseline, not the +1.48 GB it appears to
   cost against the current file.
 - **Embedded versus separate drafter**: the production Q4_K_L **already embeds an MTP head**
-  (15 `blk.64.*` tensors) at the same Q4_0 quantization as the separate file, so dropping
-  `--model-draft` is a potential ~1.6 GB VRAM saving with no speed change. Not acted on.
+  (15 `blk.64.*` tensors) at the same Q4_0 quantization as the separate file. ~~Dropping
+  `--model-draft` is a potential ~1.6 GB VRAM saving with no speed change. Not acted on.~~
+  **Settled 2026-08-17 (wave 7), prediction was wrong on both counts:** without `--model-draft`
+  the draft context is built on the *target* model, so draft logits go through the target's
+  **Q8_0** `output.weight` (1.351 GB/pass vs the drafter's 0.715 GB) — measured **−1.6% decode
+  for −0.9 GiB VRAM** (75.15→73.9 t/s shallow; acceptance *rises* .527→.571 from the
+  higher-precision head, but the extra bytes cost more than the drafts earn). Rejected; the
+  separate drafter also is the only path that supports head truncation (below).
 
 ## Open items
 
@@ -510,6 +516,43 @@ machine**, the constraint that shaped the whole methodology.
   (0003) and 0.0063 (0004) measured.
 - **Verify VRAM on a clean run at the real context size**, never from `llama-bench` — it has no
   drafter, no projector, and sizes `n_ctx` to the test. The ceiling here is 23,400 MiB.
+
+## Wave 7 (2026-08-17, image v11): truncated draft vocabulary
+
+The drafter's Q4_0 `output.weight` (248,320 rows, 0.715 GB) is **74% of every draft pass's
+read traffic** and is paid at full draft depth every cycle (no p-min). Patch 0007 ports
+llama.cpp's EAGLE3 `d2t` idiom to the qwen35 MTP graph: a drafter GGUF may carry a truncated
+head plus an I64 `d2t` tensor mapping head rows to target token ids; draft logits scatter back
+to full width with −inf on unmapped rows, so sampling and the server are untouched. Verify is
+sample-and-match (`common/sampling.cpp`) — the draft token is never emitted — so output is
+identical by construction, and measured sha256-identical in every A/B payload.
+
+Production drafter: `mtp-Qwen3.8-27B-Q4_0-d48k.gguf` — 49,152 rows chosen by corpus frequency
+(English technical + code + 10% pt-BR; 98.5% held-out coverage, 96.5% OOD), all 27 control +
+6 user-defined tokens force-included, rows copied byte-exact (Q4_0 row = 2880 B), built and
+validated by `tools/build_draft_vocab.py`, `tools/truncate_drafter.py`, and
+`tools/run_validation.sh` in this repo. The design, data flow, and correctness argument are in
+`docs/truncated-draft-vocab-design.md`; the patch itself is `patches-v14/0007-qwen35-mtp-d2t-draft-vocab.patch`
+(and `patches-v9-v12-base-4df29be4/` for the v9–v12 base). **Requires image ≥ v11**; rollback is
+pointing `--model-draft` back at the full drafter (any image).
+
+Gate that justified the build: draft-n relaunch sweep put the marginal draft step at
+**2.25 ms** (N=3→5) vs a ~1.2 ms byte floor → ~45% fixed overhead → +8% shallow ceiling.
+Measured same-image A/B (full vs d48k drafter, temp-0, 2 reps, sha-verified):
+
+| payload | full | d48k | delta | acceptance |
+|---|---|---|---|---|
+| short (98 tok) | 75.3 | 75.7 | +0.5% | .527→.488 |
+| mid-1k (code) | 75.0 | **79.6** | **+6.1%** | identical (184/346) |
+| 7k prose | 64.7 | **68.2** | **+5.4%** | .435→.431 |
+| 53.4k agentic | 59.4 | **62.9** | **+6.0%** | identical (263/599) |
+| VRAM @131k | 23,438 MiB | 22,892 | −546 MiB | |
+
+Known non-issue inherited from EAGLE3: `d2t` is declared `GET_ROWS` in `LLM_TENSOR_INFOS`, so
+it lands in a host buffer and crosses PCIe (~320 KB/draft step, ~0.008% of cycle traffic); the
+scatter itself runs on the GPU via the offload path. If a profile ever shows a new graph split
+here, the fix is declaring `LLM_TENSOR_D2T` with an I64-friendly op — one line, shared with
+EAGLE3, decide with a bench in hand.
 
 ## Weight-byte traffic as a decode-cost model — corrected
 

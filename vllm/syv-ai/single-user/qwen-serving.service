@@ -1,0 +1,18 @@
+[Unit]
+Description=Qwen3.8-27B vLLM server (single-user mode, RTX 3090)
+After=network-online.target
+
+[Service]
+Type=simple
+# Wait for the GPU to actually be free before starting. If vLLM profiles memory
+# while a previous process is still releasing VRAM, it permanently allocates a
+# smaller cache pool and throughput quietly suffers.
+ExecStartPre=/bin/bash -c "for i in $(seq 1 60); do u=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits); [ \"$u\" -lt 1000 ] && exit 0; sleep 2; done; exit 1"
+ExecStart=/bin/bash %h/qwen-serving/single-user/start_qwen.sh
+Restart=on-failure
+RestartSec=20
+StandardOutput=append:%h/qwen-serving/qwen.log
+StandardError=append:%h/qwen-serving/qwen.log
+
+[Install]
+WantedBy=default.target

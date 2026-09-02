@@ -1,0 +1,19 @@
+# build context = the repo, minus everything that is local state
+.git
+venv
+hfvenv
+models
+.env
+api_key.txt
+*.log
+__pycache__
+**/__pycache__
+profiles
+bench/quality-data
+bench/results
+drafter/data
+drafter/runs
+marlin-tune/build
+marlin-tune/*.so
+marlin-tune/csrc*
+marlin-tune/cuda13-home

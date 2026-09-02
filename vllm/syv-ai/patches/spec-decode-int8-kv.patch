@@ -1,0 +1,227 @@
+Let the split-KV verify attention read an int8 per-token-head KV cache, and hook it into the
+Triton backend. This is what makes a quantized KV cache -- and therefore >64k context -- worth
+anything for SPEC=dflash2; hybrid-sw-block-promote.patch is what makes it fit.
+
+Two halves:
+
+1. v1/attention/ops/spec_decode_attn.py gains a QUANT path. TRITON_ATTN's
+   `int8_per_token_head` cache hands out K/V views of shape [num_blocks, block_size, Hkv,
+   D + 4] -- the head dim padded so one fp32 scale per (token, head) sits inline after the
+   data -- plus f32 scale views [num_blocks, block_size, Hkv]. The padded head dim is already
+   carried by stride_kh, so the addressing is untouched; only the element type and the scale
+   multiply change. Both scales are constant along D, so folding them in after each dot is
+   exact rather than an approximation:
+       s   = (q . k_int8) * k_scale      instead of   q . (k_int8 * k_scale)
+       acc = (p * v_scale) . v_int8      instead of   p . (v_int8 * v_scale)
+   int8 -> bf16 is itself exact (bf16 has 8 mantissa bits, int8 needs 7), so the only new
+   rounding is the one bf16 multiply vLLM's own Triton kernel also does. Measured against a
+   dequantized reference: max error 1e-4. Against the unquantized reference: 1.02% mean
+   relative, which is int8 quantization of the cache, not the kernel.
+
+2. v1/attention/backends/triton_attn.py calls it for multi-query batches, the way
+   flash_attn.py already does. vLLM's own unified attention cannot cover this case: it
+   disables its split-KV ("3D") path whenever max_seqlen_q > 1, and every DFlash2 step is a
+   multi-query verify. Measured per attention layer at a 128k context, 8 query tokens:
+   1.3 ms for this kernel against 7.4 ms for unified attention and 10.1 ms for FA2. The gate
+   excludes the drafter's own sliding-window layers (they set a window) and everything the
+   kernel does not implement.
+
+Cost, honestly: the padded head dim means stride_kh is 260 B, so odd KV heads start 4 bytes
+off a 16-byte boundary and the vectorized loads break. In isolation that costs 61% (128k,
+q=8: 2,151 us against a contiguous int8 cache's 1,335 and bf16's 1,250); end to end it is
+about 13% of the step. Note also that a contiguous int8 cache is still slightly *slower* than
+bf16 despite half the bytes -- this kernel is tile-bound, not bandwidth-bound, at these
+shapes, so a quantized cache buys context, never speed. Reading the data as int32 (4-byte
+aligned, which 260 does satisfy) and unpacking would recover most of the 61%; not done here.
+
+Apply from the repo root, after spec-decode-attn.patch:
+  patch -p1 -d venv/lib/python3.12/site-packages/vllm < patches/spec-decode-int8-kv.patch
+
+Written against vLLM 0.27.1. Reapply after upgrades.
+
+--- a/v1/attention/backends/flash_attn.py
++++ b/v1/attention/backends/flash_attn.py
+@@ -1757,7 +1757,7 @@
+     return _SPEC_ATTN_QMAX
+ 
+ 
+-def _spec_attn_run(impl, q, key_cache, value_cache, out, cu_seqlens_q, seqused_k, block_table, max_seqlen_q):
++def _spec_attn_run(impl, q, key_cache, value_cache, out, cu_seqlens_q, seqused_k, block_table, max_seqlen_q, k_scale_cache=None, v_scale_cache=None):
+     from vllm.v1.attention.ops.spec_decode_attn import SpecDecodeAttention
+ 
+     key = (impl.num_heads, impl.head_size, q.device)
+@@ -1776,4 +1776,5 @@
+         )
+         _SPEC_ATTN[key] = att
+     att.run(q, key_cache, value_cache, out, cu_seqlens_q, seqused_k, block_table, impl.scale,
+-            cu_seqlens_q.shape[0] - 1, max_seqlen_q)
++            cu_seqlens_q.shape[0] - 1, max_seqlen_q,
++            k_scale_cache=k_scale_cache, v_scale_cache=v_scale_cache)
+--- a/v1/attention/backends/triton_attn.py
++++ b/v1/attention/backends/triton_attn.py
+@@ -41,6 +41,11 @@
+     triton_reshape_and_cache_flash_per_token_head_quant,
+ )
+ from vllm.v1.attention.ops.triton_unified_attention import unified_attention
++from vllm.v1.attention.backends.flash_attn import (  # syv patch
++    _spec_attn_enabled,
++    _spec_attn_qmax,
++    _spec_attn_run,
++)
+ from vllm.v1.kv_cache_interface import (
+     AttentionSpec,
+     KVQuantMode,
+@@ -688,6 +693,44 @@
+ 
+         mm_prefix_range_tensor = attn_metadata.mm_prefix_range_tensor
+ 
++        # syv patch: the split-KV Triton verify attention (patches/spec-decode-attn.patch),
++        # which vLLM's own unified attention cannot do here -- it refuses to split the KV
++        # sequence whenever max_seqlen_q > 1 (triton_unified_attention.py, `use_3d`), and
++        # every DFlash2 step is a multi-query verify. Measured at a 128k context, 8 query
++        # tokens: 1.3 ms per layer against unified attention's 7.4 ms.
++        # int8 per-token-head only: the kernel folds the per-(token, head) scales in after
++        # each dot, which is exact because they are constant along the head dim. The
++        # drafter's own sliding-window layers are excluded by the window test below.
++        if (
++            _spec_attn_enabled()
++            and self._kv_quant_mode == KVQuantMode.INT8_PER_TOKEN_HEAD
++            and k_scale_cache is not None
++            and 1 < max_seqlen_q <= _spec_attn_qmax(self.num_heads // self.num_kv_heads)
++            and attn_metadata.causal
++            and (self.sliding_window is None or self.sliding_window == (-1, -1))
++            and not self.logits_soft_cap
++            and self.alibi_slopes is None
++            and self.sinks is None
++            and self.chunk_lookback == -1
++            and mm_prefix_range_tensor is None
++            and attn_metadata.rswa_prefix_lens is None
++            and output_scale is None
++        ):
++            _spec_attn_run(
++                self,
++                query[:num_actual_tokens],
++                key_cache,
++                value_cache,
++                output[:num_actual_tokens],
++                cu_seqlens_q,
++                seqused_k,
++                block_table,
++                max_seqlen_q,
++                k_scale_cache,
++                v_scale_cache,
++            )
++            return output
++
+         unified_attention(
+             q=query[:num_actual_tokens],
+             k=key_cache,
+--- a/v1/attention/ops/spec_decode_attn.py
++++ b/v1/attention/ops/spec_decode_attn.py
+@@ -21,6 +21,22 @@
+ cu_seqlens_q [num_reqs + 1]. Query token i of a request sits at kv position
+ seqused_k - q_len + i and attends causally.
+ 
++int8 KV (QUANT=1): the same kernel reads TRITON_ATTN's `int8_per_token_head` cache. That
++backend hands out K/V views of shape [num_blocks, block_size, Hkv, D + 4] -- the head dim
++is padded so one float32 scale per (token, head) sits inline after the data -- plus f32
++scale views [num_blocks, block_size, Hkv]. Only the element type and the scale multiply
++change here: the padded head dim is already carried by stride_kh, so the addressing is
++untouched. Both scales are per (token, head), i.e. constant along D, so folding them in
++after the dot is exact rather than an approximation:
++  s   = (q . k_int8) * k_scale        instead of  q . (k_int8 * k_scale)
++  acc = (p * v_scale) . v_int8        instead of  p . (v_int8 * v_scale)
++int8 -> bf16 is itself exact (bf16 has 8 mantissa bits, int8 needs 7), so the only new
++rounding is the one bf16 multiply the stock Triton kernel also does.
++
++Halving the bytes matters because this kernel is bandwidth-bound at long context: at a
++128k context and 8 query tokens it reads 524 MB of bf16 KV in 1,198 us, which is 437 GB/s
++of the 3090's ~936.
++
+ Restrictions: q_len <= QMAX_TOKENS per request, D a power of two <= 256, no sliding
+ window / softcap / alibi.
+ """
+@@ -40,14 +56,17 @@
+ def _spec_attn_partial(
+     q_ptr, k_ptr, v_ptr, bt_ptr, seqused_ptr, cu_q_ptr,
+     part_o_ptr, part_m_ptr, part_l_ptr,
++    ks_ptr, vs_ptr,
+     scale,
+     stride_qt, stride_qh,
+     stride_kb, stride_ks, stride_kh,
+     stride_vb, stride_vs, stride_vh,
+     stride_bt,
++    stride_ksb, stride_kss, stride_ksh,
++    stride_vsb, stride_vss, stride_vsh,
+     G: tl.constexpr, Hq: tl.constexpr, QMAX: tl.constexpr, D: tl.constexpr, BLOCK_SIZE: tl.constexpr,
+     BLOCK_M: tl.constexpr, TILE: tl.constexpr, NSEG: tl.constexpr, QT: tl.constexpr,
+-    NTILE: tl.constexpr,
++    NTILE: tl.constexpr, QUANT: tl.constexpr,
+ ):
+     pid = tl.program_id(0)
+     req = pid // NTILE
+@@ -89,7 +108,17 @@
+         v_ptrs = v_ptr + blk[:, None] * stride_vb + slot[:, None] * stride_vs + kvh * stride_vh + d[None, :]
+         k = tl.load(k_ptrs, mask=k_ok[:, None], other=0.0)
+         v = tl.load(v_ptrs, mask=k_ok[:, None], other=0.0)
+-        s = tl.dot(qs, tl.trans(k)).to(tl.float32)            # [BLOCK_M, TILE]
++        if QUANT:
++            # int8 data, one f32 scale per (token, head); both constant along D.
++            k = k.to(tl.bfloat16)
++            v = v.to(tl.bfloat16)
++            k_sc = tl.load(ks_ptr + blk * stride_ksb + slot * stride_kss + kvh * stride_ksh,
++                           mask=k_ok, other=0.0)
++            v_sc = tl.load(vs_ptr + blk * stride_vsb + slot * stride_vss + kvh * stride_vsh,
++                           mask=k_ok, other=0.0)
++            s = tl.dot(qs, tl.trans(k)).to(tl.float32) * k_sc[None, :]
++        else:
++            s = tl.dot(qs, tl.trans(k)).to(tl.float32)            # [BLOCK_M, TILE]
+         allowed = k_ok[None, :] & (pos[None, :] <= q_pos[:, None]) & row_ok[:, None]
+         s = tl.where(allowed, s, float("-inf"))
+         m_new = tl.maximum(m_i, tl.max(s, 1))
+@@ -97,7 +126,10 @@
+         p = tl.exp(s - m_safe[:, None])
+         alpha = tl.exp(tl.where(m_i == float("-inf"), float("-inf"), m_i - m_safe))
+         l_i = l_i * alpha + tl.sum(p, 1)
+-        acc = acc * alpha[:, None] + tl.dot(p.to(tl.bfloat16), v).to(tl.float32)
++        if QUANT:
++            acc = acc * alpha[:, None] + tl.dot((p * v_sc[None, :]).to(tl.bfloat16), v).to(tl.float32)
++        else:
++            acc = acc * alpha[:, None] + tl.dot(p.to(tl.bfloat16), v).to(tl.float32)
+         m_i = m_new
+ 
+     # store partials at flat index ((req*Hq + head)*QMAX + i)*NSEG + seg
+@@ -171,10 +203,14 @@
+         qt = max(1, block_m // G)
+         return block_m, qt, triton.cdiv(q_len, qt), 8 if block_m >= 128 else 4
+ 
+-    def run(self, q, key_cache, value_cache, out, cu_seqlens_q, seqused_k, block_table, scale, num_reqs, max_query_len):
++    def run(self, q, key_cache, value_cache, out, cu_seqlens_q, seqused_k, block_table, scale,
++            num_reqs, max_query_len, k_scale_cache=None, v_scale_cache=None):
++        """key/value_cache: [num_blocks, block_size, Hkv, D] bf16, or [.., D + pad] int8
++        with k/v_scale_cache [num_blocks, block_size, Hkv] float32 (per-token-head int8)."""
+         Hq, D = q.shape[1], q.shape[2]
+         Hkv = key_cache.shape[2]
+         G = Hq // Hkv
++        quant = k_scale_cache is not None
+         assert max_query_len <= self.qmax, "too many query tokens per request for this kernel"
+         assert num_reqs <= self.max_num_reqs
+         # shared memory on sm86 is 99 KB: q tile + one K and one V tile + scores must fit
+@@ -184,13 +220,16 @@
+         _spec_attn_partial[grid](
+             q, key_cache, value_cache, block_table, seqused_k, cu_seqlens_q,
+             self.part_o, self.part_m, self.part_l,
++            k_scale_cache, v_scale_cache,
+             scale,
+             q.stride(0), q.stride(1),
+             key_cache.stride(0), key_cache.stride(1), key_cache.stride(2),
+             value_cache.stride(0), value_cache.stride(1), value_cache.stride(2),
+             block_table.stride(0),
++            *(k_scale_cache.stride() if quant else (0, 0, 0)),
++            *(v_scale_cache.stride() if quant else (0, 0, 0)),
+             G=G, Hq=Hq, QMAX=self.qmax, D=D, BLOCK_SIZE=key_cache.shape[1], BLOCK_M=block_m,
+-            TILE=tile, NSEG=self.nseg, QT=qt, NTILE=ntile,
++            TILE=tile, NSEG=self.nseg, QT=qt, NTILE=ntile, QUANT=quant,
+             num_warps=warps, num_stages=1,
+         )
+         _spec_attn_combine[(num_reqs, Hq, max_query_len)](

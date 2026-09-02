@@ -1,0 +1,441 @@
+diff --git a/Dockerfile b/Dockerfile
+index 30220f4..5c71f66 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -24,11 +24,16 @@ COPY docker/requirements.txt docker/requirements.txt
+ RUN venv/bin/pip install -r docker/requirements.txt
+ 
+ COPY . .
++RUN bash docker/patch_flashinfer_pageable_buffers.sh
+ RUN set -e; SP=$(venv/bin/python -c 'import vllm, os; print(os.path.dirname(vllm.__file__))' | tail -n1); \
+     for p in patches/*.patch; do echo "== $p"; patch -p1 -d "$SP" < "$p"; done; \
+     bash kvarn/install.sh; \
+     bash verify.sh --install
+ 
++# k8s runs this image as uid 1000; COPY preserves restrictive host modes, so
++# make the app tree world-readable regardless of build-context permissions.
++RUN chmod -R a+rX /app
++
+ # HOME is a volume: torch.compile cache (~/.cache/vllm), Triton (~/.triton),
+ # FlashInfer JIT (~/.cache/flashinfer), HF hub cache.
+ RUN mkdir -p /cache /app/models && chmod 1777 /cache
+diff --git a/clients/README.md b/clients/README.md
+new file mode 100644
+index 0000000..ba97a47
+--- /dev/null
++++ b/clients/README.md
+@@ -0,0 +1,45 @@
++# Client configs with dynamically discovered parameters
++
++`sync-agent-models.py` configures the pi and prime-agent CLIs against this
++stack's OpenAI-compatible endpoint without hand-maintained parameters. It
++interrogates the running server and rewrites the `home-vllm` provider entry
++in `~/.pi/agent/models.json` and `~/.prime/agent/models.json`, preserving
++every other provider and each file's local conventions.
++
++## What is discovered, and from where
++
++| parameter | source |
++|---|---|
++| model id, `contextWindow` | `GET /v1/models` (vLLM reports `max_model_len`) |
++| `reasoning_effort` levels | probe with an invalid effort; the chat template's `raise_exception` message enumerates the valid levels in its 400 body |
++| vision (`input: ["text","image"]`) | a 1x1-pixel PNG probe: HTTP 200 = multimodal, 400 = text-only |
++| `maxTokens` | policy: `min(--max-tokens, contextWindow // 2)`, default cap 32768 |
++
++Neither CLI discovers custom-provider parameters natively (their catalog
++refresh covers SaaS providers only), so this script is the discovery layer.
++
++## Usage
++
++```bash
++clients/sync-agent-models.py                 # discover + write both configs
++clients/sync-agent-models.py --dry-run       # show what would change
++clients/sync-agent-models.py --base http://host:port/v1 --provider home-vllm
++BEARER=<token> clients/sync-agent-models.py  # via the Caddy-gated public path
++```
++
++Re-run after any deployment change — a different `MAX_LEN`, a model swap, or
++a chat-template change — instead of editing the JSON by hand. Timestamped
++`.bak-*` backups are written next to each config before any change; writes
++are atomic.
++
++Total probe cost: three requests, 3 output tokens.
++
++## Notes
++
++- `thinkingLevelMap` styles differ by agent and are preserved: pi fills
++  aliases (`high -> xhigh`, `minimal -> low`), prime-agent maps only exact
++  levels and nulls the rest.
++- The default endpoint is the in-cluster service (`llama.apps.svc.cluster.local:8080`). The
++  public path is bearer-gated by Caddy; pass `BEARER`.
++- vLLM 0.27.1 returns the CoT in `message.reasoning` (not
++  `reasoning_content`); both CLIs already read the right field.
+diff --git a/clients/sync-agent-models.py b/clients/sync-agent-models.py
+new file mode 100755
+index 0000000..0e5de71
+--- /dev/null
++++ b/clients/sync-agent-models.py
+@@ -0,0 +1,140 @@
++#!/usr/bin/env python3
++"""Sync pi and prime-agent model configs from the live vLLM endpoint.
++
++Discovers, from the server itself:
++  - model id and context window   (GET /v1/models: id, max_model_len)
++  - reasoning-effort levels       (probe with an invalid effort; the chat
++                                   template's 400 message enumerates them,
++                                   e.g. "Supported types are xhigh (default),
++                                   medium, and low.")
++  - vision support                (1x1-pixel image probe: 200 = multimodal,
++                                   400 = text-only)
++
++Then rewrites the target provider entry in ~/.pi/agent/models.json and
++~/.prime/agent/models.json, preserving every other provider and each file's
++local conventions (headers, apiKey, authHeader). A timestamped .bak of each
++file is written first; writes are atomic. Re-run after any deployment change
++(MAX_LEN, model swap, template change) instead of editing configs by hand.
++
++Usage:
++  clients/sync-agent-models.py [--base http://llama.apps.svc.cluster.local:8080/v1]
++                               [--provider home-vllm] [--dry-run]
++  BEARER=<token> for the Caddy-gated public path.
++"""
++import argparse, base64, json, os, re, shutil, sys, time, urllib.request
++
++def _png_1px():
++    import struct, zlib
++    def chunk(t, d):
++        c = t + d
++        return struct.pack(">I", len(d)) + c + struct.pack(">I", zlib.crc32(c))
++    ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
++    idat = zlib.compress(b"\x00\xff\x00\x00")
++    return base64.b64encode(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr)
++                            + chunk(b"IDAT", idat) + chunk(b"IEND", b"")).decode()
++
++PNG_1PX = _png_1px()
++
++def call(base, path, payload=None, bearer=None, timeout=60):
++    req = urllib.request.Request(base + path,
++        data=json.dumps(payload).encode() if payload else None,
++        headers={"Content-Type": "application/json",
++                 **({"Authorization": f"Bearer {bearer}"} if bearer else {})},
++        method="POST" if payload else "GET")
++    try:
++        with urllib.request.urlopen(req, timeout=timeout) as r:
++            return r.status, json.load(r)
++    except urllib.error.HTTPError as e:
++        try: return e.code, json.load(e)
++        except Exception: return e.code, {"raw": e.read().decode(errors="replace")[:400]}
++
++def discover(base, bearer):
++    st, j = call(base, "/models", bearer=bearer)
++    if st != 200 or not j.get("data"):
++        sys.exit(f"cannot list models at {base}/models: HTTP {st} {j}")
++    m = j["data"][0]
++    model_id, ctx = m["id"], m.get("max_model_len")
++    if not ctx:
++        sys.exit(f"/models did not report max_model_len: {m}")
++    # effort levels: the template's raise_exception enumerates them on a bad value
++    st, j = call(base, "/chat/completions", {
++        "model": model_id, "max_tokens": 1,
++        "messages": [{"role": "user", "content": "hi"}],
++        "chat_template_kwargs": {"reasoning_effort": "___invalid___"}}, bearer)
++    msg = json.dumps(j)
++    levels = None
++    if st == 400:
++        found = re.findall(r"\b(xhigh|high|medium|low|minimal)\b", msg)
++        levels = sorted(set(found), key=found.index) or None
++    # vision probe
++    st, _ = call(base, "/chat/completions", {
++        "model": model_id, "max_tokens": 1, "messages": [{"role": "user", "content": [
++            {"type": "text", "text": "hi"},
++            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{PNG_1PX}"}}]}]},
++        bearer, timeout=300)
++    vision = st == 200
++    return model_id, ctx, levels, vision
++
++def thinking_map(levels, style):
++    """pi fills aliases; prime-agent nulls non-native levels."""
++    if not levels:
++        return None
++    have = set(levels)
++    alias = {"off": "off",
++             "minimal": "minimal" if "minimal" in have else ("low" if "low" in have else None),
++             "low": "low" if "low" in have else None,
++             "medium": "medium" if "medium" in have else None,
++             "high": "high" if "high" in have else ("xhigh" if "xhigh" in have else None),
++             "xhigh": "xhigh" if "xhigh" in have else None,
++             "max": "xhigh" if "xhigh" in have else ("high" if "high" in have else None)}
++    if style == "prime":  # exact levels only, keep off
++        return {k: (v if (v in have or (k == v == "off")) and k in (*have, "off") else None)
++                for k, v in alias.items()}
++    return alias
++
++def update_file(path, provider, model_id, ctx, levels, vision, max_tokens, dry):
++    if not os.path.exists(path):
++        print(f"skip {path}: not found"); return
++    cfg = json.load(open(path))
++    prov = cfg.setdefault("providers", {}).setdefault(provider, {})
++    models = prov.get("models") or [{}]
++    entry = models[0]
++    style = "prime" if "/.prime/" in path else "pi"
++    old = json.dumps(entry, sort_keys=True)
++    entry.update({
++        "id": model_id,
++        "name": entry.get("name") or f"{model_id} (home vLLM)",
++        "reasoning": bool(levels),
++        "input": ["text", "image"] if vision else ["text"],
++        "contextWindow": ctx,
++        "maxTokens": min(max_tokens, ctx // 2),
++        "cost": entry.get("cost") or {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
++    })
++    tm = thinking_map(levels, style)
++    if tm:
++        entry["thinkingLevelMap"] = tm
++        entry.setdefault("compat", {})["supportsReasoningEffort"] = True
++    prov["models"] = [entry]
++    changed = old != json.dumps(entry, sort_keys=True)
++    if dry:
++        print(f"{path}: {'WOULD update' if changed else 'up to date'}"); return
++    if changed:
++        shutil.copy2(path, f"{path}.bak-{time.strftime('%Y%m%dT%H%M%S')}")
++        tmp = path + ".tmp"
++        json.dump(cfg, open(tmp, "w"), indent=2)
++        os.replace(tmp, path)
++    print(f"{path}: {'updated' if changed else 'up to date'} "
++          f"(id={model_id} ctx={ctx} levels={levels} vision={vision})")
++
++if __name__ == "__main__":
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--base", default="http://llama.apps.svc.cluster.local:8080/v1")
++    ap.add_argument("--provider", default="home-vllm")
++    ap.add_argument("--max-tokens", type=int, default=32768)
++    ap.add_argument("--dry-run", action="store_true")
++    a = ap.parse_args()
++    model_id, ctx, levels, vision = discover(a.base.rstrip("/"), os.environ.get("BEARER"))
++    print(f"discovered: id={model_id} max_model_len={ctx} effort_levels={levels} vision={vision}")
++    for p in ("~/.pi/agent/models.json", "~/.prime/agent/models.json"):
++        update_file(os.path.expanduser(p), a.provider, model_id, ctx, levels, vision,
++                    a.max_tokens, a.dry_run)
+diff --git a/docker-compose.override.yml b/docker-compose.override.yml
+new file mode 100644
+index 0000000..46b124b
+--- /dev/null
++++ b/docker-compose.override.yml
+@@ -0,0 +1,5 @@
++# Local override: bind-mount the patched launcher (VISION=1 keeps the vision tower)
++services:
++  single:
++    volumes:
++      - ./single-user/start_qwen.sh:/app/single-user/start_qwen.sh:ro
+diff --git a/docker/patch_flashinfer_pageable_buffers.sh b/docker/patch_flashinfer_pageable_buffers.sh
+new file mode 100644
+index 0000000..51f9f72
+--- /dev/null
++++ b/docker/patch_flashinfer_pageable_buffers.sh
+@@ -0,0 +1,25 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++flashinfer_dir=$(/app/venv/bin/python -c 'import flashinfer, os; print(os.path.dirname(flashinfer.__file__))' | tail -n1)
++files=("$flashinfer_dir/prefill.py" "$flashinfer_dir/decode.py")
++
++# FlashInfer reuses these CPU planning workspaces across plan calls. Pageable
++# memory makes the subsequent H2D copy synchronous with respect to the host,
++# preventing the next MTP draft step from rewriting a pinned buffer whose copy
++# is still in flight. Keep the patch narrow: sparse/MLA/POD buffers are outside
++# the Qwen target/draft path under test.
++matches=$(grep -h -c 'pin_memory=True' "${files[@]}" | awk '{sum += $1} END {print sum + 0}')
++if [ "$matches" -ne 8 ]; then
++  echo "expected 8 FlashInfer prefill/decode pinned planning buffers, found $matches" >&2
++  exit 1
++fi
++
++sed -i 's/pin_memory=True/pin_memory=False/g' "${files[@]}"
++
++if grep -q 'pin_memory=True' "${files[@]}"; then
++  echo "FlashInfer planning-buffer patch is incomplete" >&2
++  exit 1
++fi
++
++echo "patched 8 FlashInfer prefill/decode planning buffers to pageable memory"
+diff --git a/patches/marlin-repack-staged-sm80.patch b/patches/marlin-repack-staged-sm80.patch
+new file mode 100644
+index 0000000..922cef7
+--- /dev/null
++++ b/patches/marlin-repack-staged-sm80.patch
+@@ -0,0 +1,129 @@
++sm80 Marlin repack: stage the per-layer transients through one grow-only
++buffer, so VMM mapping churn cannot wedge the card (#27, candidate).
++
++The Xid-31 class ahnguyen17 root-caused on a CMP 170HX (GA100): during
++weight loading, every Marlin layer's transform allocates and frees transient
++GPU tensors around gptq_marlin_repack (the .contiguous() copy and the pad),
++interleaved with the model's own weight allocations. On sm80 that VMM
++map/unmap churn corrupts mappings until an unrelated elementwise kernel
++write-faults asynchronously — the faulting frame drifts between runs, the
++card wedges until reboot. Their proof: the same math staged through CPU is
++bit-exact and Xid-free, convicting the allocation pattern, not the
++arithmetic (issue #27; gotcha 41).
++
++This is the GPU-resident version of that workaround: pad+contiguous land in
++ONE persistent, grow-only staging buffer per device, and the source tensor
++is dropped before the repack output allocates. Per-layer allocation traffic
++falls from two transients + one output to just the output; the staging
++buffer reallocates only when a larger shape class first appears (a handful
++of times per load, instead of hundreds of alloc/free pairs).
++
++Bit-exactness is by construction — the repack kernel receives identical
++bytes — and verified on the 3090 across the checkpoint's real shape ladder
++(w4 and w8, padded and unpadded, contiguous and strided sources, buffer
++reuse and regrowth): kernel inputs and outputs torch.equal in all cases.
++
++Costs and gating: the buffer stays resident after load — up to ~1.2 GiB on
++this stack, because the quantized embedding/lm_head whales set its size.
++That is why it defaults ON only for compute capability 8.0 exactly (the
++card class where the alternative is a wedge-until-reboot and which ships
++40-64 GiB), and OFF everywhere else. Override with
++VLLM_MARLIN_REPACK_STAGED=0/1. ahnguyen17's CPU-fallback patch remains the
++zero-VRAM alternative at ~3 min extra boot; this one keeps boot speed and
++should also help A100s if the churn class reproduces there.
++
++Status: candidate — bit-exact and inert-off-sm80 verified here; whether it
++actually prevents the Xid-31 on sm80 needs the 170HX test (#27).
++
++--- generated hunks below ---
++--- a/model_executor/kernels/linear/mixed_precision/marlin.py
+++++ b/model_executor/kernels/linear/mixed_precision/marlin.py
++@@ -2,6 +2,8 @@
++ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++ 
++ 
+++import os
+++
++ import torch
++ 
++ from vllm import _custom_ops as ops
++@@ -29,6 +31,55 @@
++ from vllm.platforms import current_platform
++ from vllm.scalar_type import scalar_types
++ 
+++# (syv) #27: sm80 (GA100) wedges with Xid 31 during Marlin repack -- not from
+++# the repack kernel, but from VMM mapping churn under the per-layer transient
+++# allocations around it (the contiguous copy and the pad), after which an
+++# unrelated elementwise kernel write-faults asynchronously. ahnguyen17 verified
+++# on a CMP 170HX that the same math staged through CPU is bit-exact and
+++# Xid-free, which convicts the allocation pattern, not the arithmetic. This is
+++# the GPU-resident version of that fix: pad/copy into ONE grow-only staging
+++# buffer per device (layer shapes repeat, so it reallocates a handful of times
+++# instead of alloc/freeing two transients per layer), hand the SAME values to
+++# the repack kernel, get bit-identical output. Costs one max-layer-sized buffer
+++# (~141 MB on this stack) that stays resident after load on the cards where it
+++# is on -- the card class where the alternative is a wedge-until-reboot.
+++# Default: on for compute capability 8.0 exactly, off elsewhere; override with
+++# VLLM_MARLIN_REPACK_STAGED=0/1.
+++_REPACK_STAGING: dict = {}
+++
+++
+++def _use_staged_repack(device: torch.device) -> bool:
+++    env = os.environ.get("VLLM_MARLIN_REPACK_STAGED")
+++    if env is not None:
+++        return env == "1"
+++    if device.type != "cuda":
+++        return False
+++    return torch.cuda.get_device_capability(device) == (8, 0)
+++
+++
+++def _staged_pad_qweight(
+++    qweight: torch.Tensor, size_n: int, size_k: int, padded_n: int, padded_k: int
+++) -> torch.Tensor:
+++    """marlin_pad_qweight + .contiguous() through a persistent staging buffer.
+++
+++    Returns a view holding exactly what the unstaged path would pass to
+++    gptq_marlin_repack; the caller must consume it before the next call.
+++    """
+++    pack_factor = size_k // qweight.size(0)
+++    rows, cols = padded_k // pack_factor, padded_n
+++    need = rows * cols
+++    buf = _REPACK_STAGING.get(qweight.device)
+++    if buf is None or buf.numel() < need or buf.dtype != qweight.dtype:
+++        _REPACK_STAGING.pop(qweight.device, None)
+++        buf = torch.empty(need, dtype=qweight.dtype, device=qweight.device)
+++        _REPACK_STAGING[qweight.device] = buf
+++    view = buf[:need].view(rows, cols)
+++    if (rows, cols) != (qweight.size(0), qweight.size(1)):
+++        view.zero_()
+++    view[: qweight.size(0), : qweight.size(1)].copy_(qweight)
+++    return view
+++
+++
++ from .MPLinearKernel import MPLinearKernel, MPLinearLayerConfig
++ 
++ 
++@@ -159,6 +210,23 @@
++         def transform_w_q(x):
++             assert isinstance(x, BasevLLMParameter)
++             permute_param_layout_(x, input_dim=0, output_dim=1, packed_dim=0)
+++            if _use_staged_repack(x.data.device):
+++                # (syv) #27: stage contiguous+pad through the persistent buffer
+++                # and drop the source before the repack output allocates, so
+++                # the only per-layer allocation left is the final weight.
+++                staged = _staged_pad_qweight(
+++                    x.data, size_n, size_k, padded_n, padded_k
+++                )
+++                x.data = torch.empty(0, dtype=staged.dtype, device=staged.device)
+++                x.data = ops.gptq_marlin_repack(
+++                    staged,
+++                    perm=layer.g_idx_sort_indices,
+++                    size_k=padded_k,
+++                    size_n=padded_n,
+++                    num_bits=c.weight_type.size_bits,
+++                    is_a_8bit=is_a_8bit,
+++                )
+++                return x
++             x.data = ops.gptq_marlin_repack(
++                 marlin_pad_qweight(
++                     x.data.contiguous(), size_n, size_k, padded_n, padded_k
+diff --git a/prepare/build_draft_vocab.py b/prepare/build_draft_vocab.py
+index 250096c..dc05aba 100644
+--- a/prepare/build_draft_vocab.py
++++ b/prepare/build_draft_vocab.py
+@@ -18,9 +18,11 @@ Usage (from the repo root):
+   python prepare/build_draft_vocab.py /path/to/model --ids prepare/draft_vocab_ids.json  # shipped id list
+   python prepare/build_draft_vocab.py /path/to/model --n 40960 --corpus f1 f2 ...        # or count your own
+ Corpus files: .txt/.jsonl (uses "prompt"/"response"/"messages"/"text" fields)/.parquet(text)/.py
+-The shipped draft_vocab_ids.json was counted over Danish web text (fineweb-2),
+-English Wikipedia, Python source and the model's own chat outputs (8.8M tokens);
+-held-out coverage 95%.
++The shipped draft_vocab_ids.json is counted over the model's OWN outputs
++(gen_data.py); held-out coverage 97.5% (96% on code). An earlier list counted
++over Danish web text, Wikipedia and Python source (8.8M tokens, 95% held-out,
++92%/83% in production) was replaced in e964409 — every coverage miss is a
++forced rejection, and the own-outputs list measured 108 vs 98 tok/s greedy.
+ """
+ import glob, json, os, sys, shutil, collections
+ import torch
+diff --git a/single-user/start_qwen.sh b/single-user/start_qwen.sh
+index 16090c6..03d4149 100755
+--- a/single-user/start_qwen.sh
++++ b/single-user/start_qwen.sh
+@@ -251,7 +251,12 @@ if [ "$SPEC" = "dflash2" ]; then
+   [ -n "$KV_MEM" ] && EXTRA_ARGS="--kv-cache-memory=$KV_MEM ${EXTRA_ARGS}"
+ else
+   MAX_SEQS=${MAX_SEQS:-8}
+-  SPEC_CFG="{\"method\":\"mtp\",\"num_speculative_tokens\":$DRAFT_TOKENS,\"draft_sample_method\":\"${DRAFT_SAMPLE:-probabilistic}\"}"
++  # The MTP draft head can use a different attention backend and KV dtype from
++  # the target. This lets long mode keep FlashInfer/FP8 for its 128k target KV
++  # while routing only the drafter away from FlashInfer's repeated-plan path.
++  DRAFT_ATTN_JSON=${DRAFT_ATTN_BACKEND:+,\"attention_backend\":\"$DRAFT_ATTN_BACKEND\"}
++  DRAFT_KV_JSON=${DRAFT_KV_DTYPE:+,\"kv_cache_dtype\":\"$DRAFT_KV_DTYPE\"}
++  SPEC_CFG="{\"method\":\"mtp\",\"num_speculative_tokens\":$DRAFT_TOKENS,\"draft_sample_method\":\"${DRAFT_SAMPLE:-probabilistic}\"${DRAFT_ATTN_JSON}${DRAFT_KV_JSON}}"
+   CG=${CG:-32}
+ fi
+ 
+@@ -368,7 +373,7 @@ exec venv/bin/vllm serve "$MODEL" \
+   --max-model-len $MAX_LEN \
+   --max-num-seqs $MAX_SEQS \
+   --api-server-count $API_SERVERS \
+-  --language-model-only \
++  $([ "${VISION:-0}" = "1" ] || echo --language-model-only) \
+   $ATTN_ARGS \
+   --mamba-ssm-cache-dtype float16 \
+   ${ASYNC_ARGS} \

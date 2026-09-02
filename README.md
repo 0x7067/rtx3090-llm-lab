@@ -23,8 +23,9 @@ alternative.
   superseded set behind images v9–v12 (base `4df29be4f`); both names hold the
   same eight files, kept so the base commit is unambiguous.
 - [`vllm/`](vllm/) contains the syv-ai overlay, the v9 image overlay once
-  deployed ([`vllm/image-v9/`](vllm/image-v9/)), the exported v10 and v11
-  branch diffs ([`vllm/image-v10/`](vllm/image-v10/),
+  deployed ([`vllm/image-v9/`](vllm/image-v9/)), the exported pre-v10, v10 and
+  v11 branch diffs ([`vllm/image-v9-k8s-deploy/`](vllm/image-v9-k8s-deploy/),
+  [`vllm/image-v10/`](vllm/image-v10/),
   [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)), and the Club 3090
   bundle. vLLM v10 was production from 2026-08-20 to 2026-09-02; llama.cpp v14
   is production now.
@@ -45,14 +46,15 @@ alternative.
 This repo (`0x7067/rtx3090-llm-lab`) is canonical for benchmarks, llama.cpp
 patches, and the write-up docs — everything above and below this section.
 **As of 2026-09-02 it is the only repo of this work that remains.** The two
-other repos that used to hold adjacent pieces are being deleted on 2026-09-02,
+other repos that used to hold adjacent pieces were deleted on 2026-09-02,
 their unique content having been exported here first:
 
 - `0x7067/qwen38-27b-rtx3090` was a fork of
   [`syv-ai/qwen38-27b-rtx3090`](https://github.com/syv-ai/qwen38-27b-rtx3090),
   kept only as the vehicle for upstreaming PRs to syv-ai. Its deploy branches
-  (`local/k8s-deploy-v10`, `local/k8s-deploy-v11-vllm028`, …) were never merged
-  anywhere upstream. They are exported here as diffs under
+  (`local/k8s-deploy`, `local/k8s-deploy-v10`, `local/k8s-deploy-v11-vllm028`)
+  were never merged anywhere upstream. They are exported here as diffs under
+  [`vllm/image-v9-k8s-deploy/`](vllm/image-v9-k8s-deploy/),
   [`vllm/image-v10/`](vllm/image-v10/) and
   [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/), alongside the syv-ai
   overlay and the Club 3090 bundle in [`vllm/`](vllm/). **Deleted 2026-09-02.**

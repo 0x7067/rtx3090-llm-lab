@@ -1,0 +1,34 @@
+diff --git i/common/chat.cpp w/common/chat.cpp
+index 743ecde0a..d3a2b4190 100644
+--- i/common/chat.cpp
++++ w/common/chat.cpp
+@@ -3718,6 +3718,29 @@ static common_chat_params common_chat_templates_apply_jinja(const struct common_
+         LOG_DBG("%s: using differential autoparser\n", __func__);
+         struct autoparser::autoparser autoparser;
+         autoparser.analyze_template(tmpl);
++        // Effort-dependent thinking tags (K2 Horizon: <ifm|think>, <ifm|think_fast>,
++        // <ifm|think_faster> selected by reasoning_effort). The analyzer only sees the
++        // tag the template emits for its default kwargs; if this request's generation
++        // prompt ends with a sibling tag (same stem, extra suffix), adopt that tag and
++        // its closing form so reasoning is still extracted at every effort level.
++        if (autoparser.reasoning.mode != autoparser::reasoning_mode::NONE && !autoparser.reasoning.start.empty()) {
++            const std::string start = trim_whitespace(autoparser.reasoning.start);
++            const std::string gen   = trim_whitespace(common_chat_template_generation_prompt_impl(tmpl, params));
++            if (!start.empty() && start.front() == '<' && start.back() == '>' &&
++                !(gen.size() >= start.size() && gen.compare(gen.size() - start.size(), start.size(), start) == 0)) {
++                const auto lt = gen.rfind('<');
++                if (lt != std::string::npos) {
++                    const std::string tag  = gen.substr(lt);
++                    const std::string stem = start.substr(0, start.size() - 1);
++                    if (tag.size() > start.size() && tag.back() == '>' && tag.compare(0, stem.size(), stem) == 0 &&
++                        tag.find('/') == std::string::npos) {
++                        LOG_DBG("%s: adopting effort-specific reasoning tag %s (analyzer default %s)\n", __func__, tag.c_str(), start.c_str());
++                        autoparser.reasoning.start = tag;
++                        autoparser.reasoning.end   = "</" + tag.substr(1);
++                    }
++                }
++            }
++        }
+         auto auto_params = autoparser::peg_generator::generate_parser(tmpl, params, autoparser);
+ 
+         common_chat_msg_delimiters delimiters;

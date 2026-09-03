@@ -16,3 +16,13 @@ v14 kernel patches, byte-identical to `patches-v14/`. New in v15:
 Apply order is lexical (`git apply patches/*.patch`); 0009 touches no file
 the kernel patches touch. Verified 2026-09-03: all seven apply cleanly in
 either order.
+
+- `0010-effort-specific-reasoning-tags.patch` (v16, 2026-09-03): the
+  differential auto-parser learns one reasoning tag from the template's
+  default kwargs. K2 Horizon opens `<ifm|think>` / `<ifm|think_fast>` /
+  `<ifm|think_faster>` depending on `reasoning_effort`, so medium and low
+  requests returned the reasoning inline with a stray closing tag in
+  `content`. The patch inspects the request's rendered generation prompt and,
+  if it ends with a sibling tag (same stem, extra suffix, no `/`), adopts it
+  and its `</...>` closer for that request. Generic; no-op for every template
+  whose generation prompt ends with the analyzer's own tag.

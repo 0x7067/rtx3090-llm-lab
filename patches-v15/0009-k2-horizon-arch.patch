@@ -1,0 +1,2166 @@
+diff --git a/conversion/__init__.py b/conversion/__init__.py
+index a5632fcc4..648dd73fb 100644
+--- a/conversion/__init__.py
++++ b/conversion/__init__.py
+@@ -134,6 +134,8 @@ TEXT_MODEL_MAP: dict[str, str] = {
+     "JinaBertForMaskedLM": "bert",
+     "JinaBertModel": "bert",
+     "JinaEmbeddingsV5Model": "bert",
++    "K2HorizonForCausalLM": "k2_horizon",
++    "K2AuroraForCausalLM": "k2_horizon", # TODO: DELETE
+     "KORMoForCausalLM": "qwen",
+     "KimiK25ForConditionalGeneration": "deepseek",
+     "KimiK3ForConditionalGeneration": "kimi_k3",
+diff --git a/conversion/base.py b/conversion/base.py
+index daae28e92..6f0c3194d 100644
+--- a/conversion/base.py
++++ b/conversion/base.py
+@@ -221,6 +221,8 @@ class ModelBase:
+ 
+         prefix = "model" if not self.is_mistral_format else "consolidated"
+         part_names: list[str] = ModelBase.get_model_part_names(self.dir_model, prefix, ".safetensors")
++        if not part_names and not self.is_mistral_format:
++            part_names = ModelBase.get_model_part_names(self.dir_model, "pytorch_model", ".safetensors")
+         is_safetensors: bool = len(part_names) > 0
+         if not is_safetensors:
+             part_names = ModelBase.get_model_part_names(self.dir_model, "pytorch_model", ".bin")
+@@ -1540,6 +1542,12 @@ class TextModel(ModelBase):
+         if chkhsh == "9e454714343b69b99b71795c1d27a68c2a1d15dab111f4d353109f966af29da7":
+             # ref: https://huggingface.co/LiquidAI/LFM2.5-8B-A1B
+             res = "lfm2"
++        if chkhsh == "1f9825a388f700a6b591722f17d470cbbcf10973ece35d2fd14239a14110ae1a":
++            # ref: https://huggingface.co/IFM/K2-Horizon-0.9B
++            res = "k2-horizon"
++        if chkhsh == "a9af07a84191f55098b248ae6f3dfe9e32d3190bebe8eafd91c1ddec9bc3449f":
++            # ref: https://huggingface.co/IFM/K2-Horizon-36B
++            res = "k2-horizon"
+         if chkhsh == "0ef9807a4087ebef797fc749390439009c3b9eda9ad1a097abbe738f486c01e5":
+             # ref: https://huggingface.co/meta-llama/Meta-Llama-3-8B
+             res = "llama-bpe"
+diff --git a/conversion/k2_horizon.py b/conversion/k2_horizon.py
+new file mode 100644
+index 000000000..2d7722209
+--- /dev/null
++++ b/conversion/k2_horizon.py
+@@ -0,0 +1,212 @@
++from __future__ import annotations
++
++import re
++from pathlib import Path
++from typing import Iterable
++
++import torch
++from torch import Tensor
++
++from .base import ModelBase, TextModel, gguf
++
++@ModelBase.register(
++    "K2HorizonForCausalLM",
++    "K2AuroraForCausalLM", # TODO: DELETE
++)
++@ModelBase.example(
++    "IFM/K2-Horizon-0.9B",
++    "IFM/K2-Horizon-36B",
++)
++class K2HorizonModel(TextModel):
++    model_arch = gguf.MODEL_ARCH.K2HORIZON
++
++    def set_vocab(self):
++        super().set_vocab()
++
++        template_path = (
++            Path(__file__).parent.parent
++            / "models"
++            / "templates"
++            / "k2-horizon.jinja"
++        )
++        template = template_path.read_text(encoding="utf-8")
++        self.gguf_writer.remove_key(gguf.Keys.Tokenizer.CHAT_TEMPLATE)
++        self.gguf_writer.add_chat_template(template)
++
++    def set_gguf_parameters(self):
++        super().set_gguf_parameters()
++        # generic
++        rope_head_dim = self.hparams.get("rope_head_dim")
++        norm_groups = int(self.hparams.get("layernorm_num_groups", 1))
++
++        self.gguf_writer.add_group_norm_groups(norm_groups)
++        if rope_head_dim is not None:
++            self.gguf_writer.add_rope_dimension_count(int(rope_head_dim))
++
++        # moe
++        num_experts = int(self.hparams.get("num_experts", 0))
++        if num_experts > 0:
++            moe_ff = int(self.hparams["moe_intermediate_size"])
++            dense_layers = self.hparams.get("num_dense_layers")
++            mlp_only_layers = {int(layer) for layer in self.hparams.get("mlp_only_layers", [])}
++            sparse_step = int(self.hparams.get("decoder_sparse_step", 1))
++            shared_experts = int(self.hparams.get("num_shared_experts", 0))
++            router_scale = self.hparams.get("router_scaling_factor")
++            normalize_topk = bool(self.hparams.get("norm_topk_prob", False))
++            router_func = self.hparams.get("router_score_func")
++
++            if dense_layers is None:
++                dense_layers = 0
++                while dense_layers in mlp_only_layers:
++                    dense_layers += 1
++
++            self.gguf_writer.add_expert_feed_forward_length(moe_ff)
++            self.gguf_writer.add_leading_dense_block_count(dense_layers)            
++            self.gguf_writer.add_moe_every_n_layers(sparse_step)
++            self.gguf_writer.add_expert_shared_count(shared_experts)
++            self.gguf_writer.add_expert_weights_norm(normalize_topk)
++            if shared_experts > 0:
++                self.gguf_writer.add_expert_shared_feed_forward_length(moe_ff * shared_experts)
++            if router_scale is not None:
++                self.gguf_writer.add_expert_weights_scale(float(router_scale))
++            match router_func:
++                case "sigmoid":
++                    gating_func = gguf.ExpertGatingFuncType.SIGMOID    
++                case "softmax":
++                    gating_func = gguf.ExpertGatingFuncType.SOFTMAX
++                case _:
++                    raise ValueError(f"Unsupported router_score_func: {router_func!r}")
++            self.gguf_writer.add_expert_gating_func(gating_func)
++
++        # mova
++        value_experts = int(self.hparams.get("mova_num_experts", 0))
++        value_experts_used = int(self.hparams.get("mova_num_experts_per_tok", 0))
++
++        if value_experts > 0 and value_experts_used > 0:
++            assert value_experts_used <= value_experts
++            self.gguf_writer.add_attention_value_expert_count(value_experts)
++            self.gguf_writer.add_attention_value_expert_used_count(value_experts_used)
++
++        # gate func, only making sure it exists and is softplus
++        gate_func = self.hparams.get("attention_gate_func")
++        if gate_func not in (None, "softplus"):
++            raise ValueError(f"Unsupported attention_gate_func: {gate_func!r}")
++
++    _experts: list[dict[str, Tensor]] | None = None
++    _value_experts: list[dict[str, Tensor]] | None = None
++    def modify_tensors(
++        self,
++        data_torch: Tensor,
++        name: str,
++        bid: int | None
++    ) -> Iterable[tuple[str, Tensor]]:
++        # MoE: router
++        if name.endswith(".mlp.gate.bias"):
++            assert bid is not None
++            yield (
++                self.format_tensor_name(
++                    gguf.MODEL_TENSOR.FFN_EXP_PROBS_B,
++                    bid,
++                    ".bias"
++                ),
++                data_torch
++            )
++            return
++
++        # MoE: actual up down or gate
++        is_moe_tensor = re.fullmatch(r"model\.layers\.\d+\.mlp\.experts\.\d+\.(down_proj|gate_proj|up_proj)\.weight", name)
++        if is_moe_tensor:
++            assert bid is not None
++            num_experts = int(self.hparams["num_experts"])
++
++            # allocate on first layer that has experts
++            if self._experts is None:
++                self._experts = [{} for _ in range(self.block_count)]
++
++            # atp, this_blocks_experts contains all experts
++            this_blocks_experts = self._experts[bid]
++            this_blocks_experts[name] = data_torch
++
++            # filling up self._experts until up down gate are all inside, then continue
++            if len(this_blocks_experts) < num_experts * 3:
++                return
++
++            for projection in ("down_proj", "gate_proj", "up_proj"):
++                tensors = []
++                for expert_id in range(num_experts):
++                    expert_name = f"model.layers.{bid}.mlp.experts.{expert_id}.{projection}.weight"
++                    tensors.append(this_blocks_experts.pop(expert_name))
++                merged = torch.stack(tensors, dim=0)
++                merged_name = f"model.layers.{bid}.mlp.experts.{projection}.weight"
++                yield from super().modify_tensors(
++                    merged,
++                    merged_name,
++                    bid
++                )
++            return
++        
++        # MoVA
++        is_mova_weights = re.fullmatch(r"model\.layers\.\d+\.self_attn\.v_experts\.\d+\.weight", name)
++        if is_mova_weights:
++            assert bid is not None
++            num_value_experts = int(self.hparams["mova_num_experts"])
++            if self._value_experts is None:
++                self._value_experts = [{} for _ in range(self.block_count)]
++
++            this_blocks_value_expert = self._value_experts[bid]
++            this_blocks_value_expert[name] = data_torch
++
++            # no need to * 3 because no up down gate like normal moe
++            if len(this_blocks_value_expert) < num_value_experts:
++                return
++
++            tensors = []
++            for value_exp_id in range(num_value_experts):
++                value_exp_name = f"model.layers.{bid}.self_attn.v_experts.{value_exp_id}.weight"
++                tensors.append(this_blocks_value_expert.pop(value_exp_name))
++
++            merged = torch.stack(tensors, dim = 0)
++            merged_name = f"model.layers.{bid}.self_attn.v_experts.weight"
++            yield from super().modify_tensors(
++                merged,
++                merged_name,
++                bid
++            )
++            return
++
++        # fallback, the default way basically
++        yield from super().modify_tensors(
++            data_torch,
++            name,
++            bid
++        )
++
++    def prepare_tensors(self):
++        super().prepare_tensors()
++
++        # this is just checks basically
++        if self._experts is not None:
++            remaining_experts = [
++                name
++                for block in self._experts
++                for name in block
++            ]
++
++            if remaining_experts:
++                raise ValueError(
++                    f"Unprocessed MoE experts: {remaining_experts}"
++                )
++
++        if self._value_experts is not None:
++            remaining_value_experts = [
++                name
++                for block in self._value_experts
++                for name in block
++            ]
++
++            if remaining_value_experts:
++                raise ValueError(
++                    "Unprocessed MoVA value experts: "
++                    f"{remaining_value_experts}"
++                )
++
+diff --git a/convert_hf_to_gguf_update.py b/convert_hf_to_gguf_update.py
+index e5d3196ef..17f9488af 100755
+--- a/convert_hf_to_gguf_update.py
++++ b/convert_hf_to_gguf_update.py
+@@ -190,6 +190,9 @@ pre_computed_hashes = [
+     {"name": "gpt-2", "tokt": TOKENIZER_TYPE.BPE, "repo": "https://huggingface.co/evilfreelancer/ruGPT3XL", "chkhsh": "0fe1cf6eda062318a1af7270f3331a85c539a01778ff948e24388e949c5282f4"},
+     # lfm2 variants
+     {"name": "lfm2", "tokt": TOKENIZER_TYPE.BPE, "repo": "https://huggingface.co/LiquidAI/LFM2.5-8B-A1B", "chkhsh": "9e454714343b69b99b71795c1d27a68c2a1d15dab111f4d353109f966af29da7"},
++    # K2 Horizon. 2 hashes because various sets of tokens depending on size
++    {"name": "k2-horizon", "tokt": TOKENIZER_TYPE.BPE, "repo": "https://huggingface.co/IFM/K2-Horizon-0.9B", "chkhsh": "1f9825a388f700a6b591722f17d470cbbcf10973ece35d2fd14239a14110ae1a"},
++    {"name": "k2-horizon", "tokt": TOKENIZER_TYPE.BPE, "repo": "https://huggingface.co/IFM/K2-Horizon-36B", "chkhsh": "a9af07a84191f55098b248ae6f3dfe9e32d3190bebe8eafd91c1ddec9bc3449f"},
+ ]
+ 
+ 
+diff --git a/gguf-py/gguf/constants.py b/gguf-py/gguf/constants.py
+index c99feb3c7..13d556738 100644
+--- a/gguf-py/gguf/constants.py
++++ b/gguf-py/gguf/constants.py
+@@ -217,6 +217,8 @@ class Keys:
+         SLIDING_WINDOW_PATTERN       = "{arch}.attention.sliding_window_pattern"
+         TEMPERATURE_SCALE            = "{arch}.attention.temperature_scale"
+         ROPE_PATTERN                 = "{arch}.attention.rope_pattern"
++        VALUE_EXPERT_COUNT           = "{arch}.attention.value_expert_count"
++        VALUE_EXPERT_USED_COUNT      = "{arch}.attention.value_expert_used_count"
+ 
+         class Indexer:
+             HEAD_COUNT = "{arch}.attention.indexer.head_count"
+@@ -625,6 +627,7 @@ class MODEL_ARCH(IntEnum):
+     NANBEIGE         = auto()
+     QWEN3TTS         = auto()
+     POCKETTTS        = auto()
++    K2HORIZON        = auto()
+ 
+ 
+ class VISION_PROJECTOR_TYPE(IntEnum):
+@@ -888,6 +891,9 @@ class MODEL_TENSOR(IntEnum):
+     INDEXER_COMPRESSOR_WGATE = auto()
+     INDEXER_COMPRESSOR_APE = auto()
+     INDEXER_COMPRESSOR_NORM = auto()
++    ATTN_V_GATE          = auto() # K2Horizon
++    ATTN_V_EXP           = auto() # K2Horizon
++
+     # vision
+     V_MMPROJ             = auto()
+     V_MMPROJ_FC          = auto()
+@@ -1374,6 +1380,7 @@ MODEL_ARCH_NAMES: dict[MODEL_ARCH, str] = {
+     MODEL_ARCH.NANBEIGE:         "nanbeige",
+     MODEL_ARCH.QWEN3TTS:         "qwen3tts",
+     MODEL_ARCH.POCKETTTS:        "pockettts",
++    MODEL_ARCH.K2HORIZON:        "k2-horizon",
+ }
+ 
+ VISION_PROJECTOR_TYPE_NAMES: dict[VISION_PROJECTOR_TYPE, str] = {
+@@ -1964,6 +1971,10 @@ TENSOR_NAMES: dict[MODEL_TENSOR, str] = {
+     MODEL_TENSOR.DFLASH_SELECTOR_NEXT:      "selector_successor",
+     MODEL_TENSOR.DFLASH_SELECTOR_HIDDEN:    "selector_hidden",
+     MODEL_TENSOR.D2T:                       "d2t",
++    # K2 Horizon
++    MODEL_TENSOR.ATTN_V_GATE:               "blk.{bid}.attn_v_gate",
++    MODEL_TENSOR.ATTN_V_EXP:                "blk.{bid}.attn_v_exps",
++
+ }
+ 
+ MODEL_TENSORS: dict[MODEL_ARCH, list[MODEL_TENSOR]] = {
+@@ -5374,6 +5385,39 @@ MODEL_TENSORS: dict[MODEL_ARCH, list[MODEL_TENSOR]] = {
+         MODEL_TENSOR.FFN_DOWN,
+         MODEL_TENSOR.FFN_UP,
+     ],
++    MODEL_ARCH.K2HORIZON: [
++        MODEL_TENSOR.TOKEN_EMBD,
++        MODEL_TENSOR.OUTPUT_NORM,
++        MODEL_TENSOR.OUTPUT,
++        MODEL_TENSOR.ATTN_NORM,
++        MODEL_TENSOR.ATTN_Q,
++        MODEL_TENSOR.ATTN_Q_NORM,
++        MODEL_TENSOR.ATTN_K,
++        MODEL_TENSOR.ATTN_K_NORM,
++        MODEL_TENSOR.ATTN_V,
++        MODEL_TENSOR.ATTN_V_GATE, # MoVA
++        MODEL_TENSOR.ATTN_V_EXP,  # MoVA
++        MODEL_TENSOR.ATTN_OUT,
++        MODEL_TENSOR.ATTN_GATE,
++        MODEL_TENSOR.FFN_NORM,
++
++        # Dense MLP
++        MODEL_TENSOR.FFN_GATE,
++        MODEL_TENSOR.FFN_UP,
++        MODEL_TENSOR.FFN_DOWN,
++
++        # MoE
++        MODEL_TENSOR.FFN_GATE_INP,
++        MODEL_TENSOR.FFN_EXP_PROBS_B,
++        MODEL_TENSOR.FFN_GATE_EXP,
++        MODEL_TENSOR.FFN_UP_EXP,
++        MODEL_TENSOR.FFN_DOWN_EXP,
++
++        # Shared Expert
++        MODEL_TENSOR.FFN_GATE_SHEXP,
++        MODEL_TENSOR.FFN_UP_SHEXP,
++        MODEL_TENSOR.FFN_DOWN_SHEXP,
++    ]
+ }
+ 
+ # tensors that will not be serialized
+diff --git a/gguf-py/gguf/gguf_writer.py b/gguf-py/gguf/gguf_writer.py
+index d95fe9b1a..5a82cd46f 100644
+--- a/gguf-py/gguf/gguf_writer.py
++++ b/gguf-py/gguf/gguf_writer.py
+@@ -1561,6 +1561,12 @@ class GGUFWriter:
+     def add_xielu_eps(self, values: Sequence[float]):
+         self.add_array(Keys.xIELU.EPS, values)
+ 
++    def add_attention_value_expert_count(self, count: int):
++        self.add_uint32(Keys.Attention.VALUE_EXPERT_COUNT.format(arch=self.arch), count)
++
++    def add_attention_value_expert_used_count(self, count: int):
++        self.add_uint32(Keys.Attention.VALUE_EXPERT_USED_COUNT.format(arch=self.arch), count)
++
+     # diffusion models
+ 
+     def add_diffusion_shift_logits(self, value: bool) -> None:
+diff --git a/gguf-py/gguf/tensor_mapping.py b/gguf-py/gguf/tensor_mapping.py
+index 861acfe18..6fdcfb418 100644
+--- a/gguf-py/gguf/tensor_mapping.py
++++ b/gguf-py/gguf/tensor_mapping.py
+@@ -392,6 +392,7 @@ class TensorNameMap:
+             "model.layers.{bid}.linear_attn.in_proj_z",  # qwen3.5
+             "model.layers.{bid}.self_attn.g_proj",    # step3.5 head-wise attention gate
+             "model.layers.{bid}.self_attn.output_gate",  # minimax-01
++            "model.layers.{bid}.self_attn.attn_gate_proj", # K2Horizon
+         ),
+ 
+         # Feed-forward norm
+@@ -2696,6 +2697,14 @@ class TensorNameMap:
+         MODEL_TENSOR.NEXTN_SHARED_HEAD_NORM: (
+             "model.layers.{bid}.shared_head.norm",
+         ),
++
++        MODEL_TENSOR.ATTN_V_GATE: (
++            "model.layers.{bid}.self_attn.v_router",
++        ),
++
++        MODEL_TENSOR.ATTN_V_EXP: (
++            "model.layers.{bid}.self_attn.v_experts",
++        ),
+     }
+ 
+     # architecture-specific block mappings
+diff --git a/models/templates/k2-horizon.jinja b/models/templates/k2-horizon.jinja
+new file mode 100644
+index 000000000..9dc680f7a
+--- /dev/null
++++ b/models/templates/k2-horizon.jinja
+@@ -0,0 +1,883 @@
++{{- bos_token }}
++{%- if tool_presentation is defined -%}
++    {{- raise_exception("Unsupported argument: tool_presentation. Use tool_presentation_format with one of: json, xml, markdown.") -}}
++{%- endif -%}
++{%- if tool_calling_format is defined -%}
++    {{- raise_exception("Unsupported argument: tool_calling_format. Use tool_call_format with one of: json, xml, xml_typed.") -}}
++{%- endif -%}
++{%- if tool_format is defined -%}
++    {{- raise_exception("Unsupported argument: tool_format. Use tool_call_format with one of: json, xml, xml_typed.") -}}
++{%- endif -%}
++{%- set tool_presentation_fmt = tool_presentation_format | default('markdown') -%}
++{%- set tool_call_fmt = tool_call_format | default('xml') -%}
++{%- if tool_presentation_fmt != 'json' and tool_presentation_fmt != 'xml' and tool_presentation_fmt != 'markdown' -%}
++    {{- raise_exception("Unsupported tool_presentation_format: '" ~ tool_presentation_fmt ~ "'. Supported formats: json, xml, markdown.") -}}
++{%- endif -%}
++{%- if tool_call_fmt != 'json' and tool_call_fmt != 'xml' and tool_call_fmt != 'xml_typed' -%}
++    {{- raise_exception("Unsupported tool_call_format: '" ~ tool_call_fmt ~ "'. Supported formats: json, xml, xml_typed.") -}}
++{%- endif -%}
++
++{#- Renderability state, computed during validate_tools (single walk, no extra -#}
++{#- traversal at render time): ok = working flag for the tool being validated; -#}
++{#- bad = pipe-delimited indices of tools that must render as verbatim JSON. -#}
++{%- set RB = namespace(ok=true, bad='|') -%}
++
++{%- macro value_contains_mapping(v) -%}
++{%- if v is mapping -%}
++true
++{%- elif v is sequence and v is not string -%}
++{%- set f = namespace(x='false') -%}
++{%- for c in v -%}{%- if value_contains_mapping(c) == 'true' -%}{%- set f.x = 'true' -%}{%- endif -%}{%- endfor -%}
++{{- f.x -}}
++{%- else -%}
++false
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_compact_type_name(type_name, spec) -%}
++{%- if type_name == "array" -%}
++array[{%- if 'items' in spec -%}{{ render_compact_type(spec['items']) }}{%- else -%}any{%- endif -%}]
++{%- elif type_name -%}
++{{- type_name -}}
++{%- else -%}
++any
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_compact_type(spec) -%}
++{%- if spec is not mapping -%}
++any
++{%- elif spec.type is defined and spec.type is sequence and spec.type is not string and spec.type | length > 0 -%}
++{%- for type_name in spec.type -%}{{ render_compact_type_name(type_name, spec) }}{%- if not loop.last -%}|{%- endif -%}{%- endfor -%}
++{%- elif spec.type is defined and spec.type is sequence and spec.type is not string -%}
++any
++{%- elif spec.type -%}
++{{- render_compact_type_name(spec.type, spec) -}}
++{%- elif spec['$ref'] is string -%}
++{{- spec['$ref'].split('/') | last -}}
++{%- elif spec.oneOf -%}
++oneOf[{%- for variant in spec.oneOf -%}{{ render_compact_type(variant) }}{%- if not loop.last -%}|{%- endif -%}{%- endfor -%}]
++{%- elif spec.anyOf -%}
++anyOf[{%- for variant in spec.anyOf -%}{{ render_compact_type(variant) }}{%- if not loop.last -%}|{%- endif -%}{%- endfor -%}]
++{%- elif spec.properties -%}
++object
++{%- elif 'items' in spec -%}
++array[{{ render_compact_type(spec['items']) }}]
++{%- else -%}
++any
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_type_name(type_name, spec) -%}
++{%- if type_name == "array" -%}
++array of {% if 'items' in spec %}{{ render_markdown_type(spec['items']) }}{% else %}any{% endif %}
++{%- elif type_name -%}
++{{- type_name -}}
++{%- else -%}
++any
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_type(spec) -%}
++{%- if spec is true -%}
++True
++{%- elif spec is false -%}
++False
++{%- elif spec is not mapping -%}
++any
++{%- elif spec.type is defined and spec.type is sequence and spec.type is not string and spec.type | length > 0 -%}
++{%- for type_name in spec.type -%}{{ render_markdown_type_name(type_name, spec) }}{% if not loop.last %} or {% endif %}{%- endfor -%}
++{%- elif spec.type is defined and spec.type is sequence and spec.type is not string -%}
++any
++{%- elif spec.type -%}
++{{- render_markdown_type_name(spec.type, spec) -}}
++{%- elif spec['$ref'] is string -%}
++{{- spec['$ref'].split('/') | last -}}
++{%- elif spec.oneOf -%}
++oneOf[{%- for variant in spec.oneOf -%}{{ render_markdown_type(variant) }}{% if not loop.last %} or {% endif %}{%- endfor -%}]
++{%- elif spec.anyOf -%}
++anyOf[{%- for variant in spec.anyOf -%}{{ render_markdown_type(variant) }}{% if not loop.last %} or {% endif %}{%- endfor -%}]
++{%- elif spec.properties -%}
++object
++{%- elif 'items' in spec -%}
++array of {{ render_markdown_type(spec['items']) }}
++{%- else -%}
++any
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_text(value) -%}
++{{- value.split() | join(" ") -}}
++{%- endmacro -%}
++
++{%- macro render_python_string(value) -%}
++'{{- value.split() | join(" ") | replace("\\", "\\\\") | replace("'", "\\'") -}}'
++{%- endmacro -%}
++
++{%- macro render_python_repr(value) -%}
++{%- if value is string -%}
++{{ render_python_string(value) }}
++{%- elif value is true -%}
++True
++{%- elif value is false -%}
++False
++{%- elif value is none -%}
++None
++{%- elif value is mapping -%}
++{{- "{" -}}
++{%- for key, child in value | items -%}
++{{ render_python_repr(key) }}: {{ render_python_repr(child) }}{%- if not loop.last -%}, {% endif -%}
++{%- endfor -%}
++{{- "}" -}}
++{%- elif value is sequence -%}
++{{- "[" -}}
++{%- for child in value -%}
++{{ render_python_repr(child) }}{%- if not loop.last -%}, {% endif -%}
++{%- endfor -%}
++{{- "]" -}}
++{%- else -%}
++{{- value -}}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_value(value) -%}
++{%- if value is string -%}{{ render_xml_text(value) }}{%- else -%}{{ render_python_repr(value) }}{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_enum_value(value) -%}
++{%- if value is string -%}"{{- value | replace("\\", "\\\\") | replace("\"", "\\\"") -}}"{%- else -%}"{{- render_python_repr(value) | replace("\\", "\\\\") | replace("\"", "\\\"") -}}"{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_enum(values) -%}
++{%- for value in values -%}{{ render_xml_enum_value(value) }}{%- if not loop.last -%}|{%- endif -%}{%- endfor -%}
++{%- endmacro -%}
++
++{%- macro render_xml_default_attr(value) -%}
++{{- " default=" }}{%- if value is string -%}"{{- value | replace("\\", "\\\\") | replace("\"", "\\\"") -}}"{%- else -%}{{ render_xml_value(value) }}{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_attr(name, value) -%}
++{{- " " + name + "=" }}{%- if value == "" -%}""{%- else -%}{{ render_xml_value(value) }}{%- endif -%}
++{%- endmacro -%}
++
++{%- macro validate_schema(spec, path, lenient=false, classify=true, in_variant=false) -%}
++{%- if spec is mapping -%}
++    {%- if not lenient -%}
++    {%- if spec.required is defined -%}
++        {%- if spec.required is string or spec.required is not sequence -%}
++            {{- raise_exception("Schema '" + path + "' has 'required' but it is not a list.") -}}
++        {%- endif -%}
++        {%- if spec.required | length > 0 and not spec.properties and not in_variant -%}
++            {{- raise_exception("Schema '" + path + "' has required fields but no properties object to define them.") -}}
++        {%- endif -%}
++        {%- if spec.properties -%}
++            {%- for required_name in spec.required -%}
++                {%- if required_name not in spec.properties -%}
++                    {{- raise_exception("Schema '" + path + "' marks '" + required_name + "' as required, but that property is not defined in properties.") -}}
++                {%- endif -%}
++            {%- endfor -%}
++        {%- endif -%}
++    {%- endif -%}
++    {%- endif -%}
++    {#- renderability classification, piggybacking on this walk (no raises here): -#}
++    {#- constructs the pretty renderer does not fully handle flip RB.ok so the -#}
++    {#- tool falls back to verbatim JSON. Skipped entirely for json presentation. -#}
++    {%- if classify -%}
++    {%- for key, value in spec | items -%}
++        {%- if key == '$ref' -%}
++            {#- llama.cpp's Jinja has no dictionary constructor, so $ref inlining stays -#}
++            {#- template-local by falling back to the exact JSON presentation. -#}
++            {%- set RB.ok = false -%}
++        {%- elif key == '$defs' or key == 'definitions' -%}
++            {%- if value is mapping -%}
++                {%- for dk, dv in value | items -%}
++                    {{- validate_schema(dv, path + ".$defs." + dk, true) -}}
++                {%- endfor -%}
++            {%- else -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- elif key == 'type' -%}
++            {%- if value is mapping -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- elif key == 'enum' -%}
++            {%- if value is string or value is mapping or value is not sequence -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- elif key == 'items' -%}
++            {#- any items shape renders: mapping structurally, others via repr detail -#}
++        {%- elif key == 'oneOf' or key == 'anyOf' -%}
++            {%- if value is mapping or value is string or value is not sequence -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- elif key == 'required' -%}
++            {%- if value and not spec.properties -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- elif ('|' ~ key ~ '|') in '|description|default|title|examples|properties|patternProperties|additionalProperties|returns|' -%}
++        {%- elif value is mapping -%}
++            {%- for uk, uv in value | items -%}
++                {%- if value_contains_mapping(uv) == 'true' -%}{%- set RB.ok = false -%}{%- endif -%}
++            {%- endfor -%}
++        {%- elif value is sequence and value is not string -%}
++            {%- if value_contains_mapping(value) == 'true' -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- endif -%}
++    {%- endfor -%}
++    {%- endif -%}
++    {%- if spec.properties -%}
++        {%- for child_name, child_spec in spec.properties | items -%}
++            {{- validate_schema(child_spec, path + "." + child_name, lenient, classify) -}}
++        {%- endfor -%}
++    {%- endif -%}
++    {%- if 'items' in spec -%}{{- validate_schema(spec['items'], path + "[]", lenient, classify) -}}{%- endif -%}
++    {%- if spec.oneOf -%}
++        {%- for variant in spec.oneOf -%}{{- validate_schema(variant, path + ".oneOf[" + (loop.index0 | string) + "]", lenient, classify, true) -}}{%- endfor -%}
++    {%- endif -%}
++    {%- if spec.anyOf -%}
++        {%- for variant in spec.anyOf -%}{{- validate_schema(variant, path + ".anyOf[" + (loop.index0 | string) + "]", lenient, classify, true) -}}{%- endfor -%}
++    {%- endif -%}
++    {%- if spec.additionalProperties is mapping -%}{{- validate_schema(spec.additionalProperties, path + ".additionalProperties", lenient, classify) -}}{%- endif -%}
++    {%- if spec.patternProperties is mapping -%}
++        {%- for pattern, pattern_spec in spec.patternProperties | items -%}
++            {{- validate_schema(pattern_spec, path + ".patternProperties[" + pattern + "]", lenient, classify) -}}
++        {%- endfor -%}
++    {%- endif -%}
++    {%- if spec.returns is mapping -%}{{- validate_schema(spec.returns, path + ".returns", lenient, classify) -}}{%- endif -%}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro validate_tools(tools_list, classify=true) -%}
++{%- set RB.bad = '|' -%}
++{%- for tool in tools_list -%}
++    {%- set fn = tool.function if tool.function is defined else tool -%}
++    {%- set RB.ok = true -%}
++    {%- if fn.parameters is defined and fn.parameters is string -%}
++        {{- raise_exception("tool.function.parameters must be a dict, not a JSON string. Parse it before passing to the template.") -}}
++    {%- endif -%}
++    {%- if fn.parameters is not defined or fn.parameters is none -%}
++        {%- if fn.arguments is defined -%}
++            {{- raise_exception("Tool '" + fn.name + "' has 'arguments' instead of 'parameters'. Rename 'arguments' to 'parameters'.") -}}
++        {%- else -%}
++            {{- raise_exception("Tool '" + fn.name + "' is missing required 'parameters' field. Each tool must have a 'parameters' dict with 'type', 'properties', and 'required' keys.") -}}
++        {%- endif -%}
++    {%- endif -%}
++    {{- validate_schema(fn.parameters, "tool." + fn.name + ".parameters", false, classify) -}}
++    {%- if classify -%}
++    {%- if fn.parameters is mapping -%}
++        {#- unknown container-valued keys at the parameters ROOT are never rendered -#}
++        {#- by the pretty path (root extras are dropped) -> verbatim fallback. -#}
++        {%- for rk, rv in fn.parameters | items -%}
++            {%- if rk not in ['type', 'description', 'enum', 'default', 'properties', 'required', 'optional', 'title', 'items', 'oneOf', 'anyOf', 'additionalProperties', 'patternProperties', 'returns', 'examples', '$defs', 'definitions', '$ref'] -%}
++                {%- if rv is mapping or (rv is sequence and rv is not string) -%}{%- set RB.ok = false -%}{%- endif -%}
++            {%- endif -%}
++        {%- endfor -%}
++    {%- else -%}
++        {%- set RB.ok = false -%}
++    {%- endif -%}
++    {%- endif -%}
++    {%- if fn.returns is mapping -%}{{- validate_schema(fn.returns, "tool." + fn.name + ".returns", false, classify) -}}{%- endif -%}
++    {%- if classify and fn.returns is not defined and fn.response is mapping -%}{{- validate_schema(fn.response, "tool." + fn.name + ".response", true) -}}{%- endif -%}
++    {#- unknown container-valued keys at the FUNCTION level are never rendered -> fallback. -#}
++    {%- if classify -%}
++    {%- for fk, fv in fn | items -%}
++        {%- if fk not in ['name', 'description', 'parameters', 'returns', 'response', 'type', 'function'] -%}
++            {%- if fv is mapping or (fv is sequence and fv is not string) -%}{%- set RB.ok = false -%}{%- endif -%}
++        {%- endif -%}
++    {%- endfor -%}
++    {%- endif -%}
++    {%- if not RB.ok -%}{%- set RB.bad = RB.bad ~ loop.index0 ~ '|' -%}{%- endif -%}
++{%- endfor -%}
++{%- endmacro -%}
++
++{%- macro render_tools_json(tools_list) -%}
++{{- "<ifm|tools>" }}
++{%- for tool in tools_list %}
++{{- "\n" }}
++{{- tool | tojson }}
++{%- endfor %}
++{{- "\n</ifm|tools>" }}
++{%- endmacro -%}
++
++{%- macro render_xml_schema_attrs(spec, include_value_attrs) -%}
++{%- if spec is mapping -%}
++{%- set structural_keys = ["type", "description", "enum", "default", "properties", "required", "items", "oneOf", "anyOf", "additionalProperties", "patternProperties", "returns"] -%}
++{%- if include_value_attrs and spec.enum -%}{{- " enum=" }}{{ render_xml_enum(spec.enum) }}{%- endif -%}
++{%- if include_value_attrs and spec.default is defined -%}{{ render_xml_default_attr(spec.default) }}{%- endif -%}
++{%- if spec.additionalProperties is defined and spec.additionalProperties is not mapping -%}{{ render_xml_attr("additionalProperties", spec.additionalProperties) }}{%- endif -%}
++{%- if spec.patternProperties is defined and spec.patternProperties is not mapping -%}{{ render_xml_attr("patternProperties", spec.patternProperties) }}{%- endif -%}
++{%- for key, value in spec | items -%}
++    {%- if key not in structural_keys -%}
++{{ render_xml_attr(key, value) }}
++    {%- endif -%}
++{%- endfor -%}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro xml_schema_has_children(spec, include_properties, include_description) -%}
++{%- if spec is not mapping -%}
++false
++{%- elif (include_description and spec.description is defined) or (include_properties and spec.properties) or 'items' in spec or spec.oneOf or spec.anyOf or spec.additionalProperties is mapping or spec.patternProperties is mapping or spec.returns is defined -%}
++true
++{%- else -%}
++false
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_schema_node(tag, spec, include_properties) -%}
++{%- if spec is mapping -%}
++{{- "<" + tag + " type=" + render_compact_type(spec) }}{{ render_xml_schema_attrs(spec, true) }}
++{%- if xml_schema_has_children(spec, include_properties, true) == 'true' -%}
++{{- ">" }}{{ render_xml_schema_children(spec, include_properties, true) }}{{- "</" + tag + ">" }}
++{%- else -%}
++{{- "/>" }}
++{%- endif -%}
++{%- else -%}
++{{- "<" + tag + ">" }}{{ render_xml_value(spec) }}{{- "</" + tag + ">" }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_pattern_property(pattern, spec) -%}
++{%- if spec is mapping -%}
++{{- "<patternProperty" }}{{ render_xml_attr("pattern", pattern) }}{{- " type=" + render_compact_type(spec) }}{{ render_xml_schema_attrs(spec, true) }}
++{%- if xml_schema_has_children(spec, true, true) == 'true' -%}
++{{- ">" }}{{ render_xml_schema_children(spec, true, true) }}{{- "</patternProperty>" }}
++{%- else -%}
++{{- "/>" }}
++{%- endif -%}
++{%- else -%}
++{{- "<patternProperty" }}{{ render_xml_attr("pattern", pattern) }}{{- ">" }}{{ render_xml_value(spec) }}{{- "</patternProperty>" }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_schema_children(spec, include_properties, include_description) -%}
++{%- if include_description and spec.description is defined -%}{{- "<description>" }}{{ spec.description }}{{- "</description>" }}{%- endif -%}
++{%- if include_properties and spec.properties -%}
++{%- for child_name, child_spec in spec.properties | items -%}
++{{- render_xml_param(child_name, child_spec, spec.required or []) }}
++{%- endfor -%}
++{%- endif -%}
++{%- if 'items' in spec -%}{{ render_xml_schema_node("items", spec['items'], true) }}{%- endif -%}
++{%- if spec.oneOf -%}
++{{- "<oneOf>" }}
++{%- for variant in spec.oneOf -%}{{ render_xml_schema_node("variant", variant, true) }}{%- endfor -%}
++{{- "</oneOf>" }}
++{%- endif -%}
++{%- if spec.anyOf -%}
++{{- "<anyOf>" }}
++{%- for variant in spec.anyOf -%}{{ render_xml_schema_node("variant", variant, true) }}{%- endfor -%}
++{{- "</anyOf>" }}
++{%- endif -%}
++{%- if spec.additionalProperties is mapping -%}{{ render_xml_schema_node("additionalProperties", spec.additionalProperties, true) }}{%- endif -%}
++{%- if spec.patternProperties is mapping -%}
++{{- "<patternProperties>" }}
++{%- for pattern, pattern_spec in spec.patternProperties | items -%}{{ render_xml_pattern_property(pattern, pattern_spec) }}{%- endfor -%}
++{{- "</patternProperties>" }}
++{%- elif spec.patternProperties is defined -%}<patternProperties>{{ render_xml_value(spec.patternProperties) }}</patternProperties>{%- endif -%}
++{%- if spec.returns is mapping -%}{{ render_xml_schema_node("returns", spec.returns, true) }}{%- elif spec.returns is defined -%}<returns>{{ render_xml_value(spec.returns) }}</returns>{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_xml_param(name, spec, required_list) -%}
++{{- "<param name=" + name + " type=" + render_compact_type(spec) }}
++{%- if name in (required_list or []) -%}{{- " required=true" }}{%- endif -%}
++{%- if spec.enum -%}{{- " enum=" }}{{ render_xml_enum(spec.enum) }}{%- endif -%}
++{%- if spec.default is defined -%}{{ render_xml_default_attr(spec.default) }}{%- endif -%}
++{{- render_xml_schema_attrs(spec, false) }}
++{%- if spec.description or xml_schema_has_children(spec, true, false) == 'true' -%}
++{{- ">" }}
++{%- if spec.description -%}{{ spec.description }}{%- endif -%}
++{{- render_xml_schema_children(spec, true, false) }}
++{{- "</param>" }}
++{%- else -%}
++{{- "/>" }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_tools_xml(tools_list) -%}
++{{- "<ifm|tools>" }}
++{%- for tool in tools_list -%}
++    {%- set fn = tool.function if tool.function is defined else tool -%}
++    {%- set fnp = namespace(p=fn.parameters) -%}
++{{- "\n<function name=" + fn.name + ">" }}
++{%- if fn.description -%}
++{{- "<description>" }}{{ fn.description }}{{- "</description>" }}
++{%- endif -%}
++{{- "<parameters>" }}
++{%- if fnp.p and fnp.p.properties -%}
++    {%- for pname, pspec in fnp.p.properties | items -%}
++{{- render_xml_param(pname, pspec, fnp.p.required or []) }}
++    {%- endfor -%}
++{%- elif fnp.p is mapping and (fnp.p.oneOf or fnp.p.anyOf or 'items' in fnp.p) -%}
++{{- render_xml_schema_children(fnp.p, true, false) }}
++{%- endif -%}
++{{- "</parameters>" }}
++{%- set fn_ret = fn.returns if fn.returns is defined else fn.response -%}
++{%- if fn_ret is mapping -%}{{ render_xml_schema_node("returns", fn_ret, true) }}{%- elif fn_ret is defined -%}<returns>{{ render_xml_value(fn_ret) }}</returns>{%- endif -%}
++{{- "</function>" }}
++{%- endfor -%}
++{{- "\n</ifm|tools>" }}
++{%- endmacro -%}
++
++{%- macro render_markdown_literal(value) -%}
++{%- if value is string and value == "" -%}""
++{%- elif value is string -%}`{{ value | replace("\n", "\\n") }}`
++{%- else -%}`{{ render_python_repr(value) }}`
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_allowed_values(values) -%}
++{%- for value in values -%}{{ render_markdown_literal(value) }}{% if not loop.last %}, {% endif %}{%- endfor -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_value(value) -%}
++{%- if value is string and value == "" -%}""{%- elif value is string -%}{{ value }}{%- else -%}{{ render_python_repr(value) }}{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_detail(indent, label, value) -%}
++{{- "\n" + indent + "  - " + label + ": " }}{{ render_markdown_value(value) }}
++{%- endmacro -%}
++
++{%- macro render_markdown_metadata_detail(label, value) -%}
++{{- "\n- " + label + ": " }}{{ render_markdown_value(value) }}
++{%- endmacro -%}
++
++{%- macro render_markdown_schema_annotations(spec, indent, include_value_details) -%}
++{%- if include_value_details and spec.description is defined -%}{{ render_markdown_detail(indent, "Description", spec.description | replace("\n", "\n" + indent + "    ")) }}{%- endif -%}
++{%- if include_value_details and spec.enum is defined -%}{{- "\n" + indent + "  - Allowed values: " }}{{ render_allowed_values(spec.enum) }}{%- endif -%}
++{%- if include_value_details and spec.default is defined -%}{{- "\n" + indent + "  - Default: " }}{{ render_markdown_literal(spec.default) }}{%- endif -%}
++{%- if spec.additionalProperties is defined -%}
++    {%- if spec.additionalProperties is mapping -%}
++{{- "\n" + indent + "  - Additional properties *(" + render_markdown_type(spec.additionalProperties) + ")*" }}
++{{- render_markdown_schema_details(spec.additionalProperties, indent + "  ", true) }}
++    {%- else -%}
++{{ render_markdown_detail(indent, "Additional properties", spec.additionalProperties) }}
++    {%- endif -%}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_metadata_annotations(spec) -%}
++{%- if spec.description is defined -%}{{ render_markdown_metadata_detail("Description", spec.description | replace("\n", "\n    ")) }}{%- endif -%}
++{%- if spec.enum is defined -%}{{- "\n- Allowed values: " }}{{ render_allowed_values(spec.enum) }}{%- endif -%}
++{%- if spec.default is defined -%}{{- "\n- Default: " }}{{ render_markdown_literal(spec.default) }}{%- endif -%}
++{%- if spec.additionalProperties is defined -%}
++    {%- if spec.additionalProperties is mapping -%}
++{{- "\n- Additional properties *(" + render_markdown_type(spec.additionalProperties) + ")*" }}
++{{- render_markdown_schema_details(spec.additionalProperties, "", true) }}
++    {%- else -%}
++{{ render_markdown_metadata_detail("Additional properties", spec.additionalProperties) }}
++    {%- endif -%}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_schema_extras(spec, indent) -%}
++{%- set rendered_keys = ["type", "description", "enum", "default", "properties", "required", "items", "oneOf", "anyOf", "additionalProperties", "patternProperties", "returns"] -%}
++{%- for key, value in spec | items -%}
++    {%- if key not in rendered_keys -%}
++{{- "\n" + indent + "  - " + key + ": " }}{{ render_markdown_value(value) }}
++    {%- endif -%}
++{%- endfor -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_metadata_extras(spec) -%}
++{%- set rendered_keys = ["type", "description", "enum", "default", "properties", "required", "items", "oneOf", "anyOf", "additionalProperties", "patternProperties", "returns"] -%}
++{%- for key, value in spec | items -%}
++    {%- if key not in rendered_keys -%}
++{{- "\n- " + key + ": " }}{{ render_markdown_value(value) }}
++    {%- endif -%}
++{%- endfor -%}
++{%- endmacro -%}
++
++{%- macro markdown_schema_has_extra(spec) -%}
++{%- set rendered_keys = ["type", "description", "enum", "default", "properties", "required", "items", "oneOf", "anyOf", "additionalProperties", "patternProperties", "returns"] -%}
++{%- set found = namespace(value='false') -%}
++{%- for key, value in spec | items -%}
++    {%- if key not in rendered_keys -%}{%- set found.value = 'true' -%}{%- endif -%}
++{%- endfor -%}
++{{- found.value -}}
++{%- endmacro -%}
++
++{%- macro markdown_parameter_schema_has_details(spec) -%}
++{%- if spec.description is defined or spec.enum is defined or spec.default is defined or spec.additionalProperties is defined or spec.patternProperties is defined or 'items' in spec or spec.oneOf or spec.anyOf or spec.returns is defined or markdown_schema_has_extra(spec) == 'true' -%}
++true
++{%- else -%}
++false
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_schema_structure(spec, indent, include_properties) -%}
++{%- if include_properties and spec.properties -%}
++    {%- for child_name, child_spec in spec.properties | items -%}
++{{- render_markdown_param(child_name, child_spec, spec.required or [], indent + "  ") }}
++    {%- endfor -%}
++{%- endif -%}
++{%- if 'items' in spec and spec['items'] is mapping -%}
++{{- "\n" + indent + "  - Items *(" + render_markdown_type(spec['items']) + ")*" }}
++{{- render_markdown_schema_details(spec['items'], indent + "  ", true) }}
++{%- elif 'items' in spec -%}
++{{ render_markdown_detail(indent, "Items", spec['items']) }}
++{%- endif -%}
++{%- if spec.oneOf -%}
++{{- "\n" + indent + "  - oneOf:" }}
++    {%- for variant in spec.oneOf -%}
++{{- "\n" + indent + "    - Variant " }}{{ loop.index }}{{- " *(" + render_markdown_type(variant) + ")*" }}
++{{- render_markdown_schema_details(variant, indent + "    ", true) }}
++    {%- endfor -%}
++{%- endif -%}
++{%- if spec.anyOf -%}
++{{- "\n" + indent + "  - anyOf:" }}
++    {%- for variant in spec.anyOf -%}
++{{- "\n" + indent + "    - Variant " }}{{ loop.index }}{{- " *(" + render_markdown_type(variant) + ")*" }}
++{{- render_markdown_schema_details(variant, indent + "    ", true) }}
++    {%- endfor -%}
++{%- endif -%}
++{%- if spec.patternProperties is mapping -%}
++{{- "\n" + indent + "  - Pattern properties:" }}
++    {%- for pattern, pattern_spec in spec.patternProperties | items -%}
++        {%- if pattern_spec is mapping -%}
++{{- "\n" + indent + "    - `" + pattern + "` *(" + render_markdown_type(pattern_spec) + ")*" }}
++{{- render_markdown_schema_details(pattern_spec, indent + "    ", true) }}
++        {%- else -%}
++{{- "\n" + indent + "    - `" + pattern + "`: " }}{{ render_markdown_value(pattern_spec) }}
++        {%- endif -%}
++    {%- endfor -%}
++{%- elif spec.patternProperties is defined -%}
++{{ render_markdown_detail(indent, "Pattern properties", spec.patternProperties) }}
++{%- endif -%}
++{%- if spec.returns is mapping -%}
++{{- "\n" + indent + "  - Returns *(" + render_markdown_type(spec.returns) + ")*" }}
++{{- render_markdown_schema_details(spec.returns, indent + "  ", true) }}
++{%- elif spec.returns is defined -%}
++{{ render_markdown_detail(indent, "Returns", spec.returns) }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_schema_details(spec, indent, include_value_details) -%}
++{%- if spec is mapping -%}
++{{- render_markdown_schema_annotations(spec, indent, include_value_details) }}
++{{- render_markdown_schema_structure(spec, indent, true) }}
++{{- render_markdown_schema_extras(spec, indent) }}
++{%- elif spec is not boolean -%}
++{{- "\n" + indent + "  - Value: " }}{{ render_markdown_literal(spec) }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_parameter_schema(spec) -%}
++{%- if spec is mapping -%}
++{{- render_markdown_metadata_annotations(spec) }}
++{%- if 'items' in spec and spec['items'] is mapping -%}
++{{- "\n- Items *(" + render_markdown_type(spec['items']) + ")*" }}
++{{- render_markdown_schema_details(spec['items'], "", true) }}
++{%- elif 'items' in spec -%}
++{{ render_markdown_metadata_detail("Items", spec['items']) }}
++{%- endif -%}
++{%- if spec.oneOf -%}
++{{- "\n- oneOf:" }}
++    {%- for variant in spec.oneOf -%}
++{{- "\n  - Variant " }}{{ loop.index }}{{- " *(" + render_markdown_type(variant) + ")*" }}
++{{- render_markdown_schema_details(variant, "  ", true) }}
++    {%- endfor -%}
++{%- endif -%}
++{%- if spec.anyOf -%}
++{{- "\n- anyOf:" }}
++    {%- for variant in spec.anyOf -%}
++{{- "\n  - Variant " }}{{ loop.index }}{{- " *(" + render_markdown_type(variant) + ")*" }}
++{{- render_markdown_schema_details(variant, "  ", true) }}
++    {%- endfor -%}
++{%- endif -%}
++{%- if spec.patternProperties is mapping -%}
++{{- "\n- Pattern properties:" }}
++    {%- for pattern, pattern_spec in spec.patternProperties | items -%}
++        {%- if pattern_spec is mapping -%}
++{{- "\n  - `" + pattern + "` *(" + render_markdown_type(pattern_spec) + ")*" }}
++{{- render_markdown_schema_details(pattern_spec, "  ", true) }}
++        {%- else -%}
++{{- "\n  - `" + pattern + "`: " }}{{ render_markdown_value(pattern_spec) }}
++        {%- endif -%}
++    {%- endfor -%}
++{%- elif spec.patternProperties is defined -%}
++{{ render_markdown_metadata_detail("Pattern properties", spec.patternProperties) }}
++{%- endif -%}
++{%- if spec.returns is mapping -%}
++{{- "\n- Returns *(" + render_markdown_type(spec.returns) + ")*" }}
++{{- render_markdown_schema_details(spec.returns, "", true) }}
++{%- elif spec.returns is defined -%}
++{{ render_markdown_metadata_detail("Returns", spec.returns) }}
++{%- endif -%}
++{{- render_markdown_metadata_extras(spec) }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_markdown_param(name, spec, required_list, indent) -%}
++{{- "\n" + indent + "- `" + name + "` *(" + render_markdown_type(spec) }}
++{%- if name in (required_list or []) -%}{{- ", required" }}{%- endif -%}
++{{- ")*" }}
++{%- if spec.description -%}{{- " - " + spec.description | replace("\n", "\n" + indent + "  ") }}{%- endif -%}
++{%- if spec.enum -%}
++{{- "\n" + indent + "  - Allowed values: " }}{{ render_allowed_values(spec.enum) }}
++{%- endif -%}
++{%- if spec.default is defined -%}
++{{- "\n" + indent + "  - Default: " }}{{ render_markdown_literal(spec.default) }}
++{%- endif -%}
++{{- render_markdown_schema_details(spec, indent, false) }}
++{%- endmacro -%}
++
++{%- macro render_tools_markdown(tools_list) -%}
++{{- "<ifm|tools>" }}
++{%- for tool in tools_list -%}
++    {%- set fn = tool.function if tool.function is defined else tool -%}
++    {%- set fnp = namespace(p=fn.parameters) -%}
++{{- "\n## " + fn.name }}
++{%- if fn.description -%}
++{{- "\n" + fn.description }}
++{%- endif -%}
++{{- "\n\n**Parameters**" }}
++{%- if fnp.p and fnp.p.properties -%}
++    {%- for pname, pspec in fnp.p.properties | items -%}
++{{- render_markdown_param(pname, pspec, fnp.p.required or [], "") }}
++    {%- endfor -%}
++{%- elif fnp.p is mapping and (fnp.p.oneOf or fnp.p.anyOf or 'items' in fnp.p) -%}
++{{- render_markdown_parameter_schema(fnp.p) }}
++{%- else -%}
++{{- "\n- None" }}
++{%- endif -%}
++{%- set fn_ret = fn.returns if fn.returns is defined else fn.response -%}
++{%- if fn_ret is mapping -%}
++{{- "\n\n**Returns**" }}
++{{- "\n- Return *(" + render_markdown_type(fn_ret) + ")*" }}
++{{- render_markdown_schema_details(fn_ret, "", true) }}
++{%- elif fn_ret is defined -%}
++{{- "\n\n**Returns**\n- " }}{{ render_markdown_value(fn_ret) }}
++{%- endif -%}
++{%- if not loop.last -%}{{- "\n" }}{%- endif -%}
++{%- endfor -%}
++{{- "\n</ifm|tools>" }}
++{%- endmacro -%}
++
++{%- macro render_tool_presentation(tools_list, fmt) -%}
++{%- if fmt == 'json' -%}
++{{- render_tools_json(tools_list) }}
++{%- elif RB.bad != '|' -%}
++{#- some tool uses constructs the pretty renderers cannot represent (verdicts -#}
++{#- computed during validate_tools): render the WHOLE toolset exactly as the -#}
++{#- json presentation would, so the block stays uniform and model-familiar. -#}
++{{- render_tools_json(tools_list) }}
++{%- elif fmt == 'xml' -%}
++{{- render_tools_xml(tools_list) }}
++{%- elif fmt == 'markdown' -%}
++{{- render_tools_markdown(tools_list) }}
++{%- else -%}
++{{- raise_exception("Unsupported tool_presentation_format: '" + fmt + "'. Supported formats: json, xml, markdown.") }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_call_instructions(fmt) -%}
++{%- if fmt == 'json' -%}
++{{- "Wrap all tool calls in a single <ifm|tool_calls></ifm|tool_calls> block. For each call, emit one JSON object with the function name and arguments on the same line inside <ifm|tool_call></ifm|tool_call> tags:\n\n<ifm|tool_calls>\n<ifm|tool_call>{\"name\": <function-name>, \"arguments\": <args-json-object>}</ifm|tool_call>\n</ifm|tool_calls>" }}
++{%- elif fmt == 'xml' -%}
++{{- "Wrap all tool calls in a single <ifm|tool_calls></ifm|tool_calls> block. For each call, write the function name at the start of <ifm|tool_call>, followed by paired <ifm|arg_key> and <ifm|arg_value> tags for each argument:\n\n<ifm|tool_calls>\n<ifm|tool_call>$FUNCTION_NAME\n<ifm|arg_key>$PARAMETER_NAME</ifm|arg_key>\n<ifm|arg_value>$PARAMETER_VALUE</ifm|arg_value>\n...\n</ifm|tool_call>\n</ifm|tool_calls>\n\nString and scalar parameters should be written as plain text. Array and object parameters should be written as JSON literals." }}
++{%- elif fmt == 'xml_typed' -%}
++{{- "Wrap all tool calls in a single <ifm|tool_calls></ifm|tool_calls> block. For each call, write the function name at the start of <ifm|tool_call>, followed by <ifm|arg_key>, <ifm|arg_type>, and <ifm|arg_value> tags for each argument:\n\n<ifm|tool_calls>\n<ifm|tool_call>$FUNCTION_NAME\n<ifm|arg_key>$PARAMETER_NAME</ifm|arg_key>\n<ifm|arg_type>$ARGUMENT_TYPE</ifm|arg_type>\n<ifm|arg_value>$PARAMETER_VALUE</ifm|arg_value>\n...\n</ifm|tool_call>\n</ifm|tool_calls>\n\nUse the parameter type shown in the tool definition. If that type contains anyOf or oneOf, use the actual argument value type instead. String and scalar parameters should be written as plain text. Array and object parameters should be written as JSON literals." }}
++{%- else -%}
++{{- raise_exception("Unsupported tool_call_format: '" + fmt + "'. Supported formats: json, xml, xml_typed.") }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_system_with_tools(tools_list, system_content, presentation_fmt, call_fmt) -%}
++{{- "<|ifm|im_start|>system\n# Tools\nYou may call one or more tools to assist with the user query.\n\nAvailable tools are:\n\n" }}
++{{- render_tool_presentation(tools_list, presentation_fmt) }}
++{{- "\n\nWhen calling tools, you MUST follow the tool-call format below:\n\n" }}
++{{- render_call_instructions(call_fmt) }}
++{%- if system_content -%}
++{{- "\n\n" + system_content }}
++{%- endif -%}
++{{- "<|ifm|im_end|>" }}
++{%- endmacro -%}
++
++{%- macro render_argument_value(value) -%}
++{%- if value is string -%}{{- value -}}{%- else -%}{{- value | tojson -}}{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_value_type(value) -%}
++{%- if value is none -%}null
++{%- elif value is boolean -%}boolean
++{%- elif value is integer -%}integer
++{%- elif value is number -%}number
++{%- elif value is string -%}string
++{%- elif value is mapping -%}object
++{%- elif value is sequence -%}array
++{%- else -%}any
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro schema_has_combinator(spec) -%}
++{%- if spec.oneOf or spec.anyOf -%}
++true
++{%- elif spec.type is defined and spec.type is sequence and spec.type is not string and spec.type | length > 1 -%}
++true
++{%- elif spec.type == "array" and 'items' in spec -%}
++{{- schema_has_combinator(spec['items']) -}}
++{%- elif spec.properties -%}
++    {%- set found = namespace(value='false') -%}
++    {%- for child_name, child_spec in spec.properties | items -%}
++        {%- if schema_has_combinator(child_spec) == 'true' -%}
++            {%- set found.value = 'true' -%}
++        {%- endif -%}
++    {%- endfor -%}
++{{- found.value -}}
++{%- else -%}
++false
++{%- endif -%}
++{%- endmacro -%}
++
++{%- macro render_arg_type(tools_list, tool_name, arg_name, value) -%}
++{%- set found = namespace(type='any') -%}
++{%- for tool in tools_list -%}
++    {%- set fn = tool.function if tool.function is defined else tool -%}
++    {%- if fn.name == tool_name and fn.parameters and fn.parameters.properties and arg_name in fn.parameters.properties -%}
++        {%- set spec = fn.parameters.properties[arg_name] -%}
++        {%- if spec is mapping and spec['$ref'] is string -%}
++            {%- set found.type = render_value_type(value) -%}
++        {%- elif schema_has_combinator(spec) == 'true' -%}
++            {%- set found.type = render_value_type(value) -%}
++        {%- else -%}
++            {%- set found.type = render_compact_type(spec) -%}
++        {%- endif -%}
++    {%- endif -%}
++{%- endfor -%}
++{{- found.type -}}
++{%- endmacro -%}
++
++{%- macro render_tool_calls_block(tool_calls, fmt, tools_list) -%}
++{{- "<ifm|tool_calls>" }}
++{%- for raw_tool_call in tool_calls -%}
++    {%- set tool_call = raw_tool_call.function if raw_tool_call.function else raw_tool_call -%}
++    {%- if tool_call.arguments is string -%}
++        {{- raise_exception("tool_call.arguments must be a dict, not a JSON string. Parse it before passing to the template.") -}}
++    {%- endif -%}
++    {%- if fmt == 'json' -%}
++{{- "\n<ifm|tool_call>{\"name\": \"" + tool_call.name + "\", \"arguments\": " }}{{ tool_call.arguments | tojson }}{{- "}</ifm|tool_call>" }}
++    {%- elif fmt == 'xml' or fmt == 'xml_typed' -%}
++{{- "\n<ifm|tool_call>" + tool_call.name + "\n" }}
++        {%- for key, value in tool_call.arguments | items -%}
++{{- "<ifm|arg_key>" + key + "</ifm|arg_key>\n" }}
++{%- if fmt == 'xml_typed' -%}
++{{- "<ifm|arg_type>" + render_arg_type(tools_list, tool_call.name, key, value) + "</ifm|arg_type>\n" }}
++{%- endif -%}
++{{- "<ifm|arg_value>" }}{{ render_argument_value(value) }}{{- "</ifm|arg_value>\n" }}
++        {%- endfor -%}
++{{- "</ifm|tool_call>" }}
++    {%- else -%}
++        {{- raise_exception("Unsupported tool_call_format: '" + fmt + "'. Supported formats: json, xml, xml_typed.") -}}
++    {%- endif -%}
++{%- endfor -%}
++{{- "\n</ifm|tool_calls>" }}
++{%- endmacro -%}
++
++{%- macro render_tool_response_messages(raw_content) -%}
++{%- if raw_content is string -%}
++{{- '<|ifm|im_start|>tool\n' + raw_content + '<|ifm|im_end|>' }}
++{%- elif raw_content is sequence and raw_content is not string and raw_content is not mapping -%}
++    {%- if raw_content | length == 0 -%}
++        {{- raise_exception("tool message content list must not be empty.") -}}
++    {%- endif -%}
++{{- '<|ifm|im_start|>tool\n' -}}
++    {%- for item in raw_content -%}
++        {%- if not loop.first -%}{{- '\n' -}}{%- endif -%}
++        {%- if item is string -%}
++{{- item -}}
++        {%- elif item is mapping and item.text is string -%}
++{{- item.text -}}
++        {%- else -%}
++{{- (item | tojson) -}}
++        {%- endif -%}
++    {%- endfor -%}
++{{- '<|ifm|im_end|>' -}}
++{%- else -%}
++{{- '<|ifm|im_start|>tool\n' }}{{ raw_content | tojson }}{{- '<|ifm|im_end|>' }}
++{%- endif -%}
++{%- endmacro -%}
++
++{%- set available_tools = tools if tools else [] -%}
++{%- if (not available_tools) and messages[0].role == 'system' and messages[0].get('tools') -%}
++    {%- set available_tools = messages[0]['tools'] -%}
++{%- endif -%}
++{%- if available_tools -%}
++    {{- validate_tools(available_tools, tool_presentation_fmt != 'json') }}
++    {%- set system_content = '' -%}
++    {%- if messages[0].role == 'system' and messages[0].content -%}
++        {%- set system_content = messages[0].content -%}
++    {%- endif -%}
++    {{- render_system_with_tools(available_tools, system_content, tool_presentation_fmt, tool_call_fmt) }}
++{%- else -%}
++    {%- if messages[0].role == 'system' -%}
++        {{- '<|ifm|im_start|>system\n' + messages[0].content + '<|ifm|im_end|>' }}
++    {%- endif -%}
++{%- endif -%}
++
++{%- for message in messages -%}
++    {%- if message.content is string -%}
++        {%- set content = message.content -%}
++    {%- else -%}
++        {%- set content = '' -%}
++    {%- endif -%}
++    {%- if (message.role == "user") or (message.role == "system" and not loop.first) -%}
++        {{- '<|ifm|im_start|>' + message.role + '\n' + content + '<|ifm|im_end|>' }}
++    {%- elif message.role == "assistant" -%}
++        {%- set thinking_content = '' -%}
++        {%- set think_tag = 'ifm|think' -%}
++        {%- if message.think is defined and message.think is string -%}
++            {%- set thinking_content = message.think -%}
++            {%- set think_tag = 'ifm|think' -%}
++        {%- elif message.think_fast is defined and message.think_fast is string -%}
++            {%- set thinking_content = message.think_fast -%}
++            {%- set think_tag = 'ifm|think_fast' -%}
++        {%- elif message.think_faster is defined and message.think_faster is string -%}
++            {%- set thinking_content = message.think_faster -%}
++            {%- set think_tag = 'ifm|think_faster' -%}
++        {%- elif message.reasoning_content is defined and message.reasoning_content is string -%}
++            {%- set thinking_content = message.reasoning_content -%}
++            {%- set think_tag = 'ifm|think' -%}
++        {%- elif message.reasoning is defined and message.reasoning is string -%}
++            {%- set thinking_content = message.reasoning -%}
++            {%- set think_tag = 'ifm|think' -%}
++        {%- else -%}
++            {%- if '</ifm|think>' in content -%}
++                {%- set thinking_content = content.split('</ifm|think>')[0].rstrip('\n').split('<ifm|think>')[-1].lstrip('\n') -%}
++                {%- set content = content.split('</ifm|think>')[-1].lstrip('\n') -%}
++                {%- set think_tag = 'ifm|think' -%}
++            {%- elif '</ifm|think_fast>' in content -%}
++                {%- set thinking_content = content.split('</ifm|think_fast>')[0].rstrip('\n').split('<ifm|think_fast>')[-1].lstrip('\n') -%}
++                {%- set content = content.split('</ifm|think_fast>')[-1].lstrip('\n') -%}
++                {%- set think_tag = 'ifm|think_fast' -%}
++            {%- elif '</ifm|think_faster>' in content -%}
++                {%- set thinking_content = content.split('</ifm|think_faster>')[0].rstrip('\n').split('<ifm|think_faster>')[-1].lstrip('\n') -%}
++                {%- set content = content.split('</ifm|think_faster>')[-1].lstrip('\n') -%}
++                {%- set think_tag = 'ifm|think_faster' -%}
++            {%- endif -%}
++        {%- endif -%}
++        {{- '<|ifm|im_start|>' + message.role }}
++        {% generation %}
++        {%- if think_tag -%}
++            {%- if thinking_content -%}
++                {{- '<' + think_tag + '>\n' + thinking_content + '\n</' + think_tag + '>\n' + content.lstrip('\n') }}
++            {%- else -%}
++                {{- '<' + think_tag + '>\n</' + think_tag + '>\n' + content.lstrip('\n') }}
++            {%- endif -%}
++        {%- else -%}
++            {{- content }}
++        {%- endif -%}
++        {%- if message.tool_calls -%}
++            {%- if content -%}
++                {{- '\n' }}
++            {%- endif -%}
++            {{- render_tool_calls_block(message.tool_calls, tool_call_fmt, available_tools) }}
++        {%- endif -%}
++        {{- '<|ifm|im_end|>' -}}
++        {%- endgeneration -%}
++    {%- elif message.role == "tool" -%}
++        {{- render_tool_response_messages(message.content) }}
++    {%- endif -%}
++{%- endfor -%}
++{%- if add_generation_prompt -%}
++    {%- set effort = reasoning_effort | default('high') -%}
++    {%- if enable_thinking is defined and enable_thinking is false -%}
++        {{- '<|ifm|im_start|>assistant\n<ifm|think>\n</ifm|think>\n' }}
++    {%- elif effort == 'high' -%}
++        {{- '<|ifm|im_start|>assistant\n<ifm|think>\n' }}
++    {%- elif effort == 'medium' -%}
++        {{- '<|ifm|im_start|>assistant\n<ifm|think_fast>\n' }}
++    {%- elif effort == 'low' -%}
++        {{- '<|ifm|im_start|>assistant\n<ifm|think_faster>\n' }}
++    {%- else -%}
++        {{- raise_exception("Unsupported reasoning_effort: '" + effort + "'. Supported values: high, medium, low.") -}}
++    {%- endif -%}
++{%- endif -%}
+diff --git a/src/llama-arch.cpp b/src/llama-arch.cpp
+index 7adb87411..a5632454f 100644
+--- a/src/llama-arch.cpp
++++ b/src/llama-arch.cpp
+@@ -154,6 +154,7 @@ static const std::map<llm_arch, const char *> LLM_ARCH_NAMES = {
+     { LLM_ARCH_NANBEIGE,         "nanbeige"         },
+     { LLM_ARCH_QWEN3TTS,         "qwen3tts"         },
+     { LLM_ARCH_POCKETTTS,        "pockettts"        },
++    { LLM_ARCH_K2_HORIZON,       "k2-horizon"       },
+     { LLM_ARCH_UNKNOWN,          "(unknown)"        },
+ };
+ 
+@@ -415,6 +416,10 @@ static const std::map<llm_kv, const char *> LLM_KV_NAMES = {
+     { LLM_KV_XIELU_BETA,            "xielu.beta"            },
+     { LLM_KV_XIELU_EPS,             "xielu.eps"             },
+ 
++    // K2 Horizon MoVA
++    { LLM_KV_ATTENTION_VALUE_EXPERT_COUNT,          "%s.attention.value_expert_count"},
++    { LLM_KV_ATTENTION_VALUE_EXPERT_USED_COUNT,     "%s.attention.value_expert_used_count"},
++
+     // deprecated
+     { LLM_KV_TOKENIZER_PREFIX_ID, "tokenizer.ggml.prefix_token_id" },
+     { LLM_KV_TOKENIZER_SUFFIX_ID, "tokenizer.ggml.suffix_token_id" },
+@@ -693,6 +698,8 @@ static const std::map<llm_tensor, const char *> LLM_TENSOR_NAMES = {
+     { LLM_TENSOR_DFLASH_SELECTOR_PREV,                   "selector_predecessor" },
+     { LLM_TENSOR_DFLASH_SELECTOR_NEXT,                   "selector_successor" },
+     { LLM_TENSOR_DFLASH_SELECTOR_HIDDEN,                 "selector_hidden" },
++    { LLM_TENSOR_ATTN_V_GATE,                            "blk.%d.attn_v_gate"},
++    { LLM_TENSOR_ATTN_V_EXPS,                            "blk.%d.attn_v_exps"},
+ };
+ 
+ // declare information about the model weight tensors:
+@@ -982,6 +989,9 @@ static const std::map<llm_tensor, llm_tensor_info> LLM_TENSOR_INFOS = {
+     {LLM_TENSOR_DFLASH_SELECTOR_PREV,       {LLM_TENSOR_LAYER_OUTPUT,    GGML_OP_GET_ROWS}},
+     {LLM_TENSOR_DFLASH_SELECTOR_NEXT,       {LLM_TENSOR_LAYER_OUTPUT,    GGML_OP_GET_ROWS}},
+     {LLM_TENSOR_DFLASH_SELECTOR_HIDDEN,     {LLM_TENSOR_LAYER_OUTPUT,    GGML_OP_MUL_MAT}},
++    // K2 Horizon MoVA
++    {LLM_TENSOR_ATTN_V_GATE,                {LLM_TENSOR_LAYER_REPEATING, GGML_OP_MUL_MAT}},
++    {LLM_TENSOR_ATTN_V_EXPS,                {LLM_TENSOR_LAYER_REPEATING, GGML_OP_MUL_MAT_ID}},
+ };
+ 
+ LLM_KV::LLM_KV(llm_arch arch, const char * suffix) : arch(arch), suffix(suffix) {}
+diff --git a/src/llama-arch.h b/src/llama-arch.h
+index ca7d55a5f..b3915ac89 100644
+--- a/src/llama-arch.h
++++ b/src/llama-arch.h
+@@ -159,6 +159,7 @@ enum llm_arch {
+     LLM_ARCH_QWEN3TTS,
+     LLM_ARCH_POCKETTTS,
+     LLM_ARCH_MINIMAX_01,
++    LLM_ARCH_K2_HORIZON,
+     LLM_ARCH_UNKNOWN,
+ };
+ 
+@@ -424,6 +425,10 @@ enum llm_kv {
+     LLM_KV_DENSE_2_FEAT_OUT,
+     LLM_KV_DENSE_3_FEAT_IN,
+     LLM_KV_DENSE_3_FEAT_OUT,
++
++    // K2 Horizon MoVA 
++    LLM_KV_ATTENTION_VALUE_EXPERT_COUNT,
++    LLM_KV_ATTENTION_VALUE_EXPERT_USED_COUNT,
+ };
+ 
+ enum llm_tensor {
+@@ -700,6 +705,9 @@ enum llm_tensor {
+     LLM_TENSOR_DFLASH_SELECTOR_PREV,
+     LLM_TENSOR_DFLASH_SELECTOR_NEXT,
+     LLM_TENSOR_DFLASH_SELECTOR_HIDDEN,
++    // K2 Horizon MoVA
++    LLM_TENSOR_ATTN_V_GATE,
++    LLM_TENSOR_ATTN_V_EXPS,
+ };
+ 
+ 
+diff --git a/src/llama-hparams.h b/src/llama-hparams.h
+index 1411692a8..1d877b0cc 100644
+--- a/src/llama-hparams.h
++++ b/src/llama-hparams.h
+@@ -65,6 +65,10 @@ struct llama_hparams {
+     uint32_t n_expert_used = 0;
+     uint32_t n_rel_attn_bkts = 0;
+ 
++    // K2 Horizon MoVA
++    uint32_t n_value_expert = 0;
++    uint32_t n_value_expert_used = 0;
++
+     // TODO: this needs to be reworked
+     int32_t  n_layer_kv_from_start = -1; // if non-negative, the first n_layer_kv_from_start layers have KV cache
+ 
+diff --git a/src/llama-model.cpp b/src/llama-model.cpp
+index bfce09de0..a1250e4a8 100644
+--- a/src/llama-model.cpp
++++ b/src/llama-model.cpp
+@@ -336,7 +336,9 @@ static llama_model * llama_model_mapping(llm_arch arch, const llama_model_params
+             return new llama_model_kimi_k3(params);
+         case LLM_ARCH_STEP35:
+             return new llama_model_step35(params);
+-        default:
++        case LLM_ARCH_K2_HORIZON:
++            return new llama_model_k2_horizon(params);
++            default:
+             throw std::runtime_error(std::string("unsupported model architecture: '") + llm_arch_name(arch) + "'");
+     }
+ 
+@@ -2939,6 +2941,7 @@ llama_rope_type llama_model_rope_type(const llama_model * model) {
+         case LLM_ARCH_MIMO2:
+         case LLM_ARCH_STEP35:
+         case LLM_ARCH_TALKIE:
++        case LLM_ARCH_K2_HORIZON:
+         case LLM_ARCH_MELLUM:
+             return LLAMA_ROPE_TYPE_NEOX;
+ 
+diff --git a/src/llama-model.h b/src/llama-model.h
+index 38066538e..a727bd812 100644
+--- a/src/llama-model.h
++++ b/src/llama-model.h
+@@ -297,6 +297,10 @@ struct llama_layer {
+     struct ggml_tensor * wv_enc    = nullptr;
+     struct ggml_tensor * wo_enc    = nullptr;
+     struct ggml_tensor * wqkv_gate = nullptr;
++    // K2 Horizon MoVA
++    struct ggml_tensor * attn_v_gate   = nullptr;
++    struct ggml_tensor * attn_v_gate_b = nullptr;
++    struct ggml_tensor * attn_v_exps   = nullptr;
+ 
+     // relative position bias
+     struct ggml_tensor * attn_rel_b       = nullptr;
+diff --git a/src/llama-vocab.cpp b/src/llama-vocab.cpp
+index ff926ceec..4d054db40 100644
+--- a/src/llama-vocab.cpp
++++ b/src/llama-vocab.cpp
+@@ -535,6 +535,11 @@ struct llm_tokenizer_bpe : llm_tokenizer {
+                     "(?:'[sS]|'[tT]|'[rR][eE]|'[vV][eE]|'[mM]|'[lL][lL]|'[dD])|[^\\r\\n\\p{L}\\p{N}]?\\p{L}+|\\p{N}+| ?[^\\s\\p{L}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+",
+                 };
+                 break;
++            case LLAMA_VOCAB_PRE_TYPE_K2_HORIZON:
++                regex_exprs = {
++                    "(?:'[sS]|'[tT]|'[rR][eE]|'[vV][eE]|'[mM]|'[lL][lL]|'[dD])|[^\\r\\n\\p{L}\\p{N}]?(?:\\p{L}|\\p{M}|\\u200C|\\u200D)+|\\p{N}{1,3}| ?[^\\s\\p{L}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+",
++                };
++                break;
+             case LLAMA_VOCAB_PRE_TYPE_WHITESPACE:
+                 // whitespace pre-tokenizer (jinaai/jina-embeddings-v2-base-zh)
+                 regex_exprs = {
+@@ -2381,6 +2386,10 @@ void llama_vocab::impl::load(llama_model_loader & ml, const LLM_KV & kv) {
+             } else if (
+                 tokenizer_pre == "mellum2") {
+                 pre_type = LLAMA_VOCAB_PRE_TYPE_MELLUM2;
++            } else if (
++                tokenizer_pre == "k2-horizon") {
++                pre_type = LLAMA_VOCAB_PRE_TYPE_K2_HORIZON;
++                clean_spaces = false;
+             } else {
+                 throw std::runtime_error(format("unknown pre-tokenizer type: '%s'", tokenizer_pre.c_str()));
+             }
+diff --git a/src/llama-vocab.h b/src/llama-vocab.h
+index b7c289263..2f3f7d56b 100644
+--- a/src/llama-vocab.h
++++ b/src/llama-vocab.h
+@@ -65,6 +65,7 @@ enum llama_vocab_pre_type {
+     LLAMA_VOCAB_PRE_TYPE_GRANITE_EMB_MULTI = 54,
+     LLAMA_VOCAB_PRE_TYPE_MELLUM2           = 55,
+     LLAMA_VOCAB_PRE_TYPE_LAGUNA            = 56,
++    LLAMA_VOCAB_PRE_TYPE_K2_HORIZON        = 57,
+ };
+ 
+ struct LLM_KV;
+diff --git a/src/models/k2-horizon.cpp b/src/models/k2-horizon.cpp
+new file mode 100644
+index 000000000..ac901da50
+--- /dev/null
++++ b/src/models/k2-horizon.cpp
+@@ -0,0 +1,663 @@
++#include "models.h"
++
++void llama_model_k2_horizon::load_arch_hparams(llama_model_loader & ml) {
++    // generic
++    ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
++    ml.get_key(LLM_KV_ATTENTION_GROUPNORM_GROUPS, hparams.n_norm_groups, false);
++
++    hparams.f_norm_group_eps = hparams.f_norm_rms_eps;
++    if (hparams.n_norm_groups == 0) hparams.n_norm_groups = 1;
++    
++    // moe
++    if (hparams.n_expert > 0) {
++        ml.get_key(LLM_KV_EXPERT_FEED_FORWARD_LENGTH, hparams.n_ff_exp);
++        ml.get_key(LLM_KV_LEADING_DENSE_BLOCK_COUNT, hparams.n_layer_dense_lead, false);
++        ml.get_key(LLM_KV_MOE_EVERY_N_LAYERS, hparams.moe_every_n_layers, false);
++        ml.get_key(LLM_KV_EXPERT_SHARED_COUNT, hparams.n_expert_shared, false);
++        ml.get_key(LLM_KV_EXPERT_SHARED_FEED_FORWARD_LENGTH, hparams.n_ff_shexp, false);
++        ml.get_key(LLM_KV_EXPERT_WEIGHTS_SCALE, hparams.expert_weights_scale, false);
++        ml.get_key(LLM_KV_EXPERT_WEIGHTS_NORM, hparams.expert_weights_norm, false);
++        ml.get_key(LLM_KV_EXPERT_GATING_FUNC, hparams.expert_gating_func, false);
++        if (hparams.expert_gating_func == LLAMA_EXPERT_GATING_FUNC_TYPE_NONE) {
++            hparams.expert_gating_func = LLAMA_EXPERT_GATING_FUNC_TYPE_SIGMOID;
++        }
++    }
++
++    // mova
++    ml.get_key(LLM_KV_ATTENTION_VALUE_EXPERT_COUNT, hparams.n_value_expert, false);
++    ml.get_key(LLM_KV_ATTENTION_VALUE_EXPERT_USED_COUNT, hparams.n_value_expert_used, false);
++    if (hparams.n_value_expert > 0) {
++        GGML_ASSERT(hparams.n_value_expert <= LLAMA_MAX_EXPERTS);
++        GGML_ASSERT(hparams.n_value_expert_used > 0);
++        GGML_ASSERT(hparams.n_value_expert_used <= hparams.n_value_expert);
++    }
++    else {
++        GGML_ASSERT(hparams.n_value_expert_used == 0);
++    }
++
++    // model size info
++    if (hparams.n_layer() == 28 && hparams.n_embd == 1536) {
++        type = LLM_TYPE_1B;
++    }
++    else if (hparams.n_layer() == 48 && hparams.n_embd == 2560) {
++        type = LLM_TYPE_36B;
++    }
++    else {
++        type = LLM_TYPE_UNKNOWN;
++    }
++}
++
++void llama_model_k2_horizon::load_arch_tensors(llama_model_loader & ml) {
++    GGML_UNUSED(ml);
++    LLAMA_LOAD_LOCALS; // initializing variables basically
++
++    // embeddings
++    tok_embd = create_tensor(
++        tn(LLM_TENSOR_TOKEN_EMBD, "weight"),
++        {n_embd, n_vocab},
++        0
++    );
++
++    // final norm and output projection
++    output_norm = create_tensor(
++        tn(LLM_TENSOR_OUTPUT_NORM, "weight"),
++        {n_embd},
++        0
++    );
++
++    // output
++    output = create_tensor(
++        tn(LLM_TENSOR_OUTPUT, "weight"),
++        {n_embd, n_vocab},
++        TENSOR_NOT_REQUIRED // can be tied with embedding (indicated by tensor not found in .gguf). see next conditional
++    );
++    if (output == nullptr) {
++        output = create_tensor(
++            tn(LLM_TENSOR_TOKEN_EMBD, "weight"),
++            {n_embd, n_vocab},
++            TENSOR_DUPLICATED
++        );
++    }
++
++    for (int i = 0; i < n_layer; i++){
++        auto & layer = layers[i];
++        const bool is_moe_layer = n_expert > 0 && static_cast<uint32_t>(i) >= hparams.n_layer_dense_lead;
++        const bool is_mova_layer = is_moe_layer && hparams.n_value_expert > 0; // in the architecture, if mova is moe as well
++        
++        // attn normalization
++        layer.attn_norm = create_tensor(
++            tn(LLM_TENSOR_ATTN_NORM, "weight", i),
++            {n_embd},
++            0
++        );
++        
++        // query and key tensors, always dense. and their optional normalization
++        // query
++        layer.wq = create_tensor(
++            tn(LLM_TENSOR_ATTN_Q, "weight", i),
++            {n_embd, n_embd_head_k * n_head},
++            0
++        );
++        layer.attn_q_norm = create_tensor(
++            tn(LLM_TENSOR_ATTN_Q_NORM, "weight", i),
++            {n_embd_head_k * n_head},
++            TENSOR_NOT_REQUIRED
++        );
++
++        // key
++        layer.wk = create_tensor(
++            tn(LLM_TENSOR_ATTN_K, "weight", i),
++            {n_embd, n_embd_k_gqa},
++            0
++        );
++        layer.attn_k_norm = create_tensor(
++            tn(LLM_TENSOR_ATTN_K_NORM, "weight", i),
++            {n_embd_k_gqa},
++            TENSOR_NOT_REQUIRED
++        );
++
++        // value tensors, possible MoVA
++        if (is_mova_layer) {
++            layer.attn_v_gate = create_tensor(
++                tn(LLM_TENSOR_ATTN_V_GATE, "weight", i),
++                {n_embd, hparams.n_value_expert},
++                0
++            );
++            layer.attn_v_gate_b = create_tensor(
++                tn(LLM_TENSOR_ATTN_V_GATE, "bias", i),
++                {hparams.n_value_expert},
++                TENSOR_NOT_REQUIRED
++            );
++            layer.attn_v_exps = create_tensor(
++                tn(LLM_TENSOR_ATTN_V_EXPS, "weight", i),
++                {n_embd, n_embd_v_gqa, hparams.n_value_expert},
++                0
++            );
++        }
++        else {
++            layer.wv = create_tensor(
++                tn(LLM_TENSOR_ATTN_V, "weight", i),
++                {n_embd, n_embd_v_gqa},
++                0
++            );
++        }
++
++        // attn output projection
++        layer.wo = create_tensor(
++            tn(LLM_TENSOR_ATTN_OUT, "weight", i),
++            {n_embd_head_v * n_head, n_embd},
++            0
++        );
++
++        // optional softplus gate
++        layer.wqkv_gate = create_tensor(
++            tn(LLM_TENSOR_ATTN_GATE, "weight", i),
++            {n_embd, n_embd_head_v * n_head},
++            TENSOR_NOT_REQUIRED
++        );
++
++        // FFN normalization
++        layer.ffn_norm = create_tensor(
++            tn(LLM_TENSOR_FFN_NORM, "weight", i),
++            {n_embd},
++            0
++        );
++
++        // MoE stuff
++        if (is_moe_layer) {
++            if (hparams.n_ff_exp == 0){
++                throw std::runtime_error("K2 MoE layer requires expert_feed_forward_length");
++            }
++            
++            // moe router and it's optional bias
++            layer.ffn_gate_inp = create_tensor(
++                tn(LLM_TENSOR_FFN_GATE_INP, "weight", i),
++                {n_embd, n_expert},
++                0
++            );
++            layer.ffn_exp_probs_b = create_tensor(
++                tn(LLM_TENSOR_FFN_EXP_PROBS_B, "bias", i),
++                {n_expert},
++                TENSOR_NOT_REQUIRED
++            );
++
++            // routed experts (up, gate, and down)
++            layer.ffn_up_exps = create_tensor(
++                tn(LLM_TENSOR_FFN_UP_EXPS, "weight", i),
++                {n_embd, hparams.n_ff_exp, n_expert},
++                0
++            );
++            layer.ffn_gate_exps = create_tensor(
++                tn(LLM_TENSOR_FFN_GATE_EXPS, "weight", i),
++                {n_embd, hparams.n_ff_exp, n_expert},
++                0
++            );
++            layer.ffn_down_exps = create_tensor(
++                tn(LLM_TENSOR_FFN_DOWN_EXPS, "weight", i),
++                {hparams.n_ff_exp, n_embd, n_expert},
++                0
++            );
++
++            // shared experts (always evaluated)
++            if (hparams.n_expert_shared > 0) {
++                int64_t n_ff_shexp;
++                if (hparams.n_ff_shexp > 0) {
++                    n_ff_shexp = hparams.n_ff_shexp;
++                } else {
++                    n_ff_shexp = hparams.n_ff_exp * hparams.n_expert_shared;
++                }
++
++                // up gate down
++                layer.ffn_up_shexp = create_tensor(
++                    tn(LLM_TENSOR_FFN_UP_SHEXP, "weight", i),
++                    {n_embd, n_ff_shexp},
++                    0
++                );
++                layer.ffn_gate_shexp = create_tensor(
++                    tn(LLM_TENSOR_FFN_GATE_SHEXP, "weight", i),
++                    {n_embd, n_ff_shexp},
++                    0
++                );
++                layer.ffn_down_shexp = create_tensor(
++                    tn(LLM_TENSOR_FFN_DOWN_SHEXP, "weight", i),
++                    {n_ff_shexp, n_embd},
++                    0
++                );
++            }
++        }
++        else {
++            // ordinary up gate down
++            layer.ffn_up = create_tensor(
++                tn(LLM_TENSOR_FFN_UP, "weight", i),
++                {n_embd, n_ff},
++                0
++            );
++            layer.ffn_gate = create_tensor(
++                tn(LLM_TENSOR_FFN_GATE, "weight", i),
++                {n_embd, n_ff},
++                0
++            );
++            layer.ffn_down = create_tensor(
++                tn(LLM_TENSOR_FFN_DOWN, "weight", i),
++                {n_ff, n_embd},
++                0
++            );
++        }
++        
++    }
++
++}
++
++// helper for grouped RMS norm
++static ggml_tensor * k2_horizon_group_rms_norm(
++    ggml_context * ctx,
++    ggml_tensor * cur,
++    ggml_tensor * weight,
++    int64_t n_groups,
++    float eps
++) {
++    GGML_ASSERT(n_groups > 0);
++    GGML_ASSERT(cur->ne[0] % n_groups == 0);
++
++    const int64_t n_embd = cur->ne[0];
++    const int64_t n_tokens = cur->ne[1];
++
++    // separate embeddings into groups
++    cur = ggml_reshape_3d(
++        ctx,
++        cur,
++        n_embd / n_groups,
++        n_groups,
++        n_tokens
++    );
++
++    // norm it
++    cur = ggml_rms_norm(ctx, cur, eps);
++
++    // bring back shape
++    cur = ggml_reshape_2d(ctx, cur, n_embd, n_tokens);
++
++    // apply the learned normalization weights
++    if (weight != nullptr) {
++        cur = ggml_mul(ctx, cur, weight);
++    }
++
++    return cur;
++}
++
++ggml_tensor * llama_model_k2_horizon::graph::build_routed_value(
++    const llama_layer & layer,
++    ggml_tensor * cur,
++    int il
++) const {
++    const int64_t n_embd     = cur->ne[0];
++    const int64_t n_tokens   = cur->ne[1];
++    const int64_t n_embd_gqa = hparams.n_embd_v_gqa(il);
++    const int64_t n_values   = hparams.n_value_expert;
++    const int64_t n_used     = hparams.n_value_expert_used;
++
++    GGML_ASSERT(layer.attn_v_gate != nullptr);
++    GGML_ASSERT(layer.attn_v_exps != nullptr);
++    GGML_ASSERT(n_values > 0);
++    GGML_ASSERT(n_used > 0);
++
++    // router. logits and probs
++    ggml_tensor * logits = build_lora_mm(layer.attn_v_gate, cur);
++    ggml_tensor * probs = nullptr;
++    
++    // probs
++    llama_expert_gating_func_type gating_func = static_cast<llama_expert_gating_func_type>(hparams.expert_gating_func);
++    switch(gating_func){
++        case LLAMA_EXPERT_GATING_FUNC_TYPE_SOFTMAX:
++            probs = ggml_soft_max(ctx0, logits);
++            break;
++        case LLAMA_EXPERT_GATING_FUNC_TYPE_SIGMOID:
++            probs = ggml_sigmoid(ctx0, logits);
++            break;
++        default:
++            GGML_ABORT("Unsupported K2 Horizon value-router gating function");
++    }
++
++    // selection probs
++    ggml_tensor * selection_probs = probs;
++    if (layer.attn_v_gate_b != nullptr){
++        selection_probs = ggml_add(ctx0, probs, layer.attn_v_gate_b);
++        cb(selection_probs, "v_moe_probs_biased", il);
++    }
++
++    // select expert values
++    ggml_tensor * selected_value_experts = ggml_argsort_top_k(ctx0, selection_probs, n_used);
++    
++    // reshaping and selecting the weights (probs) of the selected experts
++    probs = ggml_reshape_3d(ctx0, probs, 1, n_values, n_tokens);
++    ggml_tensor * selected_weights = ggml_get_rows(ctx0, probs, selected_value_experts);
++
++    // if weights of value experts are to be normalized
++    if (hparams.expert_weights_norm) {
++        selected_weights = ggml_reshape_2d(ctx0, selected_weights, n_used, n_tokens);
++        ggml_tensor * selected_weights_sum = ggml_sum_rows(ctx0, selected_weights);
++        selected_weights_sum = ggml_clamp(ctx0, selected_weights_sum, 6.103515625e-5f, INFINITY);
++        selected_weights = ggml_div(ctx0, selected_weights, selected_weights_sum);
++        selected_weights = ggml_reshape_3d(ctx0, selected_weights, 1, n_used, n_tokens);
++        cb(selected_weights, "v_moe_weights_norm", il);
++    }
++
++    // scaling
++    if (hparams.expert_weights_scale != 0.0f && hparams.expert_weights_scale != 1.0f) {
++        selected_weights = ggml_scale(ctx0, selected_weights, hparams.expert_weights_scale);
++        cb(selected_weights, "v_moe_weights_scaled", il);
++    }
++
++    // labeling
++    cb(logits, "v_moe_logits", il); 
++    cb(probs, "v_moe_probs", il);
++    cb(selected_value_experts->src[0], "v_moe_argsort", il);
++    cb(selected_value_experts, "v_moe_topk", il);
++    cb(selected_weights, "v_moe_weights", il);
++
++    ggml_tensor * value_inp = ggml_reshape_3d(ctx0, cur, n_embd, 1, n_tokens);
++    // computing only on selected experts (the _id in the api)
++    ggml_tensor * values = build_lora_mm_id(layer.attn_v_exps, value_inp, selected_value_experts);
++    values = ggml_silu(ctx0, values);
++    values = ggml_mul(ctx0, values, selected_weights);
++    cb(values, "v_moe_weighted", il);
++
++    // sum the multiple value outputs
++    ggml_tensor * value_parts[LLAMA_MAX_EXPERTS] = {};
++    for(int64_t i = 0; i < n_used; i++) {
++        value_parts[i] = ggml_view_2d(ctx0, values, n_embd_gqa, n_tokens, values->nb[2], i * values->nb[1]);
++    }
++    ggml_tensor * value_out = value_parts[0];
++    for (int64_t i = 1; i < n_used; ++i) {
++        value_out = ggml_add(ctx0, value_out, value_parts[i]);
++    }
++    
++    // making it contiguous in case it isn't (for one expert only)
++    if (n_used == 1) value_out = ggml_cont(ctx0, value_out);
++
++    cb(value_out, "Vcur_routed", il);
++    return value_out;
++}
++
++llama_model_k2_horizon::graph::graph(
++    const llama_model & model,
++    const llm_graph_params & params
++) : llm_graph_context(params) {
++    const int64_t n_embd_head = hparams.n_embd_head_v();
++    GGML_ASSERT(n_embd_head == hparams.n_embd_head_k());
++    
++    // initialization or placeholders for computational artifacts
++    ggml_tensor * cur;
++    ggml_tensor * inpL = build_inp_embd(model.tok_embd);
++    ggml_tensor * inp_pos = build_inp_pos();
++    auto * inp_attn = build_attn_inp_kv();
++    ggml_tensor * inp_out_ids = build_inp_out_ids();
++    
++
++    for (int il = 0; il < n_layer; ++il) {
++        res->t_layer_inp[il] = inpL;
++        ggml_tensor * inpSA = inpL; // for residuals
++
++        const bool is_moe_layer = n_expert > 0 && static_cast<uint32_t>(il) >= hparams.n_layer_dense_lead;
++        const bool is_mova_layer = is_moe_layer && hparams.n_value_expert > 0;
++
++        // ============ grouped rms norm
++        cur = k2_horizon_group_rms_norm(
++            ctx0,
++            inpL,
++            model.layers[il].attn_norm,
++            hparams.n_norm_groups,
++            hparams.f_norm_rms_eps
++        );
++        cb(cur, "attn_norm", il);
++
++        // ============ setup attention tensors
++        ggml_tensor * attn_inp = cur;
++
++        // query
++        ggml_tensor * Qcur = build_lora_mm(model.layers[il].wq, cur, model.layers[il].wq_s);
++        if (model.layers[il].attn_q_norm != nullptr) {
++            Qcur = k2_horizon_group_rms_norm(
++                ctx0,
++                Qcur,
++                model.layers[il].attn_q_norm,
++                n_head,
++                hparams.f_norm_rms_eps
++            );
++        }
++
++        // key
++        ggml_tensor * Kcur = build_lora_mm(model.layers[il].wk, cur, model.layers[il].wk_s);
++        if (model.layers[il].attn_k_norm != nullptr) {
++            Kcur = k2_horizon_group_rms_norm(
++                ctx0,
++                Kcur,
++                model.layers[il].attn_k_norm,
++                n_head_kv,
++                hparams.f_norm_rms_eps
++            );
++        }
++
++        // value
++        ggml_tensor * Vcur;
++        if (is_mova_layer) {
++            Vcur = build_routed_value(model.layers[il], cur, il); // handle MoVA
++        }
++        else {
++            Vcur = build_lora_mm(model.layers[il].wv, cur, model.layers[il].wv_s);
++        }
++
++        // reshaping
++        Qcur = ggml_reshape_3d(ctx0, Qcur, n_embd_head, n_head, n_tokens);
++        Kcur = ggml_reshape_3d(ctx0, Kcur, n_embd_head, n_head_kv, n_tokens);
++        Vcur = ggml_reshape_3d(ctx0, Vcur, n_embd_head, n_head_kv, n_tokens);
++
++        // applying RoPE
++        Qcur = ggml_rope_ext(
++            ctx0,
++            Qcur,
++            inp_pos,
++            nullptr,
++            n_rot,
++            rope_type,
++            n_ctx_orig,
++            freq_base,
++            freq_scale,
++            ext_factor,
++            attn_factor,
++            beta_fast,
++            beta_slow
++        );
++        Kcur = ggml_rope_ext(
++            ctx0,
++            Kcur,
++            inp_pos,
++            nullptr,
++            n_rot,
++            rope_type,
++            n_ctx_orig,
++            freq_base,
++            freq_scale,
++            ext_factor,
++            attn_factor,
++            beta_fast,
++            beta_slow
++        );
++
++        cb(Qcur, "Qcur", il);
++        cb(Kcur, "Kcur", il);
++        cb(Vcur, "Vcur", il);
++        
++        // ============ attention (with and without gating)
++        const float kq_scale = 1.0f / sqrtf(static_cast<float>(n_embd_head));
++        if(model.layers[il].wqkv_gate == nullptr){ // without gating
++            cur = build_attn(
++                inp_attn,
++                model.layers[il].wo,
++                model.layers[il].wo_b,
++                model.layers[il].wo_s,
++                Qcur,
++                Kcur,
++                Vcur,
++                nullptr, // attention score bias
++                nullptr, // attn sink
++                nullptr, // MLA value transformation
++                kq_scale,
++                il
++            );
++        }
++        else { // with gating
++            // no output yet
++            cur = build_attn(
++                inp_attn,
++                nullptr,
++                nullptr,
++                nullptr,
++                Qcur,
++                Kcur,
++                Vcur,
++                nullptr,
++                nullptr,
++                nullptr,
++                kq_scale,
++                il
++            );
++
++            // building the gate
++            constexpr float LN2 = 0.6931471805599453f;
++            constexpr float ONE_OVER_LN2 = 1.4426950408889634f;
++
++            ggml_tensor * gate = build_lora_mm(model.layers[il].wqkv_gate, attn_inp, model.layers[il].wqkv_gate_s);
++            gate = ggml_scale(ctx0, gate, LN2);
++            gate = ggml_softplus(ctx0, gate);
++            gate = ggml_scale(ctx0, gate, ONE_OVER_LN2);
++
++            // applying the gate
++            cur = ggml_mul(ctx0, cur, gate);
++            
++            // projection
++            cur = build_lora_mm(model.layers[il].wo, cur, model.layers[il].wo_s);
++
++            // bias
++            if (model.layers[il].wo_b != nullptr) {
++                cur = ggml_add(ctx0, cur, model.layers[il].wo_b);
++            }
++        }
++
++        // ============ output layer, and take (usually) last token for generation
++        if (il == n_layer - 1 && inp_out_ids != nullptr) {
++            cur = ggml_get_rows(ctx0, cur, inp_out_ids);
++            inpSA = ggml_get_rows(ctx0, inpSA, inp_out_ids); // pull the same positions for inpSA
++        }
++
++        // ============ add residuals
++        ggml_tensor * ffn_inp = ggml_add(ctx0, cur, inpSA);
++        cb(ffn_inp, "ffn_inp", il);
++
++        // ============ group RMSNorm before FFN
++        cur = k2_horizon_group_rms_norm(
++            ctx0,
++            ffn_inp,
++            model.layers[il].ffn_norm,
++            hparams.n_norm_groups,
++            hparams.f_norm_rms_eps
++        );
++        cb(cur, "ffn_norm", il);
++
++        // ============ Mixture of Experts
++        if (is_moe_layer) {
++            ggml_tensor * moe_out = build_moe_ffn(
++                cur,
++                model.layers[il].ffn_gate_inp,
++                model.layers[il].ffn_up_exps,
++                model.layers[il].ffn_gate_exps,
++                model.layers[il].ffn_down_exps,
++                model.layers[il].ffn_exp_probs_b,
++                n_expert,
++                n_expert_used,
++                LLM_FFN_SILU,
++                hparams.expert_weights_norm,
++                hparams.expert_weights_scale,
++                static_cast<llama_expert_gating_func_type>(hparams.expert_gating_func),
++                il
++            );
++
++            // shared experts
++            if (model.layers[il].ffn_gate_shexp != nullptr){
++                ggml_tensor * shared_moe_out = build_ffn(
++                    cur,
++                    model.layers[il].ffn_up_shexp,
++                    nullptr,
++                    nullptr,
++                    model.layers[il].ffn_gate_shexp,
++                    nullptr,
++                    nullptr,
++                    model.layers[il].ffn_down_shexp,
++                    nullptr,
++                    nullptr,
++                    nullptr,
++                    LLM_FFN_SILU,
++                    LLM_FFN_PAR,
++                    il
++                );
++                cur = ggml_add(ctx0, moe_out, shared_moe_out);
++            }
++            else{
++                cur = moe_out;
++            }
++        }
++        else { // normal non moe FFN
++            cur = build_ffn(
++                cur,
++                model.layers[il].ffn_up,
++                nullptr,
++                nullptr,
++                model.layers[il].ffn_gate,
++                nullptr,
++                nullptr,
++                model.layers[il].ffn_down,
++                nullptr,
++                nullptr,
++                nullptr,
++                LLM_FFN_SILU,
++                LLM_FFN_PAR,
++                il
++            );
++        }
++        cb(cur, "ffn_out", il);
++        
++        // ============ FFN residual
++        cur = ggml_add(ctx0, cur, ffn_inp);
++        cur = build_cvec(cur, il);
++        cb(cur, "l_out", il);
++        
++        // for next layer
++        inpL = cur;
++    }
++
++    // final group rms norm. also becomes last layer embedding
++    cur = k2_horizon_group_rms_norm(
++        ctx0,
++        inpL,
++        model.output_norm,
++        hparams.n_norm_groups,
++        hparams.f_norm_rms_eps
++    );
++    cb(cur, "result_norm", -1);
++    res->t_embd = cur;
++
++    // ============ vocab projection. also becomes logits
++    cur = build_lora_mm(model.output, cur,model.output_s);
++    cb(cur, "result_output", -1);
++    res->t_logits = cur;
++
++    // build everything
++    ggml_build_forward_expand(gf, cur);
++}
++
++
++std::unique_ptr<llm_graph_context> llama_model_k2_horizon::build_arch_graph (
++    const llm_graph_params & params
++) const {
++    return std::make_unique<graph>(*this, params);
++}
+diff --git a/src/models/models.h b/src/models/models.h
+index 9b87a40d5..c1d2a60bc 100644
+--- a/src/models/models.h
++++ b/src/models/models.h
+@@ -2543,3 +2543,31 @@ struct llama_model_step35 : public llama_model_base {
+ 
+     std::unique_ptr<llm_graph_context> build_arch_graph(const llm_graph_params & params) const override;
+ };
++
++
++struct llama_model_k2_horizon : public llama_model_base {
++    llama_model_k2_horizon(
++        const llama_model_params & params
++    ) : llama_model_base(params) {}
++
++    void load_arch_hparams(llama_model_loader & ml) override;
++
++    void load_arch_tensors(llama_model_loader & ml) override;
++
++    struct graph: public llm_graph_context {
++        graph(
++            const llama_model & model,
++            const llm_graph_params & params
++        );
++
++        ggml_tensor * build_routed_value (
++            const llama_layer & layer,
++            ggml_tensor * cur,
++            int il // layer index
++        ) const;
++    };
++
++    std::unique_ptr<llm_graph_context> build_arch_graph(
++        const llm_graph_params & params
++    ) const override;
++};

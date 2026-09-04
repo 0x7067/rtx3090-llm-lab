@@ -202,3 +202,21 @@ Two secondary findings from that pass:
    train the drafter to emit them mid-stream.
 4. Capture with `chat_template: k2-horizon-thinking` (not `-nothink`) and
    delete the previous 504 GB feature set first.
+
+### Regeneration throughput and truncation (measured mid-run)
+
+Rates fall as the input shifts from mined contexts to public prompts:
+87 rows/min for the first ~200, then 26, then a steady 15. Cause is output
+length, not a leak: the mined agent contexts mostly end in a tool call
+(mean 436 completion tokens, 2% truncated at the 4,096 cap), while the
+public prompts write long reasoning at medium effort (mean 2,001 tokens,
+14% truncated). Aggregate ~190 tok/s, which is what bf16 batching gives on
+this card with 28k tokens of KV.
+
+`build_capture_set.py` drops truncated rows before capture: a reasoning
+block cut mid-thought teaches the drafter to predict a stop the target
+would never emit. Expect to keep ~8,800 of 10,082 rows.
+
+Feature-store planning at `max_length: 2048` and 32.8 KB/token: ~677 GB for
+the full set. The stale 504 GB from the discarded first pass was deleted to
+make room (878 GB free on Buttercup).

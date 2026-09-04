@@ -1,0 +1,96 @@
+--- a/python/sglang/srt/models/xllm.py
++++ b/python/sglang/srt/models/xllm.py
+@@ -28,7 +28,7 @@
+ 
+ import math
+ from contextlib import nullcontext
+-from typing import Any, Dict, Iterable, Optional, Tuple, Union
++from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+ 
+ import torch
+ import torch.nn.functional as F
+@@ -1633,6 +1633,10 @@
+         else:
+             self.norm = PPMissingLayer(return_tuple=True)
+ 
++        # EAGLE3 / DFlash auxiliary hidden-state capture (SpecForge). Layer
++        # indices follow the SGLang convention "before layer i".
++        self.layers_to_capture: List[int] = []
++
+     def forward(
+         self,
+         input_ids: torch.Tensor,
+@@ -1652,7 +1656,12 @@
+             hidden_states = pp_proxy_tensors["hidden_states"]
+             residual = pp_proxy_tensors["residual"]
+ 
++        aux_hidden_states = []
+         for i in range(self.start_layer, self.end_layer):
++            if i in self.layers_to_capture:
++                aux_hidden_states.append(
++                    hidden_states + residual if residual is not None else hidden_states
++                )
+             ctx = (
+                 nullcontext()
+                 if check_cuda_graph_backend(Phase.PREFILL, Backend.TC_PIECEWISE)
+@@ -1680,7 +1689,9 @@
+                 else:
+                     hidden_states, _ = self.norm(hidden_states, residual)
+ 
+-        return hidden_states
++        if len(aux_hidden_states) == 0:
++            return hidden_states
++        return hidden_states, aux_hidden_states
+ 
+ 
+ class XllmForCausalLM(nn.Module):
+@@ -1716,6 +1727,9 @@
+         else:
+             self.lm_head = PPMissingLayer()
+         self.logits_processor = LogitsProcessor(config)
++
++        # For EAGLE3 / DFlash draft training (SpecForge capture server)
++        self.capture_aux_hidden_states = False
+         # Value experts are shards of one attention-TP parameter, not FFN/EP
+         # experts. ParameterMapper therefore stages all 64 canonical HF shards
+         # before writing the persistent packed tensor during live updates.
+@@ -1743,14 +1757,38 @@
+             input_embeds,
+             pp_proxy_tensors=pp_proxy_tensors,
+         )
++
++        aux_hidden_states = None
++        if self.capture_aux_hidden_states:
++            hidden_states, aux_hidden_states = hidden_states
++
+         if self.pp_group.is_last_rank:
+             logits_output = self.logits_processor(
+-                input_ids, hidden_states, self.lm_head, forward_batch
++                input_ids, hidden_states, self.lm_head, forward_batch, aux_hidden_states
+             )
+             return logits_output
+         else:
+             return hidden_states
+ 
++    def set_eagle3_layers_to_capture(self, layer_ids: Optional[List[int]] = None):
++        if not self.pp_group.is_last_rank:
++            return
++        self.capture_aux_hidden_states = True
++        if layer_ids is None:
++            num_layers = self.config.num_hidden_layers
++            self.model.layers_to_capture = [2, num_layers // 2, num_layers - 3]
++        else:
++            self.model.layers_to_capture = [val + 1 for val in layer_ids]
++
++    def set_dflash_layers_to_capture(self, layer_ids: List[int]):
++        if not self.pp_group.is_last_rank:
++            return
++        if layer_ids is None:
++            raise ValueError("DFLASH requires explicit layer_ids for aux hidden capture.")
++        self.capture_aux_hidden_states = True
++        # SGLang captures "before layer i"; HF-style "after layer k" is before k + 1.
++        self.model.layers_to_capture = [val + 1 for val in layer_ids]
++
+     @property
+     def start_layer(self):
+         return self.model.start_layer

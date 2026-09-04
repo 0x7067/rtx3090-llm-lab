@@ -20,13 +20,21 @@ data:
 
 training:
   strategy: eagle3
-  num_epochs: 10
+  # Measured on the 3090: ~1 step/s at batch_size 1, so one epoch over the
+  # 16,000 captured samples is ~4.5 h. Ten epochs (the upstream Qwen3-8B
+  # recipe) would be ~44 h with production offline; 2 epochs is the
+  # validation budget. Raise once the pipeline has proven its speedup.
+  num_epochs: 2
   batch_size: 1
   learning_rate: 1.0e-4
   max_grad_norm: 0.5
   ttt_length: 7
   attention_backend: flex_attention
-  save_interval: 1000
+  # Exact lower-memory teacher projection: without it the 250,624-vocab logits
+  # are materialised in full and the run sits at 22.6/24 GB with hundreds of
+  # allocator OOM retries (observed 2026-09-04, first attempt).
+  compact_teacher: true
+  save_interval: 2000
   log_interval: 50
   dist_timeout: 20
   seed: 0

@@ -166,3 +166,39 @@ of the 68 Claude Code transcripts on this host into 1,082 tool-using
 contexts (~3.4k tokens each, 3.7M tokens, 105 secret-like strings redacted)
 at `sessions/denguinho-server/claude-code/extracted.jsonl`; assistant turns
 are to be regenerated with K2 before use.
+
+## Why the first training run was discarded (2026-09-04)
+
+The first capture/train pass used the public datasets' own answers with
+thinking disabled. It trained fine (loss 3.08 -> 1.9, position-0 accuracy
+0 -> 21% by step 350) but it was teaching the drafter to predict text the
+target never emits: K2 in production writes reasoning inside `<ifm|think>`
+at medium effort. Acceptance is measured against the target's own output, so
+mismatched data caps the achievable speedup no matter how long it trains.
+Two secondary findings from that pass:
+
+- `training.compact_teacher: true` is required here. Without it the 250,624-
+  vocab teacher logits are materialised in full: 22.6/24 GB with 133
+  allocator OOM retries. With it, 22.3 GB and no fatal errors.
+- Throughput is ~1 step/s at `batch_size: 1`, so one epoch over 16,000
+  samples is ~4.5 h. The upstream 10-epoch recipe would be ~44 h.
+
+## Regeneration pass (the data that is actually worth training on)
+
+1. `serve-k2-sglang.sh` serves the target with SGLang (bf16, triton
+   attention, 28,299 tokens of KV at mem-fraction 0.90, both `k2_horizon`
+   parsers). llama.cpp's single slot would take a day for this; SGLang
+   batches.
+2. `build_regen_prompts.py` assembles the input: the 1,082 mined agent
+   contexts first (real tool schemas, repo content, multi-turn), then 9,000
+   public coding prompts truncated to their first user turn so K2 answers
+   from scratch instead of continuing another model's text.
+3. `regenerate_sessions.py` calls the server at `--effort medium`
+   (production's setting), concurrency 8, and keeps `reasoning_content` and
+   `tool_calls` on the assistant turn. Measured 49 rows/min, so ~3.5 h for
+   10,082 rows. It strips stray `</ifm|think>` tags: when the model emits no
+   reasoning, SGLang's parser hands back a lone closing tag, and the chat
+   template adds the tags itself at render time, so leaving them in would
+   train the drafter to emit them mid-stream.
+4. Capture with `chat_template: k2-horizon-thinking` (not `-nothink`) and
+   delete the previous 504 GB feature set first.

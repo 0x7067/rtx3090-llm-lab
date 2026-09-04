@@ -9,3 +9,6 @@ sequence, costs and open risks.
 - `configs/k2-horizon-7b-dflash2.json`: DFlash2 draft config (5 layers, hidden 4096, GQA 32/8, target layers [1,9,17,26,34] of 36, mask token `reserved_special_token_573` = 250623).
 - `specforge_k2_template.py`: K2 Horizon chat template registration for SpecForge.
 - `train-k2-7b-dflash2-online.yaml`: online disaggregated training config.
+- `serve-k2-sglang.sh`, `build_regen_prompts.py`, `regenerate_sessions.py`: the regeneration pass that produces target-generated training data.
+- `train-eagle3.sh`, `train-k2-7b-eagle3-offline.yaml`: offline EAGLE-3 training on the captured features.
+- `inspect_features.py`: feature shape/dtype and bytes-per-token check.

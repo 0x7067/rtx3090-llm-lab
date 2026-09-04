@@ -13,6 +13,7 @@ Usage:
 """
 import argparse
 import json
+import re
 import sys
 import time
 import urllib.request
@@ -27,6 +28,20 @@ def call(base_url, api_key, body, timeout):
     )
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.load(r)
+
+
+THINK_TAG = re.compile(r"</?ifm\|think(?:_fast|_faster)?>")
+
+
+def strip_think_tags(text: str) -> str:
+    """Drop stray thinking tags the server's parser leaves in the payload.
+
+    When the model emits no reasoning, SGLang's k2_horizon parser hands back a
+    lone closing tag as the reasoning field; the chat template adds the tags
+    itself at render time, so any tag inside the text is duplication that
+    would teach the drafter to emit them mid-stream.
+    """
+    return THINK_TAG.sub("", text).strip()
 
 
 def to_openai_messages(conv):
@@ -66,8 +81,10 @@ def regen_one(args, row):
     msg = choice["message"]
     assistant = {
         "role": "assistant",
-        "content": msg.get("content") or "",
-        "reasoning_content": msg.get("reasoning_content") or msg.get("reasoning") or "",
+        "content": strip_think_tags(msg.get("content") or ""),
+        "reasoning_content": strip_think_tags(
+            msg.get("reasoning_content") or msg.get("reasoning") or ""
+        ),
     }
     if msg.get("tool_calls"):
         assistant["tool_calls"] = [

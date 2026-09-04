@@ -1,0 +1,31 @@
+[
+  {
+    "tag": "q4parallel2-overcommit",
+    "input_tokens": 70000,
+    "elapsed_s": 252.75520844899984,
+    "content": null,
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 70000,
+      "prompt_ms": 147571.937,
+      "prompt_per_token_ms": 2.1081705285714287,
+      "prompt_per_second": 474.3449291446246,
+      "predicted_n": 8192,
+      "predicted_ms": 30258.214,
+      "predicted_per_token_ms": 3.694080576242217,
+      "predicted_per_second": 270.7033534761834,
+      "draft_n": 8176,
+      "draft_n_accepted": 8040
+    },
+    "truncated": false,
+    "tokens_evaluated": 70000,
+    "passed": true
+  },
+  {
+    "tag": "q4parallel2-overcommit",
+    "input_tokens": 70000,
+    "elapsed_s": 194.82610324200004,
+    "passed": false,
+    "error": "HTTP Error 500: Internal Server Error"
+  }
+]

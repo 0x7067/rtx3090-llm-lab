@@ -1,0 +1,9 @@
+FROM llama:qwen-speed-build AS build
+COPY kv-admission.patch /tmp/kv-admission.patch
+RUN git apply --check /tmp/kv-admission.patch \
+    && git apply /tmp/kv-admission.patch \
+    && cmake --build build --target llama-server -j4
+
+FROM llama:cuda-swap-v17
+# Preserve the qualified math libraries and replace only server admission logic.
+COPY --from=build /src/llama.cpp/build/bin/libllama-server-impl.so /usr/local/lib/libllama-server-impl.so

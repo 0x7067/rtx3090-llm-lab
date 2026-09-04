@@ -1,5 +1,3 @@
-# Qualified 2026-09-04 for llama:cuda-swap-v18; see benchmarks/qwen-speed-2026-09-04/.
-# Flux deploys the matching stanza in docker-services/k8s/workloads/apps/llama/configmap.yaml.
 models:
   "qwen3.8-27b":
     # Q4 drafter and CPU vision leave room for two slots without changing target weights.

@@ -1,0 +1,37 @@
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -1534,6 +1534,34 @@
+     }
+ 
+     server_slot * get_available_slot(const server_task & task) {
++        // A unified pool does not grow with the number of slots. Reserve each
++        // request's prompt and output budget before admitting another request;
++        // otherwise two individually valid long prompts can fail every slot.
++        if (params_base.kv_unified && params_base.n_parallel > 1) {
++            const auto reservation = [&](const server_task & request) -> int64_t {
++                const int32_t predict = request.params.n_predict != -1
++                    ? request.params.n_predict : params_base.n_predict;
++                if (predict < 0) {
++                    return n_ctx_slot();
++                }
++                // Leave a batch of headroom for cache allocation and draft verification.
++                return std::min<int64_t>(n_ctx_slot(),
++                    request.n_tokens() + int64_t(predict) + params_base.n_batch);
++            };
++            int64_t reserved = reservation(task);
++            bool busy = false;
++            for (const auto & active : slots) {
++                if (active.is_processing() && active.task) {
++                    busy = true;
++                    reserved += reservation(*active.task);
++                }
++            }
++            if (busy && reserved > n_ctx) {
++                SRV_DBG("shared KV budget unavailable, defer task, id_task = %d\n", task.id);
++                return nullptr;
++            }
++        }
++
+         server_slot * ret = nullptr;
+ 
+         bool update_cache = false;

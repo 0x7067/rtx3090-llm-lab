@@ -1,0 +1,22 @@
+{
+  "tag": "q4parallel2-cpuvision-r2",
+  "input_tokens": 125000,
+  "elapsed_s": 165.40879236199999,
+  "content": "The user is asking me to remember the reference code \"Q38_CTX_START_7F3A\" and then return only that reference code after reading the background context. The instruction is clear: \"Read the background below, then return only the reference code.\"\n\nThe reference code is: Q38_CTX_START_7F3A\n</think>\n\nQ38_CTX_START_7F3A",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 125000,
+    "prompt_ms": 164248.186,
+    "prompt_per_token_ms": 1.313985488,
+    "prompt_per_second": 761.043412680369,
+    "predicted_n": 83,
+    "predicted_ms": 895.695,
+    "predicted_per_token_ms": 10.923109756097562,
+    "predicted_per_second": 91.54902059294737,
+    "draft_n": 112,
+    "draft_n_accepted": 66
+  },
+  "truncated": false,
+  "tokens_evaluated": 125000,
+  "passed": true
+}

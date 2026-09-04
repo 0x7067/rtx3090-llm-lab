@@ -1,0 +1,4 @@
+{
+  "llama:cuda-swap-v17": "ba1470ffa41175e0d67c67da680361e3ad59b3a6157853d751b8e63404190d00  /usr/local/lib/libggml-cuda.so\nf620a59c0498b484c921d3c4637d6d827cc8eacb4cbdac7e46611151a28f706e  /usr/local/lib/libllama.so\n24203453d8e799335ed7b1c1a668a4f73eac5e18c65c485bf1a05543a71533f3  /usr/local/lib/libmtmd.so\n",
+  "llama:qwen-speed-guard-v1": "ba1470ffa41175e0d67c67da680361e3ad59b3a6157853d751b8e63404190d00  /usr/local/lib/libggml-cuda.so\nf620a59c0498b484c921d3c4637d6d827cc8eacb4cbdac7e46611151a28f706e  /usr/local/lib/libllama.so\n24203453d8e799335ed7b1c1a668a4f73eac5e18c65c485bf1a05543a71533f3  /usr/local/lib/libmtmd.so\n"
+}

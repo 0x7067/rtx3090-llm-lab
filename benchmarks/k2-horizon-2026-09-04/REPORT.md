@@ -87,6 +87,9 @@ a 250k-row lm_head (2 GB at Q8). Levers, in order of payoff:
 2. **Smaller quant.** Q4_K_M is +44% decode over Q8_0 (KLD 0.042, top-1 91.9%
    vs 97.5%) and is served as the on-demand `k2-horizon-7b-fast` backend;
    Q5_K_M lands in the same quality band 11% slower, so it is not served.
+   Live through llama-swap: `k2-horizon-7b-fast` answered `K2_FAST_OK` at
+   medium effort and decoded a nonced 509-token low-effort coding answer at
+   98 tok/s (Q8_0 profile: 67-73), 15,548 MiB resident at 131k.
 3. **Reasoning effort.** medium/low are the daily-driver settings for the
    Pi/Prime agentic loop; high spends 4000+ tokens before answering.
 

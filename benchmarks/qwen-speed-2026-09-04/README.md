@@ -134,8 +134,13 @@ Drafter SHA256: `1a25c56858e1ebe93f2718ac1d49d1151f9323325c1bbfd6209370f4db131eb
 
 `candidate-profile.yaml` and `../../config/llama-swap-qwen38.yaml` contain the serving
 profile. The parent repository's llama ConfigMap and deployment select it and v18.
-At inspection, the live deployment was already at zero replicas and Flux apps
-reconciliation suspended. These experiments leave that maintenance state intact;
-activation awaits the user's answer. The image is published and the drafter is
-already present in the persistent model volume. Rollback is the original v17 image
-and profile from parent revision ac71891; the original Q8 drafter remains available.
+At inspection, the live deployment was at zero replicas and Flux apps reconciliation
+was suspended. After the user approved publication and activation, lab PR #1 and
+parent PR #2 were merged. Flux applied parent revision
+`51cb2c7dfade70f7a3ad8ddcc37412d17764dbc1`; llama became ready on v18 with one
+replica and zero restarts. The live service passed all four functional/tool probes
+and measured 119.04 tok/s on the four distinct concurrent coding requests
+(`production-v18.jsonl`). Flux apps reconciliation is resumed.
+
+Rollback is the original v17 image and profile from parent revision ac71891;
+the original Q8 drafter remains available.

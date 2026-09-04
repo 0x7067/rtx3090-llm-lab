@@ -1,0 +1,39 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "437",
+        "reasoning_content": "The user wants me to calculate 19 * 23 and answer with only the number.\n\n19 * 23 = 19 * 20 + 19 * 3 = 380 + 57 = 437\n"
+      }
+    }
+  ],
+  "created": 1788561711,
+  "model": "/models/qwen3.8/unsloth/Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf",
+  "system_fingerprint": "b10760-0f3a71be1",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 63,
+    "prompt_tokens": 24,
+    "total_tokens": 87,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-UfaIs71tPEqmZ6HYtgPMgbnOW5YvnFwU",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 24,
+    "prompt_ms": 237.635,
+    "prompt_per_token_ms": 9.901458333333332,
+    "prompt_per_second": 100.99522376754267,
+    "predicted_n": 63,
+    "predicted_ms": 493.65,
+    "predicted_per_token_ms": 7.962096774193548,
+    "predicted_per_second": 125.59505722678011,
+    "draft_n": 63,
+    "draft_n_accepted": 54
+  }
+}

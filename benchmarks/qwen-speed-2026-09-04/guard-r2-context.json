@@ -1,0 +1,24 @@
+[
+  {
+    "tag": "guard-r2",
+    "input_tokens": 125000,
+    "elapsed_s": 165.08188345899998,
+    "content": "The user is asking me to remember the reference code \"Q38_CTX_START_7F3A\" and then return only that reference code after reading the background context. The instruction is clear: \"Read the background below, then return only the reference code.\"\n\nThe reference code is: Q38_CTX_START_7F3A\n</think>\n\nQ38_CTX_START_7F3A",
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 125000,
+      "prompt_ms": 164026.023,
+      "prompt_per_token_ms": 1.312208184,
+      "prompt_per_second": 762.074198433745,
+      "predicted_n": 83,
+      "predicted_ms": 893.292,
+      "predicted_per_token_ms": 10.893804878048782,
+      "predicted_per_second": 91.7952920209741,
+      "draft_n": 112,
+      "draft_n_accepted": 66
+    },
+    "truncated": false,
+    "tokens_evaluated": 125000,
+    "passed": true
+  }
+]

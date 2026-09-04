@@ -1,0 +1,93 @@
+0.00.129.926 W DEPRECATED: --mmap and --no-mmap are deprecated. use --load-mode mmap instead
+0.00.133.725 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.134.102 W srv  llama_server: -----------------
+0.00.134.103 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set
+0.00.134.103 W srv  llama_server: this can be a security risk (cross-origin attacks)
+0.00.134.103 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655
+0.00.134.104 W srv  llama_server: -----------------
+0.00.135.345 I srv    load_model: loading model '/models/qwen3.8/unsloth/Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf'
+0.00.993.692 E llama_init_from_model: failed to initialize the context: dflash requires ctx_other to be set (this warning is normal during memory fitting)
+0.01.035.477 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model
+0.01.035.495 W common_fit_params: failed to fit params to free device memory: n_gpu_layers already set by user to 99, abort
+0.01.354.080 W model has unused tensor blk.64.attn_norm.weight (size = 20480 bytes) -- ignoring
+0.01.354.086 W model has unused tensor blk.64.post_attention_norm.weight (size = 20480 bytes) -- ignoring
+0.01.354.093 W model has unused tensor blk.64.attn_q.weight (size = 51609600 bytes) -- ignoring
+0.01.354.096 W model has unused tensor blk.64.attn_k.weight (size = 5570560 bytes) -- ignoring
+0.01.354.099 W model has unused tensor blk.64.attn_v.weight (size = 5570560 bytes) -- ignoring
+0.01.354.108 W model has unused tensor blk.64.attn_output.weight (size = 25804800 bytes) -- ignoring
+0.01.354.111 W model has unused tensor blk.64.attn_q_norm.weight (size = 1024 bytes) -- ignoring
+0.01.354.114 W model has unused tensor blk.64.attn_k_norm.weight (size = 1024 bytes) -- ignoring
+0.01.354.117 W model has unused tensor blk.64.ffn_gate.weight (size = 73113600 bytes) -- ignoring
+0.01.354.120 W model has unused tensor blk.64.ffn_down.weight (size = 73113600 bytes) -- ignoring
+0.01.354.122 W model has unused tensor blk.64.ffn_up.weight (size = 73113600 bytes) -- ignoring
+0.01.354.126 W model has unused tensor blk.64.nextn.eh_proj.weight (size = 43008000 bytes) -- ignoring
+0.01.354.129 W model has unused tensor blk.64.nextn.enorm.weight (size = 20480 bytes) -- ignoring
+0.01.354.132 W model has unused tensor blk.64.nextn.hnorm.weight (size = 20480 bytes) -- ignoring
+0.01.354.140 W model has unused tensor blk.64.nextn.shared_head_norm.weight (size = 20480 bytes) -- ignoring
+0.39.301.757 I cmn          init: llama threadpool init, n_threads = 8
+0.39.367.712 I common_speculative_init_result: loading draft model '/trial/DFlash2-Q4_K_M.gguf'
+0.39.860.285 W load_hparams: Qwen-VL models require at minimum 1024 image tokens to function correctly on grounding tasks
+0.39.860.288 W load_hparams: if you encounter problems with accuracy, try adding --image-min-tokens 1024
+0.39.860.288 W load_hparams: more info: https://github.com/ggml-org/llama.cpp/issues/16842
+
+0.40.006.629 I srv    load_model: loaded multimodal model, '/models/qwen3.8/ggml-org/Qwen3.8-27B-GGUF/mmproj-Qwen3.8-27B-Q8_0.gguf'
+0.40.050.903 I srv    load_model: initializing, n_slots = 2, n_ctx_slot = 131072, kv_unified = 'true'
+0.40.051.817 I common_speculative_impl_draft_dflash: adding speculative implementation 'draft-dflash'
+0.40.051.820 I common_speculative_impl_draft_dflash: - n_max=7, n_min=0, p_min=0.00
+0.40.051.821 I common_speculative_impl_draft_dflash: - block_size=8, mask_token_id=248070, n_extract=5, sample_from_anchor=true
+0.40.076.754 I srv          init: chat template supports preserving reasoning, consider enabling it via --reasoning-preserve
+0.40.076.782 I srv  llama_server: model loaded
+0.40.076.785 I srv  llama_server: listening on http://127.0.0.1:18089
+0.40.351.589 I slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = -1
+0.40.351.636 I slot launch_slot_: id  1 | task 0 | processing task, is_child = 0
+0.41.221.455 I slot print_timing: id  1 | task 0 | prompt eval time =     237.14 ms /    33 tokens (    7.19 ms per token,   139.16 tokens per second)
+0.41.221.458 I slot print_timing: id  1 | task 0 |        eval time =     632.39 ms /    89 tokens (    7.19 ms per token,   139.15 tokens per second)
+0.41.221.458 I slot print_timing: id  1 | task 0 |       total time =     869.53 ms /   122 tokens
+0.41.221.461 I slot print_timing: id  1 | task 0 |    graphs reused =         12
+0.41.221.477 I slot print_timing: id  1 | task 0 | draft acceptance = 0.91667 (   77 accepted /    84 generated), mean len =  7.42
+0.41.221.510 I slot      release: id  1 | task 0 | stop processing: n_tokens = 122, truncated = 0
+0.41.223.426 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1
+0.41.223.460 I slot launch_slot_: id  0 | task 15 | processing task, is_child = 0
+0.42.516.961 I slot print_timing: id  0 | task 15 | prompt eval time =     165.11 ms /    55 tokens (    3.00 ms per token,   333.11 tokens per second)
+0.42.516.963 I slot print_timing: id  0 | task 15 |        eval time =    1017.94 ms /   128 tokens (    8.02 ms per token,   124.76 tokens per second)
+0.42.516.964 I slot print_timing: id  0 | task 15 |       total time =    1183.05 ms /   183 tokens
+0.42.516.964 I slot print_timing: id  0 | task 15 |    graphs reused =         33
+0.42.517.000 I slot print_timing: id  0 | task 15 | draft acceptance = 0.68831 (  106 accepted /   154 generated), mean len =  5.82
+0.42.517.025 I slot      release: id  0 | task 15 | stop processing: n_tokens = 183, truncated = 0
+0.42.518.958 I slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = 1947558366
+0.42.518.992 I slot launch_slot_: id  1 | task 40 | processing task, is_child = 0
+0.43.940.589 I slot print_timing: id  1 | task 40 | prompt eval time =     154.22 ms /    42 tokens (    3.67 ms per token,   272.33 tokens per second)
+0.43.940.592 I slot print_timing: id  1 | task 40 |        eval time =    1154.74 ms /   145 tokens (    8.02 ms per token,   124.70 tokens per second)
+0.43.940.592 I slot print_timing: id  1 | task 40 |       total time =    1308.96 ms /   187 tokens
+0.43.940.593 I slot print_timing: id  1 | task 40 |    graphs reused =         57
+0.43.940.608 I slot print_timing: id  1 | task 40 | draft acceptance = 0.68571 (  120 accepted /   175 generated), mean len =  5.80
+0.43.940.630 I slot      release: id  1 | task 40 | stop processing: n_tokens = 187, truncated = 0
+0.43.941.358 W Wrong type supplied for parameter 'tool_choice', using default value: [json.exception.type_error.302] type must be string, but is object
+0.43.943.743 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = 1948853880
+0.43.943.841 I slot launch_slot_: id  0 | task 68 | processing task, is_child = 0
+/src/llama.cpp/ggml/src/ggml-cuda/ggml-cuda.cu:108: CUDA error
+0.44.060.566 E CUDA error: out of memory
+0.44.060.569 E   current device: 0, in function launch_mul_mat_q_impl at /src/llama.cpp/ggml/src/ggml-cuda/template-instances/../mmq.cuh:1484
+0.44.060.569 E   cudaFuncSetAttribute((mul_mat_q<type, J, false, pipeline>), cudaFuncAttributeMaxDynamicSharedMemorySize, nbytes_shared)
+/usr/local/lib/libggml-base.so.0(+0x1c39b)[0x75aaaf0a139b]
+/usr/local/lib/libggml-base.so.0(ggml_print_backtrace+0x21c)[0x75aaaf0a181c]
+/usr/local/lib/libggml-base.so.0(ggml_abort+0x15b)[0x75aaaf0a19fb]
+/usr/local/lib/libggml-cuda.so.0(_Z15ggml_cuda_errorPKcS0_S0_iS0_+0xb7)[0x75aaab5ecdb7]
+/usr/local/lib/libggml-cuda.so.0(+0xb6d171)[0x75aaabef4171]
+/usr/local/lib/libggml-cuda.so.0(_Z19ggml_cuda_mul_mat_qR25ggml_backend_cuda_contextPK11ggml_tensorS3_S3_PS1_+0xcec)[0x75aaab63cf0c]
+/usr/local/lib/libggml-cuda.so.0(+0x27d119)[0x75aaab604119]
+/usr/local/lib/libggml-base.so.0(ggml_backend_sched_graph_compute_async+0x867)[0x75aaaf0c0c37]
+/usr/local/lib/libllama.so.0(_ZN13llama_context13graph_computeEP11ggml_cgraphb+0xa1)[0x75aaaf26b0f1]
+/usr/local/lib/libllama.so.0(_ZN13llama_context14process_ubatchERK12llama_ubatch14llm_graph_typeP22llama_memory_context_iR11ggml_status+0x11a)[0x75aaaf26f26a]
+/usr/local/lib/libllama.so.0(_ZN13llama_context6decodeERK11llama_batch+0x63d)[0x75aaaf27659d]
+/usr/local/lib/libllama.so.0(llama_decode+0xf)[0x75aaaf277a2f]
+/usr/local/lib/libllama-server-impl.so(_ZNSt17_Function_handlerIFvvEZN19server_context_impl6decodeERiiR11llama_batchEUlvE_E9_M_invokeERKSt9_Any_data+0x49)[0x75aab01666a9]
+/usr/local/lib/libllama-server-impl.so(_ZN12server_queue14yield_to_queueEOSt8functionIFvvEE+0xa6)[0x75aab012aac6]
+/usr/local/lib/libllama-server-impl.so(_ZN19server_context_impl6decodeERiiR11llama_batch+0x159)[0x75aab017af59]
+/usr/local/lib/libllama-server-impl.so(_ZN19server_context_impl12update_slotsEv+0x391)[0x75aab017c9f1]
+/usr/local/lib/libllama-server-impl.so(_ZN12server_queue10start_loopEl+0x125)[0x75aab012b705]
+/usr/local/lib/libllama-server-impl.so(_Z12llama_serverR13common_paramsiPPc+0x3ba0)[0x75aab00e3710]
+/usr/local/lib/libllama-server-impl.so(_Z12llama_serveriPPc+0xd6)[0x75aab00e4756]
+/lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca)[0x75aaafb8a1ca]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b)[0x75aaafb8a28b]
+/usr/local/bin/llama-server(+0x12a5)[0x645425f722a5]

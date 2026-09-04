@@ -1,0 +1,4 @@
+[INFO] using nvidia-smi for GPU monitoring
+[INFO] llama-swap listening on http://127.0.0.1:18089
+[INFO] <qwen3.8-27b> Health check passed on http://localhost:5800/health
+[INFO] Request 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 867 "OpenAI File Downloader, XaiImageApiFetch/1.0" 7.993656537s

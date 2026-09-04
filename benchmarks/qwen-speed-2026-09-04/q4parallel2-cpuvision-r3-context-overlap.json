@@ -1,0 +1,46 @@
+[
+  {
+    "tag": "q4parallel2-cpuvision-r3",
+    "input_tokens": 70000,
+    "elapsed_s": 93.04112157000009,
+    "content": "The user is asking me to remember the reference code \"Q38_CTX_START_7F3A\" and then return only that reference code after reading the background context. The instruction says \"Read the background below, then return only the reference code.\"\n\nThe reference code given at the start is: Q38_CTX_START_7F3A\n\nI need to return only that reference code.\n</think>\n\nQ38_CTX_START_7F3A",
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 70000,
+      "prompt_ms": 77350.04,
+      "prompt_per_token_ms": 1.1050005714285713,
+      "prompt_per_second": 904.976907574967,
+      "predicted_n": 95,
+      "predicted_ms": 15538.593,
+      "predicted_per_token_ms": 165.30418085106385,
+      "predicted_per_second": 6.049453769720334,
+      "draft_n": 140,
+      "draft_n_accepted": 75
+    },
+    "truncated": false,
+    "tokens_evaluated": 70000,
+    "passed": true
+  },
+  {
+    "tag": "q4parallel2-cpuvision-r3",
+    "input_tokens": 70000,
+    "elapsed_s": 196.07461336799997,
+    "content": "The user is asking me to remember the reference code \"Q38_CTX_OTHER_9B2C\" and then return only that reference code after reading the background. The instruction says \"Read the background below, then return only the reference code.\"\n\nThe reference code given at the start is: Q38_CTX_OTHER_9B2C\n\nI need to return only that reference code.\n</think>\n\nQ38_CTX_OTHER_9B2C",
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 70000,
+      "prompt_ms": 119493.833,
+      "prompt_per_token_ms": 1.7070547571428571,
+      "prompt_per_second": 585.8042900004723,
+      "predicted_n": 94,
+      "predicted_ms": 1435.373,
+      "predicted_per_token_ms": 15.434118279569892,
+      "predicted_per_second": 64.79152108894343,
+      "draft_n": 183,
+      "draft_n_accepted": 75
+    },
+    "truncated": false,
+    "tokens_evaluated": 70000,
+    "passed": true
+  }
+]

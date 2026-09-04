@@ -1,0 +1,49 @@
+0.00.125.462 W DEPRECATED: --mmap and --no-mmap are deprecated. use --load-mode mmap instead
+0.00.129.340 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.129.668 W srv  llama_server: -----------------
+0.00.129.669 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set
+0.00.129.669 W srv  llama_server: this can be a security risk (cross-origin attacks)
+0.00.129.669 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655
+0.00.129.670 W srv  llama_server: -----------------
+0.00.130.904 I srv    load_model: loading model '/models/qwen3.8/unsloth/Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf'
+0.00.991.703 E llama_init_from_model: failed to initialize the context: dflash requires ctx_other to be set (this warning is normal during memory fitting)
+0.01.030.883 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model
+0.01.030.900 W common_fit_params: failed to fit params to free device memory: n_gpu_layers already set by user to 99, abort
+0.01.353.228 W model has unused tensor blk.64.attn_norm.weight (size = 20480 bytes) -- ignoring
+0.01.353.234 W model has unused tensor blk.64.post_attention_norm.weight (size = 20480 bytes) -- ignoring
+0.01.353.241 W model has unused tensor blk.64.attn_q.weight (size = 51609600 bytes) -- ignoring
+0.01.353.244 W model has unused tensor blk.64.attn_k.weight (size = 5570560 bytes) -- ignoring
+0.01.353.247 W model has unused tensor blk.64.attn_v.weight (size = 5570560 bytes) -- ignoring
+0.01.353.258 W model has unused tensor blk.64.attn_output.weight (size = 25804800 bytes) -- ignoring
+0.01.353.261 W model has unused tensor blk.64.attn_q_norm.weight (size = 1024 bytes) -- ignoring
+0.01.353.264 W model has unused tensor blk.64.attn_k_norm.weight (size = 1024 bytes) -- ignoring
+0.01.353.267 W model has unused tensor blk.64.ffn_gate.weight (size = 73113600 bytes) -- ignoring
+0.01.353.270 W model has unused tensor blk.64.ffn_down.weight (size = 73113600 bytes) -- ignoring
+0.01.353.273 W model has unused tensor blk.64.ffn_up.weight (size = 73113600 bytes) -- ignoring
+0.01.353.276 W model has unused tensor blk.64.nextn.eh_proj.weight (size = 43008000 bytes) -- ignoring
+0.01.353.280 W model has unused tensor blk.64.nextn.enorm.weight (size = 20480 bytes) -- ignoring
+0.01.353.283 W model has unused tensor blk.64.nextn.hnorm.weight (size = 20480 bytes) -- ignoring
+0.01.353.309 W model has unused tensor blk.64.nextn.shared_head_norm.weight (size = 20480 bytes) -- ignoring
+0.43.560.845 I cmn          init: llama threadpool init, n_threads = 8
+0.43.625.283 I common_speculative_init_result: loading draft model '/models/qwen3.8/z-lab/Qwen3.8-27B-DFlash2-GGUF/Qwen3.8-27B-DFlash2-Q8_0.gguf'
+0.44.218.455 W load_hparams: Qwen-VL models require at minimum 1024 image tokens to function correctly on grounding tasks
+0.44.218.457 W load_hparams: if you encounter problems with accuracy, try adding --image-min-tokens 1024
+0.44.218.457 W load_hparams: more info: https://github.com/ggml-org/llama.cpp/issues/16842
+
+/src/llama.cpp/ggml/src/ggml-backend.cpp:188: GGML_ASSERT(buffer) failed
+0.44.219.895 E ggml_backend_cuda_buffer_type_alloc_buffer: allocating 600.12 MiB on device 0: cudaMalloc failed: out of memory
+0.44.219.898 E alloc_tensor_range: failed to allocate CUDA0 buffer of size 629270528
+/usr/local/lib/libggml-base.so.0(+0x1c39b)[0x7e67225a339b]
+/usr/local/lib/libggml-base.so.0(ggml_print_backtrace+0x21c)[0x7e67225a381c]
+/usr/local/lib/libggml-base.so.0(ggml_abort+0x15b)[0x7e67225a39fb]
+/usr/local/lib/libggml-base.so.0(+0x36a31)[0x7e67225bda31]
+/usr/local/lib/libmtmd.so.0(_ZN17clip_model_loader12load_tensorsER8clip_ctx+0x5920)[0x7e6722b68de0]
+/usr/local/lib/libmtmd.so.0(_Z9clip_initPKc19clip_context_params+0x255)[0x7e6722b50a15]
+/usr/local/lib/libmtmd.so.0(_ZN12mtmd_contextC2EPKcPK11llama_modelRK19mtmd_context_paramsb+0x36e)[0x7e6722aa879e]
+/usr/local/lib/libmtmd.so.0(mtmd_init_from_file+0x31)[0x7e6722aa0411]
+/usr/local/lib/libllama-server-impl.so(_ZN19server_context_impl10load_modelER13common_params+0x7ba)[0x7e672368337a]
+/usr/local/lib/libllama-server-impl.so(_Z12llama_serverR13common_paramsiPPc+0x3777)[0x7e67235e52e7]
+/usr/local/lib/libllama-server-impl.so(_Z12llama_serveriPPc+0xd6)[0x7e67235e6756]
+/lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca)[0x7e672308c1ca]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b)[0x7e672308c28b]
+/usr/local/bin/llama-server(+0x12a5)[0x557b547e22a5]

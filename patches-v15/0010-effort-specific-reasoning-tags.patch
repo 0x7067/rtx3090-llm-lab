@@ -1,16 +1,61 @@
+diff --git i/common/chat-auto-parser-generator.cpp w/common/chat-auto-parser-generator.cpp
+index d7e117e4d..302ed50cc 100644
+--- i/common/chat-auto-parser-generator.cpp
++++ w/common/chat-auto-parser-generator.cpp
+@@ -162,12 +162,23 @@ common_peg_parser analyze_reasoning::build_parser(parser_build_context & ctx) co
+ 
+     if (mode == reasoning_mode::TAG_BASED || mode == reasoning_mode::TOOLS_ONLY) {
+         if (!end.empty()) {
++            std::vector<std::string> ends = { trim_whitespace(end) };
++            std::vector<common_peg_parser> end_tags = { p.optspace(end) };
++            for (const auto & alt : end_alternatives) {
++                if (alt.empty() || trim_whitespace(alt) == ends.front()) {
++                    continue;
++                }
++                ends.push_back(trim_whitespace(alt));
++                end_tags.push_back(p.optspace(alt));
++            }
++            auto until_end = ends.size() == 1 ? p.until(ends.front()) : p.until_one_of(ends);
++            auto close_tag = end_tags.size() == 1 ? end_tags.front() : p.choice(end_tags);
+             if (!start.empty()) {
+                 // Standard tag-based: optional(<think>reasoning</think>)
+-                return p.optional(p.optspace(start) + p.reasoning(p.until(trim_whitespace(end))) + p.optspace(end));
++                return p.optional(p.optspace(start) + p.reasoning(until_end) + close_tag);
+             }
+             // Delimiter-style (empty start)
+-            return p.optional(p.reasoning(p.until(trim_whitespace(end))) + p.optspace(end));
++            return p.optional(p.reasoning(until_end) + close_tag);
+         }
+     }
+ 
+diff --git i/common/chat-auto-parser.h w/common/chat-auto-parser.h
+index 8ae15c91e..76da80cee 100644
+--- i/common/chat-auto-parser.h
++++ w/common/chat-auto-parser.h
+@@ -258,6 +258,9 @@ struct analyze_reasoning : analyze_base {
+ 
+     std::string start;  // e.g., "<think>", "[THINK]", "<|START_THINKING|>", ""
+     std::string end;    // e.g., "</think>", "[BEGIN FINAL RESPONSE]", "<|END_THINKING|>"
++    // Additional closing tags accepted besides `end` (templates whose opener varies
++    // per request but whose model closes with the default tag, e.g. K2 Horizon).
++    std::vector<std::string> end_alternatives;
+ 
+     analyze_reasoning() = default;
+     analyze_reasoning(const common_chat_template & tmpl, bool supports_tools);
 diff --git i/common/chat.cpp w/common/chat.cpp
-index 743ecde0a..d3a2b4190 100644
+index 743ecde0a..f9abd7b49 100644
 --- i/common/chat.cpp
 +++ w/common/chat.cpp
-@@ -3718,6 +3718,29 @@ static common_chat_params common_chat_templates_apply_jinja(const struct common_
+@@ -3718,6 +3718,34 @@ static common_chat_params common_chat_templates_apply_jinja(const struct common_
          LOG_DBG("%s: using differential autoparser\n", __func__);
          struct autoparser::autoparser autoparser;
          autoparser.analyze_template(tmpl);
 +        // Effort-dependent thinking tags (K2 Horizon: <ifm|think>, <ifm|think_fast>,
 +        // <ifm|think_faster> selected by reasoning_effort). The analyzer only sees the
-+        // tag the template emits for its default kwargs; if this request's generation
-+        // prompt ends with a sibling tag (same stem, extra suffix), adopt that tag and
-+        // its closing form so reasoning is still extracted at every effort level.
++        // tag the template emits for its default kwargs. If this request's generation
++        // prompt ends with a sibling tag (same stem, extra suffix), adopt it as the
++        // opener and accept both its matching closer and the default closer: the
++        // model was observed closing <ifm|think_fast> with </ifm|think>.
 +        if (autoparser.reasoning.mode != autoparser::reasoning_mode::NONE && !autoparser.reasoning.start.empty()) {
 +            const std::string start = trim_whitespace(autoparser.reasoning.start);
 +            const std::string gen   = trim_whitespace(common_chat_template_generation_prompt_impl(tmpl, params));
@@ -23,8 +68,12 @@ index 743ecde0a..d3a2b4190 100644
 +                    if (tag.size() > start.size() && tag.back() == '>' && tag.compare(0, stem.size(), stem) == 0 &&
 +                        tag.find('/') == std::string::npos) {
 +                        LOG_DBG("%s: adopting effort-specific reasoning tag %s (analyzer default %s)\n", __func__, tag.c_str(), start.c_str());
++                        const std::string default_end = autoparser.reasoning.end;
 +                        autoparser.reasoning.start = tag;
 +                        autoparser.reasoning.end   = "</" + tag.substr(1);
++                        if (!default_end.empty()) {
++                            autoparser.reasoning.end_alternatives.push_back(default_end);
++                        }
 +                    }
 +                }
 +            }
@@ -32,3 +81,16 @@ index 743ecde0a..d3a2b4190 100644
          auto auto_params = autoparser::peg_generator::generate_parser(tmpl, params, autoparser);
  
          common_chat_msg_delimiters delimiters;
+@@ -3736,6 +3764,12 @@ static common_chat_params common_chat_templates_apply_jinja(const struct common_
+             auto end_tag = trim_whitespace(autoparser.reasoning.end);
+             if (!end_tag.empty()) {
+                 auto_params.thinking_end_tags = {std::move(end_tag)};
++                for (const auto & alt : autoparser.reasoning.end_alternatives) {
++                    auto alt_tag = trim_whitespace(alt);
++                    if (!alt_tag.empty() && alt_tag != auto_params.thinking_end_tags.front()) {
++                        auto_params.thinking_end_tags.push_back(std::move(alt_tag));
++                    }
++                }
+             }
+         }
+         common_peg_arena arena;

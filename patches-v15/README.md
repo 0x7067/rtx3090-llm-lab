@@ -17,7 +17,7 @@ Apply order is lexical (`git apply patches/*.patch`); 0009 touches no file
 the kernel patches touch. Verified 2026-09-03: all seven apply cleanly in
 either order.
 
-- `0010-effort-specific-reasoning-tags.patch` (v16, 2026-09-03): the
+- `0010-effort-specific-reasoning-tags.patch` (v16/v17, 2026-09-03/04): the
   differential auto-parser learns one reasoning tag from the template's
   default kwargs. K2 Horizon opens `<ifm|think>` / `<ifm|think_fast>` /
   `<ifm|think_faster>` depending on `reasoning_effort`, so medium and low
@@ -26,3 +26,10 @@ either order.
   if it ends with a sibling tag (same stem, extra suffix, no `/`), adopts it
   and its `</...>` closer for that request. Generic; no-op for every template
   whose generation prompt ends with the analyzer's own tag.
+  v17 revision: the model closes `<ifm|think_fast>` with `</ifm|think>` (all
+  six tags are distinct added tokens, so this is trained behaviour, not a
+  tokenizer artefact), which made v16 swallow the answer into reasoning at
+  medium effort. The analyzer struct gained `end_alternatives`; the PEG
+  builder uses `until_one_of` + a choice of closers, and `thinking_end_tags`
+  carries both. Target: high/medium/low/thinking-off all
+  return the answer in `content` and the thinking in `reasoning_content`.

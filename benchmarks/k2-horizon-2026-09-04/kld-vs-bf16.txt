@@ -1,0 +1,34 @@
+== Q8_0
+Mean PPL(Q)                   :   5.730355 ±   0.066285
+Mean PPL(base)                :   5.723627 ±   0.066167
+Mean PPL(Q)/PPL(base)         :   1.001176 ±   0.000557
+Mean PPL(Q)-PPL(base)         :   0.006729 ±   0.003188
+Same top p: 97.513 ± 0.070 %
+== Q6_K
+Mean PPL(Q)                   :   5.777128 ±   0.067007
+Mean PPL(base)                :   5.723627 ±   0.066167
+Mean PPL(Q)/PPL(base)         :   1.009348 ±   0.001152
+Mean PPL(Q)-PPL(base)         :   0.053502 ±   0.006614
+Same top p: 94.634 ± 0.102 %
+== Q5_K_M
+Mean PPL(Q)                   :   5.916327 ±   0.069038
+Mean PPL(base)                :   5.723627 ±   0.066167
+Mean ln(PPL(Q)/PPL(base))     :   0.033113 ±   0.001692
+Mean PPL(Q)/PPL(base)         :   1.033668 ±   0.001749
+Mean PPL(Q)-PPL(base)         :   0.192701 ±   0.010235
+Mean    KLD:   0.044640 ±   0.001035
+Maximum KLD:   9.867304
+Mean    Δp: -0.659 ± 0.030 %
+Maximum Δp: 73.448%
+Same top p: 93.139 ± 0.114 %
+== Q4_K_M
+Mean PPL(Q)                   :   5.883762 ±   0.068566
+Mean PPL(base)                :   5.723627 ±   0.066167
+Mean ln(PPL(Q)/PPL(base))     :   0.027594 ±   0.001519
+Mean PPL(Q)/PPL(base)         :   1.027978 ±   0.001561
+Mean PPL(Q)-PPL(base)         :   0.160136 ±   0.009120
+Mean    KLD:   0.041908 ±   0.000643
+Maximum KLD:   5.090002
+Mean    Δp: -0.481 ± 0.025 %
+Maximum Δp: 72.496%
+Same top p: 91.897 ± 0.123 %

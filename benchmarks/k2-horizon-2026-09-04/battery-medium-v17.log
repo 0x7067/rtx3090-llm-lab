@@ -1,0 +1,19 @@
+[decode] SUMMARY median_tok_s=72.71 median_ttft_s=0.387
+[quality] PASS arithmetic_exact   finish=stop wall=0.833 tokens=48
+[quality] PASS portuguese_json    finish=stop wall=0.902 tokens=65
+[quality] PASS python_fix         finish=stop wall=1.838 tokens=145
+[quality] PASS required_tool      finish=tool_calls wall=0.764 tokens=45
+[quality] SUMMARY 4/4 passed
+[decode] run 1/5 ttft=0.35s tok_s=113.57 tokens=512
+[decode] SUMMARY median_tok_s=102.13 median_ttft_s=0.368
+[sustained] tokens=6000 finish=length overall_tok_s=70.04 ttft=0.235s
+[prefill] tokens=14209 (usage) ttft=4.202s prefill_tok_s=3381.2
+[session] turn 8/8 applied=True ttft=0.565s tok_s=265.09 tokens=1343
+[session] SUMMARY cumulative_tok_s=211.73 applied_rate=1.0 wall=49.55s
+[session] turn 6/6 applied=True ttft=1.533s tok_s=297.04 tokens=1246
+[session] SUMMARY cumulative_tok_s=186.83 applied_rate=1.0 wall=70.99s
+[concurrent] n=4 aggregate_tok_s=71.43 wall=28.67s
+[session] turn 20/20 applied=True ttft=1.489s tok_s=314.3 tokens=1391
+[session] SUMMARY cumulative_tok_s=286.97 applied_rate=1.0 wall=114.02s
+BATTERY-DONE
+

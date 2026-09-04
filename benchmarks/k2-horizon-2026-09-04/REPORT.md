@@ -98,3 +98,61 @@ a 250k-row lm_head (2 GB at Q8). Levers, in order of payoff:
 - `results-high-v15.jsonl`, `results-medium-v17.jsonl`, `battery-medium-v17.log`
 - `llama-bench-quants.md`, `kld-vs-bf16.txt`
 - `qualify-k2.py` (probe script), `make-quants.sh` (imatrix + quant recipe)
+
+## Path research (five parallel agents, 2026-09-04)
+
+Question: what is the best path to make K2 Horizon 7B a top agentic coder on
+this box? Findings, ranked by what they change:
+
+1. **Capability ceiling (evals).** No independent eval of the 7B/32B/36B
+   exists yet (Artificial Analysis indexes only the 375B; SWE-bench,
+   Terminal-Bench, LiveBench, Aider have nothing). On vendor numbers the 7B
+   is roughly half of Qwen3.8-27B on the agentic rows that matter for coding:
+   Terminal-Bench 2.1 39.1 vs 73.0, tau3-Banking 25.8 vs 48.0, SciCode 31.6
+   vs 44.7. It wins its size class (Qwen3.5-9B, Gemma 4-12B, Granite 4.2-8B)
+   by wide margins. IFM's own card shows the 32B-Stage1 (unfinished) losing
+   to Qwen3.8-27B on every row; the 36B-A4B is the strongest sibling
+   (Terminal-Bench 58.6) but Q4 is 22.4 GB with 196 KB/token KV, so it has
+   no usable context on 24 GB. One HN tester saw the 7B loop on a simple
+   coding prompt. Conclusion: the 7B is a fast secondary model, not a 27B
+   replacement, and no fine-tune or drafter changes that.
+2. **Drafter (speed).** No DFlash/EAGLE/MTP drafter exists for any K2 size.
+   The 3.7B sibling shares the vocab but has the same KV geometry as the 7B
+   and does not fit as a classic draft; the 0.9B has a different vocab.
+   Realistic route: SpecForge DFlash2 (or EAGLE-3 as the cheap fallback) on a
+   rented H100, 100-200k regenerated prompts via SGLang, 2-4 engineer days,
+   $150-400, expected 1.6-2.2x (110-150 tok/s). llama.cpp drafters are
+   target-agnostic once the arch is registered; our v15+ image already sits
+   on a master that has DFlash2, so the fork-rebase prerequisite is done.
+   Unverified: whether SGLang's K2Horizon class exposes aux hidden states for
+   SpecForge capture.
+3. **Uno (IFM's own speedup).** Research library only: no HTTP server, no
+   streaming, no tool/reasoning parsing, bf16 base mandatory (18 GB) so ~8k
+   context on 24 GB, gated per-row LoRA that cannot be merged into a GGUF.
+   Lossless in the speculative-verification sense. Net over the current
+   setup 1.2-1.5x after 1-2 weeks of work. Watch, do not build.
+4. **Fine-tuning.** Not now. The Pretrain/Midtrain datasets 404, no SFT/RL/
+   agentic data exists, `horizon-post-train` is a placeholder, the shipped
+   7B `main` is the sft_2 checkpoint (no RL branch below 375B). QLoRA fits a
+   3090 only with fused CE and <=16k sequences; a rented H100 does it for
+   $10-30. Evidence (RL's Razor, trajectory-SFT interface papers) says
+   small-scale SFT of an RL-tuned reasoner buys ~0-2 points with real
+   forgetting/format-drift risk; the Terminal-Bench gap is capacity, not
+   format. Revisit when IFM publishes the post-training data and code.
+5. **Engines.** vLLM nightly has in-tree K2 support with reasoning and
+   tool parsers (all three formats) and runs the FP8 checkpoint on Ampere via
+   Marlin weight-only, ~140k ctx with fp8 KV, ngram/suffix spec decoding.
+   Estimated decode 70-90 tok/s raw: parity with llama.cpp Q8_0, not a win.
+   SGLang refuses quantized weights (bf16 only, ~25k ctx). No upstream
+   llama.cpp PR exists yet. Stay on llama.cpp.
+
+**Decision.** Keep Qwen3.8-27B as the agentic coder. Serve K2 7B as the fast
+small-task model it is (`k2-horizon-7b-fast` at medium/low effort). The only
+investment with a clear payoff is a DFlash2/EAGLE-3 drafter (item 2) if
+110-150 tok/s on the 7B is worth ~$300 and a few days; nothing on the list
+closes the capability gap to the 27B.
+
+**Re-check in a week:** artificialanalysis.ai for the 7B/36B pages;
+huggingface.co/IFM for post-training data and any drafter; ifm-ai/
+horizon-post-train; ggml-org/llama.cpp PRs for "K2 Horizon"; z-lab and
+SpecBundle for community drafters; the IFM 32B card for the Stage 2 checkpoint.

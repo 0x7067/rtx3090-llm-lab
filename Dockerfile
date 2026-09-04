@@ -36,6 +36,8 @@ RUN git clone https://github.com/ggml-org/llama.cpp.git . \
 # 0007: qwen35 MTP truncated draft vocab via d2t tensor
 # 0008: env-gated small-batch MMQ grid + y-tile double buffer (GGML_CUDA_MMQ_SMALLN)
 # 0009: K2 Horizon architecture (see patches-v15/README.md)
+# 0010: effort-specific reasoning tags
+# 0011: queue requests that would exceed the shared KV pool
 COPY patches-v15/ /src/llama.cpp/patches/
 RUN git apply --stat --apply patches/*.patch
 

@@ -15,8 +15,20 @@ TEMPLATE_REGISTRY.register(
         assistant_header="<|ifm|im_start|>assistant\n<ifm|think>\n",
         user_header="<|ifm|im_start|>user\n",
         system_prompt=None,
-        end_of_turn_token="<|ifm|im_end|>\n",
+        end_of_turn_token="<|ifm|im_end|>",
         parser_type="thinking",
         enable_thinking=True,
+    ),
+)
+
+# Thinking disabled (what the template renders for enable_thinking=false or an
+# empty reasoning_content): no newline after </ifm|think>, none after im_end.
+TEMPLATE_REGISTRY.register(
+    name="k2-horizon-nothink",
+    template=ChatTemplate(
+        assistant_header="<|ifm|im_start|>assistant\n<ifm|think>\n</ifm|think>",
+        user_header="<|ifm|im_start|>user\n",
+        system_prompt=None,
+        end_of_turn_token="<|ifm|im_end|>",
     ),
 )

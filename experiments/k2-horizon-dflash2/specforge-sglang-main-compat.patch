@@ -1,0 +1,133 @@
+diff --git i/specforge/data/parse.py w/specforge/data/parse.py
+index 70b41fd..ee1edb6 100644
+--- i/specforge/data/parse.py
++++ w/specforge/data/parse.py
+@@ -21,7 +21,12 @@ class Parser(ABC):
+     ):
+         self.tokenizer = tokenizer
+         self.chat_template = chat_template
+-        self.standard_keys = {"role", "content", "tool_calls"}
++        self.standard_keys = {"role", "content", "tool_calls", "reasoning_content"}
++        # Templates such as K2 Horizon raise unless every assistant message
++        # carries a thinking field; default it to empty (thinking-off render).
++        self._assistant_needs_reasoning = "ifm|think" in (
++            getattr(tokenizer, "chat_template", None) or ""
++        )
+ 
+     @abstractmethod
+     def parse(
+@@ -114,6 +119,15 @@ class Parser(ABC):
+         normalized = {**message, "role": role, "content": content}
+         normalized.pop("from", None)
+         normalized.pop("value", None)
++        if (
++            role == "assistant"
++            and getattr(self, "_assistant_needs_reasoning", False)
++            and not any(
++                k in normalized
++                for k in ("reasoning_content", "reasoning", "think", "think_fast", "think_faster")
++            )
++        ):
++            normalized["reasoning_content"] = ""
+         return normalized
+ 
+ 
+diff --git i/specforge/data/template.py w/specforge/data/template.py
+index 26d1e82..127595f 100644
+--- i/specforge/data/template.py
++++ w/specforge/data/template.py
+@@ -387,3 +387,27 @@ TEMPLATE_REGISTRY.register(
+         ],
+     ),
+ )
++TEMPLATE_REGISTRY.register(
++    name="k2-horizon-thinking",
++    template=ChatTemplate(
++        assistant_header="<|ifm|im_start|>assistant\n<ifm|think>\n",
++        user_header="<|ifm|im_start|>user\n",
++        system_prompt=None,
++        end_of_turn_token="<|ifm|im_end|>",
++        parser_type="thinking",
++        enable_thinking=True,
++    ),
++)
++
++# K2 Horizon with thinking disabled: what the chat template emits for
++# enable_thinking=false. Use for datasets whose assistant turns carry no
++# reasoning (original, non-regenerated answers).
++TEMPLATE_REGISTRY.register(
++    name="k2-horizon-nothink",
++    template=ChatTemplate(
++        assistant_header="<|ifm|im_start|>assistant\n<ifm|think>\n</ifm|think>",
++        user_header="<|ifm|im_start|>user\n",
++        system_prompt=None,
++        end_of_turn_token="<|ifm|im_end|>",
++    ),
++)
+diff --git i/specforge/offline_capture/sglang_backend/capture.py w/specforge/offline_capture/sglang_backend/capture.py
+index 21815cf..d344e4d 100644
+--- i/specforge/offline_capture/sglang_backend/capture.py
++++ w/specforge/offline_capture/sglang_backend/capture.py
+@@ -74,6 +74,17 @@ class OfflineSGLangCaptureBackend:
+             **kwargs,
+         )
+ 
++        # SGLang >= 0.5.19 requires the process entry to publish its config
++        # before any ModelRunner is constructed (runtime_context.assert_published).
++        try:
++            from sglang.srt.runtime_context import publish as _sgl_publish
++        except ImportError:  # older SGLang: nothing to publish
++            _sgl_publish = None
++        if getattr(server_args, "device", None) is None:
++            server_args.device = "cuda"  # newer SGLang resolves this lazily
++        if _sgl_publish is not None:
++            _sgl_publish(server_args, role="scheduler")
++
+         tp_rank = dist.get_rank(get_tp_group())
+         attn_tp_rank, attn_tp_size, attn_dp_rank, attn_dp_size = (
+             compute_dp_attention_world_info(
+@@ -165,7 +176,15 @@ class OfflineSGLangCaptureBackend:
+         )
+ 
+     def _maybe_prepare_mlp_sync_batch(self, batch: ScheduleBatch) -> None:
+-        if require_mlp_sync(self.model_runner.server_args):
++        # SGLang >= 0.5.19 reads these from the published runtime context and
++        # takes no arguments; older versions take server_args.
++        def _call(fn):
++            try:
++                return fn()
++            except TypeError:
++                return fn(self.model_runner.server_args)
++
++        if _call(require_mlp_sync):
+             prepare_mlp_sync_batch_raw(
+                 batch,
+                 model_runner=self.model_runner,
+@@ -175,9 +194,7 @@ class OfflineSGLangCaptureBackend:
+                 tp_group=self.model_runner.tp_group,
+                 get_idle_batch=None,
+                 disable_cuda_graph=self.model_runner.server_args.disable_cuda_graph,
+-                require_mlp_tp_gather=require_mlp_tp_gather(
+-                    self.model_runner.server_args
+-                ),
++                require_mlp_tp_gather=_call(require_mlp_tp_gather),
+                 disable_overlap_schedule=self.model_runner.server_args.disable_overlap_schedule,
+                 offload_tags=set(),
+             )
+@@ -188,7 +205,15 @@ class OfflineSGLangCaptureBackend:
+             disable=False,
+             req_to_token_pool=self.model_runner.req_to_token_pool,
+             token_to_kv_pool_allocator=self.model_runner.token_to_kv_pool_allocator,
+-            page_size=self.model_runner.server_args.page_size,
++            # Must match the allocator actually built by the ModelRunner (newer
++            # SGLang sizes it from the runtime-context schedule bag, not
++            # server_args.page_size); a mismatch routes prefill to alloc_extend
++            # on an unpaged allocator.
++            page_size=getattr(
++                self.model_runner.token_to_kv_pool_allocator,
++                "page_size",
++                self.model_runner.server_args.page_size or 1,
++            ),
+         )
+         batch = ScheduleBatch.init_new(
+             reqs=reqs,

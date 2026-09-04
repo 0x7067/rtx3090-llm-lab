@@ -118,3 +118,51 @@ while production is idle.
    the SGLang server default is already `reasoning_effort=high`.
 4. Acceptance on reasoning-heavy outputs is lower than on plain chat; the
    Qwen3.8 DFlash2 stack still measured 1.8x in llama.cpp on this box.
+
+## Local run log (2026-09-04, RTX 3090, EAGLE-3 offline)
+
+Environment: `/data/buttercup_6tb/specforge-work/` (venv via uv, Python 3.12,
+torch 2.13.0+cu130, SGLang main `2a0602c` from source with
+`sglang-k2-capture.patch`, SpecForge main `e606d40` installed `--no-deps` with
+`specforge-sglang-main-compat.patch`). Weights: `models/IFM/K2-Horizon-7B`
+at main revision `586b03f0` (the cookbook's `69ada542` no longer exists).
+
+Fixes needed to make SpecForge's offline capture run on SGLang main:
+1. `runtime_context.publish(server_args, role="scheduler")` before the
+   ModelRunner (`assert_published` is new).
+2. `server_args.device` defaults to None until later; set `"cuda"`.
+3. `CacheInitParams.page_size` must equal the allocator's page size (the
+   runner sizes it from the schedule bag, not `server_args.page_size`);
+   otherwise prefill hits `alloc_extend` on an unpaged allocator.
+4. `require_mlp_sync()` / `require_mlp_tp_gather()` take no arguments now.
+5. K2's HF template raises on assistant messages without a thinking field:
+   the parser now defaults `reasoning_content=""` (and keeps that key through
+   `_sanitize_message`) when the template mentions `ifm|think`.
+6. Template registrations: with empty reasoning the template renders
+   `<ifm|think>\n</ifm|think>` with NO trailing newline and `<|ifm|im_end|>`
+   with none either; the first attempt (`\n` on both) matched nothing and
+   produced an all-zero loss mask (symptom: "Total token frequency is zero").
+7. CUDA toolchain in the venv: nvcc 13.3 vs runtime headers 13.0, so CCCL
+   refuses to compile (`CUDA compiler and CUDA toolkit headers are
+   incompatible`). `NVCC_PREPEND_FLAGS=-DCCCL_DISABLE_CTK_COMPATIBILITY_CHECK`
+   plus `CUDA_HOME=<venv>/nvidia/cu13` with `lib64 -> lib` and
+   `libcudart.so -> libcudart.so.13` symlinks (the JIT links `-lcudart` from
+   `$CUDA_HOME/lib64`). FlashInfer's JIT prefill kernel was avoided by using
+   `--sglang-attention-backend triton`; SGLang's own fused-RoPE JIT still
+   compiles and works with the flags above.
+8. `deep_ep` (sgl-deep-ep) asserts on import without CUDA_HOME; uninstalled
+   (dense model, not needed).
+
+Measured: bf16 target resident 19.5 GB at mem-fraction 0.88, batch 4,
+ctx 2304. Features: `input_ids`, `loss_mask`, `aux_hidden_state`
+(3 x 4096 bf16) and `hidden_state` (4096 bf16) = 32.8 KB/token; the 64-sample
+smoke run averaged ~990 tokens/sample (32 MB/sample). Full run: 16,000 of
+the 20,000 prepared samples (OPC realuser 8k + OPC largescale 6k +
+PerfectBlend 6k, shuffled), ~525 GB, ~3.5 h. Training: `train-eagle3.sh`
+(offline colocated, `train-k2-7b-eagle3-offline.yaml`).
+
+Mined agent data for the next round: `extract_claude_sessions.py` turned 44
+of the 68 Claude Code transcripts on this host into 1,082 tool-using
+contexts (~3.4k tokens each, 3.7M tokens, 105 secret-like strings redacted)
+at `sessions/denguinho-server/claude-code/extracted.jsonl`; assistant turns
+are to be regenerated with K2 before use.

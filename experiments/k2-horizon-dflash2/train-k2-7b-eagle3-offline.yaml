@@ -1,0 +1,44 @@
+# SpecForge offline colocated EAGLE-3 training for IFM/K2-Horizon-7B on one
+# RTX 3090. Features are captured first with scripts/prepare_hidden_states.py
+# (target bf16 alone on the GPU), then the 1-layer draft trains against the
+# stored features without the target loaded. Adapted from
+# examples/configs/offline/colocated/qwen3-8b-eagle3-offline.yaml.
+model:
+  target_model_path: /data/buttercup_6tb/specforge-work/models/IFM/K2-Horizon-7B
+  draft_model_config: /data/docker-services/rtx3090-llm-lab/experiments/k2-horizon-dflash2/configs/k2-horizon-7b-eagle3.json
+  target_backend: sglang
+  trust_remote_code: true
+  embedding_key: model.embed_tokens.weight
+  lm_head_key: lm_head.weight
+  torch_dtype: bfloat16
+
+data:
+  hidden_states_path: /data/buttercup_6tb/specforge-work/cache/hidden_states/k2-7b-eagle3
+  max_length: 2048
+  chat_template: k2-horizon-nothink   # first run uses original answers (no reasoning); switch to k2-horizon-thinking for regenerated data
+  cache_dir: /data/buttercup_6tb/specforge-work/cache
+
+training:
+  strategy: eagle3
+  num_epochs: 10
+  batch_size: 1
+  learning_rate: 1.0e-4
+  max_grad_norm: 0.5
+  ttt_length: 7
+  attention_backend: flex_attention
+  save_interval: 1000
+  log_interval: 50
+  dist_timeout: 20
+  seed: 0
+
+tracking:
+  report_to: tensorboard
+
+run_id: k2-horizon-7b-eagle3-offline
+output_dir: /data/buttercup_6tb/specforge-work/outputs/k2-horizon-7b-eagle3-offline
+
+deployment:
+  mode: local_colocated
+  trainer:
+    nnodes: 1
+    nproc_per_node: 1

@@ -31,5 +31,5 @@ either order.
   tokenizer artefact), which made v16 swallow the answer into reasoning at
   medium effort. The analyzer struct gained `end_alternatives`; the PEG
   builder uses `until_one_of` + a choice of closers, and `thinking_end_tags`
-  carries both. Target: high/medium/low/thinking-off all
+  carries both. Verified live on v17 (2026-09-04): high/medium/low/thinking-off all
   return the answer in `content` and the thinking in `reasoning_content`.

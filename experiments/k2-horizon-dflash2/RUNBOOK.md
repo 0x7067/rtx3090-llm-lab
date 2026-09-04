@@ -220,3 +220,15 @@ would never emit. Expect to keep ~8,800 of 10,082 rows.
 Feature-store planning at `max_length: 2048` and 32.8 KB/token: ~677 GB for
 the full set. The stale 504 GB from the discarded first pass was deleted to
 make room (878 GB free on Buttercup).
+
+### Conversion path de-risked before training finished
+
+`convert_hf_to_gguf.py` routes `LlamaForCausalLMEagle3` through the Llama
+converter, whose `set_vocab` points `dir_model` at `--target-model-dir` and
+runs the generic BPE path (unlike the DFlash converter, it does not delegate
+to the target's own model class). That path identifies the pre-tokenizer by
+a sha256 over a fixed check string, and an unregistered hash aborts the
+conversion. `check_tokenizer_hash.py` confirms K2-Horizon-7B hashes to
+`a9af07a8...`, the registered `k2-horizon` entry it shares with the 36B, so
+the draft will convert. Note the check string is 350 characters; a truncated
+copy produces a different hash and a false negative.

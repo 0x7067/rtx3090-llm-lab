@@ -7,6 +7,9 @@ alternative.
 
 ## Repository map
 
+- [`benchmarks/paired-harness/`](benchmarks/paired-harness/) freezes custom quality
+  fixtures and inference profiles for paired comparisons, with cluster-bootstrap
+  intervals, executable coding checks, tool replay, and separate latency metrics.
 - [`benchmarks/tiel-vs-qwen/`](benchmarks/tiel-vs-qwen/) contains the public
   Tiel-versus-Qwen comparison, corrected harnesses, and later qualification
   evidence.

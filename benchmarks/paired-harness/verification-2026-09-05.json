@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-05",
+  "scope": "Harness smoke verification against existing production Qwen; not a controlled engine comparison or a quality equivalence claim.",
+  "harness_sha256": "6d542e9ce26a47b5c8c9397593a70189ff24afdba362d4cbd0ecdfc74d1747c8",
+  "plan_sha256": "83c02e3e03f3612555e7ec806036c3ae1336a4515c32a57d3d4b45786a006065",
+  "suite_sha256": "6ae04eccfe466675717516b7cfef8b94ba856278d387bfd13b5bacbe0ad83ee2",
+  "runtime": {
+    "engine": "llama.cpp cuda-swap-v18; llama-swap v230",
+    "image_digest": "sha256:23da58507732c60e658bf21ddabb56e1fc9509387fc9730e0a3e39c852b63336",
+    "config_sha256": "764a9e03113cbf0347b96a01b95b430a152410696531fc4af16ac0d97b0df90c",
+    "target_weights": "Qwen3.8-27B-UD-Q4_K_XL-v3.gguf; existing production volume, hash not remeasured",
+    "draft": "DFlash2-Q4_K_M; n=7 plus ngram-mod match=32",
+    "kv": "q4_0, unified 131072 tokens, parallel=2",
+    "hardware": "RTX 3090; NVIDIA 595.71.05; power limit observed 370 W",
+    "cache_policy": "shared live endpoint; no administrative cache reset; unique per-item prefix; warmup excluded",
+    "purpose": "harness integration smoke only; not a performance comparison"
+  },
+  "quality_items_passed": 16,
+  "quality_items_attempted": 16,
+  "performance_probes_completed": 2,
+  "http_or_protocol_failures": 0,
+  "one_token_prefill_decode_rate": null,
+  "checks": "12 unittest checks including local mock HTTP pairing/report and pinned Docker behavior grading; all passed.",
+  "raw_artifacts": "runs/production-final/ (local, gitignored); frozen plan: runs/plan-final.json",
+  "development_note": "The first exploratory pass exposed an ambiguous replay prompt and a spurious one-token decode-rate calculation. The prompt was made explicit and the rate suppressed before this final frozen pass. Earlier /tmp/paired-harness-2026-09-05 runs are not qualification data."
+}

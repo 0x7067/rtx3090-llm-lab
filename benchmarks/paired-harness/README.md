@@ -11,6 +11,10 @@ The first [58-case production baseline](baseline-2026-09-05.md) records the
 2026-09-05 v18 results and their limits, including cache reuse and the deepest
 observed prompt sizes.
 
+The [Qwen3.6 Heretic versus Qwen3.8 comparison](qwen36-vs-qwen38-2026-09-05.md)
+adds a matched two-profile run and a separate 8k-budget diagnostic for capped
+Qwen3.6 coding answers, with per-case measurements in its companion JSON.
+
 ## Run a comparison
 
 From this directory, with Python 3.10+:

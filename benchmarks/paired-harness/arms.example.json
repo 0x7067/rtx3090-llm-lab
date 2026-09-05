@@ -1,0 +1,28 @@
+[
+  {
+    "name": "control",
+    "base_url": "http://127.0.0.1:18080/v1",
+    "model": "qwen3.8-27b",
+    "metadata": {
+      "engine": "REPLACE: engine/version/image digest",
+      "target_weights": "REPLACE: quant and SHA256",
+      "draft": "REPLACE: drafter and speculation config",
+      "kv": "REPLACE: dtype, context, concurrency",
+      "hardware": "REPLACE: GPU, driver, clocks/power",
+      "cache_policy": "REPLACE: reset procedure and prefix-cache settings"
+    }
+  },
+  {
+    "name": "candidate",
+    "base_url": "http://127.0.0.1:18081/v1",
+    "model": "qwen3.8-27b",
+    "metadata": {
+      "engine": "REPLACE: engine/version/image digest",
+      "target_weights": "REPLACE: quant and SHA256",
+      "draft": "REPLACE: drafter and speculation config",
+      "kv": "REPLACE: dtype, context, concurrency",
+      "hardware": "REPLACE: GPU, driver, clocks/power",
+      "cache_policy": "REPLACE: reset procedure and prefix-cache settings"
+    }
+  }
+]

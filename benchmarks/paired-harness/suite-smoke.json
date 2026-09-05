@@ -1,0 +1,478 @@
+{
+  "description": "Synthetic infrastructure/coding smoke suite; not a quality qualification dataset. Retrieval sizes are lines, never estimated tokens. Tool replay uses frozen history, not a live agent.",
+  "confidence": 0.95,
+  "bootstrap_samples": 10000,
+  "min_clusters": 20,
+  "repeats": 1,
+  "seeds": [
+    42
+  ],
+  "code_image": "sha256:613c5454f914638dc2bfcab71c8630de0089f7ebff0a7239b54f34866c4b6051",
+  "margins": {
+    "relevance": 0.03,
+    "transcript_qa": 0.03,
+    "reasoning": 0.03,
+    "extraction": 0.03,
+    "coding": 0.03,
+    "tool_replay": 0.03,
+    "retrieval": 0.03
+  },
+  "request_defaults": {
+    "temperature": 0,
+    "top_p": 1,
+    "reasoning_effort": "medium",
+    "max_tokens": 2048
+  },
+  "cases": [
+    {
+      "id": "relevant-config",
+      "tier": "relevance",
+      "cluster": "relevant-config",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Question: Which file sets the listen port? Documents: A: README says the service is fast. B: config.yaml contains listen_port: 8080. C: notes.txt lists groceries. Return only a JSON array of relevant document IDs."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "set_f1",
+        "expected": [
+          "B"
+        ]
+      }
+    },
+    {
+      "id": "relevant-db",
+      "tier": "relevance",
+      "cluster": "relevant-db",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "set_f1",
+        "expected": [
+          "A",
+          "C"
+        ]
+      }
+    },
+    {
+      "id": "transcript-en",
+      "tier": "transcript_qa",
+      "cluster": "transcript-en",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Transcript: Mira: Ship Tuesday. Leo: The database migration is still pending. Mira: Then move the release to Thursday. Leo: Agreed, Thursday. What is the final release day? Reply with the day only."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "Thursday"
+      }
+    },
+    {
+      "id": "transcript-pt",
+      "tier": "transcript_qa",
+      "cluster": "transcript-pt",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Transcrição: Ana: Vamos usar a porta 8080. Bruno: Está ocupada, use 9090. Ana: Certo, 9090. Qual foi a porta final? Responda apenas com o número."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "9090"
+      }
+    },
+    {
+      "id": "reason-boundary",
+      "tier": "reasoning",
+      "cluster": "reason-boundary",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "false"
+      }
+    },
+    {
+      "id": "reason-deps",
+      "tier": "reasoning",
+      "cluster": "reason-deps",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "A must run before B. C must run after B. D must run before A. Return the only valid order as a JSON array of letters, with no prose."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "json",
+        "expected": [
+          "D",
+          "A",
+          "B",
+          "C"
+        ]
+      }
+    },
+    {
+      "id": "extract-pt",
+      "tier": "extraction",
+      "cluster": "extract-pt",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Extraia somente os IDs dos chamados ainda abertos como um array JSON: INC-21 está aberto; INC-22 foi fechado; INC-23 segue aberto; INC-21 continua aberto."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "set_f1",
+        "expected": [
+          "INC-21",
+          "INC-23"
+        ]
+      }
+    },
+    {
+      "id": "extract-en",
+      "tier": "extraction",
+      "cluster": "extract-en",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Return only JSON with keys service, port, retries. Service: worker. Listen port: 8123. The old retry count was 5; the approved replacement is 2."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "json",
+        "expected": {
+          "service": "worker",
+          "port": 8123,
+          "retries": 2
+        }
+      }
+    },
+    {
+      "id": "code-chunks",
+      "tier": "coding",
+      "cluster": "code-chunks",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Write Python function chunks(items, size) returning a list of consecutive lists of at most size elements. Empty input returns []. Raise ValueError for size <= 0. Do not mutate items. Return only Python code."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "python",
+        "tests": "assert chunks([], 2) == []\na = [1,2,3,4,5]\nassert chunks(a,2) == [[1,2],[3,4],[5]]\nassert a == [1,2,3,4,5]\nassert chunks([1],4) == [[1]]\nfor size in (0,-1):\n    try: chunks([1],size)\n    except ValueError: pass\n    else: raise AssertionError('invalid size accepted')"
+      }
+    },
+    {
+      "id": "code-expiry",
+      "tier": "coding",
+      "cluster": "code-expiry",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Write Python function purge(entries, now). entries maps keys to (value, expires_at); expires_at may be None, meaning no expiry. Return a NEW dict containing entries with no expiry or expires_at > now. Preserve the tuples and do not mutate input. Return only Python code."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "python",
+        "tests": "a = {'a': (1,10), 'b':(2,None), 'c':(3,11)}\nassert purge(a,10) == {'b':(2,None),'c':(3,11)}\nassert len(a) == 3\nassert purge({},0) == {}\nassert purge(a,9) == a\nassert purge(a,9) is not a"
+      }
+    },
+    {
+      "id": "tool-read",
+      "tier": "tool_replay",
+      "cluster": "cache-episode",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Read src/cache.py using read_file before proposing changes."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_file",
+              "description": "Read a repository file",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "run_tests",
+              "description": "Run one test file",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto"
+      },
+      "grader": {
+        "kind": "tool",
+        "expected": [
+          {
+            "name": "read_file",
+            "arguments": {
+              "path": "src/cache.py"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "tool-followup",
+      "tier": "tool_replay",
+      "cluster": "cache-episode",
+      "phase": "quality",
+      "grader": {
+        "kind": "tool",
+        "expected": [
+          {
+            "name": "run_tests",
+            "arguments": {
+              "path": "tests/test_cache.py"
+            }
+          }
+        ]
+      },
+      "request": {
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_file",
+              "description": "Read a repository file",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "run_tests",
+              "description": "Run one test file",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Read src/cache.py, then run tests/test_cache.py using run_tests. After the read_file result, your next response must contain exactly one run_tests call for tests/test_cache.py and no other tool calls. Do not read another file or make changes."
+          },
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "id": "read_1",
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "arguments": "{\"path\":\"src/cache.py\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "read_1",
+            "content": "def expired(now, deadline):\n    return now >= deadline\n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "needle-32-start",
+      "tier": "retrieval",
+      "cluster": "needle-document-32",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "The deployment rollback code is ORCHID-7319.\nRecord 00000: unrelated reference REF-00000.\nRecord 00001: unrelated reference REF-00001.\nRecord 00002: unrelated reference REF-00002.\nRecord 00003: unrelated reference REF-00003.\nRecord 00004: unrelated reference REF-00004.\nRecord 00005: unrelated reference REF-00005.\nRecord 00006: unrelated reference REF-00006.\nRecord 00007: unrelated reference REF-00007.\nRecord 00008: unrelated reference REF-00008.\nRecord 00009: unrelated reference REF-00009.\nRecord 00010: unrelated reference REF-00010.\nRecord 00011: unrelated reference REF-00011.\nRecord 00012: unrelated reference REF-00012.\nRecord 00013: unrelated reference REF-00013.\nRecord 00014: unrelated reference REF-00014.\nRecord 00015: unrelated reference REF-00015.\nRecord 00016: unrelated reference REF-00016.\nRecord 00017: unrelated reference REF-00017.\nRecord 00018: unrelated reference REF-00018.\nRecord 00019: unrelated reference REF-00019.\nRecord 00020: unrelated reference REF-00020.\nRecord 00021: unrelated reference REF-00021.\nRecord 00022: unrelated reference REF-00022.\nRecord 00023: unrelated reference REF-00023.\nRecord 00024: unrelated reference REF-00024.\nRecord 00025: unrelated reference REF-00025.\nRecord 00026: unrelated reference REF-00026.\nRecord 00027: unrelated reference REF-00027.\nRecord 00028: unrelated reference REF-00028.\nRecord 00029: unrelated reference REF-00029.\nRecord 00030: unrelated reference REF-00030.\nRecord 00031: unrelated reference REF-00031.\nReturn only the deployment rollback code."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "ORCHID-7319"
+      }
+    },
+    {
+      "id": "needle-32-end",
+      "tier": "retrieval",
+      "cluster": "needle-document-32",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Record 00000: unrelated reference REF-00000.\nRecord 00001: unrelated reference REF-00001.\nRecord 00002: unrelated reference REF-00002.\nRecord 00003: unrelated reference REF-00003.\nRecord 00004: unrelated reference REF-00004.\nRecord 00005: unrelated reference REF-00005.\nRecord 00006: unrelated reference REF-00006.\nRecord 00007: unrelated reference REF-00007.\nRecord 00008: unrelated reference REF-00008.\nRecord 00009: unrelated reference REF-00009.\nRecord 00010: unrelated reference REF-00010.\nRecord 00011: unrelated reference REF-00011.\nRecord 00012: unrelated reference REF-00012.\nRecord 00013: unrelated reference REF-00013.\nRecord 00014: unrelated reference REF-00014.\nRecord 00015: unrelated reference REF-00015.\nRecord 00016: unrelated reference REF-00016.\nRecord 00017: unrelated reference REF-00017.\nRecord 00018: unrelated reference REF-00018.\nRecord 00019: unrelated reference REF-00019.\nRecord 00020: unrelated reference REF-00020.\nRecord 00021: unrelated reference REF-00021.\nRecord 00022: unrelated reference REF-00022.\nRecord 00023: unrelated reference REF-00023.\nRecord 00024: unrelated reference REF-00024.\nRecord 00025: unrelated reference REF-00025.\nRecord 00026: unrelated reference REF-00026.\nRecord 00027: unrelated reference REF-00027.\nRecord 00028: unrelated reference REF-00028.\nRecord 00029: unrelated reference REF-00029.\nRecord 00030: unrelated reference REF-00030.\nRecord 00031: unrelated reference REF-00031.\nThe deployment rollback code is ORCHID-7319.\nReturn only the deployment rollback code."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "ORCHID-7319"
+      }
+    },
+    {
+      "id": "needle-512-start",
+      "tier": "retrieval",
+      "cluster": "needle-document-512",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "The deployment rollback code is ORCHID-7319.\nRecord 00000: unrelated reference REF-00000.\nRecord 00001: unrelated reference REF-00001.\nRecord 00002: unrelated reference REF-00002.\nRecord 00003: unrelated reference REF-00003.\nRecord 00004: unrelated reference REF-00004.\nRecord 00005: unrelated reference REF-00005.\nRecord 00006: unrelated reference REF-00006.\nRecord 00007: unrelated reference REF-00007.\nRecord 00008: unrelated reference REF-00008.\nRecord 00009: unrelated reference REF-00009.\nRecord 00010: unrelated reference REF-00010.\nRecord 00011: unrelated reference REF-00011.\nRecord 00012: unrelated reference REF-00012.\nRecord 00013: unrelated reference REF-00013.\nRecord 00014: unrelated reference REF-00014.\nRecord 00015: unrelated reference REF-00015.\nRecord 00016: unrelated reference REF-00016.\nRecord 00017: unrelated reference REF-00017.\nRecord 00018: unrelated reference REF-00018.\nRecord 00019: unrelated reference REF-00019.\nRecord 00020: unrelated reference REF-00020.\nRecord 00021: unrelated reference REF-00021.\nRecord 00022: unrelated reference REF-00022.\nRecord 00023: unrelated reference REF-00023.\nRecord 00024: unrelated reference REF-00024.\nRecord 00025: unrelated reference REF-00025.\nRecord 00026: unrelated reference REF-00026.\nRecord 00027: unrelated reference REF-00027.\nRecord 00028: unrelated reference REF-00028.\nRecord 00029: unrelated reference REF-00029.\nRecord 00030: unrelated reference REF-00030.\nRecord 00031: unrelated reference REF-00031.\nRecord 00032: unrelated reference REF-00032.\nRecord 00033: unrelated reference REF-00033.\nRecord 00034: unrelated reference REF-00034.\nRecord 00035: unrelated reference REF-00035.\nRecord 00036: unrelated reference REF-00036.\nRecord 00037: unrelated reference REF-00037.\nRecord 00038: unrelated reference REF-00038.\nRecord 00039: unrelated reference REF-00039.\nRecord 00040: unrelated reference REF-00040.\nRecord 00041: unrelated reference REF-00041.\nRecord 00042: unrelated reference REF-00042.\nRecord 00043: unrelated reference REF-00043.\nRecord 00044: unrelated reference REF-00044.\nRecord 00045: unrelated reference REF-00045.\nRecord 00046: unrelated reference REF-00046.\nRecord 00047: unrelated reference REF-00047.\nRecord 00048: unrelated reference REF-00048.\nRecord 00049: unrelated reference REF-00049.\nRecord 00050: unrelated reference REF-00050.\nRecord 00051: unrelated reference REF-00051.\nRecord 00052: unrelated reference REF-00052.\nRecord 00053: unrelated reference REF-00053.\nRecord 00054: unrelated reference REF-00054.\nRecord 00055: unrelated reference REF-00055.\nRecord 00056: unrelated reference REF-00056.\nRecord 00057: unrelated reference REF-00057.\nRecord 00058: unrelated reference REF-00058.\nRecord 00059: unrelated reference REF-00059.\nRecord 00060: unrelated reference REF-00060.\nRecord 00061: unrelated reference REF-00061.\nRecord 00062: unrelated reference REF-00062.\nRecord 00063: unrelated reference REF-00063.\nRecord 00064: unrelated reference REF-00064.\nRecord 00065: unrelated reference REF-00065.\nRecord 00066: unrelated reference REF-00066.\nRecord 00067: unrelated reference REF-00067.\nRecord 00068: unrelated reference REF-00068.\nRecord 00069: unrelated reference REF-00069.\nRecord 00070: unrelated reference REF-00070.\nRecord 00071: unrelated reference REF-00071.\nRecord 00072: unrelated reference REF-00072.\nRecord 00073: unrelated reference REF-00073.\nRecord 00074: unrelated reference REF-00074.\nRecord 00075: unrelated reference REF-00075.\nRecord 00076: unrelated reference REF-00076.\nRecord 00077: unrelated reference REF-00077.\nRecord 00078: unrelated reference REF-00078.\nRecord 00079: unrelated reference REF-00079.\nRecord 00080: unrelated reference REF-00080.\nRecord 00081: unrelated reference REF-00081.\nRecord 00082: unrelated reference REF-00082.\nRecord 00083: unrelated reference REF-00083.\nRecord 00084: unrelated reference REF-00084.\nRecord 00085: unrelated reference REF-00085.\nRecord 00086: unrelated reference REF-00086.\nRecord 00087: unrelated reference REF-00087.\nRecord 00088: unrelated reference REF-00088.\nRecord 00089: unrelated reference REF-00089.\nRecord 00090: unrelated reference REF-00090.\nRecord 00091: unrelated reference REF-00091.\nRecord 00092: unrelated reference REF-00092.\nRecord 00093: unrelated reference REF-00093.\nRecord 00094: unrelated reference REF-00094.\nRecord 00095: unrelated reference REF-00095.\nRecord 00096: unrelated reference REF-00096.\nRecord 00097: unrelated reference REF-00097.\nRecord 00098: unrelated reference REF-00098.\nRecord 00099: unrelated reference REF-00099.\nRecord 00100: unrelated reference REF-00100.\nRecord 00101: unrelated reference REF-00101.\nRecord 00102: unrelated reference REF-00102.\nRecord 00103: unrelated reference REF-00103.\nRecord 00104: unrelated reference REF-00104.\nRecord 00105: unrelated reference REF-00105.\nRecord 00106: unrelated reference REF-00106.\nRecord 00107: unrelated reference REF-00107.\nRecord 00108: unrelated reference REF-00108.\nRecord 00109: unrelated reference REF-00109.\nRecord 00110: unrelated reference REF-00110.\nRecord 00111: unrelated reference REF-00111.\nRecord 00112: unrelated reference REF-00112.\nRecord 00113: unrelated reference REF-00113.\nRecord 00114: unrelated reference REF-00114.\nRecord 00115: unrelated reference REF-00115.\nRecord 00116: unrelated reference REF-00116.\nRecord 00117: unrelated reference REF-00117.\nRecord 00118: unrelated reference REF-00118.\nRecord 00119: unrelated reference REF-00119.\nRecord 00120: unrelated reference REF-00120.\nRecord 00121: unrelated reference REF-00121.\nRecord 00122: unrelated reference REF-00122.\nRecord 00123: unrelated reference REF-00123.\nRecord 00124: unrelated reference REF-00124.\nRecord 00125: unrelated reference REF-00125.\nRecord 00126: unrelated reference REF-00126.\nRecord 00127: unrelated reference REF-00127.\nRecord 00128: unrelated reference REF-00128.\nRecord 00129: unrelated reference REF-00129.\nRecord 00130: unrelated reference REF-00130.\nRecord 00131: unrelated reference REF-00131.\nRecord 00132: unrelated reference REF-00132.\nRecord 00133: unrelated reference REF-00133.\nRecord 00134: unrelated reference REF-00134.\nRecord 00135: unrelated reference REF-00135.\nRecord 00136: unrelated reference REF-00136.\nRecord 00137: unrelated reference REF-00137.\nRecord 00138: unrelated reference REF-00138.\nRecord 00139: unrelated reference REF-00139.\nRecord 00140: unrelated reference REF-00140.\nRecord 00141: unrelated reference REF-00141.\nRecord 00142: unrelated reference REF-00142.\nRecord 00143: unrelated reference REF-00143.\nRecord 00144: unrelated reference REF-00144.\nRecord 00145: unrelated reference REF-00145.\nRecord 00146: unrelated reference REF-00146.\nRecord 00147: unrelated reference REF-00147.\nRecord 00148: unrelated reference REF-00148.\nRecord 00149: unrelated reference REF-00149.\nRecord 00150: unrelated reference REF-00150.\nRecord 00151: unrelated reference REF-00151.\nRecord 00152: unrelated reference REF-00152.\nRecord 00153: unrelated reference REF-00153.\nRecord 00154: unrelated reference REF-00154.\nRecord 00155: unrelated reference REF-00155.\nRecord 00156: unrelated reference REF-00156.\nRecord 00157: unrelated reference REF-00157.\nRecord 00158: unrelated reference REF-00158.\nRecord 00159: unrelated reference REF-00159.\nRecord 00160: unrelated reference REF-00160.\nRecord 00161: unrelated reference REF-00161.\nRecord 00162: unrelated reference REF-00162.\nRecord 00163: unrelated reference REF-00163.\nRecord 00164: unrelated reference REF-00164.\nRecord 00165: unrelated reference REF-00165.\nRecord 00166: unrelated reference REF-00166.\nRecord 00167: unrelated reference REF-00167.\nRecord 00168: unrelated reference REF-00168.\nRecord 00169: unrelated reference REF-00169.\nRecord 00170: unrelated reference REF-00170.\nRecord 00171: unrelated reference REF-00171.\nRecord 00172: unrelated reference REF-00172.\nRecord 00173: unrelated reference REF-00173.\nRecord 00174: unrelated reference REF-00174.\nRecord 00175: unrelated reference REF-00175.\nRecord 00176: unrelated reference REF-00176.\nRecord 00177: unrelated reference REF-00177.\nRecord 00178: unrelated reference REF-00178.\nRecord 00179: unrelated reference REF-00179.\nRecord 00180: unrelated reference REF-00180.\nRecord 00181: unrelated reference REF-00181.\nRecord 00182: unrelated reference REF-00182.\nRecord 00183: unrelated reference REF-00183.\nRecord 00184: unrelated reference REF-00184.\nRecord 00185: unrelated reference REF-00185.\nRecord 00186: unrelated reference REF-00186.\nRecord 00187: unrelated reference REF-00187.\nRecord 00188: unrelated reference REF-00188.\nRecord 00189: unrelated reference REF-00189.\nRecord 00190: unrelated reference REF-00190.\nRecord 00191: unrelated reference REF-00191.\nRecord 00192: unrelated reference REF-00192.\nRecord 00193: unrelated reference REF-00193.\nRecord 00194: unrelated reference REF-00194.\nRecord 00195: unrelated reference REF-00195.\nRecord 00196: unrelated reference REF-00196.\nRecord 00197: unrelated reference REF-00197.\nRecord 00198: unrelated reference REF-00198.\nRecord 00199: unrelated reference REF-00199.\nRecord 00200: unrelated reference REF-00200.\nRecord 00201: unrelated reference REF-00201.\nRecord 00202: unrelated reference REF-00202.\nRecord 00203: unrelated reference REF-00203.\nRecord 00204: unrelated reference REF-00204.\nRecord 00205: unrelated reference REF-00205.\nRecord 00206: unrelated reference REF-00206.\nRecord 00207: unrelated reference REF-00207.\nRecord 00208: unrelated reference REF-00208.\nRecord 00209: unrelated reference REF-00209.\nRecord 00210: unrelated reference REF-00210.\nRecord 00211: unrelated reference REF-00211.\nRecord 00212: unrelated reference REF-00212.\nRecord 00213: unrelated reference REF-00213.\nRecord 00214: unrelated reference REF-00214.\nRecord 00215: unrelated reference REF-00215.\nRecord 00216: unrelated reference REF-00216.\nRecord 00217: unrelated reference REF-00217.\nRecord 00218: unrelated reference REF-00218.\nRecord 00219: unrelated reference REF-00219.\nRecord 00220: unrelated reference REF-00220.\nRecord 00221: unrelated reference REF-00221.\nRecord 00222: unrelated reference REF-00222.\nRecord 00223: unrelated reference REF-00223.\nRecord 00224: unrelated reference REF-00224.\nRecord 00225: unrelated reference REF-00225.\nRecord 00226: unrelated reference REF-00226.\nRecord 00227: unrelated reference REF-00227.\nRecord 00228: unrelated reference REF-00228.\nRecord 00229: unrelated reference REF-00229.\nRecord 00230: unrelated reference REF-00230.\nRecord 00231: unrelated reference REF-00231.\nRecord 00232: unrelated reference REF-00232.\nRecord 00233: unrelated reference REF-00233.\nRecord 00234: unrelated reference REF-00234.\nRecord 00235: unrelated reference REF-00235.\nRecord 00236: unrelated reference REF-00236.\nRecord 00237: unrelated reference REF-00237.\nRecord 00238: unrelated reference REF-00238.\nRecord 00239: unrelated reference REF-00239.\nRecord 00240: unrelated reference REF-00240.\nRecord 00241: unrelated reference REF-00241.\nRecord 00242: unrelated reference REF-00242.\nRecord 00243: unrelated reference REF-00243.\nRecord 00244: unrelated reference REF-00244.\nRecord 00245: unrelated reference REF-00245.\nRecord 00246: unrelated reference REF-00246.\nRecord 00247: unrelated reference REF-00247.\nRecord 00248: unrelated reference REF-00248.\nRecord 00249: unrelated reference REF-00249.\nRecord 00250: unrelated reference REF-00250.\nRecord 00251: unrelated reference REF-00251.\nRecord 00252: unrelated reference REF-00252.\nRecord 00253: unrelated reference REF-00253.\nRecord 00254: unrelated reference REF-00254.\nRecord 00255: unrelated reference REF-00255.\nRecord 00256: unrelated reference REF-00256.\nRecord 00257: unrelated reference REF-00257.\nRecord 00258: unrelated reference REF-00258.\nRecord 00259: unrelated reference REF-00259.\nRecord 00260: unrelated reference REF-00260.\nRecord 00261: unrelated reference REF-00261.\nRecord 00262: unrelated reference REF-00262.\nRecord 00263: unrelated reference REF-00263.\nRecord 00264: unrelated reference REF-00264.\nRecord 00265: unrelated reference REF-00265.\nRecord 00266: unrelated reference REF-00266.\nRecord 00267: unrelated reference REF-00267.\nRecord 00268: unrelated reference REF-00268.\nRecord 00269: unrelated reference REF-00269.\nRecord 00270: unrelated reference REF-00270.\nRecord 00271: unrelated reference REF-00271.\nRecord 00272: unrelated reference REF-00272.\nRecord 00273: unrelated reference REF-00273.\nRecord 00274: unrelated reference REF-00274.\nRecord 00275: unrelated reference REF-00275.\nRecord 00276: unrelated reference REF-00276.\nRecord 00277: unrelated reference REF-00277.\nRecord 00278: unrelated reference REF-00278.\nRecord 00279: unrelated reference REF-00279.\nRecord 00280: unrelated reference REF-00280.\nRecord 00281: unrelated reference REF-00281.\nRecord 00282: unrelated reference REF-00282.\nRecord 00283: unrelated reference REF-00283.\nRecord 00284: unrelated reference REF-00284.\nRecord 00285: unrelated reference REF-00285.\nRecord 00286: unrelated reference REF-00286.\nRecord 00287: unrelated reference REF-00287.\nRecord 00288: unrelated reference REF-00288.\nRecord 00289: unrelated reference REF-00289.\nRecord 00290: unrelated reference REF-00290.\nRecord 00291: unrelated reference REF-00291.\nRecord 00292: unrelated reference REF-00292.\nRecord 00293: unrelated reference REF-00293.\nRecord 00294: unrelated reference REF-00294.\nRecord 00295: unrelated reference REF-00295.\nRecord 00296: unrelated reference REF-00296.\nRecord 00297: unrelated reference REF-00297.\nRecord 00298: unrelated reference REF-00298.\nRecord 00299: unrelated reference REF-00299.\nRecord 00300: unrelated reference REF-00300.\nRecord 00301: unrelated reference REF-00301.\nRecord 00302: unrelated reference REF-00302.\nRecord 00303: unrelated reference REF-00303.\nRecord 00304: unrelated reference REF-00304.\nRecord 00305: unrelated reference REF-00305.\nRecord 00306: unrelated reference REF-00306.\nRecord 00307: unrelated reference REF-00307.\nRecord 00308: unrelated reference REF-00308.\nRecord 00309: unrelated reference REF-00309.\nRecord 00310: unrelated reference REF-00310.\nRecord 00311: unrelated reference REF-00311.\nRecord 00312: unrelated reference REF-00312.\nRecord 00313: unrelated reference REF-00313.\nRecord 00314: unrelated reference REF-00314.\nRecord 00315: unrelated reference REF-00315.\nRecord 00316: unrelated reference REF-00316.\nRecord 00317: unrelated reference REF-00317.\nRecord 00318: unrelated reference REF-00318.\nRecord 00319: unrelated reference REF-00319.\nRecord 00320: unrelated reference REF-00320.\nRecord 00321: unrelated reference REF-00321.\nRecord 00322: unrelated reference REF-00322.\nRecord 00323: unrelated reference REF-00323.\nRecord 00324: unrelated reference REF-00324.\nRecord 00325: unrelated reference REF-00325.\nRecord 00326: unrelated reference REF-00326.\nRecord 00327: unrelated reference REF-00327.\nRecord 00328: unrelated reference REF-00328.\nRecord 00329: unrelated reference REF-00329.\nRecord 00330: unrelated reference REF-00330.\nRecord 00331: unrelated reference REF-00331.\nRecord 00332: unrelated reference REF-00332.\nRecord 00333: unrelated reference REF-00333.\nRecord 00334: unrelated reference REF-00334.\nRecord 00335: unrelated reference REF-00335.\nRecord 00336: unrelated reference REF-00336.\nRecord 00337: unrelated reference REF-00337.\nRecord 00338: unrelated reference REF-00338.\nRecord 00339: unrelated reference REF-00339.\nRecord 00340: unrelated reference REF-00340.\nRecord 00341: unrelated reference REF-00341.\nRecord 00342: unrelated reference REF-00342.\nRecord 00343: unrelated reference REF-00343.\nRecord 00344: unrelated reference REF-00344.\nRecord 00345: unrelated reference REF-00345.\nRecord 00346: unrelated reference REF-00346.\nRecord 00347: unrelated reference REF-00347.\nRecord 00348: unrelated reference REF-00348.\nRecord 00349: unrelated reference REF-00349.\nRecord 00350: unrelated reference REF-00350.\nRecord 00351: unrelated reference REF-00351.\nRecord 00352: unrelated reference REF-00352.\nRecord 00353: unrelated reference REF-00353.\nRecord 00354: unrelated reference REF-00354.\nRecord 00355: unrelated reference REF-00355.\nRecord 00356: unrelated reference REF-00356.\nRecord 00357: unrelated reference REF-00357.\nRecord 00358: unrelated reference REF-00358.\nRecord 00359: unrelated reference REF-00359.\nRecord 00360: unrelated reference REF-00360.\nRecord 00361: unrelated reference REF-00361.\nRecord 00362: unrelated reference REF-00362.\nRecord 00363: unrelated reference REF-00363.\nRecord 00364: unrelated reference REF-00364.\nRecord 00365: unrelated reference REF-00365.\nRecord 00366: unrelated reference REF-00366.\nRecord 00367: unrelated reference REF-00367.\nRecord 00368: unrelated reference REF-00368.\nRecord 00369: unrelated reference REF-00369.\nRecord 00370: unrelated reference REF-00370.\nRecord 00371: unrelated reference REF-00371.\nRecord 00372: unrelated reference REF-00372.\nRecord 00373: unrelated reference REF-00373.\nRecord 00374: unrelated reference REF-00374.\nRecord 00375: unrelated reference REF-00375.\nRecord 00376: unrelated reference REF-00376.\nRecord 00377: unrelated reference REF-00377.\nRecord 00378: unrelated reference REF-00378.\nRecord 00379: unrelated reference REF-00379.\nRecord 00380: unrelated reference REF-00380.\nRecord 00381: unrelated reference REF-00381.\nRecord 00382: unrelated reference REF-00382.\nRecord 00383: unrelated reference REF-00383.\nRecord 00384: unrelated reference REF-00384.\nRecord 00385: unrelated reference REF-00385.\nRecord 00386: unrelated reference REF-00386.\nRecord 00387: unrelated reference REF-00387.\nRecord 00388: unrelated reference REF-00388.\nRecord 00389: unrelated reference REF-00389.\nRecord 00390: unrelated reference REF-00390.\nRecord 00391: unrelated reference REF-00391.\nRecord 00392: unrelated reference REF-00392.\nRecord 00393: unrelated reference REF-00393.\nRecord 00394: unrelated reference REF-00394.\nRecord 00395: unrelated reference REF-00395.\nRecord 00396: unrelated reference REF-00396.\nRecord 00397: unrelated reference REF-00397.\nRecord 00398: unrelated reference REF-00398.\nRecord 00399: unrelated reference REF-00399.\nRecord 00400: unrelated reference REF-00400.\nRecord 00401: unrelated reference REF-00401.\nRecord 00402: unrelated reference REF-00402.\nRecord 00403: unrelated reference REF-00403.\nRecord 00404: unrelated reference REF-00404.\nRecord 00405: unrelated reference REF-00405.\nRecord 00406: unrelated reference REF-00406.\nRecord 00407: unrelated reference REF-00407.\nRecord 00408: unrelated reference REF-00408.\nRecord 00409: unrelated reference REF-00409.\nRecord 00410: unrelated reference REF-00410.\nRecord 00411: unrelated reference REF-00411.\nRecord 00412: unrelated reference REF-00412.\nRecord 00413: unrelated reference REF-00413.\nRecord 00414: unrelated reference REF-00414.\nRecord 00415: unrelated reference REF-00415.\nRecord 00416: unrelated reference REF-00416.\nRecord 00417: unrelated reference REF-00417.\nRecord 00418: unrelated reference REF-00418.\nRecord 00419: unrelated reference REF-00419.\nRecord 00420: unrelated reference REF-00420.\nRecord 00421: unrelated reference REF-00421.\nRecord 00422: unrelated reference REF-00422.\nRecord 00423: unrelated reference REF-00423.\nRecord 00424: unrelated reference REF-00424.\nRecord 00425: unrelated reference REF-00425.\nRecord 00426: unrelated reference REF-00426.\nRecord 00427: unrelated reference REF-00427.\nRecord 00428: unrelated reference REF-00428.\nRecord 00429: unrelated reference REF-00429.\nRecord 00430: unrelated reference REF-00430.\nRecord 00431: unrelated reference REF-00431.\nRecord 00432: unrelated reference REF-00432.\nRecord 00433: unrelated reference REF-00433.\nRecord 00434: unrelated reference REF-00434.\nRecord 00435: unrelated reference REF-00435.\nRecord 00436: unrelated reference REF-00436.\nRecord 00437: unrelated reference REF-00437.\nRecord 00438: unrelated reference REF-00438.\nRecord 00439: unrelated reference REF-00439.\nRecord 00440: unrelated reference REF-00440.\nRecord 00441: unrelated reference REF-00441.\nRecord 00442: unrelated reference REF-00442.\nRecord 00443: unrelated reference REF-00443.\nRecord 00444: unrelated reference REF-00444.\nRecord 00445: unrelated reference REF-00445.\nRecord 00446: unrelated reference REF-00446.\nRecord 00447: unrelated reference REF-00447.\nRecord 00448: unrelated reference REF-00448.\nRecord 00449: unrelated reference REF-00449.\nRecord 00450: unrelated reference REF-00450.\nRecord 00451: unrelated reference REF-00451.\nRecord 00452: unrelated reference REF-00452.\nRecord 00453: unrelated reference REF-00453.\nRecord 00454: unrelated reference REF-00454.\nRecord 00455: unrelated reference REF-00455.\nRecord 00456: unrelated reference REF-00456.\nRecord 00457: unrelated reference REF-00457.\nRecord 00458: unrelated reference REF-00458.\nRecord 00459: unrelated reference REF-00459.\nRecord 00460: unrelated reference REF-00460.\nRecord 00461: unrelated reference REF-00461.\nRecord 00462: unrelated reference REF-00462.\nRecord 00463: unrelated reference REF-00463.\nRecord 00464: unrelated reference REF-00464.\nRecord 00465: unrelated reference REF-00465.\nRecord 00466: unrelated reference REF-00466.\nRecord 00467: unrelated reference REF-00467.\nRecord 00468: unrelated reference REF-00468.\nRecord 00469: unrelated reference REF-00469.\nRecord 00470: unrelated reference REF-00470.\nRecord 00471: unrelated reference REF-00471.\nRecord 00472: unrelated reference REF-00472.\nRecord 00473: unrelated reference REF-00473.\nRecord 00474: unrelated reference REF-00474.\nRecord 00475: unrelated reference REF-00475.\nRecord 00476: unrelated reference REF-00476.\nRecord 00477: unrelated reference REF-00477.\nRecord 00478: unrelated reference REF-00478.\nRecord 00479: unrelated reference REF-00479.\nRecord 00480: unrelated reference REF-00480.\nRecord 00481: unrelated reference REF-00481.\nRecord 00482: unrelated reference REF-00482.\nRecord 00483: unrelated reference REF-00483.\nRecord 00484: unrelated reference REF-00484.\nRecord 00485: unrelated reference REF-00485.\nRecord 00486: unrelated reference REF-00486.\nRecord 00487: unrelated reference REF-00487.\nRecord 00488: unrelated reference REF-00488.\nRecord 00489: unrelated reference REF-00489.\nRecord 00490: unrelated reference REF-00490.\nRecord 00491: unrelated reference REF-00491.\nRecord 00492: unrelated reference REF-00492.\nRecord 00493: unrelated reference REF-00493.\nRecord 00494: unrelated reference REF-00494.\nRecord 00495: unrelated reference REF-00495.\nRecord 00496: unrelated reference REF-00496.\nRecord 00497: unrelated reference REF-00497.\nRecord 00498: unrelated reference REF-00498.\nRecord 00499: unrelated reference REF-00499.\nRecord 00500: unrelated reference REF-00500.\nRecord 00501: unrelated reference REF-00501.\nRecord 00502: unrelated reference REF-00502.\nRecord 00503: unrelated reference REF-00503.\nRecord 00504: unrelated reference REF-00504.\nRecord 00505: unrelated reference REF-00505.\nRecord 00506: unrelated reference REF-00506.\nRecord 00507: unrelated reference REF-00507.\nRecord 00508: unrelated reference REF-00508.\nRecord 00509: unrelated reference REF-00509.\nRecord 00510: unrelated reference REF-00510.\nRecord 00511: unrelated reference REF-00511.\nReturn only the deployment rollback code."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "ORCHID-7319"
+      }
+    },
+    {
+      "id": "needle-512-end",
+      "tier": "retrieval",
+      "cluster": "needle-document-512",
+      "phase": "quality",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Record 00000: unrelated reference REF-00000.\nRecord 00001: unrelated reference REF-00001.\nRecord 00002: unrelated reference REF-00002.\nRecord 00003: unrelated reference REF-00003.\nRecord 00004: unrelated reference REF-00004.\nRecord 00005: unrelated reference REF-00005.\nRecord 00006: unrelated reference REF-00006.\nRecord 00007: unrelated reference REF-00007.\nRecord 00008: unrelated reference REF-00008.\nRecord 00009: unrelated reference REF-00009.\nRecord 00010: unrelated reference REF-00010.\nRecord 00011: unrelated reference REF-00011.\nRecord 00012: unrelated reference REF-00012.\nRecord 00013: unrelated reference REF-00013.\nRecord 00014: unrelated reference REF-00014.\nRecord 00015: unrelated reference REF-00015.\nRecord 00016: unrelated reference REF-00016.\nRecord 00017: unrelated reference REF-00017.\nRecord 00018: unrelated reference REF-00018.\nRecord 00019: unrelated reference REF-00019.\nRecord 00020: unrelated reference REF-00020.\nRecord 00021: unrelated reference REF-00021.\nRecord 00022: unrelated reference REF-00022.\nRecord 00023: unrelated reference REF-00023.\nRecord 00024: unrelated reference REF-00024.\nRecord 00025: unrelated reference REF-00025.\nRecord 00026: unrelated reference REF-00026.\nRecord 00027: unrelated reference REF-00027.\nRecord 00028: unrelated reference REF-00028.\nRecord 00029: unrelated reference REF-00029.\nRecord 00030: unrelated reference REF-00030.\nRecord 00031: unrelated reference REF-00031.\nRecord 00032: unrelated reference REF-00032.\nRecord 00033: unrelated reference REF-00033.\nRecord 00034: unrelated reference REF-00034.\nRecord 00035: unrelated reference REF-00035.\nRecord 00036: unrelated reference REF-00036.\nRecord 00037: unrelated reference REF-00037.\nRecord 00038: unrelated reference REF-00038.\nRecord 00039: unrelated reference REF-00039.\nRecord 00040: unrelated reference REF-00040.\nRecord 00041: unrelated reference REF-00041.\nRecord 00042: unrelated reference REF-00042.\nRecord 00043: unrelated reference REF-00043.\nRecord 00044: unrelated reference REF-00044.\nRecord 00045: unrelated reference REF-00045.\nRecord 00046: unrelated reference REF-00046.\nRecord 00047: unrelated reference REF-00047.\nRecord 00048: unrelated reference REF-00048.\nRecord 00049: unrelated reference REF-00049.\nRecord 00050: unrelated reference REF-00050.\nRecord 00051: unrelated reference REF-00051.\nRecord 00052: unrelated reference REF-00052.\nRecord 00053: unrelated reference REF-00053.\nRecord 00054: unrelated reference REF-00054.\nRecord 00055: unrelated reference REF-00055.\nRecord 00056: unrelated reference REF-00056.\nRecord 00057: unrelated reference REF-00057.\nRecord 00058: unrelated reference REF-00058.\nRecord 00059: unrelated reference REF-00059.\nRecord 00060: unrelated reference REF-00060.\nRecord 00061: unrelated reference REF-00061.\nRecord 00062: unrelated reference REF-00062.\nRecord 00063: unrelated reference REF-00063.\nRecord 00064: unrelated reference REF-00064.\nRecord 00065: unrelated reference REF-00065.\nRecord 00066: unrelated reference REF-00066.\nRecord 00067: unrelated reference REF-00067.\nRecord 00068: unrelated reference REF-00068.\nRecord 00069: unrelated reference REF-00069.\nRecord 00070: unrelated reference REF-00070.\nRecord 00071: unrelated reference REF-00071.\nRecord 00072: unrelated reference REF-00072.\nRecord 00073: unrelated reference REF-00073.\nRecord 00074: unrelated reference REF-00074.\nRecord 00075: unrelated reference REF-00075.\nRecord 00076: unrelated reference REF-00076.\nRecord 00077: unrelated reference REF-00077.\nRecord 00078: unrelated reference REF-00078.\nRecord 00079: unrelated reference REF-00079.\nRecord 00080: unrelated reference REF-00080.\nRecord 00081: unrelated reference REF-00081.\nRecord 00082: unrelated reference REF-00082.\nRecord 00083: unrelated reference REF-00083.\nRecord 00084: unrelated reference REF-00084.\nRecord 00085: unrelated reference REF-00085.\nRecord 00086: unrelated reference REF-00086.\nRecord 00087: unrelated reference REF-00087.\nRecord 00088: unrelated reference REF-00088.\nRecord 00089: unrelated reference REF-00089.\nRecord 00090: unrelated reference REF-00090.\nRecord 00091: unrelated reference REF-00091.\nRecord 00092: unrelated reference REF-00092.\nRecord 00093: unrelated reference REF-00093.\nRecord 00094: unrelated reference REF-00094.\nRecord 00095: unrelated reference REF-00095.\nRecord 00096: unrelated reference REF-00096.\nRecord 00097: unrelated reference REF-00097.\nRecord 00098: unrelated reference REF-00098.\nRecord 00099: unrelated reference REF-00099.\nRecord 00100: unrelated reference REF-00100.\nRecord 00101: unrelated reference REF-00101.\nRecord 00102: unrelated reference REF-00102.\nRecord 00103: unrelated reference REF-00103.\nRecord 00104: unrelated reference REF-00104.\nRecord 00105: unrelated reference REF-00105.\nRecord 00106: unrelated reference REF-00106.\nRecord 00107: unrelated reference REF-00107.\nRecord 00108: unrelated reference REF-00108.\nRecord 00109: unrelated reference REF-00109.\nRecord 00110: unrelated reference REF-00110.\nRecord 00111: unrelated reference REF-00111.\nRecord 00112: unrelated reference REF-00112.\nRecord 00113: unrelated reference REF-00113.\nRecord 00114: unrelated reference REF-00114.\nRecord 00115: unrelated reference REF-00115.\nRecord 00116: unrelated reference REF-00116.\nRecord 00117: unrelated reference REF-00117.\nRecord 00118: unrelated reference REF-00118.\nRecord 00119: unrelated reference REF-00119.\nRecord 00120: unrelated reference REF-00120.\nRecord 00121: unrelated reference REF-00121.\nRecord 00122: unrelated reference REF-00122.\nRecord 00123: unrelated reference REF-00123.\nRecord 00124: unrelated reference REF-00124.\nRecord 00125: unrelated reference REF-00125.\nRecord 00126: unrelated reference REF-00126.\nRecord 00127: unrelated reference REF-00127.\nRecord 00128: unrelated reference REF-00128.\nRecord 00129: unrelated reference REF-00129.\nRecord 00130: unrelated reference REF-00130.\nRecord 00131: unrelated reference REF-00131.\nRecord 00132: unrelated reference REF-00132.\nRecord 00133: unrelated reference REF-00133.\nRecord 00134: unrelated reference REF-00134.\nRecord 00135: unrelated reference REF-00135.\nRecord 00136: unrelated reference REF-00136.\nRecord 00137: unrelated reference REF-00137.\nRecord 00138: unrelated reference REF-00138.\nRecord 00139: unrelated reference REF-00139.\nRecord 00140: unrelated reference REF-00140.\nRecord 00141: unrelated reference REF-00141.\nRecord 00142: unrelated reference REF-00142.\nRecord 00143: unrelated reference REF-00143.\nRecord 00144: unrelated reference REF-00144.\nRecord 00145: unrelated reference REF-00145.\nRecord 00146: unrelated reference REF-00146.\nRecord 00147: unrelated reference REF-00147.\nRecord 00148: unrelated reference REF-00148.\nRecord 00149: unrelated reference REF-00149.\nRecord 00150: unrelated reference REF-00150.\nRecord 00151: unrelated reference REF-00151.\nRecord 00152: unrelated reference REF-00152.\nRecord 00153: unrelated reference REF-00153.\nRecord 00154: unrelated reference REF-00154.\nRecord 00155: unrelated reference REF-00155.\nRecord 00156: unrelated reference REF-00156.\nRecord 00157: unrelated reference REF-00157.\nRecord 00158: unrelated reference REF-00158.\nRecord 00159: unrelated reference REF-00159.\nRecord 00160: unrelated reference REF-00160.\nRecord 00161: unrelated reference REF-00161.\nRecord 00162: unrelated reference REF-00162.\nRecord 00163: unrelated reference REF-00163.\nRecord 00164: unrelated reference REF-00164.\nRecord 00165: unrelated reference REF-00165.\nRecord 00166: unrelated reference REF-00166.\nRecord 00167: unrelated reference REF-00167.\nRecord 00168: unrelated reference REF-00168.\nRecord 00169: unrelated reference REF-00169.\nRecord 00170: unrelated reference REF-00170.\nRecord 00171: unrelated reference REF-00171.\nRecord 00172: unrelated reference REF-00172.\nRecord 00173: unrelated reference REF-00173.\nRecord 00174: unrelated reference REF-00174.\nRecord 00175: unrelated reference REF-00175.\nRecord 00176: unrelated reference REF-00176.\nRecord 00177: unrelated reference REF-00177.\nRecord 00178: unrelated reference REF-00178.\nRecord 00179: unrelated reference REF-00179.\nRecord 00180: unrelated reference REF-00180.\nRecord 00181: unrelated reference REF-00181.\nRecord 00182: unrelated reference REF-00182.\nRecord 00183: unrelated reference REF-00183.\nRecord 00184: unrelated reference REF-00184.\nRecord 00185: unrelated reference REF-00185.\nRecord 00186: unrelated reference REF-00186.\nRecord 00187: unrelated reference REF-00187.\nRecord 00188: unrelated reference REF-00188.\nRecord 00189: unrelated reference REF-00189.\nRecord 00190: unrelated reference REF-00190.\nRecord 00191: unrelated reference REF-00191.\nRecord 00192: unrelated reference REF-00192.\nRecord 00193: unrelated reference REF-00193.\nRecord 00194: unrelated reference REF-00194.\nRecord 00195: unrelated reference REF-00195.\nRecord 00196: unrelated reference REF-00196.\nRecord 00197: unrelated reference REF-00197.\nRecord 00198: unrelated reference REF-00198.\nRecord 00199: unrelated reference REF-00199.\nRecord 00200: unrelated reference REF-00200.\nRecord 00201: unrelated reference REF-00201.\nRecord 00202: unrelated reference REF-00202.\nRecord 00203: unrelated reference REF-00203.\nRecord 00204: unrelated reference REF-00204.\nRecord 00205: unrelated reference REF-00205.\nRecord 00206: unrelated reference REF-00206.\nRecord 00207: unrelated reference REF-00207.\nRecord 00208: unrelated reference REF-00208.\nRecord 00209: unrelated reference REF-00209.\nRecord 00210: unrelated reference REF-00210.\nRecord 00211: unrelated reference REF-00211.\nRecord 00212: unrelated reference REF-00212.\nRecord 00213: unrelated reference REF-00213.\nRecord 00214: unrelated reference REF-00214.\nRecord 00215: unrelated reference REF-00215.\nRecord 00216: unrelated reference REF-00216.\nRecord 00217: unrelated reference REF-00217.\nRecord 00218: unrelated reference REF-00218.\nRecord 00219: unrelated reference REF-00219.\nRecord 00220: unrelated reference REF-00220.\nRecord 00221: unrelated reference REF-00221.\nRecord 00222: unrelated reference REF-00222.\nRecord 00223: unrelated reference REF-00223.\nRecord 00224: unrelated reference REF-00224.\nRecord 00225: unrelated reference REF-00225.\nRecord 00226: unrelated reference REF-00226.\nRecord 00227: unrelated reference REF-00227.\nRecord 00228: unrelated reference REF-00228.\nRecord 00229: unrelated reference REF-00229.\nRecord 00230: unrelated reference REF-00230.\nRecord 00231: unrelated reference REF-00231.\nRecord 00232: unrelated reference REF-00232.\nRecord 00233: unrelated reference REF-00233.\nRecord 00234: unrelated reference REF-00234.\nRecord 00235: unrelated reference REF-00235.\nRecord 00236: unrelated reference REF-00236.\nRecord 00237: unrelated reference REF-00237.\nRecord 00238: unrelated reference REF-00238.\nRecord 00239: unrelated reference REF-00239.\nRecord 00240: unrelated reference REF-00240.\nRecord 00241: unrelated reference REF-00241.\nRecord 00242: unrelated reference REF-00242.\nRecord 00243: unrelated reference REF-00243.\nRecord 00244: unrelated reference REF-00244.\nRecord 00245: unrelated reference REF-00245.\nRecord 00246: unrelated reference REF-00246.\nRecord 00247: unrelated reference REF-00247.\nRecord 00248: unrelated reference REF-00248.\nRecord 00249: unrelated reference REF-00249.\nRecord 00250: unrelated reference REF-00250.\nRecord 00251: unrelated reference REF-00251.\nRecord 00252: unrelated reference REF-00252.\nRecord 00253: unrelated reference REF-00253.\nRecord 00254: unrelated reference REF-00254.\nRecord 00255: unrelated reference REF-00255.\nRecord 00256: unrelated reference REF-00256.\nRecord 00257: unrelated reference REF-00257.\nRecord 00258: unrelated reference REF-00258.\nRecord 00259: unrelated reference REF-00259.\nRecord 00260: unrelated reference REF-00260.\nRecord 00261: unrelated reference REF-00261.\nRecord 00262: unrelated reference REF-00262.\nRecord 00263: unrelated reference REF-00263.\nRecord 00264: unrelated reference REF-00264.\nRecord 00265: unrelated reference REF-00265.\nRecord 00266: unrelated reference REF-00266.\nRecord 00267: unrelated reference REF-00267.\nRecord 00268: unrelated reference REF-00268.\nRecord 00269: unrelated reference REF-00269.\nRecord 00270: unrelated reference REF-00270.\nRecord 00271: unrelated reference REF-00271.\nRecord 00272: unrelated reference REF-00272.\nRecord 00273: unrelated reference REF-00273.\nRecord 00274: unrelated reference REF-00274.\nRecord 00275: unrelated reference REF-00275.\nRecord 00276: unrelated reference REF-00276.\nRecord 00277: unrelated reference REF-00277.\nRecord 00278: unrelated reference REF-00278.\nRecord 00279: unrelated reference REF-00279.\nRecord 00280: unrelated reference REF-00280.\nRecord 00281: unrelated reference REF-00281.\nRecord 00282: unrelated reference REF-00282.\nRecord 00283: unrelated reference REF-00283.\nRecord 00284: unrelated reference REF-00284.\nRecord 00285: unrelated reference REF-00285.\nRecord 00286: unrelated reference REF-00286.\nRecord 00287: unrelated reference REF-00287.\nRecord 00288: unrelated reference REF-00288.\nRecord 00289: unrelated reference REF-00289.\nRecord 00290: unrelated reference REF-00290.\nRecord 00291: unrelated reference REF-00291.\nRecord 00292: unrelated reference REF-00292.\nRecord 00293: unrelated reference REF-00293.\nRecord 00294: unrelated reference REF-00294.\nRecord 00295: unrelated reference REF-00295.\nRecord 00296: unrelated reference REF-00296.\nRecord 00297: unrelated reference REF-00297.\nRecord 00298: unrelated reference REF-00298.\nRecord 00299: unrelated reference REF-00299.\nRecord 00300: unrelated reference REF-00300.\nRecord 00301: unrelated reference REF-00301.\nRecord 00302: unrelated reference REF-00302.\nRecord 00303: unrelated reference REF-00303.\nRecord 00304: unrelated reference REF-00304.\nRecord 00305: unrelated reference REF-00305.\nRecord 00306: unrelated reference REF-00306.\nRecord 00307: unrelated reference REF-00307.\nRecord 00308: unrelated reference REF-00308.\nRecord 00309: unrelated reference REF-00309.\nRecord 00310: unrelated reference REF-00310.\nRecord 00311: unrelated reference REF-00311.\nRecord 00312: unrelated reference REF-00312.\nRecord 00313: unrelated reference REF-00313.\nRecord 00314: unrelated reference REF-00314.\nRecord 00315: unrelated reference REF-00315.\nRecord 00316: unrelated reference REF-00316.\nRecord 00317: unrelated reference REF-00317.\nRecord 00318: unrelated reference REF-00318.\nRecord 00319: unrelated reference REF-00319.\nRecord 00320: unrelated reference REF-00320.\nRecord 00321: unrelated reference REF-00321.\nRecord 00322: unrelated reference REF-00322.\nRecord 00323: unrelated reference REF-00323.\nRecord 00324: unrelated reference REF-00324.\nRecord 00325: unrelated reference REF-00325.\nRecord 00326: unrelated reference REF-00326.\nRecord 00327: unrelated reference REF-00327.\nRecord 00328: unrelated reference REF-00328.\nRecord 00329: unrelated reference REF-00329.\nRecord 00330: unrelated reference REF-00330.\nRecord 00331: unrelated reference REF-00331.\nRecord 00332: unrelated reference REF-00332.\nRecord 00333: unrelated reference REF-00333.\nRecord 00334: unrelated reference REF-00334.\nRecord 00335: unrelated reference REF-00335.\nRecord 00336: unrelated reference REF-00336.\nRecord 00337: unrelated reference REF-00337.\nRecord 00338: unrelated reference REF-00338.\nRecord 00339: unrelated reference REF-00339.\nRecord 00340: unrelated reference REF-00340.\nRecord 00341: unrelated reference REF-00341.\nRecord 00342: unrelated reference REF-00342.\nRecord 00343: unrelated reference REF-00343.\nRecord 00344: unrelated reference REF-00344.\nRecord 00345: unrelated reference REF-00345.\nRecord 00346: unrelated reference REF-00346.\nRecord 00347: unrelated reference REF-00347.\nRecord 00348: unrelated reference REF-00348.\nRecord 00349: unrelated reference REF-00349.\nRecord 00350: unrelated reference REF-00350.\nRecord 00351: unrelated reference REF-00351.\nRecord 00352: unrelated reference REF-00352.\nRecord 00353: unrelated reference REF-00353.\nRecord 00354: unrelated reference REF-00354.\nRecord 00355: unrelated reference REF-00355.\nRecord 00356: unrelated reference REF-00356.\nRecord 00357: unrelated reference REF-00357.\nRecord 00358: unrelated reference REF-00358.\nRecord 00359: unrelated reference REF-00359.\nRecord 00360: unrelated reference REF-00360.\nRecord 00361: unrelated reference REF-00361.\nRecord 00362: unrelated reference REF-00362.\nRecord 00363: unrelated reference REF-00363.\nRecord 00364: unrelated reference REF-00364.\nRecord 00365: unrelated reference REF-00365.\nRecord 00366: unrelated reference REF-00366.\nRecord 00367: unrelated reference REF-00367.\nRecord 00368: unrelated reference REF-00368.\nRecord 00369: unrelated reference REF-00369.\nRecord 00370: unrelated reference REF-00370.\nRecord 00371: unrelated reference REF-00371.\nRecord 00372: unrelated reference REF-00372.\nRecord 00373: unrelated reference REF-00373.\nRecord 00374: unrelated reference REF-00374.\nRecord 00375: unrelated reference REF-00375.\nRecord 00376: unrelated reference REF-00376.\nRecord 00377: unrelated reference REF-00377.\nRecord 00378: unrelated reference REF-00378.\nRecord 00379: unrelated reference REF-00379.\nRecord 00380: unrelated reference REF-00380.\nRecord 00381: unrelated reference REF-00381.\nRecord 00382: unrelated reference REF-00382.\nRecord 00383: unrelated reference REF-00383.\nRecord 00384: unrelated reference REF-00384.\nRecord 00385: unrelated reference REF-00385.\nRecord 00386: unrelated reference REF-00386.\nRecord 00387: unrelated reference REF-00387.\nRecord 00388: unrelated reference REF-00388.\nRecord 00389: unrelated reference REF-00389.\nRecord 00390: unrelated reference REF-00390.\nRecord 00391: unrelated reference REF-00391.\nRecord 00392: unrelated reference REF-00392.\nRecord 00393: unrelated reference REF-00393.\nRecord 00394: unrelated reference REF-00394.\nRecord 00395: unrelated reference REF-00395.\nRecord 00396: unrelated reference REF-00396.\nRecord 00397: unrelated reference REF-00397.\nRecord 00398: unrelated reference REF-00398.\nRecord 00399: unrelated reference REF-00399.\nRecord 00400: unrelated reference REF-00400.\nRecord 00401: unrelated reference REF-00401.\nRecord 00402: unrelated reference REF-00402.\nRecord 00403: unrelated reference REF-00403.\nRecord 00404: unrelated reference REF-00404.\nRecord 00405: unrelated reference REF-00405.\nRecord 00406: unrelated reference REF-00406.\nRecord 00407: unrelated reference REF-00407.\nRecord 00408: unrelated reference REF-00408.\nRecord 00409: unrelated reference REF-00409.\nRecord 00410: unrelated reference REF-00410.\nRecord 00411: unrelated reference REF-00411.\nRecord 00412: unrelated reference REF-00412.\nRecord 00413: unrelated reference REF-00413.\nRecord 00414: unrelated reference REF-00414.\nRecord 00415: unrelated reference REF-00415.\nRecord 00416: unrelated reference REF-00416.\nRecord 00417: unrelated reference REF-00417.\nRecord 00418: unrelated reference REF-00418.\nRecord 00419: unrelated reference REF-00419.\nRecord 00420: unrelated reference REF-00420.\nRecord 00421: unrelated reference REF-00421.\nRecord 00422: unrelated reference REF-00422.\nRecord 00423: unrelated reference REF-00423.\nRecord 00424: unrelated reference REF-00424.\nRecord 00425: unrelated reference REF-00425.\nRecord 00426: unrelated reference REF-00426.\nRecord 00427: unrelated reference REF-00427.\nRecord 00428: unrelated reference REF-00428.\nRecord 00429: unrelated reference REF-00429.\nRecord 00430: unrelated reference REF-00430.\nRecord 00431: unrelated reference REF-00431.\nRecord 00432: unrelated reference REF-00432.\nRecord 00433: unrelated reference REF-00433.\nRecord 00434: unrelated reference REF-00434.\nRecord 00435: unrelated reference REF-00435.\nRecord 00436: unrelated reference REF-00436.\nRecord 00437: unrelated reference REF-00437.\nRecord 00438: unrelated reference REF-00438.\nRecord 00439: unrelated reference REF-00439.\nRecord 00440: unrelated reference REF-00440.\nRecord 00441: unrelated reference REF-00441.\nRecord 00442: unrelated reference REF-00442.\nRecord 00443: unrelated reference REF-00443.\nRecord 00444: unrelated reference REF-00444.\nRecord 00445: unrelated reference REF-00445.\nRecord 00446: unrelated reference REF-00446.\nRecord 00447: unrelated reference REF-00447.\nRecord 00448: unrelated reference REF-00448.\nRecord 00449: unrelated reference REF-00449.\nRecord 00450: unrelated reference REF-00450.\nRecord 00451: unrelated reference REF-00451.\nRecord 00452: unrelated reference REF-00452.\nRecord 00453: unrelated reference REF-00453.\nRecord 00454: unrelated reference REF-00454.\nRecord 00455: unrelated reference REF-00455.\nRecord 00456: unrelated reference REF-00456.\nRecord 00457: unrelated reference REF-00457.\nRecord 00458: unrelated reference REF-00458.\nRecord 00459: unrelated reference REF-00459.\nRecord 00460: unrelated reference REF-00460.\nRecord 00461: unrelated reference REF-00461.\nRecord 00462: unrelated reference REF-00462.\nRecord 00463: unrelated reference REF-00463.\nRecord 00464: unrelated reference REF-00464.\nRecord 00465: unrelated reference REF-00465.\nRecord 00466: unrelated reference REF-00466.\nRecord 00467: unrelated reference REF-00467.\nRecord 00468: unrelated reference REF-00468.\nRecord 00469: unrelated reference REF-00469.\nRecord 00470: unrelated reference REF-00470.\nRecord 00471: unrelated reference REF-00471.\nRecord 00472: unrelated reference REF-00472.\nRecord 00473: unrelated reference REF-00473.\nRecord 00474: unrelated reference REF-00474.\nRecord 00475: unrelated reference REF-00475.\nRecord 00476: unrelated reference REF-00476.\nRecord 00477: unrelated reference REF-00477.\nRecord 00478: unrelated reference REF-00478.\nRecord 00479: unrelated reference REF-00479.\nRecord 00480: unrelated reference REF-00480.\nRecord 00481: unrelated reference REF-00481.\nRecord 00482: unrelated reference REF-00482.\nRecord 00483: unrelated reference REF-00483.\nRecord 00484: unrelated reference REF-00484.\nRecord 00485: unrelated reference REF-00485.\nRecord 00486: unrelated reference REF-00486.\nRecord 00487: unrelated reference REF-00487.\nRecord 00488: unrelated reference REF-00488.\nRecord 00489: unrelated reference REF-00489.\nRecord 00490: unrelated reference REF-00490.\nRecord 00491: unrelated reference REF-00491.\nRecord 00492: unrelated reference REF-00492.\nRecord 00493: unrelated reference REF-00493.\nRecord 00494: unrelated reference REF-00494.\nRecord 00495: unrelated reference REF-00495.\nRecord 00496: unrelated reference REF-00496.\nRecord 00497: unrelated reference REF-00497.\nRecord 00498: unrelated reference REF-00498.\nRecord 00499: unrelated reference REF-00499.\nRecord 00500: unrelated reference REF-00500.\nRecord 00501: unrelated reference REF-00501.\nRecord 00502: unrelated reference REF-00502.\nRecord 00503: unrelated reference REF-00503.\nRecord 00504: unrelated reference REF-00504.\nRecord 00505: unrelated reference REF-00505.\nRecord 00506: unrelated reference REF-00506.\nRecord 00507: unrelated reference REF-00507.\nRecord 00508: unrelated reference REF-00508.\nRecord 00509: unrelated reference REF-00509.\nRecord 00510: unrelated reference REF-00510.\nRecord 00511: unrelated reference REF-00511.\nThe deployment rollback code is ORCHID-7319.\nReturn only the deployment rollback code."
+          }
+        ]
+      },
+      "grader": {
+        "kind": "exact",
+        "expected": "ORCHID-7319"
+      }
+    },
+    {
+      "id": "decode-short",
+      "tier": "decode-short",
+      "cluster": "decode-short",
+      "phase": "performance",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Write a detailed Python implementation of an LRU cache and explain its invariants."
+          }
+        ],
+        "max_tokens": 256
+      }
+    },
+    {
+      "id": "prefill-lines-512",
+      "tier": "prefill-lines-512",
+      "cluster": "prefill-lines-512",
+      "phase": "performance",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Log entry 0: task completed normally.\nLog entry 1: task completed normally.\nLog entry 2: task completed normally.\nLog entry 3: task completed normally.\nLog entry 4: task completed normally.\nLog entry 5: task completed normally.\nLog entry 6: task completed normally.\nLog entry 7: task completed normally.\nLog entry 8: task completed normally.\nLog entry 9: task completed normally.\nLog entry 10: task completed normally.\nLog entry 11: task completed normally.\nLog entry 12: task completed normally.\nLog entry 13: task completed normally.\nLog entry 14: task completed normally.\nLog entry 15: task completed normally.\nLog entry 16: task completed normally.\nLog entry 17: task completed normally.\nLog entry 18: task completed normally.\nLog entry 19: task completed normally.\nLog entry 20: task completed normally.\nLog entry 21: task completed normally.\nLog entry 22: task completed normally.\nLog entry 23: task completed normally.\nLog entry 24: task completed normally.\nLog entry 25: task completed normally.\nLog entry 26: task completed normally.\nLog entry 27: task completed normally.\nLog entry 28: task completed normally.\nLog entry 29: task completed normally.\nLog entry 30: task completed normally.\nLog entry 31: task completed normally.\nLog entry 32: task completed normally.\nLog entry 33: task completed normally.\nLog entry 34: task completed normally.\nLog entry 35: task completed normally.\nLog entry 36: task completed normally.\nLog entry 37: task completed normally.\nLog entry 38: task completed normally.\nLog entry 39: task completed normally.\nLog entry 40: task completed normally.\nLog entry 41: task completed normally.\nLog entry 42: task completed normally.\nLog entry 43: task completed normally.\nLog entry 44: task completed normally.\nLog entry 45: task completed normally.\nLog entry 46: task completed normally.\nLog entry 47: task completed normally.\nLog entry 48: task completed normally.\nLog entry 49: task completed normally.\nLog entry 50: task completed normally.\nLog entry 51: task completed normally.\nLog entry 52: task completed normally.\nLog entry 53: task completed normally.\nLog entry 54: task completed normally.\nLog entry 55: task completed normally.\nLog entry 56: task completed normally.\nLog entry 57: task completed normally.\nLog entry 58: task completed normally.\nLog entry 59: task completed normally.\nLog entry 60: task completed normally.\nLog entry 61: task completed normally.\nLog entry 62: task completed normally.\nLog entry 63: task completed normally.\nLog entry 64: task completed normally.\nLog entry 65: task completed normally.\nLog entry 66: task completed normally.\nLog entry 67: task completed normally.\nLog entry 68: task completed normally.\nLog entry 69: task completed normally.\nLog entry 70: task completed normally.\nLog entry 71: task completed normally.\nLog entry 72: task completed normally.\nLog entry 73: task completed normally.\nLog entry 74: task completed normally.\nLog entry 75: task completed normally.\nLog entry 76: task completed normally.\nLog entry 77: task completed normally.\nLog entry 78: task completed normally.\nLog entry 79: task completed normally.\nLog entry 80: task completed normally.\nLog entry 81: task completed normally.\nLog entry 82: task completed normally.\nLog entry 83: task completed normally.\nLog entry 84: task completed normally.\nLog entry 85: task completed normally.\nLog entry 86: task completed normally.\nLog entry 87: task completed normally.\nLog entry 88: task completed normally.\nLog entry 89: task completed normally.\nLog entry 90: task completed normally.\nLog entry 91: task completed normally.\nLog entry 92: task completed normally.\nLog entry 93: task completed normally.\nLog entry 94: task completed normally.\nLog entry 95: task completed normally.\nLog entry 96: task completed normally.\nLog entry 97: task completed normally.\nLog entry 98: task completed normally.\nLog entry 99: task completed normally.\nLog entry 100: task completed normally.\nLog entry 101: task completed normally.\nLog entry 102: task completed normally.\nLog entry 103: task completed normally.\nLog entry 104: task completed normally.\nLog entry 105: task completed normally.\nLog entry 106: task completed normally.\nLog entry 107: task completed normally.\nLog entry 108: task completed normally.\nLog entry 109: task completed normally.\nLog entry 110: task completed normally.\nLog entry 111: task completed normally.\nLog entry 112: task completed normally.\nLog entry 113: task completed normally.\nLog entry 114: task completed normally.\nLog entry 115: task completed normally.\nLog entry 116: task completed normally.\nLog entry 117: task completed normally.\nLog entry 118: task completed normally.\nLog entry 119: task completed normally.\nLog entry 120: task completed normally.\nLog entry 121: task completed normally.\nLog entry 122: task completed normally.\nLog entry 123: task completed normally.\nLog entry 124: task completed normally.\nLog entry 125: task completed normally.\nLog entry 126: task completed normally.\nLog entry 127: task completed normally.\nLog entry 128: task completed normally.\nLog entry 129: task completed normally.\nLog entry 130: task completed normally.\nLog entry 131: task completed normally.\nLog entry 132: task completed normally.\nLog entry 133: task completed normally.\nLog entry 134: task completed normally.\nLog entry 135: task completed normally.\nLog entry 136: task completed normally.\nLog entry 137: task completed normally.\nLog entry 138: task completed normally.\nLog entry 139: task completed normally.\nLog entry 140: task completed normally.\nLog entry 141: task completed normally.\nLog entry 142: task completed normally.\nLog entry 143: task completed normally.\nLog entry 144: task completed normally.\nLog entry 145: task completed normally.\nLog entry 146: task completed normally.\nLog entry 147: task completed normally.\nLog entry 148: task completed normally.\nLog entry 149: task completed normally.\nLog entry 150: task completed normally.\nLog entry 151: task completed normally.\nLog entry 152: task completed normally.\nLog entry 153: task completed normally.\nLog entry 154: task completed normally.\nLog entry 155: task completed normally.\nLog entry 156: task completed normally.\nLog entry 157: task completed normally.\nLog entry 158: task completed normally.\nLog entry 159: task completed normally.\nLog entry 160: task completed normally.\nLog entry 161: task completed normally.\nLog entry 162: task completed normally.\nLog entry 163: task completed normally.\nLog entry 164: task completed normally.\nLog entry 165: task completed normally.\nLog entry 166: task completed normally.\nLog entry 167: task completed normally.\nLog entry 168: task completed normally.\nLog entry 169: task completed normally.\nLog entry 170: task completed normally.\nLog entry 171: task completed normally.\nLog entry 172: task completed normally.\nLog entry 173: task completed normally.\nLog entry 174: task completed normally.\nLog entry 175: task completed normally.\nLog entry 176: task completed normally.\nLog entry 177: task completed normally.\nLog entry 178: task completed normally.\nLog entry 179: task completed normally.\nLog entry 180: task completed normally.\nLog entry 181: task completed normally.\nLog entry 182: task completed normally.\nLog entry 183: task completed normally.\nLog entry 184: task completed normally.\nLog entry 185: task completed normally.\nLog entry 186: task completed normally.\nLog entry 187: task completed normally.\nLog entry 188: task completed normally.\nLog entry 189: task completed normally.\nLog entry 190: task completed normally.\nLog entry 191: task completed normally.\nLog entry 192: task completed normally.\nLog entry 193: task completed normally.\nLog entry 194: task completed normally.\nLog entry 195: task completed normally.\nLog entry 196: task completed normally.\nLog entry 197: task completed normally.\nLog entry 198: task completed normally.\nLog entry 199: task completed normally.\nLog entry 200: task completed normally.\nLog entry 201: task completed normally.\nLog entry 202: task completed normally.\nLog entry 203: task completed normally.\nLog entry 204: task completed normally.\nLog entry 205: task completed normally.\nLog entry 206: task completed normally.\nLog entry 207: task completed normally.\nLog entry 208: task completed normally.\nLog entry 209: task completed normally.\nLog entry 210: task completed normally.\nLog entry 211: task completed normally.\nLog entry 212: task completed normally.\nLog entry 213: task completed normally.\nLog entry 214: task completed normally.\nLog entry 215: task completed normally.\nLog entry 216: task completed normally.\nLog entry 217: task completed normally.\nLog entry 218: task completed normally.\nLog entry 219: task completed normally.\nLog entry 220: task completed normally.\nLog entry 221: task completed normally.\nLog entry 222: task completed normally.\nLog entry 223: task completed normally.\nLog entry 224: task completed normally.\nLog entry 225: task completed normally.\nLog entry 226: task completed normally.\nLog entry 227: task completed normally.\nLog entry 228: task completed normally.\nLog entry 229: task completed normally.\nLog entry 230: task completed normally.\nLog entry 231: task completed normally.\nLog entry 232: task completed normally.\nLog entry 233: task completed normally.\nLog entry 234: task completed normally.\nLog entry 235: task completed normally.\nLog entry 236: task completed normally.\nLog entry 237: task completed normally.\nLog entry 238: task completed normally.\nLog entry 239: task completed normally.\nLog entry 240: task completed normally.\nLog entry 241: task completed normally.\nLog entry 242: task completed normally.\nLog entry 243: task completed normally.\nLog entry 244: task completed normally.\nLog entry 245: task completed normally.\nLog entry 246: task completed normally.\nLog entry 247: task completed normally.\nLog entry 248: task completed normally.\nLog entry 249: task completed normally.\nLog entry 250: task completed normally.\nLog entry 251: task completed normally.\nLog entry 252: task completed normally.\nLog entry 253: task completed normally.\nLog entry 254: task completed normally.\nLog entry 255: task completed normally.\nLog entry 256: task completed normally.\nLog entry 257: task completed normally.\nLog entry 258: task completed normally.\nLog entry 259: task completed normally.\nLog entry 260: task completed normally.\nLog entry 261: task completed normally.\nLog entry 262: task completed normally.\nLog entry 263: task completed normally.\nLog entry 264: task completed normally.\nLog entry 265: task completed normally.\nLog entry 266: task completed normally.\nLog entry 267: task completed normally.\nLog entry 268: task completed normally.\nLog entry 269: task completed normally.\nLog entry 270: task completed normally.\nLog entry 271: task completed normally.\nLog entry 272: task completed normally.\nLog entry 273: task completed normally.\nLog entry 274: task completed normally.\nLog entry 275: task completed normally.\nLog entry 276: task completed normally.\nLog entry 277: task completed normally.\nLog entry 278: task completed normally.\nLog entry 279: task completed normally.\nLog entry 280: task completed normally.\nLog entry 281: task completed normally.\nLog entry 282: task completed normally.\nLog entry 283: task completed normally.\nLog entry 284: task completed normally.\nLog entry 285: task completed normally.\nLog entry 286: task completed normally.\nLog entry 287: task completed normally.\nLog entry 288: task completed normally.\nLog entry 289: task completed normally.\nLog entry 290: task completed normally.\nLog entry 291: task completed normally.\nLog entry 292: task completed normally.\nLog entry 293: task completed normally.\nLog entry 294: task completed normally.\nLog entry 295: task completed normally.\nLog entry 296: task completed normally.\nLog entry 297: task completed normally.\nLog entry 298: task completed normally.\nLog entry 299: task completed normally.\nLog entry 300: task completed normally.\nLog entry 301: task completed normally.\nLog entry 302: task completed normally.\nLog entry 303: task completed normally.\nLog entry 304: task completed normally.\nLog entry 305: task completed normally.\nLog entry 306: task completed normally.\nLog entry 307: task completed normally.\nLog entry 308: task completed normally.\nLog entry 309: task completed normally.\nLog entry 310: task completed normally.\nLog entry 311: task completed normally.\nLog entry 312: task completed normally.\nLog entry 313: task completed normally.\nLog entry 314: task completed normally.\nLog entry 315: task completed normally.\nLog entry 316: task completed normally.\nLog entry 317: task completed normally.\nLog entry 318: task completed normally.\nLog entry 319: task completed normally.\nLog entry 320: task completed normally.\nLog entry 321: task completed normally.\nLog entry 322: task completed normally.\nLog entry 323: task completed normally.\nLog entry 324: task completed normally.\nLog entry 325: task completed normally.\nLog entry 326: task completed normally.\nLog entry 327: task completed normally.\nLog entry 328: task completed normally.\nLog entry 329: task completed normally.\nLog entry 330: task completed normally.\nLog entry 331: task completed normally.\nLog entry 332: task completed normally.\nLog entry 333: task completed normally.\nLog entry 334: task completed normally.\nLog entry 335: task completed normally.\nLog entry 336: task completed normally.\nLog entry 337: task completed normally.\nLog entry 338: task completed normally.\nLog entry 339: task completed normally.\nLog entry 340: task completed normally.\nLog entry 341: task completed normally.\nLog entry 342: task completed normally.\nLog entry 343: task completed normally.\nLog entry 344: task completed normally.\nLog entry 345: task completed normally.\nLog entry 346: task completed normally.\nLog entry 347: task completed normally.\nLog entry 348: task completed normally.\nLog entry 349: task completed normally.\nLog entry 350: task completed normally.\nLog entry 351: task completed normally.\nLog entry 352: task completed normally.\nLog entry 353: task completed normally.\nLog entry 354: task completed normally.\nLog entry 355: task completed normally.\nLog entry 356: task completed normally.\nLog entry 357: task completed normally.\nLog entry 358: task completed normally.\nLog entry 359: task completed normally.\nLog entry 360: task completed normally.\nLog entry 361: task completed normally.\nLog entry 362: task completed normally.\nLog entry 363: task completed normally.\nLog entry 364: task completed normally.\nLog entry 365: task completed normally.\nLog entry 366: task completed normally.\nLog entry 367: task completed normally.\nLog entry 368: task completed normally.\nLog entry 369: task completed normally.\nLog entry 370: task completed normally.\nLog entry 371: task completed normally.\nLog entry 372: task completed normally.\nLog entry 373: task completed normally.\nLog entry 374: task completed normally.\nLog entry 375: task completed normally.\nLog entry 376: task completed normally.\nLog entry 377: task completed normally.\nLog entry 378: task completed normally.\nLog entry 379: task completed normally.\nLog entry 380: task completed normally.\nLog entry 381: task completed normally.\nLog entry 382: task completed normally.\nLog entry 383: task completed normally.\nLog entry 384: task completed normally.\nLog entry 385: task completed normally.\nLog entry 386: task completed normally.\nLog entry 387: task completed normally.\nLog entry 388: task completed normally.\nLog entry 389: task completed normally.\nLog entry 390: task completed normally.\nLog entry 391: task completed normally.\nLog entry 392: task completed normally.\nLog entry 393: task completed normally.\nLog entry 394: task completed normally.\nLog entry 395: task completed normally.\nLog entry 396: task completed normally.\nLog entry 397: task completed normally.\nLog entry 398: task completed normally.\nLog entry 399: task completed normally.\nLog entry 400: task completed normally.\nLog entry 401: task completed normally.\nLog entry 402: task completed normally.\nLog entry 403: task completed normally.\nLog entry 404: task completed normally.\nLog entry 405: task completed normally.\nLog entry 406: task completed normally.\nLog entry 407: task completed normally.\nLog entry 408: task completed normally.\nLog entry 409: task completed normally.\nLog entry 410: task completed normally.\nLog entry 411: task completed normally.\nLog entry 412: task completed normally.\nLog entry 413: task completed normally.\nLog entry 414: task completed normally.\nLog entry 415: task completed normally.\nLog entry 416: task completed normally.\nLog entry 417: task completed normally.\nLog entry 418: task completed normally.\nLog entry 419: task completed normally.\nLog entry 420: task completed normally.\nLog entry 421: task completed normally.\nLog entry 422: task completed normally.\nLog entry 423: task completed normally.\nLog entry 424: task completed normally.\nLog entry 425: task completed normally.\nLog entry 426: task completed normally.\nLog entry 427: task completed normally.\nLog entry 428: task completed normally.\nLog entry 429: task completed normally.\nLog entry 430: task completed normally.\nLog entry 431: task completed normally.\nLog entry 432: task completed normally.\nLog entry 433: task completed normally.\nLog entry 434: task completed normally.\nLog entry 435: task completed normally.\nLog entry 436: task completed normally.\nLog entry 437: task completed normally.\nLog entry 438: task completed normally.\nLog entry 439: task completed normally.\nLog entry 440: task completed normally.\nLog entry 441: task completed normally.\nLog entry 442: task completed normally.\nLog entry 443: task completed normally.\nLog entry 444: task completed normally.\nLog entry 445: task completed normally.\nLog entry 446: task completed normally.\nLog entry 447: task completed normally.\nLog entry 448: task completed normally.\nLog entry 449: task completed normally.\nLog entry 450: task completed normally.\nLog entry 451: task completed normally.\nLog entry 452: task completed normally.\nLog entry 453: task completed normally.\nLog entry 454: task completed normally.\nLog entry 455: task completed normally.\nLog entry 456: task completed normally.\nLog entry 457: task completed normally.\nLog entry 458: task completed normally.\nLog entry 459: task completed normally.\nLog entry 460: task completed normally.\nLog entry 461: task completed normally.\nLog entry 462: task completed normally.\nLog entry 463: task completed normally.\nLog entry 464: task completed normally.\nLog entry 465: task completed normally.\nLog entry 466: task completed normally.\nLog entry 467: task completed normally.\nLog entry 468: task completed normally.\nLog entry 469: task completed normally.\nLog entry 470: task completed normally.\nLog entry 471: task completed normally.\nLog entry 472: task completed normally.\nLog entry 473: task completed normally.\nLog entry 474: task completed normally.\nLog entry 475: task completed normally.\nLog entry 476: task completed normally.\nLog entry 477: task completed normally.\nLog entry 478: task completed normally.\nLog entry 479: task completed normally.\nLog entry 480: task completed normally.\nLog entry 481: task completed normally.\nLog entry 482: task completed normally.\nLog entry 483: task completed normally.\nLog entry 484: task completed normally.\nLog entry 485: task completed normally.\nLog entry 486: task completed normally.\nLog entry 487: task completed normally.\nLog entry 488: task completed normally.\nLog entry 489: task completed normally.\nLog entry 490: task completed normally.\nLog entry 491: task completed normally.\nLog entry 492: task completed normally.\nLog entry 493: task completed normally.\nLog entry 494: task completed normally.\nLog entry 495: task completed normally.\nLog entry 496: task completed normally.\nLog entry 497: task completed normally.\nLog entry 498: task completed normally.\nLog entry 499: task completed normally.\nLog entry 500: task completed normally.\nLog entry 501: task completed normally.\nLog entry 502: task completed normally.\nLog entry 503: task completed normally.\nLog entry 504: task completed normally.\nLog entry 505: task completed normally.\nLog entry 506: task completed normally.\nLog entry 507: task completed normally.\nLog entry 508: task completed normally.\nLog entry 509: task completed normally.\nLog entry 510: task completed normally.\nLog entry 511: task completed normally.\nSummarize the logs."
+          }
+        ],
+        "max_tokens": 1
+      }
+    }
+  ]
+}

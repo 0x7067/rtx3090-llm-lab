@@ -28,13 +28,26 @@ the corrected live parser and throughput still need a GPU smoke test.
 The job pauses Flux apps and llama, starts the isolated SGLang server,
 checks a real medium-effort answer, resumes regeneration, filters the new
 capture input, and restores the local API on success, failure, or TERM.
-The API maintenance window is pending user approval. No GPU job has been
-started during this audit. The `--prepare-only` pass completed: the new
+The user authorized taking the local-model server offline to continue on
+September 5. The `--prepare-only` pass completed: the new
 output contains 1,362 unique rows, all five local regression tests and nine
 existing SGLang K2 parser tests pass, and the restart script passes
-ShellCheck. The local API remains at one healthy replica.
+ShellCheck. The job is managed by the user systemd service
+`k2-regeneration-20260905`. Startup exposed that user services inherit
+neither the interactive `KUBECONFIG` nor its local-bin PATH; the launcher
+now supplies both and checks required commands before pausing the API.
+At 21:44 UTC, Flux apps was suspended, llama was scaled to zero, and
+SGLang began loading K2 on the 3090. Inspect the service journal and
+`resume-2026-09-05/server.log` under the training directory for live state.
+The live medium-effort `2+2` smoke test passed at 21:47 UTC. By 21:48,
+48 new responses had been persisted, all 48 with usable answers or tool
+calls and no request errors; the regenerated output had 1,410 rows total.
+This confirms the corrected regeneration stage is running, not that draft
+training or deployment has completed. The job restores the API when this
+regeneration/filtering stage ends; the existing maintenance authorization
+also covers the subsequent capture and training work.
 
-Run after that approval from the host, so the job survives a client disconnect:
+The launch command, run on the host so it survives a client disconnect:
 
 ```bash
 systemd-run --user --unit=k2-regeneration-20260905 \

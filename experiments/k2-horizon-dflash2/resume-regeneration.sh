@@ -11,9 +11,12 @@ RUN="$W/resume-2026-09-05"
 mkdir -p "$RUN"
 exec 9>"$W/.k2-training.lock"
 flock -n 9 || { echo 'Another K2 training job owns the lock' >&2; exit 1; }
+export PATH="$HOME/.local/bin:$PATH"
 # shellcheck source=/dev/null
 source "$W/venv/bin/activate"
 export HF_HUB_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1
+# User services do not inherit the interactive shell's kubeconfig export.
+export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
 
 # Keep the original outputs intact: their normalization already erased the
 # delimiters needed to recover swallowed answers without generating them again.
@@ -51,6 +54,9 @@ if [[ "${1:-}" == --prepare-only ]]; then
   echo 'Dataset and parser preflight ready; GPU and local API untouched'
   exit 0
 fi
+for command in flux kubectl nvidia-smi curl setsid; do
+  command -v "$command" > /dev/null || { echo "Missing command: $command" >&2; exit 1; }
+done
 replicas=$(kubectl -n apps get deploy llama -o jsonpath='{.spec.replicas}')
 suspended=$(kubectl -n flux-system get kustomization apps -o jsonpath='{.spec.suspend}')
 [[ "$replicas" == 1 && "$suspended" != true ]] || {

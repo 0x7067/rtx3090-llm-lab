@@ -1,0 +1,36 @@
+0.00.119.621 W DEPRECATED: --mmap and --no-mmap are deprecated. use --load-mode mmap instead
+0.00.123.445 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.123.772 W srv  llama_server: -----------------
+0.00.123.773 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set
+0.00.123.773 W srv  llama_server: this can be a security risk (cross-origin attacks)
+0.00.123.774 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655
+0.00.123.774 W srv  llama_server: -----------------
+0.00.124.997 I srv    load_model: loading model '/models/qwen3.8/unsloth/Qwen3.8-27B-GGUF/Qwen3.8-27B-UD-Q4_K_XL-v3.gguf'
+0.01.008.316 E llama_init_from_model: failed to initialize the context: dflash requires ctx_other to be set (this warning is normal during memory fitting)
+0.01.046.652 W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model
+0.01.046.671 W common_fit_params: failed to fit params to free device memory: n_gpu_layers already set by user to 99, abort
+0.01.368.954 W model has unused tensor blk.64.attn_norm.weight (size = 20480 bytes) -- ignoring
+0.01.368.960 W model has unused tensor blk.64.post_attention_norm.weight (size = 20480 bytes) -- ignoring
+0.01.368.967 W model has unused tensor blk.64.attn_q.weight (size = 51609600 bytes) -- ignoring
+0.01.368.970 W model has unused tensor blk.64.attn_k.weight (size = 5570560 bytes) -- ignoring
+0.01.368.973 W model has unused tensor blk.64.attn_v.weight (size = 5570560 bytes) -- ignoring
+0.01.368.982 W model has unused tensor blk.64.attn_output.weight (size = 25804800 bytes) -- ignoring
+0.01.368.985 W model has unused tensor blk.64.attn_q_norm.weight (size = 1024 bytes) -- ignoring
+0.01.368.988 W model has unused tensor blk.64.attn_k_norm.weight (size = 1024 bytes) -- ignoring
+0.01.368.991 W model has unused tensor blk.64.ffn_gate.weight (size = 73113600 bytes) -- ignoring
+0.01.368.994 W model has unused tensor blk.64.ffn_down.weight (size = 73113600 bytes) -- ignoring
+0.01.368.996 W model has unused tensor blk.64.ffn_up.weight (size = 73113600 bytes) -- ignoring
+0.01.369.000 W model has unused tensor blk.64.nextn.eh_proj.weight (size = 43008000 bytes) -- ignoring
+0.01.369.003 W model has unused tensor blk.64.nextn.enorm.weight (size = 20480 bytes) -- ignoring
+0.01.369.005 W model has unused tensor blk.64.nextn.hnorm.weight (size = 20480 bytes) -- ignoring
+0.01.369.014 W model has unused tensor blk.64.nextn.shared_head_norm.weight (size = 20480 bytes) -- ignoring
+0.03.504.477 I cmn          init: llama threadpool init, n_threads = 8
+0.03.570.362 I common_speculative_init_result: loading draft model '/trial/DFlash2-Q4_K_M.gguf'
+0.04.051.658 E ggml_backend_cuda_buffer_type_alloc_buffer: allocating 553.90 MiB on device 0: cudaMalloc failed: out of memory
+0.04.051.661 E ggml_gallocr_reserve_n_impl: failed to allocate CUDA0 buffer of size 580809472
+0.04.051.662 E graph_reserve: failed to allocate compute buffers
+0.04.052.048 E llama_init_from_model: failed to initialize the context: failed to allocate compute pp buffers
+0.04.052.051 E common_speculative_init_result: failed to create MTP context
+0.04.052.056 E srv    load_model: failed to create MTP context
+0.04.052.061 I srv    operator(): operator(): cleaning up before exit...
+0.04.052.634 E srv  llama_server: exiting due to model loading error

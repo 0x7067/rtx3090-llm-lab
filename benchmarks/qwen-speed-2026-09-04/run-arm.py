@@ -16,6 +16,11 @@ p.add_argument('--image')
 p.add_argument('--draft', type=int, default=7)
 p.add_argument('--parallel', type=int, default=1)
 p.add_argument('--threads', type=int, default=8)
+p.add_argument('--batch', type=int, default=512)
+p.add_argument('--ubatch', type=int, default=512)
+p.add_argument('--prefill-tokens', type=int, default=0)
+p.add_argument('--prefill-cublas', type=int, default=0)
+p.add_argument('--sort-chunk-mib', type=int, default=0)
 p.add_argument('--ngram-max', type=int, default=64)
 p.add_argument('--q4-draft', action='store_true')
 p.add_argument('--cpu-vision', action='store_true')
@@ -36,6 +41,8 @@ replace('--spec-draft-n-max', a.draft)
 replace('--parallel', a.parallel)
 replace('--threads', a.threads)
 replace('--threads-batch', a.threads)
+replace('--batch-size', a.batch)
+replace('--ubatch-size', a.ubatch)
 if a.ngram_max != 64:
     cmd += ['--spec-ngram-mod-n-max', str(a.ngram_max)]
 if a.parallel > 1:
@@ -51,6 +58,11 @@ run = ['docker', 'run', '-d', '--name', name, '--gpus', 'all', '--network', 'hos
        '-v', '/tmp/qwen-speed:/trial:ro',
        '-e', 'GGML_CUDA_MMVQ_NE11_MAX=3', '-e', 'GGML_CUDA_MMQ_SMALLN=3',
        '--entrypoint', '/usr/local/bin/llama-server', base['image'], *cmd]
+if a.prefill_cublas:
+    run[2:2] = ['-e', f'GGML_CUDA_PREFILL_CUBLAS_MIN={a.prefill_cublas}']
+if a.sort_chunk_mib:
+    run[2:2] = ['-e', f'GGML_CUDA_SORT_CHUNK_MIB={a.sort_chunk_mib}']
+(ROOT / (a.tag + '-launch.json')).write_text(json.dumps(run, indent=2) + '\n')
 try:
     subprocess.run(run, check=True, stdout=subprocess.DEVNULL)
     ready = False
@@ -69,6 +81,8 @@ try:
     if not ready:
         raise RuntimeError('server startup exceeded 300 seconds')
     shared = ['--base-url','http://127.0.0.1:18089/v1','--tag',a.tag,'--reasoning','medium','--out',str(ROOT / 'screening.jsonl')]
+    if a.prefill_tokens:
+        subprocess.run([sys.executable,str(ROOT/'bench.py'),'prefill','--tokens',str(a.prefill_tokens),*shared],check=True,timeout=420)
     for job in ([] if a.checks_only else [ ['quality'], ['session','--turns','8','--max-tokens','4096','--preamble-tokens',str(a.depth)], ['concurrent','--n','4'], ['sustained','--max-tokens','2048'] ]):
         subprocess.run([sys.executable,str(ROOT/'bench.py'),*job,*shared],check=True,timeout=420,env={**os.environ,"QWEN_OUTPUTS":str(ROOT / (a.tag + "-" + job[0] + "-outputs.jsonl"))})
     if a.qualify:

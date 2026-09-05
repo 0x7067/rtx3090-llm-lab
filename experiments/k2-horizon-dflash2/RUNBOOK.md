@@ -1,5 +1,67 @@
 # K2 Horizon 7B DFlash2 drafter: training runbook
 
+## Resume audit, September 5
+
+The September 4 Claude session `e39adc1c-0fa6-4d11-85c2-93a34c34d655`
+stopped during regeneration. At this audit, no training or capture process
+is running, the old feature directory is empty, and the v18 local API is
+healthy. `regen-output.jsonl` contains 4,427 distinct, parseable rows from
+the 10,082-row input, but only **898** have a completed answer or tool call;
+464 are truncated and 3,065 completed with neither. Of 3,345 public-prompt
+rows, only 12 pass the usable-answer filter.
+
+The installed SGLang K2 parser expects `</ifm|think_fast>` at medium and
+`</ifm|think_faster>` at low. The 7B can emit `</ifm|think>` instead: a
+non-streaming parser regression reproduces it swallowing the final answer.
+The old regeneration script then removed that closing tag, so the affected
+saved answers cannot be split reliably. Do not try to recover them using
+prose heuristics. `sglang-k2-nonstream-reasoning.patch` is applied to the
+isolated SGLang checkout and accepts this delimiter for non-streaming
+regeneration; it does not change streaming parsing. The new tests execute
+the actual installed parser, and failed before this patch.
+
+`resume-regeneration.sh` preserves the original file and seeds
+`regen-output-v2.jsonl` with the 898 usable and 464 truncated records. It
+must generate the 5,655 missing plus 3,065 affected rows (8,720 total).
+At the previous 10–15 rows/minute, allow roughly 10–15 hours for this stage;
+the corrected live parser and throughput still need a GPU smoke test.
+The job pauses Flux apps and llama, starts the isolated SGLang server,
+checks a real medium-effort answer, resumes regeneration, filters the new
+capture input, and restores the local API on success, failure, or TERM.
+The API maintenance window is pending user approval. No GPU job has been
+started during this audit. The `--prepare-only` pass completed: the new
+output contains 1,362 unique rows, all five local regression tests and nine
+existing SGLang K2 parser tests pass, and the restart script passes
+ShellCheck. The local API remains at one healthy replica.
+
+Run after that approval from the host, so the job survives a client disconnect:
+
+```bash
+systemd-run --user --unit=k2-regeneration-20260905 \
+  --property=KillMode=mixed --property=TimeoutStopSec=20min \
+  bash /data/docker-services/rtx3090-llm-lab/experiments/k2-horizon-dflash2/resume-regeneration.sh
+journalctl --user -u k2-regeneration-20260905 -f
+```
+
+Before capture, correct the legacy capture script/config: they still use
+the discarded `k2-horizon-nothink` setup and original-answer dataset.
+Use regenerated data, supervise only the last K2 assistant turn, preserve
+the medium-effort wire format, and measure feature-store space first.
+In a fixed-seed sample of 200 usable rows (198 agent contexts, two public),
+last-turn masking at 2,048 tokens loses all supervision on 162 agent rows;
+8,192 loses it on one. The old 2,048-token capture cannot simply be resumed.
+There is about 856 GiB free on Buttercup. Capture, draft training, export,
+and live acceptance/speed measurement remain unfinished; no new drafter
+has been trained or deployed.
+
+Local regression command:
+
+```bash
+TORCHINDUCTOR_CACHE_DIR=/tmp/k2-resume-inductor HF_HUB_OFFLINE=1 \
+  /data/buttercup_6tb/specforge-work/venv/bin/python -m unittest discover \
+  -s experiments/k2-horizon-dflash2 -p test_resume.py -v
+```
+
 Goal: a `draft-dflash` GGUF for `IFM/K2-Horizon-7B` so llama.cpp on the 3090
 gets the same 1.6-2.2x speculative speedup the Qwen3.8-27B stack has
 (measured raw decode today: ~70 tok/s Q8_0, ~98 tok/s Q4_K_M; target 110-150).

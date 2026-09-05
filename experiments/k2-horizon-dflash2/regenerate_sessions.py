@@ -24,7 +24,11 @@ def call(base_url, api_key, body, timeout):
     req = urllib.request.Request(
         base_url.rstrip("/") + "/chat/completions",
         data=json.dumps(body).encode(),
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+            "User-Agent": "OpenAI File Downloader, XaiImageApiFetch/1.0",
+        },
     )
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.load(r)
@@ -92,12 +96,20 @@ def regen_one(args, row):
              "function": {"name": tc["function"]["name"], "arguments": tc["function"]["arguments"]}}
             for tc in msg["tool_calls"]
         ]
+    if choice.get("finish_reason") != "length" and not (
+        assistant["content"] or assistant.get("tool_calls")
+    ):
+        return None, "Completed response has no answer or tool call; inspect the reasoning parser"
     out = {
         "id": row["id"],
         "conversations": row["conversations"] + [assistant],
         "tools": row.get("tools", []),
         "finish_reason": choice.get("finish_reason"),
         "usage": resp.get("usage", {}),
+        "reasoning_effort": args.effort,
+        # Retain the parser output before normalization so a delimiter bug
+        # can be diagnosed without losing the original response again.
+        "source_message": msg,
     }
     return out, None
 
@@ -116,13 +128,15 @@ def main():
     ap.add_argument("--limit", type=int, default=None)
     args = ap.parse_args()
 
-    rows = [json.loads(l) for l in open(args.inp) if l.strip()]
+    with open(args.inp) as source:
+        rows = [json.loads(l) for l in source if l.strip()]
     if args.limit:
         rows = rows[: args.limit]
     done_ids = set()
     try:
-        for l in open(args.out):
-            done_ids.add(json.loads(l)["id"])
+        with open(args.out) as existing:
+            for l in existing:
+                done_ids.add(json.loads(l)["id"])
     except FileNotFoundError:
         pass
     todo = [r for r in rows if r["id"] not in done_ids]
@@ -146,6 +160,8 @@ def main():
                 print(f"[{i}/{len(todo)}] ok={ok} err={err} {el/60:.1f} min, "
                       f"{ok/el*60:.1f} rows/min", file=sys.stderr)
     print(f"done ok={ok} err={err}", file=sys.stderr)
+    if err:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

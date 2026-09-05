@@ -1,0 +1,6 @@
+FROM llama:qwen-speed-build AS build
+COPY sort-scratch.patch /tmp/sort-scratch.patch
+RUN git apply --check /tmp/sort-scratch.patch && git apply /tmp/sort-scratch.patch \
+    && cmake --build build --target llama-server -j2
+FROM llama:cuda-swap-v18
+COPY --from=build /src/llama.cpp/build/bin/libggml-cuda.so /usr/local/lib/libggml-cuda.so

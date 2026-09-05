@@ -1,0 +1,16 @@
+--- a/ggml/src/ggml-cuda/argsort.cu
++++ b/ggml/src/ggml-cuda/argsort.cu
+@@ -33,7 +33,12 @@
+ int argsort_f32_i32_cuda_cub_chunk_nrows(const size_t nb01, const int64_t nrows) {
+     // perform argsort in chunks up to approximately this size (currently 64MB)
+     // to avoid excessive temporary buffers memory usage
+-    const int chunk_bytes = 1 << 26;
++    // Bound temporary sorting memory independently of the model's prompt batch.
++    static const int chunk_bytes = [] {
++        const char * value = getenv("GGML_CUDA_SORT_CHUNK_MIB");
++        const int mib = value ? atoi(value) : 64;
++        return ((mib >= 1 && mib <= 64) ? mib : 64) * (1 << 20);
++    }();
+ 
+     // calculate how many rows will fit in one chunk (must be at least one)
+     const int chunk_nrows = std::max((int) (chunk_bytes / nb01), 1);

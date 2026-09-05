@@ -1,0 +1,18 @@
+--- a/ggml/src/ggml-cuda/mmq.cu
++++ b/ggml/src/ggml-cuda/mmq.cu
+@@ -309,6 +309,15 @@
+         }
+     }
+ 
++    // Opt-in prefill experiment: preserve the existing dispatch for decode.
++    static const int prefill_blas_min = [] {
++        const char * value = getenv("GGML_CUDA_PREFILL_CUBLAS_MIN");
++        return value ? atoi(value) : 0;
++    }();
++    if (GGML_CUDA_CC_IS_NVIDIA(cc) && prefill_blas_min >= 256 && ne11 >= prefill_blas_min) {
++        return false;
++    }
++
+     if (turing_mma_available(cc)) {
+         return true;
+     }

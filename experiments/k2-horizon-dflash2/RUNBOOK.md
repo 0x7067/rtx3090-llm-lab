@@ -47,6 +47,20 @@ training or deployment has completed. The job restores the API when this
 regeneration/filtering stage ends; the existing maintenance authorization
 also covers the subsequent capture and training work.
 
+The user requested notifications in this same chat. At 22:05 UTC,
+`k2-notify-20260905.service` started watching this regeneration invocation.
+It polls every 30 seconds, checks invocation-scoped journal completion
+(including restoration failures), and uses the installed `codex queue`
+command to notify the originating thread. It also queues the existing
+request to continue capture/training, so the completion callback is a
+resume point, not a claim that all fine-tuning is finished. Its state is
+`resume-2026-09-05/chat-notification.json` in the training directory; it
+records the queue receipt and exits after notification. Failed queue
+attempts retry through systemd. Six notification-state tests pass, the
+watcher is confirmed active on the correct invocation, and a separate
+delivery-test message was accepted by Codex for the originating thread.
+This setup posts to the chat; it does not configure OS/mobile push settings.
+
 The launch command, run on the host so it survives a client disconnect:
 
 ```bash

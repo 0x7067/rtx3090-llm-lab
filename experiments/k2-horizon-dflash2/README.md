@@ -15,3 +15,4 @@ current regeneration recovery, sequence, costs and open risks.
 - `inspect_features.py`: feature shape/dtype and bytes-per-token check.
 - `sglang-k2-nonstream-reasoning.patch`, `test_resume.py`: fix and regressions for swallowed medium/low-effort final answers in non-streaming regeneration.
 - `resume-regeneration.sh`: resume into a separate dataset, with exclusive GPU use and restoration of the local API when the job exits. Requires an authorized API maintenance window.
+- `notify_completion.py`: watch one systemd invocation and queue its completion/failure event to the originating Codex chat; state prevents re-sending after a successful queue receipt.

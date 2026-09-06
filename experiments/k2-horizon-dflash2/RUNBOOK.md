@@ -277,8 +277,22 @@ and what acceptance it reaches; both need the GPU that training holds.
 ### The numbers the drafter has to beat
 
 From `benchmarks/k2-horizon-2026-09-04/results-medium-v17.jsonl`, tag
-`k2-q8-medium`: the same K2 Q8_0 target on v17 with **no drafter**, medium
-reasoning. Re-run the identical battery and compare like for like:
+`k2-q8-medium`: the same K2 Q8_0 target with **no drafter**, medium reasoning.
+
+**Do not treat these as directly comparable — they are a reference point, not a
+control.** The provenance matters and was not flagged when these numbers were
+first recorded here:
+
+- Taken on **image v17**. v18 added patch 0011 `server-unified-kv-admission`,
+  which changes request admission and scheduling — throughput-relevant.
+- Taken against `http://100.64.0.2/v1`, the Headscale overlay through
+  hostNetwork Caddy, not a direct ClusterIP. Different per-request overhead.
+- Taken 2026-09-04T00:32Z, under unrecorded background load.
+
+**Always run a same-session control arm** against `k2-horizon-7b` on the same
+image, endpoint and block as whatever you are measuring. Prefill is the tell:
+speculation cannot improve prefill, so if prefill moves between arms, the
+delta is environmental and every other delta inherits that error bar.
 
 | metric | no drafter |
 |---|---|
@@ -294,6 +308,14 @@ Speculation should move decode, sustained and the session numbers; **prefill
 should not improve and may regress slightly**, since drafting does not help the
 prompt pass. Judge the drafter on sustained and the session workloads, which
 are what agent use actually looks like.
+
+**This box is not a quiet benchmark host.** Jellyfin runs software x264
+transcodes at `-threads 0` whenever someone streams something it cannot direct
+play, which is over 100% of a CPU contending with sampling and draft overhead.
+Load can halve or double over the span of one battery, so **back-to-back
+A-then-B blocks are not a valid control** — the block is not stationary.
+Interleave arms (A/B/A/B, or at minimum A/B/A and check the two A arms agree)
+and record `uptime` plus `pgrep -af ffmpeg` per arm.
 
 ### Training completed, September 6
 

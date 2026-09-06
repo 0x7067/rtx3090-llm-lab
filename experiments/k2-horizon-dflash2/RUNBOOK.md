@@ -163,9 +163,35 @@ about it:
   longest, multi-turn rows: the smoke sample averaged 4,752 tokens against the
   full set's 2,098. Useful as a worst case, useless as a sample.
 - One `CUDACachingAllocator` OOM retry appeared (398 MB request against
-  266 MB free) and recovered. batch 2 at mem-fraction 0.88 leaves about 3.3 GB
-  for activations on top of 20.7 GB resident, and it survived the hardest rows
-  in the set, but there is no room to raise either number.
+  266 MB free) and recovered. **That retry was the warning, and batch 2 did not
+  survive the real run** — see below.
+
+### batch 2 OOMed; capture runs at batch 1
+
+The first full attempt died 54 rows in with a fatal
+`torch.OutOfMemoryError: Tried to allocate 384.00 MiB. GPU 0 has a total
+capacity of 23.55 GiB of which 246.12 MiB is free`. The arithmetic is exact:
+the EAGLE-3 aux hidden state is 3 x 4,096 bf16 per token, so a batch of
+2 x 8,192 tokens needs 402,653,184 bytes in one block — the number in the
+allocator warning. Static occupancy was already 20.5 GB (18.1 GB bf16 weights
+plus a 16,384-token KV pool at 144 KiB/token), leaving under 3 GB for
+activations, and 1.23 GB of that was reserved-but-unallocated.
+
+Capture now runs at **batch 1** with
+`PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`: the KV pool halves to
+1.2 GB and the aux block to 192 MiB, giving roughly 4.2 GB of activation
+headroom. The throughput cost is small because this workload is prefill-bound
+on sequences averaging 2,098 tokens, not decode-bound.
+
+**Capture resumes.** `prepare_hidden_states.py` checks whether each sample
+index already has an output file and skips it (the `skipped=` counter in the
+progress bar), and the dataset shuffle seed is fixed, so index-to-sample
+mapping is stable across batch sizes. The 54 rows written by the failed batch-2
+attempt were kept, and a re-run after any interruption picks up where it left
+off rather than rewriting 604 GB.
+
+The wrapper restored the API correctly on this failure: Flux resumed and llama
+rolled back to one replica within 11 seconds of the crash.
 
 ### `prepare_hidden_states.py` had no way to supervise only the last turn
 

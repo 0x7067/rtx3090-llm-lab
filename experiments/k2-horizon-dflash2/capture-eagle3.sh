@@ -5,8 +5,12 @@
 # history turns written by other models, and training on those is what made
 # the first pass worthless. 8,192 max-length is the smallest cap that leaves
 # every sampled row with supervision (2,048 blanks 11%); the capture script
-# sizes the SGLang KV pool at batch x max-length, so batch 2 is the ceiling
-# that still fits beside the 18 GB bf16 target on a 24 GB card.
+# sizes the SGLang KV pool at batch x max-length, and K2 costs 144 KiB/token
+# of KV, so batch 1 is what actually fits beside the 18 GB bf16 target on a
+# 24 GB card. Batch 2 died with a fatal CUDA OOM 54 rows in: the aux
+# hidden-state tensor for 2 x 8,192 tokens is 3 x 4096 x bf16 = 384 MiB, and
+# there was 246 MiB free. Capture skips samples whose output file already
+# exists, so a re-run resumes rather than restarting.
 set -euo pipefail
 W=/data/buttercup_6tb/specforge-work
 E=/data/docker-services/rtx3090-llm-lab/experiments/k2-horizon-dflash2
@@ -17,6 +21,9 @@ export PATH="$CUDA_HOME/bin:$PATH"
 # refuses the mix at compile time. The combination (newer compiler, older
 # headers) is otherwise fine for the sm86 JIT kernels, so disable the check.
 export NVCC_PREPEND_FLAGS="-DCCCL_DISABLE_CTK_COMPATIBILITY_CHECK ${NVCC_PREPEND_FLAGS:-}"
+# 1.2 GB sat reserved-but-unallocated in the run that OOMed; expandable
+# segments hand that back instead of stranding it in fixed-size blocks.
+export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True${PYTORCH_CUDA_ALLOC_CONF:+,$PYTORCH_CUDA_ALLOC_CONF}"
 cd "$W/SpecForge"; source "$W/venv/bin/activate"
 NUM_SAMPLES="${NUM_SAMPLES:-}"
 extra=(); [ -n "$NUM_SAMPLES" ] && extra+=(--num-samples "$NUM_SAMPLES")
@@ -31,7 +38,7 @@ torchrun --standalone --nproc_per_node 1 scripts/prepare_hidden_states.py \
   --max-length 8192 \
   --train-only-last-turn \
   --tp-size 1 \
-  --batch-size "${BATCH_SIZE:-2}" \
+  --batch-size "${BATCH_SIZE:-1}" \
   --cache-dir "$W/cache" \
   --sglang-attention-backend "${ATTN_BACKEND:-triton}" \
   --sglang-mem-fraction-static "${MEM_FRACTION:-0.88}" \

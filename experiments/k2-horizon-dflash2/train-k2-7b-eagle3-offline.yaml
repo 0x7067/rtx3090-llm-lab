@@ -30,7 +30,13 @@ training:
   batch_size: 1
   learning_rate: 1.0e-4
   max_grad_norm: 0.5
-  ttt_length: 7
+  # 4, not the upstream 7. The TTT-expanded draft logits are
+  # ttt_length x seq x draft_vocab and are retained for the backward pass, so
+  # ttt_length is the term that decides whether an 8,192-token row fits on a
+  # 24 GB card. At 7 training died in compute_acceptance_rate asking for
+  # 866 MiB against 22.36 GiB already allocated, with fragmentation already
+  # ruled out. Serve with --spec-draft-n-max 4 to match the trained depth.
+  ttt_length: 4
   attention_backend: flex_attention
   # Exact lower-memory teacher projection: without it the 250,624-vocab logits
   # are materialised in full and the run sits at 22.6/24 GB with hundreds of

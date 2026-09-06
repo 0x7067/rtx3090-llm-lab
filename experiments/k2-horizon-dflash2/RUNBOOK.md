@@ -209,11 +209,43 @@ less than it does for decode.
 
 `train-eagle3.sh` still pointed `model.vocab_mapping_path` at the deleted
 `k2-7b-eagle3` directory; it now defaults to the `-regen` capture and takes a
-`FEATURES` override. Training memory is the open question: the discarded first
-pass sat at 22.3 GB with `compact_teacher` at `max_length` 2048, and the
-sequence cap is now four times that. The knob if it OOMs is
-`training.compact_teacher_chunk_size` (default 32,768 over a 250,624 vocab) —
-that chunk is the term that scales with sequence length.
+`FEATURES` override.
+
+### Training memory: `ttt_length` is the knob, in three failed attempts
+
+Training at `max_length` 8192 OOMed three times before it ran. Recorded in
+order, because two of the three fixes are the obvious ones and neither worked:
+
+1. **Default config, `ttt_length` 7.** Died in `loss.backward()` asking for
+   1.91 GB with 1.97 GB reserved-but-unallocated. Peak 23,654 MiB of 24,111.
+2. **`PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.** This did its job —
+   reserved-but-unallocated fell from 1.97 GB to 154 MB — and training still
+   died, now in `compute_acceptance_rate` at 866 MB against 22.36 GB
+   legitimately allocated. **Fragmentation was never the problem.** The setting
+   is kept because it is strictly better, not because it fixed anything.
+3. **`compact_teacher_chunk_size` 32,768 -> 8,192.** Failed **byte for byte
+   identically**: same call site, same 866 MB, same 22.36 GB. The teacher tile
+   is transient under `no_grad`, so shrinking it frees nothing that survives to
+   the backward pass. Reverted; do not try this again.
+
+What actually works is **`ttt_length: 4`** (upstream uses 7). The TTT-expanded
+draft logits are `ttt_length x seq x draft_vocab` and are *retained for the
+backward pass*, so `ttt_length` multiplies the one tensor that decides whether
+an 8,192-token row fits in 24 GB. **Serve with `--spec-draft-n-max 4`** to
+match the trained depth rather than the 7 the Qwen3.8 stanza uses.
+
+The tempting fourth option — lower the training `max_length` — is wrong here
+and was rejected on inspection, not by experiment. Truncation in
+`preprocessing.py` is `[:max_len]`: it keeps the **head** and drops the tail,
+and the supervised K2 turn is at the **end** of every row. Cutting the cap
+would silently delete supervision from exactly the long agent contexts that
+justified capturing at 8,192, recreating the defect fixed earlier that day.
+
+Running at `ttt_length` 4: ~0.93 s/step, ~3,900 optimizer steps/hour, so
+2 epochs over 8,777 samples (17,554 steps) is about **4.5 hours**. Progress at
+step 650: position-0 accuracy 0.041 -> 0.226, acceptance 0.013 -> 0.130. The
+`expandable_segments: memory mapping failed` warnings recur throughout — the
+run sits near the ceiling by design, and they are retries, not failures.
 
 ### `prepare_hidden_states.py` had no way to supervise only the last turn
 

@@ -8,6 +8,11 @@ export HF_HOME="$W/hf-home" UV_CACHE_DIR="$W/.uv-cache"
 export CUDA_HOME="$W/venv/lib/python3.12/site-packages/nvidia/cu13"
 export PATH="$CUDA_HOME/bin:$PATH"
 export NVCC_PREPEND_FLAGS="-DCCCL_DISABLE_CTK_COMPATIBILITY_CHECK ${NVCC_PREPEND_FLAGS:-}"
+# The first attempt at max_length 8192 died in loss.backward() asking for
+# 1.91 GB with 1.97 GB sitting reserved-but-unallocated. The TTT-expanded
+# draft logits are ttt_length x seq x draft_vocab, so they arrive as one large
+# block that fixed-size segments cannot satisfy from a fragmented pool.
+export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True${PYTORCH_CUDA_ALLOC_CONF:+,$PYTORCH_CUDA_ALLOC_CONF}"
 cd "$W/SpecForge"; source "$W/venv/bin/activate"
 specforge train --config "$E/train-k2-7b-eagle3-offline.yaml" \
   model.vocab_mapping_path="${FEATURES:-$W/cache/hidden_states/k2-7b-eagle3-regen}/vocab_mapping/vocab_mapping.pt" \

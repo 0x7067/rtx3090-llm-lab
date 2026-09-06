@@ -99,6 +99,117 @@ DFlash converter resolves the target class by architecture name and reuses
 its vocab handler, and the runtime shares the target's embeddings/lm_head.
 The only gap was the SGLang capture hook, provided here as a patch.
 
+## Regeneration completed, September 6
+
+The September 5 job finished its generation stage at 11:08 UTC after 13h24m:
+8,717 new rows at a steady 10.9 rows/min, 3 errors (two responses the parser
+read as having neither answer nor tool call, one HTTP 400). It then **exited 1
+purely because `err > 0`**, which skipped `build_capture_set.py` and reported
+the whole run as failed; the completion notification said `failed (exit 1)`.
+The pause/restore harness worked correctly — Flux apps resumed, llama rolled
+back to one healthy replica, GPU at 9 MiB — and no data was lost. The generated
+data is intact and was audited: `regen-output-v2.jsonl` holds **10,079 of the
+10,082 frozen input rows**, no duplicates, nothing outside the input, with
+`finish_reason` 7,834 stop / 943 tool_calls / 1,302 length. The three missing
+IDs are `69693a03-439`, `c913d1f1-13`, `pub-33c79514042d733fe78a4eda3ad43b08`.
+
+`regenerate_sessions.py` now takes `--max-error-rate` (default 0.01) and fails
+only above that fraction, so a handful of unparseable responses no longer
+discards the downstream stage; a total failure still aborts. Both behaviours
+have tests.
+
+`build_capture_set.py` was then run by hand and produced the capture input:
+**8,777 rows kept**, 1,302 truncated dropped, 0 empty, at
+`cache/dataset/k2-eagle3-regenerated.jsonl` (75 MB).
+
+### Capture length and feature-store size, measured
+
+Measured with the **actual `ThinkingParser` and the registered
+`k2-horizon-thinking` template** over a fixed-seed 500-row sample (not an
+estimate from raw text): rendered length mean 2,126 tokens, median 1,850,
+p90 4,000, max 9,136. Extrapolated to all 8,777 rows at the observed
+32.8 KB/token:
+
+| `max_length` | rows losing all supervision | feature store |
+|---|---|---|
+| 2,048 | 55/500 (11%) | 427 GB |
+| 4,096 | 35/500 (7%) | 565 GB |
+| 8,192 | 0/500 | 611 GB |
+| 16,384 | 0/500 | 612 GB |
+
+**8,192 is the setting**: the smallest cap that leaves every sampled row with
+supervision, and only 8% more disk than 4,096, which still blanks 7% of rows.
+Note 16,384 buys nothing — the distribution is exhausted by 8,192.
+
+The extrapolation was then replaced with an **exact CPU-only count**: building
+the full processed dataset at these settings gives **8,777 rows and 18,417,412
+tokens, 604 GB**, with only **5 rows** losing all supervision and length mean
+2,098 / median 1,838 / p90 3,934 / p99 7,255 / max 8,192. Buttercup had 855 GB
+free, so this fits with about 250 GB to spare. That build is cached at
+`cache/processed_dataset/48756f9976367db1d494ac5be86d7c7d*` under the same key
+the capture script computes, so the real run does not re-tokenize.
+
+### Smoke run before committing the disk
+
+A 32-sample run through `with-local-api-paused.sh` validated the new flags end
+to end and **confirmed 32,784 bytes/token exactly** — the 32.8 KB/token figure
+used for every estimate above is measured, not assumed. Two things to know
+about it:
+
+- `--num-samples` selects `range(n)` from the raw file **before** the shuffle
+  inside `build_eagle3_dataset` (EAGLE-3 registers no `loss_mask_filter`, so
+  the early-select branch is taken). `build_regen_prompts.py` puts the 1,082
+  mined agent contexts first, so a small `--num-samples` run captures only the
+  longest, multi-turn rows: the smoke sample averaged 4,752 tokens against the
+  full set's 2,098. Useful as a worst case, useless as a sample.
+- One `CUDACachingAllocator` OOM retry appeared (398 MB request against
+  266 MB free) and recovered. batch 2 at mem-fraction 0.88 leaves about 3.3 GB
+  for activations on top of 20.7 GB resident, and it survived the hardest rows
+  in the set, but there is no room to raise either number.
+
+### `prepare_hidden_states.py` had no way to supervise only the last turn
+
+`build_eagle3_dataset` and `preprocess_conversations` both accept
+`train_only_last_turn`, but the capture entrypoint never exposed or passed it,
+so capture defaulted to supervising **every** assistant turn. In the mined
+agent contexts the history turns were written by Claude, not K2, so that is the
+same defect that made the first training pass worthless — measured at 1,656
+supervised tokens/row across all turns versus 1,461 for the last turn alone.
+`specforge-sglang-main-compat.patch` now adds a `--train-only-last-turn` flag
+and threads it into the dataset **cache key**, so an earlier cache cannot be
+silently reused with the wrong masking.
+
+`capture-eagle3.sh` was updated accordingly: regenerated dataset,
+`k2-horizon-thinking`, `--max-length 8192`, `--train-only-last-turn`, output at
+`cache/hidden_states/k2-7b-eagle3-regen`, and `triton` as the default attention
+backend (what the successful September 4 run actually used; the old
+`flashinfer` default never worked here). **Batch size dropped 4 -> 2**: the
+script sizes the SGLang KV pool at `batch_size x max_length`, and K2 costs
+144 KiB/token of KV (36 layers x 8 KV heads x 128 head-dim x 2 x bf16), so
+batch 2 at 8,192 is 2.4 GB beside the 18 GB bf16 target — batch 4 would need
+4.8 GB and not fit the 24 GB card.
+
+`with-local-api-paused.sh` extracts the Flux-suspend / scale-to-zero /
+GPU-free-check / restore-on-any-exit sequence that `resume-regeneration.sh`
+proved over 13 hours, so the capture and training jobs reuse it and share its
+lock instead of duplicating it.
+
+Launch, on the host so it survives a client disconnect (`NUM_SAMPLES` and
+`OUTPUT_DIR` are the smoke-run knobs):
+
+```bash
+E=/data/docker-services/rtx3090-llm-lab/experiments/k2-horizon-dflash2
+systemd-run --user --unit=k2-capture-20260906 \
+  --property=KillMode=mixed --property=TimeoutStopSec=20min \
+  bash "$E/with-local-api-paused.sh" bash "$E/capture-eagle3.sh"
+journalctl --user -u k2-capture-20260906 -f
+```
+
+The wrapper restores the API on success, failure, or TERM, so an abandoned
+session cannot leave llama scaled to zero. tqdm writes progress with carriage
+returns and no newlines, so **the journal looks frozen while the run is
+healthy** — check `find <output-path> -name '*.ckpt' | wc -l` instead.
+
 ## Prerequisites (rented box, 1x H100 80 GB is enough; 2x makes it simpler)
 
 - Python 3.10+, CUDA 12.8 driver.

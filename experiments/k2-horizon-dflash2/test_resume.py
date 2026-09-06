@@ -54,6 +54,21 @@ class RegenerationTests(unittest.TestCase):
             self.assertEqual(error.exception.code, 1)
             self.assertEqual(out.read_text(), "")
 
+    def test_stray_failures_keep_the_run_successful(self):
+        # The September 5 run generated 8,717 usable rows and then exited 1 on
+        # three unparseable responses, which skipped the capture-set filtering
+        # step and reported the whole 13-hour job as failed.
+        with tempfile.TemporaryDirectory() as tmp:
+            inp, out = Path(tmp) / "input.jsonl", Path(tmp) / "output.jsonl"
+            rows = [{"id": str(i)} for i in range(200)]
+            inp.write_text('\n'.join(json.dumps(r) for r in rows) + '\n')
+            results = iter([(None, "bad response")] + [({"id": str(i)}, None) for i in range(1, 200)])
+            with patch("sys.argv", ["regen", str(inp), str(out), "--base-url", "http://localhost/v1"]), patch.object(
+                regen, "regen_one", side_effect=lambda *a: next(results)
+            ):
+                regen.main()
+            self.assertEqual(len(out.read_text().splitlines()), 199)
+
 
 class K2ParserTests(unittest.TestCase):
     def test_nonstream_generic_close_preserves_answer_at_every_effort(self):

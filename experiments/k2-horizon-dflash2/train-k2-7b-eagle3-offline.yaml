@@ -13,17 +13,19 @@ model:
   torch_dtype: bfloat16
 
 data:
-  hidden_states_path: /data/buttercup_6tb/specforge-work/cache/hidden_states/k2-7b-eagle3
-  max_length: 2048
-  chat_template: k2-horizon-nothink   # first run uses original answers (no reasoning); switch to k2-horizon-thinking for regenerated data
+  hidden_states_path: /data/buttercup_6tb/specforge-work/cache/hidden_states/k2-7b-eagle3-regen
+  max_length: 8192
+  chat_template: k2-horizon-thinking
   cache_dir: /data/buttercup_6tb/specforge-work/cache
 
 training:
   strategy: eagle3
-  # Measured on the 3090: ~1 step/s at batch_size 1, so one epoch over the
-  # 16,000 captured samples is ~4.5 h. Ten epochs (the upstream Qwen3-8B
-  # recipe) would be ~44 h with production offline; 2 epochs is the
-  # validation budget. Raise once the pipeline has proven its speedup.
+  # Measured on the 3090 at max_length 2048: ~1 step/s at batch_size 1, so one
+  # epoch over 16,000 samples was ~4.5 h. This set is 8,777 samples but four
+  # times the sequence cap, so re-measure step time before budgeting. Ten
+  # epochs (the upstream Qwen3-8B recipe) is out of reach with production
+  # offline; 2 epochs is the validation budget. Raise once the pipeline has
+  # proven its speedup.
   num_epochs: 2
   batch_size: 1
   learning_rate: 1.0e-4
@@ -42,8 +44,8 @@ training:
 tracking:
   report_to: tensorboard
 
-run_id: k2-horizon-7b-eagle3-offline
-output_dir: /data/buttercup_6tb/specforge-work/outputs/k2-horizon-7b-eagle3-offline
+run_id: k2-horizon-7b-eagle3-regen
+output_dir: /data/buttercup_6tb/specforge-work/outputs/k2-horizon-7b-eagle3-regen
 
 deployment:
   mode: local_colocated

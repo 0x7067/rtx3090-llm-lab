@@ -126,6 +126,10 @@ def main():
     ap.add_argument("--timeout", type=int, default=900)
     ap.add_argument("--concurrency", type=int, default=1)
     ap.add_argument("--limit", type=int, default=None)
+    # A run of ~10k rows reliably produces a handful of unparseable responses.
+    # Failing the whole job on those aborts the downstream filtering step and
+    # discards hours of usable generation, so only a broad failure is fatal.
+    ap.add_argument("--max-error-rate", type=float, default=0.01)
     args = ap.parse_args()
 
     with open(args.inp) as source:
@@ -160,7 +164,7 @@ def main():
                 print(f"[{i}/{len(todo)}] ok={ok} err={err} {el/60:.1f} min, "
                       f"{ok/el*60:.1f} rows/min", file=sys.stderr)
     print(f"done ok={ok} err={err}", file=sys.stderr)
-    if err:
+    if err > len(todo) * args.max_error_rate:
         raise SystemExit(1)
 
 

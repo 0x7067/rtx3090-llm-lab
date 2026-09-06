@@ -653,3 +653,89 @@ conversion. `check_tokenizer_hash.py` confirms K2-Horizon-7B hashes to
 `a9af07a8...`, the registered `k2-horizon` entry it shares with the 36B, so
 the draft will convert. Note the check string is 350 characters; a truncated
 copy produces a different hash and a false negative.
+
+## Step 5 measured: the drafter helps sustained generation, taxes prefill
+
+Served on `k2-horizon-7b-eagle3` (a new stanza, so the no-drafter
+`k2-horizon-7b` survives as the control). Loads at **20,738 MiB** with 131k
+q8_0 KV — 1,880 MiB over the no-drafter resident, matching 1.53 GB of draft
+weights plus 0.29 GB of draft KV. No OOM, no fallback needed.
+
+**Ignore the Step 5 note above that budgets 22.7 GB and advises dropping to
+ctx 100k.** It was written for the 5-layer DFlash draft that was never
+trained. The 1-layer EAGLE-3 draft is ~2 GB cheaper. Dropping context would
+also have made the session numbers incomparable to the baseline, which is
+pinned at 131k.
+
+Served acceptance, read from the response `timings` block (see below), on a
+quiet-ish box: **0.389** over 400 predicted tokens (243/624 drafted) and
+**0.345** over 1,528 (885/2,568). Training reported 0.472 across 4 TTT
+positions. The gap is the ordinary teacher-forced-vs-served one, not a
+serving mismatch; `--spec-draft-n-max 4` does match the trained depth.
+
+### The first comparison was against a baseline that could not be compared
+
+The recorded baseline came from `results-medium-v17.jsonl`: image **v17**,
+reached over the `100.64.0.2` Headscale overlay through hostNetwork Caddy,
+2026-09-04. The eagle3 run was image **v18** (patch 0011 added
+`server-unified-kv-admission`, which changes request admission) against
+ClusterIP directly. Against that baseline the drafter looked like a 13%
+decode regression.
+
+Re-running the no-drafter arm in the same block, same image, same path
+**erased the decode regression**: 92.6 tok/s, not the 102.1 the v17 file
+recorded. Numbers below are against the same-block control.
+
+| test | nodraft (v18) | eagle3 | ratio |
+|---|---|---|---|
+| sustained | 67.8 | 87.8 | **1.29x** |
+| session 8t | 209.5 | 237.4 | **1.13x** |
+| session 20t @20k | 275.5 | 286.4 | 1.04x |
+| session 6t @50k | 174.8 | 172.2 | 0.99x |
+| decode | 92.6 | 88.5 | 0.96x |
+| concurrent x4 | 82.4 | 76.3 | **0.93x** |
+| prefill | 3402.3 | 2959.1 | **0.87x** |
+
+Quality 4/4 on both arms.
+
+**The prefill cost is real and is not an artifact.** The fresh v18/ClusterIP
+control returns 3402.3 against the old v17 overlay figure of 3381.2 — 0.6%
+apart — so image and network path did not move prefill, and the drafter's
+2959 is a genuine 13% tax. That is physically consistent: the EAGLE-3 head
+consumes target hidden states from layers [2, 18, 33], so it does work during
+prompt processing, not only during decode.
+
+Profile: speculation pays on single-stream long generation and shallow edit
+sessions, is neutral on deep-context sessions, and loses when the GPU is
+already busy. **Not promoted to any default.** A 13% prefill tax and a 7%
+concurrency loss are the wrong trade for a shared endpoint.
+
+### Reading draft acceptance past llama-swap
+
+llama-swap suppresses backend stdout, so the server's speculation lines never
+reach the pod log, and `/upstream/<model>/metrics` returns 501. Neither is a
+llama-swap limitation:
+
+- `server-common.cpp:82-84` adds `draft_n` and `draft_n_accepted` to slot
+  stats whenever `n_draft_tokens > 0`, and `server-task.cpp:1101-1103`
+  attaches `timings` to the OAI-compat response without needing `verbose` or
+  `timings_per_token`. **A plain non-streaming POST returns acceptance.** No
+  restart, no flag.
+- The 501 is `server-context.cpp:4670`: `/metrics` is gated on `--metrics`,
+  which `common/arg.cpp:3602` defaults to off. Adding it exposes
+  `spec_decode_num_draft_tokens_total`, `..._accepted_tokens_total` and
+  `..._num_drafts_total` — cumulative, which is what a benchmark-wide
+  acceptance figure wants.
+
+### Benchmark hygiene this run got wrong
+
+This box is not quiet. A Jellyfin software x264 transcode (`-threads 0`,
+~115% CPU) and Funes indexing bursts (~600% CPU observed) come and go, and
+1-minute load swung between 1.6 and 7.7 during the session. Two consequences:
+
+- **Record load and background processes per arm.** They were not recorded
+  during the first eagle3 battery, so what the box was doing during that run
+  is now unrecoverable.
+- **Interleave arms, do not block them.** A back-to-back A-then-B design
+  confounds any load drift with the arm change. Against a transient, only
+  A/B/A/B interleaving actually controls it.

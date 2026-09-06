@@ -739,3 +739,70 @@ This box is not quiet. A Jellyfin software x264 transcode (`-threads 0`,
 - **Interleave arms, do not block them.** A back-to-back A-then-B design
   confounds any load drift with the arm change. Against a transient, only
   A/B/A/B interleaving actually controls it.
+
+## Upstream research, 2026-09-05/06: Uno is the thing to watch, and we cannot run it
+
+### IFM shipped an official lossless speedup, and it is not a drafter
+
+`IFM/K2-Horizon-7B-Uno` (adapter card expanded 2026-09-05) is a **conditional-
+LoRA for diffusion-style block decoding**, not a draft model. Rank 128, alpha
+8192, dropout 0.05, targeting `q/k/v/o/gate/down/up_proj`; 698 MB; converted
+from checkpoint 597 of a Stage-5 Phase-2 run. IFM calls the method Diffusion
+Distillation: the autoregressive weights stay frozen and own the output
+distribution, while the adapter learns only to emit blocks of tokens in
+parallel. They claim losslessness, an average **2.71 tokens per forward**
+(2.86 on MATH500, scoring 98.9), and gains that hold at every batch size —
+explicitly benchmarked as beating speculative decoding.
+
+**We cannot use it.** It needs the Uno conditional-LoRA inference runtime;
+llama.cpp has no such path, and `--spec-type` has no entry that fits (the
+closest, `draft-dflash`, wants a separate block-diffusion *draft model*, not a
+LoRA on the target). Loading it through PEFT gets the weights, not the parallel
+decode. If Uno ever reaches vLLM or SGLang, it is strictly better than what we
+trained: 2.71 tok/forward against our measured ~1.38 accepted per draft cycle,
+at 698 MB against 1.53 GB, with no separate training run.
+
+This is the honest framing of our EAGLE-3 work: it was the right call on
+2026-09-04 when the only published option was "train your own", and it is
+superseded in principle by an official artifact we cannot yet execute.
+
+### llama.cpp still has no upstream K2 Horizon support
+
+Discussion #28308 (opened 2026-09-03) is still the only upstream thread; no PR
+merged as of 2026-09-06. Every K2 GGUF publisher, IFM's own included, points at
+the `MBZUAI-IFM/llama.cpp` fork branch `model/K2Horizon` — the same source as
+our `patches-v15/0009`. A blocker named in the thread: the 3.7B/7B variants
+need a different Transformers version than llama.cpp pins. Upstream EAGLE-3
+itself is merged and current (#18039, plus #24593 and #25794 extending it), so
+only the K2 architecture is out of tree. **Do not expect to drop the patch set
+on a routine image bump.**
+
+### Effort mismatch was costing us 19% of acceptance
+
+IFM's guidance is `reasoning_effort: high` always, and the base
+`k2-horizon-7b` stanza follows it. But the drafter was trained on **medium**
+output (`regenerate_sessions.py --effort medium`, production's setting) and the
+template opens a different tag per effort — `<ifm|think>` at high,
+`<ifm|think_fast>` at medium. Serving the drafter under the high default is a
+distribution mismatch.
+
+Measured on one prompt, 1,200 predicted tokens each:
+
+| effort | draft_n | accepted | acceptance | tok/s |
+|---|---|---|---|---|
+| medium | 1909 | 721 | **0.378** | 110.0 |
+| high | 2287 | 697 | **0.305** | 104.4 |
+
+All four eagle3 stanzas now default to medium. `k2-horizon-7b` keeps high, so
+the publisher-recommended configuration is still one model ID away. Note the
+benchmark numbers elsewhere in this file were taken at medium and are therefore
+the *favourable* case, not a pessimistic one.
+
+### Watch item: multi-turn thinking field
+
+An NVIDIA forum report (2026-09-06) has vLLM rejecting the second turn of every
+chat with `TemplateError: Assistant message is missing a thinking field.
+Provide one of: think, reasoning, reasoning_content, think_fast, think_faster.`
+Our session benchmarks are multi-turn and did not hit this, but they replay
+assistant turns we generated. Worth checking before trusting multi-turn agent
+traffic against any K2 stanza.

@@ -295,6 +295,37 @@ should not improve and may regress slightly**, since drafting does not help the
 prompt pass. Judge the drafter on sustained and the session workloads, which
 are what agent use actually looks like.
 
+### Training completed, September 6
+
+`TRAIN-DONE` at 22:00:24, exit 0, API restored automatically. 2 epochs,
+17,554 steps, about 4.5 hours. Final checkpoint
+`k2-horizon-7b-eagle3-regen-step17554`, with `-latest` pointing at it.
+
+Final metrics, **averaged over the last 20 logged readings** — at batch_size 1
+the per-step spread is wide (position-0 accuracy ranged 0.404 to 0.773 across
+those same 20), so any single step is noise:
+
+| metric | value |
+|---|---|
+| position-0 accuracy | 0.633 |
+| mean accuracy over the 4 TTT positions | 0.536 |
+| position-0 acceptance | 0.577 |
+| mean acceptance | 0.472 |
+| position-0 loss | 1.595 |
+
+Trajectory: position-0 accuracy 0.041 -> 0.226 -> 0.437 -> 0.585 -> 0.636 ->
+0.745 over the run. **The discarded first pass reached only ~0.21 by step 350**
+on public-dataset answers with thinking disabled, so the regenerated,
+K2-authored, last-turn-supervised data is the difference this whole exercise
+was about.
+
+Set expectations from these numbers rather than from the aspirational
+"target 110-150 tok/s" earlier in this runbook, which was written before
+anything was measured: mean acceptance 0.472 over 4 positions is respectable,
+not spectacular, and points at roughly a **1.3-1.7x** decode gain rather than
+the 1.6-2.2x the Qwen3.8 DFlash stack gets at draft depth 7. A 1.4x here is a
+normal result, not a failure.
+
 Measurement command once the GGUF is in place (note `--spec-type draft-eagle3`
 and `--spec-draft-n-max 4`, not the `draft-dflash` / 7 the Qwen3.8 stanza uses):
 

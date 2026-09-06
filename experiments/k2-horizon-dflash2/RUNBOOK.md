@@ -326,6 +326,38 @@ not spectacular, and points at roughly a **1.3-1.7x** decode gain rather than
 the 1.6-2.2x the Qwen3.8 DFlash stack gets at draft depth 7. A 1.4x here is a
 normal result, not a failure.
 
+### Reading draft acceptance when llama-swap hides the backend log
+
+llama-swap suppresses llama-server's stdout in this deployment, so the
+per-slot speculation lines never reach `kubectl logs`. Two ways around it,
+both verified in the source at the image's pinned ref, not from memory:
+
+**Per-response, needs no flag and no restart.** `server-common.cpp:82-84` adds
+`draft_n` and `draft_n_accepted` to `server_slot_stats::to_json()` whenever
+`n_draft_tokens > 0`, and `server-task.cpp:1101-1103` attaches `timings` to the
+**OAI-compat** response whenever the stats are set — no `verbose`, no
+`timings_per_token` needed for the final response. So an ordinary
+non-streaming `/v1/chat/completions` already carries
+`timings.draft_n_accepted / timings.draft_n`. This works against a running
+backend, which matters: restarting to enable telemetry invalidates whatever
+benchmark is in flight.
+
+**Cumulative, needs `--metrics` in the stanza.** `/metrics` answering **501 is
+llama-server, not llama-swap** — `server-context.cpp:4670` returns
+"This server does not support metrics endpoint. Start it with `--metrics`"
+when `endpoint_metrics` is false, which `common/arg.cpp:3602` shows is the
+default. With the flag, `server-task.cpp:1556-1564` exposes
+`spec_decode_num_draft_tokens_total`,
+`spec_decode_num_accepted_tokens_total` and `spec_decode_num_drafts_total`.
+The last one gives mean accepted-per-draft-cycle, which is the figure that
+actually explains a speedup.
+
+Compare whatever you measure against the **0.472 mean acceptance seen in
+training**. Close to it means the drafter serves as trained; well below points
+at a serving mismatch — drafting deeper than the trained depth of 4, or a
+template/tokenizer difference between capture and serving — rather than a weak
+drafter.
+
 Measurement command once the GGUF is in place (note `--spec-type draft-eagle3`
 and `--spec-draft-n-max 4`, not the `draft-dflash` / 7 the Qwen3.8 stanza uses):
 

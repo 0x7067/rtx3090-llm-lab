@@ -17,6 +17,14 @@ CONVERT_SRC="${CONVERT_SRC:-$W/llama.cpp-convert}"
 OUT="${OUT:-/data/buttercup_6tb/k3s/llama-models/k2-horizon/local/K2-Horizon-7B-Eagle3-Q8_0.gguf}"
 TARGET="$W/models/IFM/K2-Horizon-7B"
 
+# Its own lock, not the training lock: this script is deliberately runnable
+# while training holds the GPU, which is how the path was proven against the
+# step-8000 checkpoint. What needs guarding is EXPORT_DIR, which the rm -rf
+# below wipes -- a second concurrent run would delete the first one's export
+# mid-conversion.
+exec 8>"$W/.k2-export.lock"
+flock -n 8 || { echo 'Another export/convert run owns the lock' >&2; exit 1; }
+
 [[ -d "$CKPT" ]] || { echo "No checkpoint at $CKPT" >&2; exit 1; }
 [[ -f "$CONVERT_SRC/convert_hf_to_gguf.py" ]] || { echo "No converter at $CONVERT_SRC" >&2; exit 1; }
 export HF_HOME="$W/hf-home" HF_HUB_OFFLINE=1

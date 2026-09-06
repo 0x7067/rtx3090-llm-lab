@@ -10,6 +10,6 @@ export PATH="$CUDA_HOME/bin:$PATH"
 export NVCC_PREPEND_FLAGS="-DCCCL_DISABLE_CTK_COMPATIBILITY_CHECK ${NVCC_PREPEND_FLAGS:-}"
 cd "$W/SpecForge"; source "$W/venv/bin/activate"
 specforge train --config "$E/train-k2-7b-eagle3-offline.yaml" \
-  model.vocab_mapping_path="$W/cache/hidden_states/k2-7b-eagle3/vocab_mapping/vocab_mapping.pt" \
+  model.vocab_mapping_path="${FEATURES:-$W/cache/hidden_states/k2-7b-eagle3-regen}/vocab_mapping/vocab_mapping.pt" \
   "$@"
 echo TRAIN-DONE

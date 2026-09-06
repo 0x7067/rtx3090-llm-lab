@@ -193,6 +193,28 @@ off rather than rewriting 604 GB.
 The wrapper restored the API correctly on this failure: Flux resumed and llama
 rolled back to one replica within 11 seconds of the crash.
 
+### Capture completed, September 6
+
+**8,777/8,777 rows, 564 GB, in 1h30m** (15:34:33 to 17:04:45 UTC) at about 100
+rows/min. The run reported `Processed: 8,723, Skipped: 54`, confirming the
+resume path: the 54 rows written before the batch-2 OOM were reused, not
+regenerated. Every file carries `input_ids`, `loss_mask`,
+`aux_hidden_state` (3 x 4,096 bf16) and `hidden_state` (4,096 bf16) at the
+measured 32,784 bytes/token. Buttercup has 291 GB left. The API restored
+cleanly and the GPU returned to 9 MiB.
+
+The batch-1 estimate of 5-7 hours was badly wrong — the real cost was 1h30m.
+This workload is prefill-bound on long sequences, where batch size buys much
+less than it does for decode.
+
+`train-eagle3.sh` still pointed `model.vocab_mapping_path` at the deleted
+`k2-7b-eagle3` directory; it now defaults to the `-regen` capture and takes a
+`FEATURES` override. Training memory is the open question: the discarded first
+pass sat at 22.3 GB with `compact_teacher` at `max_length` 2048, and the
+sequence cap is now four times that. The knob if it OOMs is
+`training.compact_teacher_chunk_size` (default 32,768 over a 250,624 vocab) —
+that chunk is the term that scales with sequence length.
+
 ### `prepare_hidden_states.py` had no way to supervise only the last turn
 
 `build_eagle3_dataset` and `preprocess_conversations` both accept

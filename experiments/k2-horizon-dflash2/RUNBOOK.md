@@ -274,6 +274,35 @@ hash resolved — the failure mode `check_tokenizer_hash.py` exists to catch.
 What remains untested is whether llama.cpp *loads* the draft beside the target
 and what acceptance it reaches; both need the GPU that training holds.
 
+### The numbers the drafter has to beat
+
+From `benchmarks/k2-horizon-2026-09-04/results-medium-v17.jsonl`, tag
+`k2-q8-medium`: the same K2 Q8_0 target on v17 with **no drafter**, medium
+reasoning. Re-run the identical battery and compare like for like:
+
+| metric | no drafter |
+|---|---|
+| decode (512 tok) | 102.1 tok/s |
+| sustained (6k tok) | 70.0 tok/s |
+| prefill (14,209 tok) | 3,381.2 tok/s |
+| session 8 turns | 211.7 tok/s |
+| session 6 turns @ 50k | 186.8 tok/s |
+| session 20 turns @ 20k | 287.0 tok/s |
+| concurrent x4 | 71.4 tok/s |
+
+Speculation should move decode, sustained and the session numbers; **prefill
+should not improve and may regress slightly**, since drafting does not help the
+prompt pass. Judge the drafter on sustained and the session workloads, which
+are what agent use actually looks like.
+
+Measurement command once the GGUF is in place (note `--spec-type draft-eagle3`
+and `--spec-draft-n-max 4`, not the `draft-dflash` / 7 the Qwen3.8 stanza uses):
+
+```bash
+QWEN_MODEL=k2-horizon-7b REASONING=medium \
+  benchmarks/engine-trial-2026-09-02/bench/run-arm.sh k2-eagle3-medium <base-url> [api-key]
+```
+
 ### `prepare_hidden_states.py` had no way to supervise only the last turn
 
 `build_eagle3_dataset` and `preprocess_conversations` both accept

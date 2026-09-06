@@ -30,7 +30,9 @@ def service_status(unit):
 def completion_result(status, invocation, journal):
     # A transient unit may disappear after success; its invocation-scoped
     # journal remains authoritative about the job and its API restoration.
-    endings = re.findall(r"Regeneration finished with exit=(\d+);", journal)
+    # capture/regeneration print "Regeneration finished"; jobs wrapped in
+    # with-local-api-paused.sh print "Command finished" instead.
+    endings = re.findall(r"(?:Regeneration|Command) finished with exit=(\d+);", journal)
     if endings:
         return "succeeded" if endings[-1] == "0" else f"failed (exit {endings[-1]})"
     current = status.get("InvocationID")
@@ -55,6 +57,8 @@ def main():
     parser.add_argument("--thread", required=True)
     parser.add_argument("--state", type=Path, required=True)
     parser.add_argument("--codex", default="/home/denguinho/.local/bin/codex")
+    parser.add_argument("--subject", default="Regeneration",
+                        help="What finished, as the message's sentence subject")
     args = parser.parse_args()
     if args.state.exists():
         state = json.loads(args.state.read_text())
@@ -87,10 +91,9 @@ def main():
             continue
         message = (
             "Automated K2 job notification requested by the user in this chat. "
-            f"Regeneration {result}. Service: {args.unit}; invocation: {invocation}. "
-            "This event covers data regeneration only, not completed draft training. "
-            "Check the current service result, regenerated dataset and local API restoration, "
-            "then report the outcome here. Continue the existing K2 capture/training task "
+            f"{args.subject} {result}. Service: {args.unit}; invocation: {invocation}. "
+            "Check the current service result, the job's output artifacts and local API "
+            "restoration, then report the outcome here. Continue the existing K2 task "
             "under the user's recorded maintenance authorization. "
             "Resume details: /data/docker-services/rtx3090-llm-lab/experiments/k2-horizon-dflash2/RUNBOOK.md."
         )

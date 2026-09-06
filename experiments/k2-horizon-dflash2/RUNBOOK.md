@@ -247,6 +247,33 @@ step 650: position-0 accuracy 0.041 -> 0.226, acceptance 0.013 -> 0.130. The
 `expandable_segments: memory mapping failed` warnings recur throughout — the
 run sits near the ceiling by design, and they are retries, not failures.
 
+### Export and GGUF conversion, proven on a mid-training checkpoint
+
+Both steps were run end to end against the step-8000 checkpoint **while
+training was still going**, so the path is validated before the final weights
+exist. `export-and-convert.sh` wraps them; it is CPU-only and safe to run while
+the API serves.
+
+**The runtime image has no converter.** `convert_hf_to_gguf.py` and `gguf-py`
+ship only in llama.cpp source, and there is no llama.cpp checkout on this host
+— the image build clones it. The script therefore needs `CONVERT_SRC`, a
+checkout at the image's pinned `LLAMA_CPP_REF` (`0f3a71be1`) with
+`patches-v15/` applied, created at `specforge-work/llama.cpp-convert`. Note a
+shallow `git fetch --depth 1 origin 0f3a71be1` **fails** — abbreviated SHAs are
+not valid remote refs; use `git fetch --filter=blob:none origin` then check out
+the short SHA.
+
+Checkpoints are written as `<run_id>-step<N>/training_state.pt` every 2,000
+steps, plus a `<run_id>-latest`, which is what the script defaults to.
+
+The trial produced a 1,526,962,208-byte Q8_0 draft whose metadata is correct:
+`general.architecture = eagle3`, `eagle3.target_layers = [2, 18, 33]`,
+`target_hidden_size = 4096`, `vocab_size = 250624`, `block_count = 1`, 15
+tensors. **`tokenizer.ggml.pre = 'k2-horizon'`** confirms the pre-tokenizer
+hash resolved — the failure mode `check_tokenizer_hash.py` exists to catch.
+What remains untested is whether llama.cpp *loads* the draft beside the target
+and what acceptance it reaches; both need the GPU that training holds.
+
 ### `prepare_hidden_states.py` had no way to supervise only the last turn
 
 `build_eagle3_dataset` and `preprocess_conversations` both accept

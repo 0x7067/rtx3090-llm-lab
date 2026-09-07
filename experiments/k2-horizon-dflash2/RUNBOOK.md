@@ -806,3 +806,68 @@ Provide one of: think, reasoning, reasoning_content, think_fast, think_faster.`
 Our session benchmarks are multi-turn and did not hit this, but they replay
 assistant turns we generated. Worth checking before trusting multi-turn agent
 traffic against any K2 stanza.
+
+## Uno measured on the RTX 3090: it runs, and it loses
+
+Built the upstream env (`ifm-ai/uno`, Apache 2.0) and ran the official 7B
+recipe on this card. It works — the Hopper requirement applies only to the
+Tree sampler, and FA2 covers Linear decoding on sm86.
+
+Env: `uv venv --python 3.10` at `specforge-work/uno-venv`, torch 2.11.0+cu128,
+prebuilt `flash_attn 2.8.3` wheel, `pip install -e '.[eval]'`. `uv venv` does
+not seed pip, so install with `uv pip`, not `python -m pip`. Adapter pinned at
+revision `ec92bbd7`, 1.40 GB (not the 698 MB the 0.9B card shows).
+
+Block-size sweep, 512 tokens, Linear sampler, FA2, bf16:
+
+| diffusion-block-size | tok/s | TPF |
+|---|---|---|
+| 8 | 64.7 | 1.921 |
+| **16** | **65.8** | **2.044** |
+| 32 | 59.2 | 1.893 |
+
+A 256-token run reports only 31.5 tok/s: at that length engine warm-up
+dominates and the number is meaningless. Use >= 512 tokens.
+
+**Verdict: keep llama.cpp Q8_0 + EAGLE-3.** Uno's TPF 2.04 is real but does not
+pay for bf16 on this card — 18 GB of weights per forward against 9.6 GB for
+Q8_0, so each forward costs about twice as much. Measured 65.8 tok/s against
+88.5 sustained for Q8_0 + eagle3 n3. Uno's losslessness is its only edge and it
+is worth little here: Q8_0 already measures a 1.0012 PPL ratio and 97.5% same
+top-1 against BF16. There is also no OpenAI-compatible server — the repo ships
+a Nano-vLLM engine driven by shell recipes — and no vLLM or SGLang integration
+exists, so nothing in our stack could call it.
+
+Revisit if any of these change: Uno lands in llama.cpp or vLLM; a quantized Uno
+path appears; or this box gets a Hopper card, which would unlock the Tree
+sampler that the paper says is the one for single-user latency.
+
+### Context limit, partially established
+
+KV is 144 KB/token at bf16 (2 x 36 layers x 8 kv-heads x 128 dim x 2 bytes),
+and the pool is whatever survives `total * gpu_memory_utilization - used`, so
+roughly 5 GB / 34k tokens with the 18 GB target and 1.4 GB adapter resident.
+Prompts to ~24k tokens scheduled and generated successfully at
+`--gpu-memory-utilization 0.95`.
+
+Two traps that made the first attempts lie:
+
+- **`--max-model-len 131072` "loads" fine and proves nothing.** It caps
+  sequence length, not the pool. A short prompt starts the engine at any
+  value; the pool only fails when a real sequence needs it, as
+  `scheduler.py:88 assert scheduled_seqs`.
+- Prompts go on argv, so anything past ~128 KB dies with `Argument list too
+  long` before Python starts. Synthetic filler also tokenizes far worse than
+  4 chars/token — measure with the real tokenizer, not by character count.
+
+Retrieval quality at depth is **not** established: the probes used
+`--max-tokens 32`, and at the template's default high effort the whole budget
+goes to reasoning before any answer appears.
+
+## Final configuration
+
+`k2-horizon-7b-eagle3` now serves `--spec-draft-n-max 3`, the measured best,
+and the n2/n3/pure sweep stanzas are removed now that the sweep is recorded
+here. Against the no-drafter control: **1.158x on 8-turn edit sessions, 1.248x
+sustained**, quality 4/4, at a 13% prefill cost and 7% concurrency loss that
+draft depth does not affect. Still not promoted to any default.

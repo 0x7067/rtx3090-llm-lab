@@ -1,6 +1,6 @@
 # Spark X2.5 4B on the RTX 3090
 
-The qualified profile uses the publisher's Q8_0 GGUF, one slot, 131,072
+The qualified profile uses the publisher's Q8_0 GGUF, one slot, 393,216
 tokens, FP16 K/V and full GPU offload. It runs through llama-swap with a
 separate Spark-compatible binary; other models retain the v18 runtime.
 
@@ -57,6 +57,24 @@ fast path; weight-only fallback support is a separate engine/kernel question.
 See [vLLM hardware support](https://docs.vllm.ai/en/latest/features/quantization/).
 
 ## Qualification
+
+### Current 384k profile
+
+The [384k qualification](qualification-384k-2026-09-10.json) uses the same
+Q8_0 weights and FP16 KV cache, with a 393,216-token window and 32,768-token
+output cap. Text, reasoning, streaming, tool calls and the tool-result
+follow-up passed again. Three-value retrieval from 360,098 prompt tokens
+passed in 205.68 seconds: 203.72 seconds for prompt processing (1,768 tok/s),
+then 42.64 tok/s for the 39-token answer. Short coding prompts decoded at
+128.04–128.26 tok/s in this run; these are separate runs, not a controlled
+speed comparison against the original profile.
+
+GPU memory peaked at 18,880 MiB, leaving 5,696 MiB (5.56 GiB) free.
+384k is the comfortable FP16-cache default. Extrapolating the measured
+allocation to 512k leaves only about 1 GiB free. Larger windows require
+quantizing the KV cache too; a 768k Q8-cache profile has not been qualified.
+
+### Initial 128k profile
 
 The [2026-09-10 qualification](qualification-2026-09-10.json) passed exact
 text output, separate reasoning content, streamed output, a structured

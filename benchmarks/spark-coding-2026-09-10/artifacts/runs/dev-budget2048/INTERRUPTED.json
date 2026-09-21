@@ -1,0 +1,6 @@
+{
+  "status": "incomplete_diagnostic",
+  "completed": 10,
+  "planned": 26,
+  "reason": "Initial coding failures persist despite forced reasoning end. SSE consumes the total output budget; histogram and flatten finish but fail behavioral assertions. Stop candidate; no aggregate suite score claimed. A further in-flight request was interrupted and has no completed record."
+}

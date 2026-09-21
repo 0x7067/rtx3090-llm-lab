@@ -1,0 +1,15 @@
+[
+  {
+    "name": "spark",
+    "base_url": "http://10.43.132.97:8080/v1",
+    "model": "spark-x2.5-4b",
+    "metadata": {
+      "engine": "llama.cpp XHToken 4a3635c; llama:cuda-swap-v19",
+      "target_weights": "official Spark X2.5 4B Q8_0 sha256:5c2c3c190e4337e1016b8593ca8e26e8b18c972200b107385d4ec61a25d9dea2",
+      "kv": "FP16,393216 tokens,one slot",
+      "speculation": "none",
+      "hardware": "RTX3090 24GiB",
+      "cache_policy": "warm shared service; unique campaign/case marker; latency descriptive, no cold-prefill claim"
+    }
+  }
+]

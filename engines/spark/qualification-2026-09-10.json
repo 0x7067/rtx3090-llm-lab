@@ -1,0 +1,182 @@
+{
+  "exact": {
+    "seconds": 0.10659719399882306,
+    "usage": {
+      "completion_tokens": 5,
+      "prompt_tokens": 27,
+      "total_tokens": 32,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 27,
+      "prompt_ms": 47.334,
+      "prompt_per_token_ms": 1.7531111111111113,
+      "prompt_per_second": 570.4145012042084,
+      "predicted_n": 5,
+      "predicted_ms": 43.166,
+      "predicted_per_token_ms": 10.7915,
+      "predicted_per_second": 92.66552379187324
+    }
+  },
+  "reasoning": {
+    "seconds": 3.2675718369991955,
+    "usage": {
+      "completion_tokens": 357,
+      "prompt_tokens": 36,
+      "total_tokens": 393,
+      "prompt_tokens_details": {
+        "cached_tokens": 9
+      }
+    },
+    "timings": {
+      "cache_n": 9,
+      "prompt_n": 27,
+      "prompt_ms": 33.801,
+      "prompt_per_token_ms": 1.251888888888889,
+      "prompt_per_second": 798.7929351202627,
+      "predicted_n": 357,
+      "predicted_ms": 3214.734,
+      "predicted_per_token_ms": 9.030151685393259,
+      "predicted_per_second": 110.7401110014079
+    }
+  },
+  "tool": {
+    "seconds": 0.22431759299979603,
+    "usage": {
+      "completion_tokens": 14,
+      "prompt_tokens": 108,
+      "total_tokens": 122,
+      "prompt_tokens_details": {
+        "cached_tokens": 9
+      }
+    },
+    "timings": {
+      "cache_n": 9,
+      "prompt_n": 99,
+      "prompt_ms": 46.491,
+      "prompt_per_token_ms": 0.4696060606060606,
+      "prompt_per_second": 2129.444408595212,
+      "predicted_n": 14,
+      "predicted_ms": 124.367,
+      "predicted_per_token_ms": 9.566692307692309,
+      "predicted_per_second": 104.52933656034156
+    }
+  },
+  "stream": {
+    "content": "STREAM_READY",
+    "done": true
+  },
+  "decode-0": {
+    "seconds": 2.354146593999758,
+    "usage": {
+      "completion_tokens": 256,
+      "prompt_tokens": 33,
+      "total_tokens": 289,
+      "prompt_tokens_details": {
+        "cached_tokens": 9
+      }
+    },
+    "timings": {
+      "cache_n": 9,
+      "prompt_n": 24,
+      "prompt_ms": 31.89,
+      "prompt_per_token_ms": 1.32875,
+      "prompt_per_second": 752.5870178739416,
+      "predicted_n": 256,
+      "predicted_ms": 2306.026,
+      "predicted_per_token_ms": 9.043239215686274,
+      "predicted_per_second": 110.57984602081677
+    }
+  },
+  "decode-1": {
+    "seconds": 2.4456898839998757,
+    "usage": {
+      "completion_tokens": 256,
+      "prompt_tokens": 35,
+      "total_tokens": 291,
+      "prompt_tokens_details": {
+        "cached_tokens": 9
+      }
+    },
+    "timings": {
+      "cache_n": 9,
+      "prompt_n": 26,
+      "prompt_ms": 33.689,
+      "prompt_per_token_ms": 1.2957307692307691,
+      "prompt_per_second": 771.7652646264359,
+      "predicted_n": 256,
+      "predicted_ms": 2372.163,
+      "predicted_per_token_ms": 9.3026,
+      "predicted_per_second": 107.49682884354911
+    }
+  },
+  "decode-2": {
+    "seconds": 2.4328765320005914,
+    "usage": {
+      "completion_tokens": 256,
+      "prompt_tokens": 33,
+      "total_tokens": 289,
+      "prompt_tokens_details": {
+        "cached_tokens": 9
+      }
+    },
+    "timings": {
+      "cache_n": 9,
+      "prompt_n": 24,
+      "prompt_ms": 35.069,
+      "prompt_per_token_ms": 1.4612083333333334,
+      "prompt_per_second": 684.365108785537,
+      "predicted_n": 256,
+      "predicted_ms": 2352.18,
+      "predicted_per_token_ms": 9.224235294117646,
+      "predicted_per_second": 108.41007065785783
+    }
+  },
+  "long-context": {
+    "seconds": 31.434792137999466,
+    "usage": {
+      "completion_tokens": 39,
+      "prompt_tokens": 118082,
+      "total_tokens": 118121,
+      "prompt_tokens_details": {
+        "cached_tokens": 9
+      }
+    },
+    "timings": {
+      "cache_n": 9,
+      "prompt_n": 118073,
+      "prompt_ms": 30382.686,
+      "prompt_per_token_ms": 0.25732119959685956,
+      "prompt_per_second": 3886.193603817648,
+      "predicted_n": 39,
+      "predicted_ms": 573.435,
+      "predicted_per_token_ms": 15.090394736842104,
+      "predicted_per_second": 66.26731887659456
+    },
+    "reply": "SECRET_ALPHA = cedar-7319\nSECRET_BETA = cobalt-4826\nSECRET_GAMMA = quartz-9053"
+  },
+  "qualification": {
+    "gpu": "NVIDIA RTX 3090",
+    "vram_total_mib": 24576,
+    "vram_peak_mib": 9408,
+    "runtime_commit": "4a3635c32fc9f044c2bde9ebeabf50c7e1ec5991",
+    "image_digest": "sha256:b2f307e0f21f073f16db7e7312fcbbd78cab11ea3c6a3546b77f288c7908d5a6",
+    "date": "2026-09-10",
+    "checks_passed": [
+      "exact-text",
+      "reasoning-content",
+      "tool-call",
+      "tool-result-followup",
+      "streaming",
+      "118k-three-value-retrieval"
+    ],
+    "warm_decode_tokens_per_second": [
+      110.57984602081677,
+      107.49682884354911,
+      108.41007065785783
+    ]
+  }
+}

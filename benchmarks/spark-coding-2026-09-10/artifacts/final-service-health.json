@@ -1,0 +1,35 @@
+{
+  "checked_at_utc": "2026-09-10T10:23:41.059381+00:00",
+  "ready_replicas": 1,
+  "image": "127.0.0.1:5000/llama:cuda-swap-v19",
+  "model": {
+    "id": "spark-x2.5-4b",
+    "object": "model",
+    "created": 1789035821,
+    "owned_by": "llama-swap",
+    "name": "Spark X2.5 4B (Home RTX 3090)",
+    "architecture": {
+      "input_modalities": [
+        "text"
+      ],
+      "modality": "text->text",
+      "output_modalities": [
+        "text"
+      ]
+    },
+    "capabilities": {
+      "function_calling": true
+    },
+    "supported_parameters": [
+      "tools",
+      "tool_choice"
+    ],
+    "context_length": 393216,
+    "meta": {
+      "llamaswap": {
+        "maxTokens": 32768,
+        "reasoning": true
+      }
+    }
+  }
+}

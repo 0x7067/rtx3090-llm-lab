@@ -1,0 +1,15 @@
+{
+  "model": "spark-x2.5-4b",
+  "request_defaults": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 0,
+    "max_tokens": 8192,
+    "chat_template_kwargs": {
+      "enable_thinking": true
+    },
+    "seed": 42
+  },
+  "system_instruction": "You are a practical coding assistant. Think briefly and check the stated contract, then give the requested answer. For code-only tasks, return one complete code block with no examples or explanation. Avoid revisiting decisions once resolved.",
+  "status": "Experimental request-level coding profile. Development 9/14 vs 4/14; held-out coding 6/6 vs 4/6; tool replay unchanged. One sample per case at an 8k output budget. Serving defaults and weights unchanged."
+}

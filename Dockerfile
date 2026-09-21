@@ -87,6 +87,17 @@ COPY --from=build /src/llama.cpp/build/bin/llama-gguf-split /usr/local/bin/llama
 COPY --from=build /src/llama.cpp/build/bin/*.so /usr/local/lib/
 COPY --from=build /usr/local/bin/llama-swap /usr/local/bin/llama-swap
 
+# PrismML llama.cpp fork for ternary Bonsai-2 27B (PTQ1_0/PQ2_0 ternary
+# kernels + Hadamard activation runtime; stock llama.cpp refuses the files).
+# Pinned release, kept under /opt so it can't shadow the primary build;
+# binaries use RUNPATH $ORIGIN and the CUDA 12.8 runtime libs.
+ARG PRISM_LLAMA_TAG=prism-b10709-9a9394a
+RUN curl -fsSL -o /tmp/prism-llama.tar.gz \
+      "https://github.com/PrismML-Eng/llama.cpp/releases/download/${PRISM_LLAMA_TAG}/llama-${PRISM_LLAMA_TAG}-bin-linux-cuda-12.8-x64.tar.gz" \
+    && mkdir -p /opt/prism-llama \
+    && tar xzf /tmp/prism-llama.tar.gz -C /opt/prism-llama --strip-components=1 \
+    && rm /tmp/prism-llama.tar.gz
+
 RUN ldconfig
 
 WORKDIR /app

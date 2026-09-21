@@ -1,0 +1,19 @@
+{
+  "observed_utc_date": "2026-09-10",
+  "deployment_image": "127.0.0.1:5000/llama:cuda-swap-v19",
+  "engine_commit": "4a3635c32fc9f044c2bde9ebeabf50c7e1ec5991",
+  "model": "XHToken/Spark-X2.5-4B-GGUF",
+  "model_revision": "d313463f1ff7dc29db20193fddc4ad8386d16261",
+  "model_sha256": "5c2c3c190e4337e1016b8593ca8e26e8b18c972200b107385d4ec61a25d9dea2",
+  "quantization": "Q8_0",
+  "context_tokens": 393216,
+  "kv_cache": "f16 K and V",
+  "slots": 1,
+  "speculation": "none",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "gpu_total_mib": 24576,
+  "observed_gpu_used_mib": 18880,
+  "driver": "595.71.05",
+  "cache_policy": "warm service; serial benchmark requests; descriptive latency",
+  "lab_base_commit": "be96b6145955028fb26569c49b1294d02d3ef328"
+}

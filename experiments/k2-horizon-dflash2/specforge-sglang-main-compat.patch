@@ -1,3 +1,39 @@
+diff --git i/scripts/prepare_hidden_states.py w/scripts/prepare_hidden_states.py
+index 109c014..0915e81 100644
+--- i/scripts/prepare_hidden_states.py
++++ w/scripts/prepare_hidden_states.py
+@@ -129,6 +129,14 @@ def parse_args():
+         action="store_true",
+         help="Whether the input data is preformatted text with the chat template already applied to the conversation messages.",
+     )
++    data_group.add_argument(
++        "--train-only-last-turn",
++        action="store_true",
++        help=(
++            "Supervise only the final assistant turn. Required when the history "
++            "turns were written by a different model than the capture target."
++        ),
++    )
+     data_group.add_argument("--num-samples", type=int, default=None)
+     data_group.add_argument("--build-dataset-num-proc", type=int, default=8)
+ 
+@@ -830,7 +838,7 @@ def main():
+     tokenizer = load_tokenizer(
+         args.target_model_path, trust_remote_code=args.trust_remote_code
+     )
+-    cache_params_string = f"{args.data_path}-{args.max_length}-{args.chat_template}-{args.target_model_path}-{args.num_samples}-{args.is_preformatted}"
++    cache_params_string = f"{args.data_path}-{args.max_length}-{args.chat_template}-{args.target_model_path}-{args.num_samples}-{args.is_preformatted}-{args.train_only_last_turn}"
+     cache_key = hashlib.md5(cache_params_string.encode()).hexdigest()
+ 
+     # Preprocess on complete, un-sharded dataset
+@@ -844,6 +852,7 @@ def main():
+             cache_dir=os.path.join(args.cache_dir, "processed_dataset"),
+             cache_key=cache_key,
+             is_preformatted=args.is_preformatted,
++            train_only_last_turn=args.train_only_last_turn,
+             num_proc=args.build_dataset_num_proc,
+             loss_mask_filter=capture_plan.loss_mask_filter,
+         )
 diff --git i/specforge/data/parse.py w/specforge/data/parse.py
 index 70b41fd..ee1edb6 100644
 --- i/specforge/data/parse.py

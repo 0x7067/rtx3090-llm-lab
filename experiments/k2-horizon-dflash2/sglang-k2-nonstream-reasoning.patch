@@ -1,0 +1,29 @@
+--- a/python/sglang/srt/parser/reasoning_parser.py
++++ b/python/sglang/srt/parser/reasoning_parser.py
+@@ -528,6 +528,26 @@
+         )
+ 
+ 
++    def detect_and_parse(self, text: str) -> StreamingParseResult:
++        # K2 7B can close medium/low reasoning with the generic high-effort
++        # delimiter. Local regeneration is non-streaming; accept that wire
++        # form before the base parser splits reasoning from the final answer.
++        generic_close = "</ifm|think>"
++        generic_at = text.find(generic_close)
++        selected_at = text.find(self.think_end_token)
++        if (
++            self.think_end_token != generic_close
++            and generic_at >= 0
++            and (selected_at < 0 or generic_at < selected_at)
++        ):
++            text = (
++                text[:generic_at]
++                + self.think_end_token
++                + text[generic_at + len(generic_close):]
++            )
++        return super().detect_and_parse(text)
++
++
+ class KimiK3Detector(BaseReasoningFormatDetector):
+     """Detector for the Kimi K3 XTML think channel.
+ 

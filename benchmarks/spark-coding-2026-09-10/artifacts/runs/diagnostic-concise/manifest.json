@@ -1,0 +1,139 @@
+{
+  "plan": {
+    "schema": 1,
+    "campaign": "spark-coding-dev",
+    "suite": {
+      "description": "Spark coding pilot: synthetic behavioral contracts and frozen tool replay; not a full repository-agent benchmark.",
+      "confidence": 0.95,
+      "bootstrap_samples": 10000,
+      "min_clusters": 20,
+      "repeats": 1,
+      "seeds": [
+        42
+      ],
+      "code_image": "sha256:613c5454f914638dc2bfcab71c8630de0089f7ebff0a7239b54f34866c4b6051",
+      "margins": {
+        "relevance": 0.03,
+        "transcript_qa": 0.03,
+        "reasoning": 0.03,
+        "extraction": 0.03,
+        "coding": 0.03,
+        "tool_replay": 0.03,
+        "retrieval": 0.03
+      },
+      "request_defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "top_k": 0,
+        "max_tokens": 8192,
+        "chat_template_kwargs": {
+          "enable_thinking": true
+        }
+      },
+      "cases": [
+        {
+          "id": "code-sse-frames",
+          "tier": "coding",
+          "cluster": "code-sse-frames",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "system",
+                "content": "You are a practical coding assistant. Think briefly and check the stated contract, then give the requested answer. For code-only tasks, return one complete code block with no examples or explanation. Avoid revisiting decisions once resolved."
+              },
+              {
+                "role": "user",
+                "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+          }
+        }
+      ],
+      "provenance": {
+        "generator_sha256": "791ff1914c6e21204fb318fb5c0c6786d95811081acadefb2d34103e1a6b2ea4",
+        "source": "Original authored contracts and synthetic documents. Reference solutions are excluded from requests."
+      }
+    },
+    "arms": [
+      {
+        "name": "spark",
+        "base_url": "http://10.43.132.97:8080/v1",
+        "model": "spark-x2.5-4b",
+        "metadata": {
+          "engine": "llama.cpp XHToken 4a3635c; llama:cuda-swap-v19",
+          "target_weights": "official Spark X2.5 4B Q8_0 sha256:5c2c3c190e4337e1016b8593ca8e26e8b18c972200b107385d4ec61a25d9dea2",
+          "kv": "FP16,393216 tokens,one slot",
+          "speculation": "none",
+          "hardware": "RTX3090 24GiB",
+          "cache_policy": "warm shared service; unique campaign/case marker; latency descriptive, no cold-prefill claim"
+        }
+      }
+    ],
+    "jobs": [
+      {
+        "id": "code-sse-frames:0:42",
+        "case": {
+          "id": "code-sse-frames",
+          "tier": "coding",
+          "cluster": "code-sse-frames",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "system",
+                "content": "You are a practical coding assistant. Think briefly and check the stated contract, then give the requested answer. For code-only tasks, return one complete code block with no examples or explanation. Avoid revisiting decisions once resolved."
+              },
+              {
+                "role": "user",
+                "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 0,
+          "max_tokens": 8192,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 13a51d267230a868c2bc."
+            },
+            {
+              "role": "system",
+              "content": "You are a practical coding assistant. Think briefly and check the stated contract, then give the requested answer. For code-only tasks, return one complete code block with no examples or explanation. Avoid revisiting decisions once resolved."
+            },
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "430acfe95774294134b57ac367723d248c421a63b08395a95dafd37808d0e768"
+      }
+    ],
+    "harness_sha256": "fdbdc69fe1a818b9f2177a5ee8ed786ec887ed272b3898880149d1b1fa57952c",
+    "sha256": "4da17abfeb28bd2fd36c1bb554017a9a2d4bbce2f3a754e7ecc4d0307947f1c4"
+  },
+  "arm": "spark",
+  "started_unix": 1789034122.5822735,
+  "timeout_s": 180.0
+}

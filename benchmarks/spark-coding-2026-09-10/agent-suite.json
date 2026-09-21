@@ -1,0 +1,30 @@
+{
+  "description": "Three synthetic Python file-edit/test episodes, frozen before inference. Tests are immutable. Not a real repository benchmark.",
+  "code_image": "sha256:613c5454f914638dc2bfcab71c8630de0089f7ebff0a7239b54f34866c4b6051",
+  "cases": [
+    {
+      "id": "cache-falsy",
+      "path": "cache.py",
+      "issue": "memoize calls the wrapped function repeatedly when its cached result is falsey. Cache every successful result, including None, 0, False, and an empty string. Preserve positional and keyword call support. Do not cache exceptions.",
+      "source": "def memoize(fn):\n    cache = {}\n    def wrapped(*args, **kwargs):\n        key = (args, tuple(sorted(kwargs.items())))\n        if cache.get(key):\n            return cache[key]\n        result = fn(*args, **kwargs)\n        cache[key] = result\n        return result\n    return wrapped\n",
+      "visible_tests": "calls=[]\n@memoize\ndef f(x):\n    calls.append(x)\n    return x\nassert f(0)==0 and f(0)==0\nassert calls==[0]\n",
+      "hidden_tests": "for value in (None,0,False,''):\n    calls=[]\n    @memoize\n    def f(x, y=1):\n        calls.append((x,y))\n        return value\n    assert f(3,y=2)==value and f(3,y=2)==value\n    assert len(calls)==1\ncalls=[]\n@memoize\ndef fail(x):\n    calls.append(x)\n    raise ValueError(x)\nfor i in range(2):\n    try: fail(1)\n    except ValueError: pass\n    else: raise AssertionError('exception lost')\nassert calls==[1,1]\n"
+    },
+    {
+      "id": "chunks-generator",
+      "path": "chunks.py",
+      "issue": "chunks(items, size) must accept a one-pass iterable, yield nonempty lists of at most size items, and include a short final chunk. Empty input yields nothing. size <= 0 must raise ValueError when the result is consumed. Existing list behavior should remain.",
+      "source": "def chunks(items, size):\n    for i in range(0, len(items), size):\n        yield items[i:i + size]\n",
+      "visible_tests": "assert list(chunks(iter([1,2,3]),2))==[[1,2],[3]]\nassert list(chunks([],2))==[]\n",
+      "hidden_tests": "assert list(chunks((x for x in range(7)),3))==[[0,1,2],[3,4,5],[6]]\nassert list(chunks(iter([]),1))==[]\nassert list(chunks([1,2],1))==[[1],[2]]\nfor n in (0,-1):\n    try: list(chunks([],n))\n    except ValueError: pass\n    else: raise AssertionError('invalid size accepted')\n"
+    },
+    {
+      "id": "elapsed-days",
+      "path": "elapsed.py",
+      "issue": "elapsed_seconds(start, end) loses full days and fractional seconds and incorrectly wraps negative durations. Return the signed total number of seconds between datetime objects as a float, preserving microseconds and timezone-aware datetime subtraction.",
+      "source": "def elapsed_seconds(start, end):\n    return float((end - start).seconds)\n",
+      "visible_tests": "from datetime import datetime, timedelta\ns=datetime(2026,1,1)\nassert elapsed_seconds(s,s+timedelta(days=2,seconds=3))==172803.0\n",
+      "hidden_tests": "from datetime import datetime,timedelta,timezone\ns=datetime(2026,1,1,tzinfo=timezone.utc)\nfor delta in (timedelta(microseconds=123456),timedelta(days=-3,seconds=2),timedelta(0),timedelta(days=5,seconds=4,microseconds=5)):\n    value=elapsed_seconds(s,s+delta)\n    assert isinstance(value,float) and value==delta.total_seconds()\nassert elapsed_seconds(s,s.astimezone(timezone(timedelta(hours=3))))==0.0\n"
+    }
+  ]
+}

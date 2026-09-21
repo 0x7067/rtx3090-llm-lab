@@ -1,0 +1,1296 @@
+{
+  "analysis_sha256": "3b1d946d399b8ede1ed760153251c603fd8879cd1ad442affe1747da5fc7dd75",
+  "runs": {
+    "dev-publisher": {
+      "plan_sha256": "838a93a2dcbdcd2617f75d9a8e2db6a9bbf71ca25279d7355106b49b1f3b4fa8",
+      "metrics": {
+        "coding": {
+          "passed": 4.0,
+          "attempted": 14,
+          "truncated": 9,
+          "mean_api_wall_s": 51.358524456857204,
+          "median_api_wall_s": 66.9449280350018
+        },
+        "tool_replay": {
+          "passed": 12.0,
+          "attempted": 12,
+          "truncated": 0,
+          "mean_api_wall_s": 0.7329954430009215,
+          "median_api_wall_s": 0.7083199525022792
+        }
+      },
+      "cases": {
+        "episode-unicode-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.5298084499991091,
+          "output_tokens": 55,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-sse-frames:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.84862775899819,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-histogram:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.04320382899823,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-failed-test-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.5483441370015498,
+          "output_tokens": 36,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-quoted-path-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2833099170020432,
+          "output_tokens": 23,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-pagination:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 11.329395425000257,
+          "output_tokens": 1407,
+          "grade_detail": ""
+        },
+        "code-flatten:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.94787400200221,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-batch-bytes:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 9.815736178999941,
+          "output_tokens": 1207,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 8, in <module>\nAssertionError: oversize accepted\n"
+        },
+        "episode-cache-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.9395229870024195,
+          "output_tokens": 98,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.6986646880031913,
+          "output_tokens": 76,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rate-limit:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.94198206800138,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-quoted-path-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7179752170013671,
+          "output_tokens": 59,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-retry-budget:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.99695412500296,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-cache-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.9491735970004811,
+          "output_tokens": 87,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.0683447890005482,
+          "output_tokens": 120,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-diff-keys:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 69.52259470699937,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-lru:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 11.551555463000113,
+          "output_tokens": 1332,
+          "grade_detail": ""
+        },
+        "episode-unicode-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.5797968750011933,
+          "output_tokens": 49,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-failed-test-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.6188328839998576,
+          "output_tokens": 65,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-redact:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 68.50987496200105,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-pod-logs-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.0544318499996734,
+          "output_tokens": 100,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-env-lines:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 48.43878934999884,
+          "output_tokens": 5953,
+          "grade_detail": ""
+        },
+        "code-stable-dedupe:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 30.891058421999332,
+          "output_tokens": 3808,
+          "grade_detail": ""
+        },
+        "code-topological:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.06915873699836,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-jsonl:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.11253736800063,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-pod-logs-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.8077399249996233,
+          "output_tokens": 71,
+          "grade_detail": "tool names and parsed arguments"
+        }
+      }
+    },
+    "dev-focused": {
+      "plan_sha256": "a2c1dda9cbc3d882f4482c912e2b01d9295fe7bf8f0f43314b98e3be9fe094a3",
+      "metrics": {
+        "coding": {
+          "passed": 6.0,
+          "attempted": 14,
+          "truncated": 7,
+          "mean_api_wall_s": 50.016622454857234,
+          "median_api_wall_s": 60.85941599650141
+        },
+        "tool_replay": {
+          "passed": 12.0,
+          "attempted": 12,
+          "truncated": 0,
+          "mean_api_wall_s": 0.8026554103338034,
+          "median_api_wall_s": 0.7989349350009434
+        }
+      },
+      "cases": {
+        "episode-unicode-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.8635127249981451,
+          "output_tokens": 96,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-sse-frames:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.94909433000066,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-histogram:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.04659243399874,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-failed-test-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.5328024800001003,
+          "output_tokens": 34,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-quoted-path-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.6005800669991004,
+          "output_tokens": 62,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-pagination:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 16.397514305001096,
+          "output_tokens": 2029,
+          "grade_detail": ""
+        },
+        "code-flatten:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.98111354899811,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-batch-bytes:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 32.95002374700198,
+          "output_tokens": 4058,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 8, in <module>\nAssertionError: oversize accepted\n"
+        },
+        "episode-cache-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7318719419999979,
+          "output_tokens": 67,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.8114262429990049,
+          "output_tokens": 90,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rate-limit:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.01549925700238,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-quoted-path-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.4606598560021666,
+          "output_tokens": 150,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-retry-budget:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 18.870265446999838,
+          "output_tokens": 2339,
+          "grade_detail": ""
+        },
+        "episode-cache-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.9361099120033032,
+          "output_tokens": 96,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.8630445999988297,
+          "output_tokens": 95,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-diff-keys:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.02339237300112,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-lru:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 15.804607792997558,
+          "output_tokens": 1951,
+          "grade_detail": ""
+        },
+        "episode-unicode-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.5614647059992421,
+          "output_tokens": 49,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-failed-test-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.38234643600299023,
+          "output_tokens": 34,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-redact:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.01463888099897,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-pod-logs-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.1016023299998778,
+          "output_tokens": 104,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-env-lines:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.97529226699771,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-stable-dedupe:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 37.93791387500096,
+          "output_tokens": 4673,
+          "grade_detail": ""
+        },
+        "code-topological:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 54.49702844700005,
+          "output_tokens": 6682,
+          "grade_detail": ""
+        },
+        "code-jsonl:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 54.76973766300216,
+          "output_tokens": 6715,
+          "grade_detail": ""
+        },
+        "episode-pod-logs-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7864436270028818,
+          "output_tokens": 71,
+          "grade_detail": "tool names and parsed arguments"
+        }
+      }
+    },
+    "dev-no-thinking": {
+      "plan_sha256": "c8ce41fcf4777e01cb064fbc49ce4892834a6227943c02616a6d78685095d7a6",
+      "metrics": {
+        "coding": {
+          "passed": 3.0,
+          "attempted": 14,
+          "truncated": 0,
+          "mean_api_wall_s": 1.811586409357395,
+          "median_api_wall_s": 1.7786787304994505
+        },
+        "tool_replay": {
+          "passed": 12.0,
+          "attempted": 12,
+          "truncated": 0,
+          "mean_api_wall_s": 0.28351499591644824,
+          "median_api_wall_s": 0.26584304649986734
+        }
+      },
+      "cases": {
+        "episode-unicode-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.222136029999092,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-sse-frames:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.9348169690019859,
+          "output_tokens": 233,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "code-histogram:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.274067880000075,
+          "output_tokens": 153,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "episode-failed-test-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.24627933900046628,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-quoted-path-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2201836389976961,
+          "output_tokens": 15,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-pagination:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 0.6992080870004429,
+          "output_tokens": 76,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 8, in paginate\nValueError: 2 is not in list\n"
+        },
+        "code-flatten:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 2.0648275970015675,
+          "output_tokens": 255,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "code-batch-bytes:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.787901965999481,
+          "output_tokens": 218,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 8, in <module>\nAssertionError: oversize accepted\n"
+        },
+        "episode-cache-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2492547879992344,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.27086362000045483,
+          "output_tokens": 22,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rate-limit:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 2.618671143998654,
+          "output_tokens": 320,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"answer.py\", line 38\n    else:\n    ^^^^\nSyntaxError: invalid syntax\n"
+        },
+        "episode-quoted-path-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.26082247299927985,
+          "output_tokens": 15,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-retry-budget:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 1.6836100200016517,
+          "output_tokens": 201,
+          "grade_detail": ""
+        },
+        "episode-cache-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.3267574700003024,
+          "output_tokens": 24,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.3625724599987734,
+          "output_tokens": 32,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-diff-keys:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.9186994489973586,
+          "output_tokens": 229,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\n  File \"answer.py\", line 21, in changed_paths\n  File \"answer.py\", line 15, in traverse\n  File \"answer.py\", line 15, in traverse\n  File \"answer.py\", line 17, in traverse\nUnboundLocalError: cannot access local variable 'bv' where it is not associated with a value\n"
+        },
+        "code-lru:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 1.3781870780003374,
+          "output_tokens": 166,
+          "grade_detail": ""
+        },
+        "episode-unicode-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.25156489799701376,
+          "output_tokens": 15,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-failed-test-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.3179520740013686,
+          "output_tokens": 28,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-redact:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 2.228943138001341,
+          "output_tokens": 270,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 15, in redact\nAttributeError: 'list' object has no attribute 'lower'\n"
+        },
+        "episode-pod-logs-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.3834739020021516,
+          "output_tokens": 30,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-env-lines:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.3524859859971912,
+          "output_tokens": 158,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "code-stable-dedupe:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 0.5828860140027246,
+          "output_tokens": 66,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\nAssertionError\n"
+        },
+        "code-topological:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 4.068448908001301,
+          "output_tokens": 508,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 25, in order\nValueError: Node b references unknown prerequisite a\n"
+        },
+        "code-jsonl:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 1.76945549499942,
+          "output_tokens": 215,
+          "grade_detail": ""
+        },
+        "episode-pod-logs-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2903192580015457,
+          "output_tokens": 20,
+          "grade_detail": "tool names and parsed arguments"
+        }
+      }
+    },
+    "dev-no-thinking-focused": {
+      "plan_sha256": "e6e125830251a08a9a0979284671372a468969648a4ecebc2f9ee8295d2fa67c",
+      "metrics": {
+        "coding": {
+          "passed": 2.0,
+          "attempted": 14,
+          "truncated": 0,
+          "mean_api_wall_s": 1.7117218699290138,
+          "median_api_wall_s": 1.7339654104998772
+        },
+        "tool_replay": {
+          "passed": 12.0,
+          "attempted": 12,
+          "truncated": 0,
+          "mean_api_wall_s": 0.2794941584161279,
+          "median_api_wall_s": 0.24954496650025249
+        }
+      },
+      "cases": {
+        "episode-unicode-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.22285282899974845,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-sse-frames:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.3882046279977658,
+          "output_tokens": 164,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\nAssertionError\n"
+        },
+        "code-histogram:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.2328880519999075,
+          "output_tokens": 150,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "episode-failed-test-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.24199996599782025,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-quoted-path-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2209508089981682,
+          "output_tokens": 15,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-pagination:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 0.6832267710015003,
+          "output_tokens": 74,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 7, in paginate\nValueError: 2 is not in list\n"
+        },
+        "code-flatten:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.7712805139999546,
+          "output_tokens": 219,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "code-batch-bytes:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.129543333001493,
+          "output_tokens": 135,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 8, in <module>\nAssertionError: oversize accepted\n"
+        },
+        "episode-cache-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.24053857100079767,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2716057629986608,
+          "output_tokens": 22,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rate-limit:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 3.028657317001489,
+          "output_tokens": 372,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "episode-quoted-path-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.4067426940018777,
+          "output_tokens": 32,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-retry-budget:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 1.3037827660009498,
+          "output_tokens": 153,
+          "grade_detail": ""
+        },
+        "episode-cache-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.24513011499948334,
+          "output_tokens": 14,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.3600150769998436,
+          "output_tokens": 32,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-diff-keys:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.7921486570012348,
+          "output_tokens": 214,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        },
+        "code-lru:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.6966503069997998,
+          "output_tokens": 207,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 3, in <module>\nAssertionError\n"
+        },
+        "episode-unicode-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.25395981800102163,
+          "output_tokens": 15,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-failed-test-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.2160500289974152,
+          "output_tokens": 15,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-redact:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 1.9007622090030054,
+          "output_tokens": 229,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 14, in redact\nAttributeError: 'list' object has no attribute 'lower'\n"
+        },
+        "episode-pod-logs-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.38105759199970635,
+          "output_tokens": 30,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-env-lines:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 1.0395124329988903,
+          "output_tokens": 119,
+          "grade_detail": ""
+        },
+        "code-stable-dedupe:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 2.0953385829998297,
+          "output_tokens": 259,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 27, in unique_latest\nNameError: name 'later_than' is not defined\n"
+        },
+        "code-topological:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 2.7993847079997067,
+          "output_tokens": 347,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 16, in order\nKeyError: 'a'\n"
+        },
+        "code-jsonl:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 2.1027259010006674,
+          "output_tokens": 254,
+          "grade_detail": "Traceback (most recent call last):\n  File \"answer.py\", line 26, in parse_jsonl\nNameError: name 'json' is not defined. Did you forget to import 'json'?\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\n  File \"answer.py\", line 27, in parse_jsonl\nNameError: name 'json' is not defined. Did you forget to import 'json'?\n"
+        },
+        "episode-pod-logs-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.29302663799899165,
+          "output_tokens": 20,
+          "grade_detail": "tool names and parsed arguments"
+        }
+      }
+    },
+    "dev-concise": {
+      "plan_sha256": "a596180f6ea4809c9cb4a29c1c5c35f94d55a0e05655397e894b88c1738e2abe",
+      "metrics": {
+        "coding": {
+          "passed": 9.0,
+          "attempted": 14,
+          "truncated": 4,
+          "mean_api_wall_s": 34.6637419459291,
+          "median_api_wall_s": 26.954140679001284
+        },
+        "tool_replay": {
+          "passed": 12.0,
+          "attempted": 12,
+          "truncated": 0,
+          "mean_api_wall_s": 0.9398293720008345,
+          "median_api_wall_s": 0.9025608245010517
+        }
+      },
+      "cases": {
+        "episode-unicode-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.8433447940005863,
+          "output_tokens": 91,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-sse-frames:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.98750299200037,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-histogram:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.15545351499895,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-failed-test-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.5661530430006678,
+          "output_tokens": 36,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-quoted-path-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.0485138460026064,
+          "output_tokens": 118,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-pagination:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 9.687135545998899,
+          "output_tokens": 1200,
+          "grade_detail": ""
+        },
+        "code-flatten:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 29.72637481700076,
+          "output_tokens": 3673,
+          "grade_detail": ""
+        },
+        "code-batch-bytes:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 13.454892164001649,
+          "output_tokens": 1665,
+          "grade_detail": ""
+        },
+        "episode-cache-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.6096747930023412,
+          "output_tokens": 54,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.9617768550015171,
+          "output_tokens": 107,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rate-limit:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.11348762800117,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-quoted-path-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.6286314950011729,
+          "output_tokens": 169,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-retry-budget:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 19.33467938100148,
+          "output_tokens": 2392,
+          "grade_detail": ""
+        },
+        "episode-cache-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7520354580010462,
+          "output_tokens": 70,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-pt-pods-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.2724461600009818,
+          "output_tokens": 144,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-diff-keys:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 67.0885307110002,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "code-lru:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 5.839963934002299,
+          "output_tokens": 709,
+          "grade_detail": ""
+        },
+        "episode-unicode-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7290065689994663,
+          "output_tokens": 70,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-failed-test-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.6565306789998431,
+          "output_tokens": 68,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-redact:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 18.448302395998326,
+          "output_tokens": 2284,
+          "grade_detail": ""
+        },
+        "episode-pod-logs-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.092068169000413,
+          "output_tokens": 113,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-env-lines:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 24.18190654100181,
+          "output_tokens": 2987,
+          "grade_detail": ""
+        },
+        "code-stable-dedupe:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 17.953266483000334,
+          "output_tokens": 2218,
+          "grade_detail": ""
+        },
+        "code-topological:0:42": {
+          "score": 0.0,
+          "finish_reason": "stop",
+          "wall_s": 48.04829737399996,
+          "output_tokens": 5895,
+          "grade_detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\n  File \"answer.py\", line 6, in order\nTypeError: unhashable type: 'list'\n"
+        },
+        "code-jsonl:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 30.27259376100119,
+          "output_tokens": 3731,
+          "grade_detail": ""
+        },
+        "episode-pod-logs-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.1177706029993715,
+          "output_tokens": 115,
+          "grade_detail": "tool names and parsed arguments"
+        }
+      }
+    },
+    "holdout-publisher": {
+      "plan_sha256": "7f700dd05c8f1f427b408a6d1fe79a8a2fe0d03719975daf143df183be5a190c",
+      "metrics": {
+        "coding": {
+          "passed": 4.0,
+          "attempted": 6,
+          "truncated": 2,
+          "mean_api_wall_s": 32.734954668166516,
+          "median_api_wall_s": 23.961644602999513
+        },
+        "tool_replay": {
+          "passed": 4.0,
+          "attempted": 4,
+          "truncated": 0,
+          "mean_api_wall_s": 1.0824908660006258,
+          "median_api_wall_s": 1.0588157500005764
+        }
+      },
+      "cases": {
+        "episode-not-found-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.2959442510000372,
+          "output_tokens": 149,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rolling-window:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 8.573263307000161,
+          "output_tokens": 1071,
+          "grade_detail": ""
+        },
+        "code-range-coalesce:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.98850849900191,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        },
+        "episode-untrusted-tool-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.9163877130013134,
+          "output_tokens": 83,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-reconcile:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 8.833387955000944,
+          "output_tokens": 1097,
+          "grade_detail": ""
+        },
+        "episode-not-found-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.0377542710011767,
+          "output_tokens": 112,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-untrusted-tool-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.079877228999976,
+          "output_tokens": 123,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-path-normalize:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 39.08990125099808,
+          "output_tokens": 4819,
+          "grade_detail": ""
+        },
+        "code-ttl:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 5.932442867997452,
+          "output_tokens": 732,
+          "grade_detail": ""
+        },
+        "code-merge-config:0:42": {
+          "score": 0.0,
+          "finish_reason": "length",
+          "wall_s": 66.99222412900053,
+          "output_tokens": 8192,
+          "grade_detail": "request failed or output incomplete"
+        }
+      }
+    },
+    "holdout-concise": {
+      "plan_sha256": "ae2b2373ab63f21aae714aa19b7057e0db1d8bc116b3573ded96bc30765f4b48",
+      "metrics": {
+        "coding": {
+          "passed": 6.0,
+          "attempted": 6,
+          "truncated": 0,
+          "mean_api_wall_s": 13.4663488239997,
+          "median_api_wall_s": 13.14779667950097
+        },
+        "tool_replay": {
+          "passed": 4.0,
+          "attempted": 4,
+          "truncated": 0,
+          "mean_api_wall_s": 0.8962358467479135,
+          "median_api_wall_s": 0.8063364969984832
+        }
+      },
+      "cases": {
+        "episode-not-found-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7770628279977245,
+          "output_tokens": 82,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-rolling-window:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 5.586123667999345,
+          "output_tokens": 691,
+          "grade_detail": ""
+        },
+        "code-range-coalesce:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 15.271012036002503,
+          "output_tokens": 1897,
+          "grade_detail": ""
+        },
+        "episode-untrusted-tool-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.7961917819993687,
+          "output_tokens": 78,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-reconcile:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 11.024581322999438,
+          "output_tokens": 1367,
+          "grade_detail": ""
+        },
+        "episode-not-found-first:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 0.8164812119975977,
+          "output_tokens": 81,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "episode-untrusted-tool-next:0:42": {
+          "score": 1.0,
+          "finish_reason": "tool_calls",
+          "wall_s": 1.195207564996963,
+          "output_tokens": 136,
+          "grade_detail": "tool names and parsed arguments"
+        },
+        "code-path-normalize:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 21.48677146800037,
+          "output_tokens": 2661,
+          "grade_detail": ""
+        },
+        "code-ttl:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 5.23882782599685,
+          "output_tokens": 645,
+          "grade_detail": ""
+        },
+        "code-merge-config:0:42": {
+          "score": 1.0,
+          "finish_reason": "stop",
+          "wall_s": 22.190776622999692,
+          "output_tokens": 2749,
+          "grade_detail": ""
+        }
+      }
+    }
+  },
+  "paired_instruction": {
+    "dev": {
+      "wins": [
+        "code-flatten:0:42",
+        "code-batch-bytes:0:42",
+        "code-retry-budget:0:42",
+        "code-redact:0:42",
+        "code-jsonl:0:42"
+      ],
+      "losses": [],
+      "unchanged": [
+        "episode-unicode-first:0:42",
+        "code-sse-frames:0:42",
+        "code-histogram:0:42",
+        "episode-failed-test-next:0:42",
+        "episode-quoted-path-next:0:42",
+        "code-pagination:0:42",
+        "episode-cache-next:0:42",
+        "episode-pt-pods-first:0:42",
+        "code-rate-limit:0:42",
+        "episode-quoted-path-first:0:42",
+        "episode-cache-first:0:42",
+        "episode-pt-pods-next:0:42",
+        "code-diff-keys:0:42",
+        "code-lru:0:42",
+        "episode-unicode-next:0:42",
+        "episode-failed-test-first:0:42",
+        "episode-pod-logs-next:0:42",
+        "code-env-lines:0:42",
+        "code-stable-dedupe:0:42",
+        "code-topological:0:42",
+        "episode-pod-logs-first:0:42"
+      ]
+    },
+    "holdout": {
+      "wins": [
+        "code-range-coalesce:0:42",
+        "code-merge-config:0:42"
+      ],
+      "losses": [],
+      "unchanged": [
+        "episode-not-found-next:0:42",
+        "code-rolling-window:0:42",
+        "episode-untrusted-tool-first:0:42",
+        "code-reconcile:0:42",
+        "episode-not-found-first:0:42",
+        "episode-untrusted-tool-next:0:42",
+        "code-path-normalize:0:42",
+        "code-ttl:0:42"
+      ]
+    }
+  },
+  "agents": {
+    "agent-publisher": {
+      "cache-falsy": {
+        "score": 1.0,
+        "workflow_completed": true,
+        "api_time_sum_s": 4.7687293919989315,
+        "requests": 4
+      },
+      "chunks-generator": {
+        "score": 1.0,
+        "workflow_completed": true,
+        "api_time_sum_s": 33.41610895299891,
+        "requests": 4
+      },
+      "elapsed-days": {
+        "score": 0.0,
+        "workflow_completed": false,
+        "api_time_sum_s": 67.51322282800174,
+        "requests": 2
+      }
+    },
+    "agent-no-thinking": {
+      "cache-falsy": {
+        "score": 1.0,
+        "workflow_completed": true,
+        "api_time_sum_s": 2.4995494460017653,
+        "requests": 4
+      },
+      "chunks-generator": {
+        "score": 1.0,
+        "workflow_completed": true,
+        "api_time_sum_s": 3.629390969999804,
+        "requests": 6
+      },
+      "elapsed-days": {
+        "score": 1.0,
+        "workflow_completed": true,
+        "api_time_sum_s": 2.9957644720016106,
+        "requests": 4
+      }
+    }
+  }
+}

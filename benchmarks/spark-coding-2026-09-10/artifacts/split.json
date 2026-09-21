@@ -1,0 +1,14 @@
+{
+  "holdout_clusters": [
+    "code-merge-config",
+    "code-path-normalize",
+    "code-range-coalesce",
+    "code-reconcile",
+    "code-rolling-window",
+    "code-ttl",
+    "episode-not-found",
+    "episode-untrusted-tool"
+  ],
+  "hash_salt": "spark-coding-v1",
+  "selection_before_inference": true
+}

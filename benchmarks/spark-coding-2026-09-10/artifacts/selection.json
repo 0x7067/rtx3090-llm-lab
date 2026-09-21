@@ -1,0 +1,46 @@
+{
+  "locked_at_utc": "2026-09-10T10:11:54.154898+00:00",
+  "selected": "concise",
+  "selection_rule": {
+    "frozen_at_utc": "2026-09-10T10:03:59.482270+00:00",
+    "rule": "Among completed full development conditions, choose the highest coding pass count subject to all 12 tool replay cases passing. If concise ties focused, retain focused to avoid an added system instruction. Interrupted diagnostics and single-case probes are not eligible. Freeze the winner before any holdout inference.",
+    "eligible": [
+      "publisher",
+      "focused",
+      "no-thinking",
+      "no-thinking-focused",
+      "concise"
+    ],
+    "holdout_cases": 10,
+    "holdout_coding": 6,
+    "holdout_tool_replay": 4,
+    "holdout_inspected": false,
+    "further_tuning_after_holdout": false
+  },
+  "development_scores": {
+    "publisher": {
+      "coding": 4.0,
+      "tool_replay": 12.0
+    },
+    "focused": {
+      "coding": 6.0,
+      "tool_replay": 12.0
+    },
+    "no-thinking": {
+      "coding": 3.0,
+      "tool_replay": 12.0
+    },
+    "no-thinking-focused": {
+      "coding": 2.0,
+      "tool_replay": 12.0
+    },
+    "concise": {
+      "coding": 9.0,
+      "tool_replay": 12.0
+    }
+  },
+  "holdout_already_run": false,
+  "selected_development_plan_sha256": "a596180f6ea4809c9cb4a29c1c5c35f94d55a0e05655397e894b88c1738e2abe",
+  "selected_holdout_plan_sha256": "ae2b2373ab63f21aae714aa19b7057e0db1d8bc116b3573ded96bc30765f4b48",
+  "decision": "Select the concise instruction at publisher sampling. No further changes based on holdout results."
+}

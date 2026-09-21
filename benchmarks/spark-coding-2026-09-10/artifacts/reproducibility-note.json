@@ -1,0 +1,11 @@
+{
+  "case": "code-sse-frames:0:42",
+  "request_sha256": "430acfe95774294134b57ac367723d248c421a63b08395a95dafd37808d0e768",
+  "identical_request_hash": true,
+  "probe_score": 1.0,
+  "full_run_score": 0.0,
+  "probe_cached_tokens": 9,
+  "full_run_cached_tokens": 1,
+  "shared_reasoning_prefix_characters": 70,
+  "interpretation": "Same request and seed gave different outputs. Cache histories differ; cause not established. Keep both observations; seed does not imply bitwise reproducibility."
+}

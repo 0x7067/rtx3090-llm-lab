@@ -138,7 +138,8 @@ ARGS=(--model "$MODEL" --served-model-name "$NAME" --port "$PORT" --host "${BIND
 # what the chat template emits -- this model's template writes the Qwen3 XML form
 # (<tool_call><function=..><parameter=..>), which is qwen3_xml, not the JSON-in-tag hermes form.
 [ -n "${TOOL_PARSER:-}" ] && ARGS+=(--enable-auto-tool-choice --tool-call-parser "$TOOL_PARSER")
-echo "+ $PYTHON -m vllm.entrypoints.openai.api_server ${ARGS[*]} ${EXTRA:-}"
+# Redact the --api-key value: with logToStdout=both this echo reaches pod logs.
+echo "+ $PYTHON -m vllm.entrypoints.openai.api_server ${ARGS[*]} ${EXTRA:-}" | sed -E 's/(--api-key )\S+/\1*** REDACTED ***/'
 [ -n "${DRYRUN:-}" ] && exit 0
 # EXTRA is deliberately unquoted: it carries whole flags, including --speculative-config's
 # JSON, which contains no spaces.

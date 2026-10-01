@@ -35,6 +35,10 @@ Depth 3 with 8192 batch tokens started, but the first request failed in `solve_t
 
 The production candidate uses image digest `sha256:37ae52afe6b11ffa4b613f1fa5ecd8354584a32daa500b7ce02dbdb1c283e012`, which is the exact local image used for the benchmark. It serves `qwen3.8-27b` through vLLM 0.30.0 and OrcaSAQ2 kernel 0.1.0 with MTP depth 3, 4096 batch tokens, 150,000 context, eight sequences, FP8 KV, and prefix caching.
 
+Flux applied root commit `523c923a`. The live pod reached ready with zero restarts and reported a 240,825-token KV pool, or 1.61 maximum concurrent 150,000-token requests. `/v1/models` returned `qwen3.8-27b`, and a completion returned `ORCA_READY`. The GPU thermal guard and fan controller remained active with no thermal latch.
+
+The first public check exposed stale manual VPS state: the repository contained the `llama.denguinho.org` proxy block, but `/opt/caddy-vps/Caddyfile` did not. The missing block was added without changing other VPS routes, validated, and reloaded from backup `Caddyfile.bak.20261001T122143Z`. The Cloudflare/VPS/home path then returned the model list and an `EDGE_READY` completion; an unauthenticated request remained HTTP 401.
+
 ## Evidence
 
 - `strata-publisher-calibration.json` records the publisher calibration sweep and retained settings.

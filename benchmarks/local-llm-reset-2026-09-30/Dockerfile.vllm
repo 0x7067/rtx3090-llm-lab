@@ -1,0 +1,12 @@
+FROM vllm/vllm-openai:v0.30.0@sha256:8a69ffad015f138d7170c4ddc429e230a3bc1c1719f67e14324749df200a4b90
+
+RUN apt-get update && apt-get install -y --no-install-recommends g++ ninja-build curl ca-certificates && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fL 'https://github.com/turboderp-org/exllamav3/releases/download/v1.5.1/exllamav3-1.5.1%2Bcu132.torch2.13.0-cp312-cp312-linux_x86_64.whl' -o '/tmp/exllamav3-1.5.1+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl' && uv pip install --system --no-deps '/tmp/exllamav3-1.5.1+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl' && rm '/tmp/exllamav3-1.5.1+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl'
+
+COPY pyproject.toml README.md /opt/orcasaq2/
+COPY orcasaq2 /opt/orcasaq2/orcasaq2
+COPY presets /opt/orcasaq2/presets
+RUN uv pip install --system --no-deps /opt/orcasaq2
+
+ENV VLLM_USE_FLASHINFER_SAMPLER=0

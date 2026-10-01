@@ -1,0 +1,244 @@
+{
+  "status": "ok",
+  "content": "\n\nOK",
+  "reasoning": "The user asked me to reply \"OK\". This is a simple request. I should just reply \"OK\".\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "events": [
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "role": "assistant",
+            "content": ""
+          },
+          "logprobs": null,
+          "finish_reason": null
+        }
+      ],
+      "prompt_token_ids": null,
+      "prompt_text": null
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "The"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " user asked"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " me to reply"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " \"OK\"."
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " This is a"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " simple request"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": ". I should"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " just reply \""
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "OK\".\n"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "content": "\n\nOK"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {},
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-850b65077a1108c5",
+      "object": "chat.completion.chunk",
+      "created": 1790766179,
+      "model": "orca-qwen3.8-27b",
+      "choices": [],
+      "usage": {
+        "prompt_tokens": 55,
+        "total_tokens": 82,
+        "completion_tokens": 27,
+        "completion_tokens_details": {
+          "reasoning_tokens": 23
+        }
+      },
+      "system_fingerprint": "vllm-0.30.0-2cfaf34d"
+    }
+  ],
+  "ttft_s": 0.8903820320047089,
+  "usage": {
+    "prompt_tokens": 55,
+    "total_tokens": 82,
+    "completion_tokens": 27,
+    "completion_tokens_details": {
+      "reasoning_tokens": 23
+    }
+  },
+  "timings": {},
+  "wall_s": 1.2255036950009526,
+  "e2e_output_tps": 22.03175731753221,
+  "server_decode_tps": null,
+  "server_prefill_tps": null
+}

@@ -1,0 +1,17 @@
+warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+0.00.105.191 I srv  llama_server: initializing ...
+0.00.105.201 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.105.527 W srv  llama_server: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.107.160 I srv    load_model: loading model '/models/Qwen3.8-27B-GSQ-RCO-IQ3_S.gguf'
+0.02.691.460 I cmn          init: llama threadpool init, n_threads = 10
+0.02.906.432 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 150016, kv_unified = 'false'
+0.02.910.734 W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)
+0.02.910.762 I srv  llama_server: model loaded
+0.02.910.765 I srv  llama_server: listening on http://127.0.0.1:18181
+1.34.754.492 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1
+1.34.754.631 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+1.36.547.460 I slot print_timing: id  0 | task 0 | prompt eval time =     530.71 ms /   314 tokens (    1.69 ms per token,   591.66 tokens per second)
+1.36.547.463 I slot print_timing: id  0 | task 0 |        eval time =    1262.10 ms /    58 tokens (   22.14 ms per token,    45.16 tokens per second)
+1.36.547.463 I slot print_timing: id  0 | task 0 |       total time =    1792.81 ms /   372 tokens
+1.36.547.467 I slot print_timing: id  0 | task 0 |    graphs reused =         57
+1.36.547.508 I slot      release: id  0 | task 0 | stop processing: n_tokens = 371, truncated = 0

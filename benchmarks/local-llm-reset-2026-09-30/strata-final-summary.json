@@ -1,0 +1,352 @@
+{
+  "plan_sha256": "957a049310aa926e85af6a96f32f6145ba67691530b2983ae208c89cfb0872bc",
+  "arm": "strata_flash_next",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 20,
+      "clusters": 20,
+      "statuses": {
+        "ok": 20
+      },
+      "finish_reasons": {
+        "stop": 11,
+        "length": 9
+      },
+      "prompt_tokens_observed": 20,
+      "prompt_tokens_min": 109,
+      "prompt_tokens_max": 145,
+      "full_score": 11,
+      "completed": 11,
+      "mean_score": 0.55
+    },
+    "extraction": {
+      "attempted": 6,
+      "clusters": 5,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 64,
+      "prompt_tokens_max": 84,
+      "full_score": 5,
+      "completed": 6,
+      "mean_score": 0.8333333333333334
+    },
+    "reasoning": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 73,
+      "prompt_tokens_max": 78,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "relevance": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 89,
+      "prompt_tokens_max": 91,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "retrieval": {
+      "attempted": 6,
+      "clusters": 2,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 1910,
+      "prompt_tokens_max": 114812,
+      "full_score": 5,
+      "completed": 6,
+      "mean_score": 0.8333333333333334
+    },
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 575,
+      "prompt_tokens_max": 670,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    },
+    "transcript_qa": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 83,
+      "prompt_tokens_max": 89,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {
+    "decode-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12248,
+      "prompt_tokens_max": 12248,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 18.283861258001707
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 7.542091638000784
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 28.002837736253852
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 47.6
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1638.2873423308943
+        }
+      }
+    },
+    "decode-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 385,
+      "prompt_tokens_max": 385,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 10.344318661998841
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 1.1049645829989458
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 49.49576832748749
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 55.3
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 355.0350424197713
+        }
+      }
+    },
+    "prefill-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12244,
+      "prompt_tokens_max": 12244,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 7.641883609001525
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 7.635296569000275
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.13085778993311026
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1617.9288291026337
+        }
+      }
+    },
+    "prefill-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 386,
+      "prompt_tokens_max": 386,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 1.0707030760004272
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 1.070601171000817
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.9339657486886691
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 367.47905559786744
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "retrieve-join-4096:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "invalid answer format",
+      "error": null
+    },
+    {
+      "id": "code-diff-keys:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-range-coalesce:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "extract-missing:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "invalid answer format",
+      "error": null
+    },
+    {
+      "id": "code-sse-frames:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-histogram:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-flatten:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-rate-limit:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-topological:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-redact:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    }
+  ]
+}

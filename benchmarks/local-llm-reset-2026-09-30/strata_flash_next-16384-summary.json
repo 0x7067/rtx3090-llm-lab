@@ -1,0 +1,312 @@
+{
+  "plan_sha256": "7037bfaa64ef760a7c690c59d4f6347849b8a2e208eca122eb860be24babb0cb",
+  "arm": "strata_flash_next",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 20,
+      "clusters": 20,
+      "statuses": {
+        "ok": 20
+      },
+      "finish_reasons": {
+        "stop": 18,
+        "length": 2
+      },
+      "prompt_tokens_observed": 20,
+      "prompt_tokens_min": 109,
+      "prompt_tokens_max": 146,
+      "full_score": 17,
+      "completed": 18,
+      "mean_score": 0.85
+    },
+    "extraction": {
+      "attempted": 6,
+      "clusters": 5,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 64,
+      "prompt_tokens_max": 84,
+      "full_score": 4,
+      "completed": 6,
+      "mean_score": 0.6666666666666666
+    },
+    "reasoning": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 73,
+      "prompt_tokens_max": 75,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "relevance": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 85,
+      "prompt_tokens_max": 87,
+      "full_score": 1,
+      "completed": 2,
+      "mean_score": 0.8333333333333333
+    },
+    "retrieval": {
+      "attempted": 6,
+      "clusters": 2,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 1909,
+      "prompt_tokens_max": 114811,
+      "full_score": 6,
+      "completed": 6,
+      "mean_score": 1.0
+    },
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 575,
+      "prompt_tokens_max": 673,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    },
+    "transcript_qa": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 83,
+      "prompt_tokens_max": 91,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {
+    "decode-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12247,
+      "prompt_tokens_max": 12247,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 20.24168451100195
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 9.93527541200092
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 25.294337520264826
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 49.6
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1241.1200178359697
+        }
+      }
+    },
+    "decode-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 389,
+      "prompt_tokens_max": 389,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 11.542861285000981
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 1.109831279998616
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 44.35641972630329
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 49.0
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 357.01174743024967
+        }
+      }
+    },
+    "prefill-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12248,
+      "prompt_tokens_max": 12248,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 8.069416779999301
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 8.069324642001448
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.12392469335312813
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1530.5408377486754
+        }
+      }
+    },
+    "prefill-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 383,
+      "prompt_tokens_max": 383,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 1.1171023110000533
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 1.1170073470020725
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.8951731548248066
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 349.2613532737553
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "code-diff-keys:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "extract-missing:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "invalid answer format",
+      "error": null
+    },
+    {
+      "id": "extract-quoted:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "JSON semantic equality",
+      "error": null
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "support-relevant-db:0:42",
+      "score": 0.6666666666666666,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "set micro F1 within item",
+      "error": null
+    },
+    {
+      "id": "code-redact:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 3, in <module>\nAssertionError\n",
+      "error": null
+    }
+  ]
+}

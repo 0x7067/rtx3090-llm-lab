@@ -20,8 +20,11 @@ alternative.
   is the trial that promoted llama.cpp v14 back over vLLM v10 in production:
   llama.cpp master + four drafters, SGLang, and the vLLM baseline, on one
   harness.
+- [`benchmarks/orcasaq-vs-w4-2026-09-25/`](benchmarks/orcasaq-vs-w4-2026-09-25/)
+  records the current OrcaSAQ2 EXL3 profile, the fixed chat template, the
+  W4A16 rollback profile, and the qualified reasoning-effort policy.
 - [`Dockerfile`](Dockerfile) + [`patches-v14/`](patches-v14/) build the
-  **current production** llama.cpp image (`llama:cuda-swap-v14`, base
+  last production llama.cpp image (`llama:cuda-swap-v14`, base
   `0f3a71be1`). [`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/)
   is the superseded eight-patch set behind images v9–v12 (base `4df29be4f`).
   [`PROMOTE.md`](PROMOTE.md) is the build / promote / rollback runbook for both
@@ -37,7 +40,8 @@ alternative.
   [`vllm/image-v10/`](vllm/image-v10/),
   [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)), and the Club 3090
   bundle. vLLM v10 was production from 2026-08-20 to 2026-09-02; llama.cpp v14
-  is production now.
+  replaced it later that day and remained the recorded profile until the
+  OrcaSAQ2 promotion.
 - [`docs/`](docs/) holds the write-ups: [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md)
   is the full kernel-campaign record, and the two history documents sit beside it —
   [`docs/journey-2026-08-15-to-17.md`](docs/journey-2026-08-15-to-17.md) is the
@@ -115,7 +119,19 @@ cold start, it hot-swaps models through llama-swap, and decode holds up at
 
 ## Current deployment
 
-**As of 2026-09-02, the home deployment is llama.cpp again**, image
+**As of 2026-10-01, the home deployment is ThinkingCap Q4_K_S on upstream
+llama.cpp b11277.** It serves the stable `qwen3.8-27b` model ID with one
+150,000-token slot, Q8 KV, flash attention, and the measured 210–1350 MHz / +100
+graphics VF profile. It was the only one of five reset arms to pass all 54
+quality checks, including all tool and long-context retrieval cases. See
+[`benchmarks/local-llm-reset-2026-09-30/`](benchmarks/local-llm-reset-2026-09-30/)
+for the frozen plan, raw results, resource envelope, and rollback evidence.
+
+**Between 2026-09-25 and 2026-09-30, the home deployment ran OrcaSAQ2 EXL3
+3.21 bpw on vLLM 0.30.0.** See
+[`benchmarks/orcasaq-vs-w4-2026-09-25/`](benchmarks/orcasaq-vs-w4-2026-09-25/).
+
+**Between 2026-09-02 and 2026-09-25, the home deployment ran llama.cpp**, image
 `llama:cuda-swap-v14` (llama.cpp master `0f3a71be1` + the six
 [`patches-v14/`](patches-v14/) patches), promoted over the vLLM v10 profile
 below on the strength of
@@ -149,7 +165,7 @@ evidence.
 
 The rest of this README documents the reproducible llama.cpp project. "Prod"
 in its historical notes means the last promoted llama.cpp profile, not the
-current vLLM service.
+current ThinkingCap service.
 
 ## OBLITERATED standalone variant
 
@@ -200,8 +216,8 @@ weight-bytes cost model: `docs/quant-selection.md`.
 
 ## The patches
 
-**Which set is current:** [`patches-v14/`](patches-v14/) is the set running in
-production today (image `llama:cuda-swap-v14`, promoted 2026-09-02), rebased
+**Which set is current:** [`patches-v14/`](patches-v14/) is the last promoted
+llama.cpp set (image `llama:cuda-swap-v14`, promoted 2026-09-02), rebased
 onto llama.cpp master `0f3a71be1`. `patches/` (duplicated verbatim as
 [`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/) so the
 historical base is unambiguous) is the **superseded** set behind images v9–v12,

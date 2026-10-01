@@ -1,0 +1,1526 @@
+Setting up iq2_xs: downloading the model (~70 GB; the engine is already in the image).
+Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)
+
+=== Step 1: checking your PC ===
+  [ok] GPU: NVIDIA GeForce RTX 3090, 24.0 GB VRAM, compute capability 8.6, driver 595.91.07
+  [ok] RAM: 62 GB
+  [ok] CPU: Intel(R) Core(TM) i9-10850K CPU @ 3.60GHz (AVX2)
+
+=== Step 2: your choices ===
+  [ok] model: Qwen3.8-Flash-Next
+
+  1) Q2_0     2-bit, the fastest; download 66 GB, uses ~34 GB of RAM
+  2) IQ2_XS   2-bit i-quant, a little better quality, close in speed; download 68 GB, uses ~36 GB of RAM
+  3) IQ3_XXS  3-bit i-quant, better quality, slower (more CPU work per token); download 76 GB, uses ~43 GB of RAM
+  4) IQ3_S    3.5-bit i-quant, the best quality (matches the full model), the slowest; needs a 64 GB PC with little else running; download 84 GB, uses ~50 GB of RAM   <- needs 62 GB RAM, you have 62
+  [ok] size: IQ2_XS
+  [ok] context: 150000 tokens
+  [ok] KV cache: 8-bit
+  [ok] images: off
+  [ok] low-RAM mode: the GPU holds ~49% of IQ2_XS's experts (36 GB) and the other ~18 GB stay in RAM (62 GB), read once from a copy in the model folder
+
+  EXPERIMENTAL - speed projection: a small control vector applied while the model runs (layers 4-44).
+  It changes how the model answers: its package describes it as a refusal-direction projection (the
+  model declines far fewer requests). Off unless you choose it; when on, the web app can switch it off
+  per chat. Details: data/experimental-speed-projection/README.md
+  [ok] experimental speed projection: off
+
+=== Step 3: Python packages ===
+  Installing numpy, jinja2, regex, pyyaml, tqdm, requests, cmake, ninja, pillow, psutil ...
+  > /opt/strata/.venv/bin/python -m pip install --quiet --disable-pip-version-check numpy jinja2 regex pyyaml tqdm requests cmake ninja pillow psutil
+  [ok] numpy, jinja2, regex, pyyaml, tqdm, requests, cmake, ninja, pillow, psutil installed
+
+=== Step 4: the Strata engine ===
+  [ok] llama.cpp 3cf0325 (gguf-py, ggml, mtmd)
+  [ok] engine already built for this PC
+  [ok] engine: /opt/strata/engine/strata
+
+=== Step 5: downloading Qwen3.8-Flash-Next IQ2_XS ===
+  Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   0.01 / 39.23 GB (0%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   0.17 / 39.23 GB (0%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   0.35 / 39.23 GB (1%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   0.55 / 39.23 GB (1%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   0.73 / 39.23 GB (2%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   0.92 / 39.23 GB (2%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   1.09 / 39.23 GB (3%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   1.26 / 39.23 GB (3%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   1.43 / 39.23 GB (4%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   1.59 / 39.23 GB (4%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   1.80 / 39.23 GB (5%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   1.95 / 39.23 GB (5%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   2.10 / 39.23 GB (5%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   2.29 / 39.23 GB (6%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   2.45 / 39.23 GB (6%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   2.61 / 39.23 GB (7%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   2.76 / 39.23 GB (7%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   2.94 / 39.23 GB (8%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   3.09 / 39.23 GB (8%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   3.25 / 39.23 GB (8%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   3.46 / 39.23 GB (9%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   3.65 / 39.23 GB (9%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   3.83 / 39.23 GB (10%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   3.97 / 39.23 GB (10%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.16 / 39.23 GB (11%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.37 / 39.23 GB (11%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.45 / 39.23 GB (11%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.51 / 39.23 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.58 / 39.23 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.65 / 39.23 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.72 / 39.23 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.81 / 39.23 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.87 / 39.23 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   4.94 / 39.23 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.01 / 39.23 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.08 / 39.23 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.15 / 39.23 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.21 / 39.23 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.28 / 39.23 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.35 / 39.23 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.42 / 39.23 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.49 / 39.23 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.56 / 39.23 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.63 / 39.23 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.70 / 39.23 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.76 / 39.23 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.83 / 39.23 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.88 / 39.23 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   5.95 / 39.23 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.01 / 39.23 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.09 / 39.23 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.14 / 39.23 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.21 / 39.23 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.27 / 39.23 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.33 / 39.23 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.41 / 39.23 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.48 / 39.23 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.56 / 39.23 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.64 / 39.23 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.70 / 39.23 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.77 / 39.23 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.85 / 39.23 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.90 / 39.23 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   6.97 / 39.23 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.05 / 39.23 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.11 / 39.23 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.18 / 39.23 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.26 / 39.23 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.33 / 39.23 GB (19%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.39 / 39.23 GB (19%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.45 / 39.23 GB (19%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.54 / 39.23 GB (19%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.70 / 39.23 GB (20%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   7.89 / 39.23 GB (20%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.05 / 39.23 GB (21%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.22 / 39.23 GB (21%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.33 / 39.23 GB (21%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.41 / 39.23 GB (21%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.56 / 39.23 GB (22%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.75 / 39.23 GB (22%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   8.91 / 39.23 GB (23%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   9.07 / 39.23 GB (23%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   9.26 / 39.23 GB (24%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   9.38 / 39.23 GB (24%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   9.54 / 39.23 GB (24%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   9.70 / 39.23 GB (25%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:   9.87 / 39.23 GB (25%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  10.03 / 39.23 GB (26%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  10.20 / 39.23 GB (26%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  10.38 / 39.23 GB (26%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  10.57 / 39.23 GB (27%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  10.69 / 39.23 GB (27%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  10.89 / 39.23 GB (28%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  11.09 / 39.23 GB (28%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  11.25 / 39.23 GB (29%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  11.42 / 39.23 GB (29%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  11.57 / 39.23 GB (29%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  11.75 / 39.23 GB (30%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  11.92 / 39.23 GB (30%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  12.13 / 39.23 GB (31%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  12.31 / 39.23 GB (31%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  12.47 / 39.23 GB (32%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  12.68 / 39.23 GB (32%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  12.87 / 39.23 GB (33%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  13.08 / 39.23 GB (33%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  13.24 / 39.23 GB (34%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  13.36 / 39.23 GB (34%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  13.58 / 39.23 GB (35%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  13.79 / 39.23 GB (35%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  13.95 / 39.23 GB (36%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  14.15 / 39.23 GB (36%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  14.31 / 39.23 GB (36%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  14.51 / 39.23 GB (37%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  14.71 / 39.23 GB (38%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  14.88 / 39.23 GB (38%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  15.07 / 39.23 GB (38%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  15.25 / 39.23 GB (39%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  15.44 / 39.23 GB (39%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  15.63 / 39.23 GB (40%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  15.80 / 39.23 GB (40%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  15.99 / 39.23 GB (41%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  16.20 / 39.23 GB (41%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  16.37 / 39.23 GB (42%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  16.52 / 39.23 GB (42%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  16.70 / 39.23 GB (43%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  16.92 / 39.23 GB (43%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  17.13 / 39.23 GB (44%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  17.30 / 39.23 GB (44%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  17.50 / 39.23 GB (45%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  17.70 / 39.23 GB (45%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  17.89 / 39.23 GB (46%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  18.08 / 39.23 GB (46%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  18.28 / 39.23 GB (47%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  18.43 / 39.23 GB (47%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  18.63 / 39.23 GB (47%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  18.81 / 39.23 GB (48%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  18.98 / 39.23 GB (48%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  19.18 / 39.23 GB (49%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  19.34 / 39.23 GB (49%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  19.54 / 39.23 GB (50%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  19.74 / 39.23 GB (50%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  19.93 / 39.23 GB (51%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  20.13 / 39.23 GB (51%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  20.27 / 39.23 GB (52%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  20.46 / 39.23 GB (52%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  20.67 / 39.23 GB (53%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  20.86 / 39.23 GB (53%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  21.05 / 39.23 GB (54%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  21.20 / 39.23 GB (54%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  21.38 / 39.23 GB (55%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  21.58 / 39.23 GB (55%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  21.77 / 39.23 GB (55%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  21.95 / 39.23 GB (56%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  22.11 / 39.23 GB (56%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  22.31 / 39.23 GB (57%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  22.50 / 39.23 GB (57%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  22.67 / 39.23 GB (58%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  22.84 / 39.23 GB (58%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  23.01 / 39.23 GB (59%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  23.21 / 39.23 GB (59%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  23.40 / 39.23 GB (60%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  23.60 / 39.23 GB (60%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  23.81 / 39.23 GB (61%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  23.97 / 39.23 GB (61%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  24.17 / 39.23 GB (62%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  24.34 / 39.23 GB (62%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  24.53 / 39.23 GB (63%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  24.63 / 39.23 GB (63%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  24.75 / 39.23 GB (63%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  24.93 / 39.23 GB (64%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  25.14 / 39.23 GB (64%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  25.32 / 39.23 GB (65%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  25.43 / 39.23 GB (65%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  25.63 / 39.23 GB (65%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  25.77 / 39.23 GB (66%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  25.95 / 39.23 GB (66%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  26.13 / 39.23 GB (67%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  26.31 / 39.23 GB (67%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  26.51 / 39.23 GB (68%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  26.68 / 39.23 GB (68%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  26.89 / 39.23 GB (69%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  27.00 / 39.23 GB (69%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  27.21 / 39.23 GB (69%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  27.41 / 39.23 GB (70%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  27.62 / 39.23 GB (70%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  27.75 / 39.23 GB (71%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  27.95 / 39.23 GB (71%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  28.16 / 39.23 GB (72%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  28.35 / 39.23 GB (72%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  28.54 / 39.23 GB (73%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  28.68 / 39.23 GB (73%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  28.86 / 39.23 GB (74%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  29.05 / 39.23 GB (74%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  29.24 / 39.23 GB (75%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  29.44 / 39.23 GB (75%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  29.59 / 39.23 GB (75%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  29.79 / 39.23 GB (76%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  30.01 / 39.23 GB (76%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  30.20 / 39.23 GB (77%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  30.40 / 39.23 GB (78%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  30.55 / 39.23 GB (78%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  30.73 / 39.23 GB (78%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  30.91 / 39.23 GB (79%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  31.10 / 39.23 GB (79%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  31.26 / 39.23 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  31.42 / 39.23 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  31.60 / 39.23 GB (81%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  31.80 / 39.23 GB (81%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  31.99 / 39.23 GB (82%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  32.20 / 39.23 GB (82%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  32.37 / 39.23 GB (83%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  32.53 / 39.23 GB (83%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  32.73 / 39.23 GB (83%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  32.93 / 39.23 GB (84%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  33.09 / 39.23 GB (84%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  33.30 / 39.23 GB (85%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  33.46 / 39.23 GB (85%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  33.64 / 39.23 GB (86%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  33.83 / 39.23 GB (86%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  34.02 / 39.23 GB (87%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  34.20 / 39.23 GB (87%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  34.41 / 39.23 GB (88%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  34.59 / 39.23 GB (88%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  34.80 / 39.23 GB (89%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  34.97 / 39.23 GB (89%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.15 / 39.23 GB (90%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.33 / 39.23 GB (90%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.48 / 39.23 GB (90%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.62 / 39.23 GB (91%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.79 / 39.23 GB (91%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.89 / 39.23 GB (91%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  35.97 / 39.23 GB (92%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.10 / 39.23 GB (92%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.21 / 39.23 GB (92%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.28 / 39.23 GB (92%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.43 / 39.23 GB (93%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.55 / 39.23 GB (93%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.66 / 39.23 GB (93%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.83 / 39.23 GB (94%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  36.91 / 39.23 GB (94%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  37.13 / 39.23 GB (95%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  37.33 / 39.23 GB (95%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  37.49 / 39.23 GB (96%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  37.68 / 39.23 GB (96%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  37.86 / 39.23 GB (97%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  38.04 / 39.23 GB (97%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  38.24 / 39.23 GB (97%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  38.38 / 39.23 GB (98%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  38.57 / 39.23 GB (98%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  38.69 / 39.23 GB (99%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  38.90 / 39.23 GB (99%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf:  39.09 / 39.23 GB (100%)   
+  [ok] Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf downloaded
+  Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   0.01 / 28.80 GB (0%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   0.18 / 28.80 GB (1%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   0.38 / 28.80 GB (1%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   0.58 / 28.80 GB (2%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   0.78 / 28.80 GB (3%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   0.97 / 28.80 GB (3%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   1.17 / 28.80 GB (4%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   1.36 / 28.80 GB (5%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   1.53 / 28.80 GB (5%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   1.59 / 28.80 GB (6%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   1.80 / 28.80 GB (6%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   1.93 / 28.80 GB (7%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   2.11 / 28.80 GB (7%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   2.31 / 28.80 GB (8%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   2.52 / 28.80 GB (9%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   2.63 / 28.80 GB (9%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   2.83 / 28.80 GB (10%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   3.02 / 28.80 GB (10%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   3.22 / 28.80 GB (11%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   3.42 / 28.80 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   3.57 / 28.80 GB (12%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   3.77 / 28.80 GB (13%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   3.94 / 28.80 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   4.09 / 28.80 GB (14%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   4.28 / 28.80 GB (15%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   4.48 / 28.80 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   4.62 / 28.80 GB (16%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   4.77 / 28.80 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   4.97 / 28.80 GB (17%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   5.13 / 28.80 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   5.32 / 28.80 GB (18%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   5.50 / 28.80 GB (19%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   5.70 / 28.80 GB (20%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   5.90 / 28.80 GB (20%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   5.97 / 28.80 GB (21%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   6.12 / 28.80 GB (21%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   6.32 / 28.80 GB (22%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   6.53 / 28.80 GB (23%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   6.73 / 28.80 GB (23%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   6.93 / 28.80 GB (24%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   7.11 / 28.80 GB (25%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   7.24 / 28.80 GB (25%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   7.42 / 28.80 GB (26%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   7.57 / 28.80 GB (26%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   7.75 / 28.80 GB (27%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   7.90 / 28.80 GB (27%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   8.09 / 28.80 GB (28%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   8.25 / 28.80 GB (29%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   8.39 / 28.80 GB (29%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   8.52 / 28.80 GB (30%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   8.73 / 28.80 GB (30%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   8.93 / 28.80 GB (31%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   9.11 / 28.80 GB (32%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   9.30 / 28.80 GB (32%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   9.46 / 28.80 GB (33%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   9.64 / 28.80 GB (33%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   9.83 / 28.80 GB (34%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:   9.99 / 28.80 GB (35%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  10.12 / 28.80 GB (35%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  10.26 / 28.80 GB (36%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  10.43 / 28.80 GB (36%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  10.56 / 28.80 GB (37%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  10.65 / 28.80 GB (37%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  10.83 / 28.80 GB (38%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  11.01 / 28.80 GB (38%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  11.15 / 28.80 GB (39%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  11.36 / 28.80 GB (39%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  11.57 / 28.80 GB (40%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  11.74 / 28.80 GB (41%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  11.95 / 28.80 GB (41%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  12.10 / 28.80 GB (42%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  12.30 / 28.80 GB (43%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  12.48 / 28.80 GB (43%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  12.68 / 28.80 GB (44%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  12.86 / 28.80 GB (45%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  13.04 / 28.80 GB (45%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  13.25 / 28.80 GB (46%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  13.42 / 28.80 GB (47%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  13.63 / 28.80 GB (47%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  13.81 / 28.80 GB (48%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  14.01 / 28.80 GB (49%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  14.21 / 28.80 GB (49%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  14.41 / 28.80 GB (50%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  14.60 / 28.80 GB (51%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  14.77 / 28.80 GB (51%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  14.97 / 28.80 GB (52%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  15.16 / 28.80 GB (53%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  15.34 / 28.80 GB (53%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  15.52 / 28.80 GB (54%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  15.68 / 28.80 GB (54%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  15.85 / 28.80 GB (55%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  16.05 / 28.80 GB (56%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  16.21 / 28.80 GB (56%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  16.37 / 28.80 GB (57%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  16.52 / 28.80 GB (57%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  16.73 / 28.80 GB (58%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  16.91 / 28.80 GB (59%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  17.06 / 28.80 GB (59%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  17.18 / 28.80 GB (60%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  17.33 / 28.80 GB (60%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  17.52 / 28.80 GB (61%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  17.67 / 28.80 GB (61%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  17.88 / 28.80 GB (62%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  18.07 / 28.80 GB (63%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  18.24 / 28.80 GB (63%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  18.40 / 28.80 GB (64%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  18.59 / 28.80 GB (65%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  18.77 / 28.80 GB (65%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  18.96 / 28.80 GB (66%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  19.08 / 28.80 GB (66%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  19.23 / 28.80 GB (67%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  19.40 / 28.80 GB (67%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  19.57 / 28.80 GB (68%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  19.76 / 28.80 GB (69%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  19.96 / 28.80 GB (69%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  20.11 / 28.80 GB (70%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  20.28 / 28.80 GB (70%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  20.48 / 28.80 GB (71%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  20.68 / 28.80 GB (72%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  20.87 / 28.80 GB (72%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.01 / 28.80 GB (73%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.14 / 28.80 GB (73%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.29 / 28.80 GB (74%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.45 / 28.80 GB (74%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.58 / 28.80 GB (75%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.75 / 28.80 GB (76%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  21.84 / 28.80 GB (76%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.01 / 28.80 GB (76%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.15 / 28.80 GB (77%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.30 / 28.80 GB (77%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.44 / 28.80 GB (78%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.58 / 28.80 GB (78%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.72 / 28.80 GB (79%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.90 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.91 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  22.96 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.02 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.05 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.09 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.15 / 28.80 GB (80%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.29 / 28.80 GB (81%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.41 / 28.80 GB (81%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.48 / 28.80 GB (82%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.58 / 28.80 GB (82%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.63 / 28.80 GB (82%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.76 / 28.80 GB (82%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.89 / 28.80 GB (83%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  23.95 / 28.80 GB (83%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.02 / 28.80 GB (83%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.08 / 28.80 GB (84%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.16 / 28.80 GB (84%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.25 / 28.80 GB (84%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.29 / 28.80 GB (84%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.41 / 28.80 GB (85%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.54 / 28.80 GB (85%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.62 / 28.80 GB (85%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.73 / 28.80 GB (86%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.85 / 28.80 GB (86%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  24.91 / 28.80 GB (87%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.00 / 28.80 GB (87%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.17 / 28.80 GB (87%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.28 / 28.80 GB (88%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.44 / 28.80 GB (88%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.59 / 28.80 GB (89%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.75 / 28.80 GB (89%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  25.90 / 28.80 GB (90%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  26.07 / 28.80 GB (91%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  26.21 / 28.80 GB (91%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  26.42 / 28.80 GB (92%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  26.58 / 28.80 GB (92%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  26.75 / 28.80 GB (93%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  26.92 / 28.80 GB (93%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  27.09 / 28.80 GB (94%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  27.24 / 28.80 GB (95%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  27.41 / 28.80 GB (95%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  27.59 / 28.80 GB (96%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  27.79 / 28.80 GB (96%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  27.96 / 28.80 GB (97%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  28.15 / 28.80 GB (98%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  28.30 / 28.80 GB (98%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  28.45 / 28.80 GB (99%)     Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf:  28.64 / 28.80 GB (99%)   
+  [ok] Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf downloaded
+  [ok] model files present
+
+=== Step 6: preparing the model for Strata ===
+  > /opt/strata/.venv/bin/python /opt/strata/tools/iq_pack.py --gguf /data/models/IQ2_XS/Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf --out /data/packs/iq2_xs
+model shards: Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf, Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf
+index.txt: 1079 tensors, 302 served natively, 0 in extra.bin, arena 1.43 GiB
+tokenizer/: vocab 248320, merges 247587, pre qwen35, specials {'tokenizer.ggml.eos_token_id': 248046, 'tokenizer.ggml.padding_token_id': 248044, 'tokenizer.ggml.bos_token_id': 248044}
+  Writing the experts into one file for the low-RAM mode (one time, 36 GB) ...
+  > /opt/strata/.venv/bin/python /opt/strata/tools/iq_pack.py --gguf /data/models/IQ2_XS/Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf --out /data/packs/iq2_xs --experts-bin
+model shards: Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf, Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf
+index.txt: 1079 tensors, 302 served natively, 0 in extra.bin, arena 1.43 GiB
+  layer  0  IQ2_S   /Q2_0    blob  1510400  at 0.00 GiB
+  layer  8  IQ1_M   /Q2_0    blob  1177600  at 5.57 GiB
+  layer 16  IQ2_S   /Q2_0    blob  1510400  at 10.62 GiB
+  layer 24  IQ2_S   /Q2_0    blob  1510400  at 16.19 GiB
+  layer 32  IQ2_S   /Q2_0    blob  1510400  at 21.66 GiB
+  layer 40  IQ2_S   /Q2_0    blob  1510400  at 27.26 GiB
+experts.bin: 48 layers, 33.02 GiB
+  [ok] model prepared: /data/packs/iq2_xs
+  The MTP draft layer (speculative decoding, ~2x faster output) comes from the original Qwen checkpoint:
+  only its ~5 GB of MTP tensors are downloaded.
+  > /opt/strata/.venv/bin/python /opt/strata/tools/mtp_fetch.py fetch --out /data/mtp
+# MTP block in the BF16 checkpoint
+
+31 tensors, 5.214 GB, in 28 shards.
+
+| tensor | dtype | shape | MB |
+|---|---|---|---:|
+| `mtp.fc_embedding.weight` | BF16 | 2560x2560 | 13.1 |
+| `mtp.fc_hidden.weight` | BF16 | 2560x2560 | 13.1 |
+| `mtp.hyper_connection_mixer.hc_norm.weight` | BF16 | 10240 | 0.0 |
+| `mtp.hyper_connection_mixer.input_mix_weight_down.weight` | BF16 | 320x10240 | 6.6 |
+| `mtp.hyper_connection_mixer.input_mix_weight_up.weight` | BF16 | 10240x320 | 6.6 |
+| `mtp.layers.0.attn_hyper_connection.block_inject_weight.weight` | BF16 | 4x10240 | 0.1 |
+| `mtp.layers.0.attn_hyper_connection.hc_norm.weight` | BF16 | 10240 | 0.0 |
+| `mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight` | BF16 | 320x10240 | 6.6 |
+| `mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight` | BF16 | 10240x320 | 6.6 |
+| `mtp.layers.0.mlp.experts.down_proj` | BF16 | 512x2560x640 | 1677.7 |
+| `mtp.layers.0.mlp.experts.gate_up_proj` | BF16 | 512x1280x2560 | 3355.4 |
+| `mtp.layers.0.mlp.gate.weight` | BF16 | 512x2560 | 2.6 |
+| `mtp.layers.0.mlp.shared_expert.down_proj.weight` | BF16 | 2560x640 | 3.3 |
+| `mtp.layers.0.mlp.shared_expert.gate_proj.weight` | BF16 | 640x2560 | 3.3 |
+| `mtp.layers.0.mlp.shared_expert.up_proj.weight` | BF16 | 640x2560 | 3.3 |
+| `mtp.layers.0.mlp.shared_expert_gate.weight` | BF16 | 1x2560 | 0.0 |
+| `mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight` | BF16 | 4x10240 | 0.1 |
+| `mtp.layers.0.mlp_hyper_connection.hc_norm.weight` | BF16 | 10240 | 0.0 |
+| `mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight` | BF16 | 320x10240 | 6.6 |
+| `mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight` | BF16 | 10240x320 | 6.6 |
+| `mtp.layers.0.self_attn.indexer.index_qk_proj.weight` | BF16 | 640x2560 | 3.3 |
+| `mtp.layers.0.self_attn.indexer.k_layernorm.weight` | BF16 | 128 | 0.0 |
+| `mtp.layers.0.self_attn.indexer.q_layernorm.weight` | BF16 | 128 | 0.0 |
+| `mtp.layers.0.self_attn.k_norm.weight` | BF16 | 256 | 0.0 |
+| `mtp.layers.0.self_attn.k_proj.weight` | BF16 | 512x2560 | 2.6 |
+| `mtp.layers.0.self_attn.o_proj.weight` | BF16 | 2560x6144 | 31.5 |
+| `mtp.layers.0.self_attn.q_norm.weight` | BF16 | 256 | 0.0 |
+| `mtp.layers.0.self_attn.q_proj.weight` | BF16 | 12288x2560 | 62.9 |
+| `mtp.layers.0.self_attn.v_proj.weight` | BF16 | 512x2560 | 2.6 |
+| `mtp.pre_fc_norm_embedding.weight` | BF16 | 2560 | 0.0 |
+| `mtp.pre_fc_norm_hidden.weight` | BF16 | 10240 | 0.0 |
+
+mtp.fc_embedding.weight 100%
+mtp.fc_hidden.weight 100%
+mtp.hyper_connection_mixer.hc_norm.weight 100%
+mtp.hyper_connection_mixer.input_mix_weight_down.weight 100%
+mtp.hyper_connection_mixer.input_mix_weight_up.weight 100%
+mtp.layers.0.attn_hyper_connection.block_inject_weight.weight 100%
+mtp.layers.0.attn_hyper_connection.hc_norm.weight 100%
+mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight 100%
+mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight 100%
+mtp.layers.0.mlp.experts.down_proj 4%
+mtp.layers.0.mlp.experts.down_proj 8%
+mtp.layers.0.mlp.experts.down_proj 12%
+mtp.layers.0.mlp.experts.down_proj 16%
+mtp.layers.0.mlp.experts.down_proj 20%
+mtp.layers.0.mlp.experts.down_proj 24%
+mtp.layers.0.mlp.experts.down_proj 28%
+mtp.layers.0.mlp.experts.down_proj 32%
+mtp.layers.0.mlp.experts.down_proj 36%
+mtp.layers.0.mlp.experts.down_proj 40%
+mtp.layers.0.mlp.experts.down_proj 44%
+mtp.layers.0.mlp.experts.down_proj 48%
+mtp.layers.0.mlp.experts.down_proj 52%
+mtp.layers.0.mlp.experts.down_proj 56%
+mtp.layers.0.mlp.experts.down_proj 60%
+mtp.layers.0.mlp.experts.down_proj 64%
+mtp.layers.0.mlp.experts.down_proj 68%
+mtp.layers.0.mlp.experts.down_proj 72%
+mtp.layers.0.mlp.experts.down_proj 76%
+mtp.layers.0.mlp.experts.down_proj 80%
+mtp.layers.0.mlp.experts.down_proj 84%
+mtp.layers.0.mlp.experts.down_proj 88%
+mtp.layers.0.mlp.experts.down_proj 92%
+mtp.layers.0.mlp.experts.down_proj 96%
+mtp.layers.0.mlp.experts.down_proj 100%
+mtp.layers.0.mlp.experts.gate_up_proj 2%
+mtp.layers.0.mlp.experts.gate_up_proj 4%
+mtp.layers.0.mlp.experts.gate_up_proj 6%
+mtp.layers.0.mlp.experts.gate_up_proj 8%
+mtp.layers.0.mlp.experts.gate_up_proj 10%
+mtp.layers.0.mlp.experts.gate_up_proj 12%
+mtp.layers.0.mlp.experts.gate_up_proj 14%
+mtp.layers.0.mlp.experts.gate_up_proj 16%
+mtp.layers.0.mlp.experts.gate_up_proj 18%
+mtp.layers.0.mlp.experts.gate_up_proj 20%
+mtp.layers.0.mlp.experts.gate_up_proj 22%
+mtp.layers.0.mlp.experts.gate_up_proj 24%
+mtp.layers.0.mlp.experts.gate_up_proj 26%
+mtp.layers.0.mlp.experts.gate_up_proj 28%
+mtp.layers.0.mlp.experts.gate_up_proj 30%
+mtp.layers.0.mlp.experts.gate_up_proj 32%
+mtp.layers.0.mlp.experts.gate_up_proj 34%
+mtp.layers.0.mlp.experts.gate_up_proj 36%
+mtp.layers.0.mlp.experts.gate_up_proj 38%
+mtp.layers.0.mlp.experts.gate_up_proj 40%
+mtp.layers.0.mlp.experts.gate_up_proj 42%
+mtp.layers.0.mlp.experts.gate_up_proj 44%
+mtp.layers.0.mlp.experts.gate_up_proj 46%
+mtp.layers.0.mlp.experts.gate_up_proj 48%
+mtp.layers.0.mlp.experts.gate_up_proj 50%
+mtp.layers.0.mlp.experts.gate_up_proj 52%
+mtp.layers.0.mlp.experts.gate_up_proj 54%
+mtp.layers.0.mlp.experts.gate_up_proj 56%
+mtp.layers.0.mlp.experts.gate_up_proj 58%
+mtp.layers.0.mlp.experts.gate_up_proj 60%
+mtp.layers.0.mlp.experts.gate_up_proj 62%
+mtp.layers.0.mlp.experts.gate_up_proj 64%
+mtp.layers.0.mlp.experts.gate_up_proj 66%
+mtp.layers.0.mlp.experts.gate_up_proj 68%
+mtp.layers.0.mlp.experts.gate_up_proj 70%
+mtp.layers.0.mlp.experts.gate_up_proj 72%
+mtp.layers.0.mlp.experts.gate_up_proj 74%
+mtp.layers.0.mlp.experts.gate_up_proj 76%
+mtp.layers.0.mlp.experts.gate_up_proj 78%
+mtp.layers.0.mlp.experts.gate_up_proj 80%
+mtp.layers.0.mlp.experts.gate_up_proj 82%
+mtp.layers.0.mlp.experts.gate_up_proj 84%
+mtp.layers.0.mlp.experts.gate_up_proj 86%
+mtp.layers.0.mlp.experts.gate_up_proj 88%
+mtp.layers.0.mlp.experts.gate_up_proj 90%
+mtp.layers.0.mlp.experts.gate_up_proj 92%
+mtp.layers.0.mlp.experts.gate_up_proj 94%
+mtp.layers.0.mlp.experts.gate_up_proj 96%
+mtp.layers.0.mlp.experts.gate_up_proj 98%
+mtp.layers.0.mlp.experts.gate_up_proj 100%
+mtp.layers.0.mlp.gate.weight 100%
+mtp.layers.0.mlp.shared_expert.down_proj.weight 100%
+mtp.layers.0.mlp.shared_expert.gate_proj.weight 100%
+mtp.layers.0.mlp.shared_expert.up_proj.weight 100%
+mtp.layers.0.mlp.shared_expert_gate.weight 100%
+mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight 100%
+mtp.layers.0.mlp_hyper_connection.hc_norm.weight 100%
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight 100%
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight 100%
+mtp.layers.0.self_attn.indexer.index_qk_proj.weight 100%
+mtp.layers.0.self_attn.indexer.k_layernorm.weight 100%
+mtp.layers.0.self_attn.indexer.q_layernorm.weight 100%
+mtp.layers.0.self_attn.k_norm.weight 100%
+mtp.layers.0.self_attn.k_proj.weight 100%
+mtp.layers.0.self_attn.o_proj.weight 100%
+mtp.layers.0.self_attn.q_norm.weight 100%
+mtp.layers.0.self_attn.q_proj.weight 100%
+mtp.layers.0.self_attn.v_proj.weight 100%
+mtp.pre_fc_norm_embedding.weight 100%
+mtp.pre_fc_norm_hidden.weight 100%
+  > /opt/strata/.venv/bin/python /opt/strata/tools/mtp_pack.py --src /data/mtp --experts q2_0 --out /data/mtp/mtp-q2_0.gguf
+mtp.fc_embedding.weight: BF16 13.1 MB
+mtp.fc_hidden.weight: BF16 13.1 MB
+mtp.hyper_connection_mixer.hc_norm.weight: F32 0.0 MB
+mtp.hyper_connection_mixer.input_mix_weight_down.weight: BF16 6.6 MB
+mtp.hyper_connection_mixer.input_mix_weight_up.weight: BF16 6.6 MB
+mtp.layers.0.attn_hyper_connection.block_inject_weight.weight: BF16 0.1 MB
+mtp.layers.0.attn_hyper_connection.hc_norm.weight: F32 0.0 MB
+mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight: BF16 6.6 MB
+mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight: BF16 6.6 MB
+mtp.layers.0.mlp.experts.down_proj: q2_0 235.9 MB
+mtp.layers.0.mlp.experts.gate_up_proj: q2_0 471.9 MB
+mtp.layers.0.mlp.gate.weight: BF16 2.6 MB
+mtp.layers.0.mlp.shared_expert.down_proj.weight: BF16 3.3 MB
+mtp.layers.0.mlp.shared_expert.gate_proj.weight: BF16 3.3 MB
+mtp.layers.0.mlp.shared_expert.up_proj.weight: BF16 3.3 MB
+mtp.layers.0.mlp.shared_expert_gate.weight: BF16 0.0 MB
+mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight: BF16 0.1 MB
+mtp.layers.0.mlp_hyper_connection.hc_norm.weight: F32 0.0 MB
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight: BF16 6.6 MB
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight: BF16 6.6 MB
+mtp.layers.0.self_attn.indexer.index_qk_proj.weight: BF16 3.3 MB
+mtp.layers.0.self_attn.indexer.k_layernorm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.indexer.q_layernorm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.k_norm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.k_proj.weight: BF16 2.6 MB
+mtp.layers.0.self_attn.o_proj.weight: BF16 31.5 MB
+mtp.layers.0.self_attn.q_norm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.q_proj.weight: BF16 62.9 MB
+mtp.layers.0.self_attn.v_proj.weight: BF16 2.6 MB
+mtp.pre_fc_norm_embedding.weight: F32 0.0 MB
+mtp.pre_fc_norm_hidden.weight: F32 0.0 MB
+wrote /data/mtp/mtp-q2_0.gguf: 0.889 GB of tensor data
+  > /opt/strata/.venv/bin/python /opt/strata/tools/mtp_rt.py --gguf /data/mtp/mtp-q2_0.gguf --out /data/mtp/rt
+experts.bin 707788800 B, dense.bin 116099072 B, 29 tensors -> /data/mtp/rt
+  fc_embedding.weight q8_0 2560 2560 0 6963200
+  fc_hidden.weight q8_0 2560 2560 6963200 6963200
+  hyper_connection_mixer.hc_norm.weight f32 1 10240 13926400 40960
+  hyper_connection_mixer.input_mix_weight_down.weight bf16 320 10240 13967360 6553600
+  hyper_connection_mixer.input_mix_weight_up.weight bf16 10240 320 20520960 6553600
+  attn_hyper_connection.block_inject_weight.weight bf16 4 10240 27074560 81920
+  attn_hyper_connection.hc_norm.weight f32 1 10240 27156480 40960
+  attn_hyper_connection.input_mix_weight_down.weight bf16 320 10240 27197440 6553600
+  attn_hyper_connection.input_mix_weight_up.weight bf16 10240 320 33751040 6553600
+  mlp.gate.weight bf16 512 2560 40304640 2621440
+  mlp.shared_expert.down_proj.weight q8_0 2560 640 42926080 1740800
+  mlp.shared_expert.gate_proj.weight q8_0 640 2560 44666880 1740800
+  mlp.shared_expert.up_proj.weight q8_0 640 2560 46407680 1740800
+  mlp.shared_expert_gate.weight bf16 1 2560 48148480 5120
+  mlp_hyper_connection.block_inject_weight.weight bf16 4 10240 48153600 81920
+  mlp_hyper_connection.hc_norm.weight f32 1 10240 48235520 40960
+  mlp_hyper_connection.input_mix_weight_down.weight bf16 320 10240 48276480 6553600
+  mlp_hyper_connection.input_mix_weight_up.weight bf16 10240 320 54830080 6553600
+  self_attn.indexer.index_qk_proj.weight q8_0 640 2560 61383680 1740800
+  self_attn.indexer.k_layernorm.weight f32 1 128 63124480 512
+  self_attn.indexer.q_layernorm.weight f32 1 128 63124992 512
+  self_attn.k_norm.weight f32 1 256 63125504 1024
+  self_attn.k_proj.weight q8_0 512 2560 63126528 1392640
+  self_attn.o_proj.weight q8_0 2560 6144 64519168 16711680
+  self_attn.q_norm.weight f32 1 256 81230848 1024
+  self_attn.q_proj.weight q8_0 12288 2560 81231872 33423360
+  self_attn.v_proj.weight q8_0 512 2560 114655232 1392640
+  pre_fc_norm_embedding.weight f32 1 2560 116047872 10240
+  pre_fc_norm_hidden.weight f32 1 10240 116058112 40960
+  [ok] MTP draft layer: /data/mtp/rt
+
+=== Step 7: writing the start script ===
+  [ok] KV streaming on: the context's KV cache lives in RAM (2.1 GB), more experts fit in VRAM
+  [ok] start script: run-iq2_xs.sh
+
+All set.
+  API (OpenAI):     http://127.0.0.1:18182/v1   (any API key; model name: anything)
+  API (Anthropic):  http://127.0.0.1:18182/v1/messages
+  Next time:        just run ./setup.sh (or run-iq2_xs.sh) - it starts right away
+Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)
+  [ok] GPU: GPU 0 (NVIDIA GeForce RTX 3090, 24 GB)
+
+  ----------------------------------------------------------------------------------------------------
+  Starting qwen3.8-flash-next-iq2_xs: it loads about 39 GB into RAM and locks part of it for the GPU.
+  While it does, YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES (longer the first time after a
+  restart). That is normal: please wait and don't close this window - the browser opens when it is ready.
+  Later, closing this window stops the model.
+  ----------------------------------------------------------------------------------------------------
+loading the model (the first start takes a minute or two) ...
+[strata] starting the engine: reading the model's weights ...
+[strata] still starting (20 s) - please wait ...
+[strata] loading the experts into RAM (about 39 GB) and locking part of them for the GPU.
+         YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES NOW - this is normal.
+         Please wait and don't close this window; the browser opens when it is ready.
+[strata] filling the GPU's expert cache (13103 experts, 17.56 GiB of VRAM) ...
+[strata] still starting (43 s) - please wait ...
+[strata] still starting (63 s) - please wait ...
+[strata] still starting (83 s) - please wait ...
+[strata] almost ready ...
+ready: http://127.0.0.1:18182/v1  (OpenAI: /v1/chat/completions, Anthropic: /v1/messages, context 150000 tokens)
+       open http://127.0.0.1:18182/ in a browser to chat; close this window to stop the model
+[strata] reading the prompt: 50 of 55 tokens, 7 s so far
+[strata] thinking: 4 of max 32 tokens, 7.4 tok/s, 8 s
+[strata] thinking: 23 of max 32 tokens, 13.2 tok/s, 9 s
+[strata] done: 26 tokens in 9 s (15.0 tok/s) (stop, cancel=False), expert cache 89.5% hit
+[strata] reading the prompt: 78 of 83 tokens, 4 s so far
+[strata] thinking: 17 of max 4096 tokens, 21.8 tok/s, 5 s
+[strata] thinking: 44 of max 4096 tokens, 22.4 tok/s, 7 s
+[strata] thinking: 66 of max 4096 tokens, 22.0 tok/s, 8 s
+[strata] done: 85 tokens in 9 s (17.8 tok/s) (stop, cancel=False), expert cache 92.0% hit
+[strata] reading the prompt: 630 tokens, 10 s so far
+
+[strata] stopping (Ctrl+C again to end the engine at once) ...
+[strata] reading the prompt: 630 tokens, 20 s so far
+[strata] stopped
+Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)
+  [ok] GPU: GPU 0 (NVIDIA GeForce RTX 3090, 24 GB)
+
+  ----------------------------------------------------------------------------------------------------
+  Starting qwen3.8-flash-next-iq2_xs: it loads about 39 GB into RAM and locks part of it for the GPU.
+  While it does, YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES (longer the first time after a
+  restart). That is normal: please wait and don't close this window - the browser opens when it is ready.
+  Later, closing this window stops the model.
+  ----------------------------------------------------------------------------------------------------
+loading the model (the first start takes a minute or two) ...
+[strata] starting the engine: reading the model's weights ...
+[strata] loading the experts into RAM (about 39 GB) and locking part of them for the GPU.
+         YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES NOW - this is normal.
+         Please wait and don't close this window; the browser opens when it is ready.
+[strata] filling the GPU's expert cache (13103 experts, 17.56 GiB of VRAM) ...
+[strata] almost ready ...
+[strata] still starting (35 s) - please wait ...
+[strata] still starting (55 s) - please wait ...
+ready: http://127.0.0.1:18182/v1  (OpenAI: /v1/chat/completions, Anthropic: /v1/messages, context 150000 tokens)
+       open http://127.0.0.1:18182/ in a browser to chat; close this window to stop the model
+[strata] thinking: 21 of max 32 tokens, 56.9 tok/s, 1 s
+[strata] done: 27 tokens in 1 s (65.4 tok/s) (stop, cancel=False), expert cache 89.0% hit
+[strata] thinking: 14 of max 4096 tokens, 47.6 tok/s, 1 s
+[strata] thinking: 77 of max 4096 tokens, 57.5 tok/s, 2 s
+[strata] done: 98 tokens in 2 s (58.2 tok/s) (stop, cancel=False), expert cache 93.1% hit
+[strata] reading the prompt: 625 of 630 tokens, 2 s so far
+[strata] writing a tool call: run_tests: 55 of max 4096 tokens, 60.4 tok/s, 3 s
+[strata] done: 64 tokens in 3 s (64.6 tok/s) (stop, cancel=False), expert cache 91.3% hit
+[strata] reading the prompt: 8,192 of 114,812 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 114,812 tokens, 8 s so far
+[strata] reading the prompt: 24,576 of 114,812 tokens, 12 s so far
+[strata] reading the prompt: 32,768 of 114,812 tokens, 16 s so far
+[strata] reading the prompt: 40,960 of 114,812 tokens, 20 s so far
+[strata] reading the prompt: 49,152 of 114,812 tokens, 25 s so far
+[strata] reading the prompt: 57,344 of 114,812 tokens, 29 s so far
+[strata] reading the prompt: 65,536 of 114,812 tokens, 34 s so far
+[strata] reading the prompt: 73,728 of 114,812 tokens, 38 s so far
+[strata] reading the prompt: 81,920 of 114,812 tokens, 43 s so far
+[strata] reading the prompt: 90,112 of 114,812 tokens, 48 s so far
+[strata] reading the prompt: 98,304 of 114,812 tokens, 53 s so far
+[strata] reading the prompt: 106,496 of 114,812 tokens, 59 s so far
+[strata] reading the prompt: 114,688 of 114,812 tokens, 64 s so far
+[strata] reading the prompt: 114,807 of 114,812 tokens, 65 s so far
+[strata] thinking: 29 of max 4096 tokens, 51.7 tok/s, 66 s
+[strata] thinking: 83 of max 4096 tokens, 52.4 tok/s, 67 s
+[strata] thinking: 139 of max 4096 tokens, 52.8 tok/s, 68 s
+[strata] thinking: 189 of max 4096 tokens, 51.9 tok/s, 69 s
+[strata] answering: 249 of max 4096 tokens, 52.7 tok/s, 70 s
+[strata] done: 263 tokens in 70 s (53.1 tok/s) (stop, cancel=False), expert cache 94.2% hit
+[strata] thinking: 6 of max 4096 tokens, 67.5 tok/s, 1 s
+[strata] thinking: 80 of max 4096 tokens, 71.1 tok/s, 2 s
+[strata] thinking: 151 of max 4096 tokens, 70.6 tok/s, 3 s
+[strata] thinking: 216 of max 4096 tokens, 68.0 tok/s, 4 s
+[strata] thinking: 281 of max 4096 tokens, 67.0 tok/s, 5 s
+[strata] thinking: 353 of max 4096 tokens, 67.5 tok/s, 6 s
+[strata] thinking: 422 of max 4096 tokens, 67.6 tok/s, 7 s
+[strata] thinking: 485 of max 4096 tokens, 66.6 tok/s, 8 s
+[strata] thinking: 556 of max 4096 tokens, 67.1 tok/s, 9 s
+[strata] thinking: 627 of max 4096 tokens, 67.3 tok/s, 10 s
+[strata] answering: 701 of max 4096 tokens, 67.8 tok/s, 11 s
+[strata] answering: 772 of max 4096 tokens, 67.8 tok/s, 12 s
+[strata] done: 802 tokens in 13 s (68.3 tok/s) (stop, cancel=False), expert cache 94.0% hit
+[strata] thinking: 22 of max 4096 tokens, 61.0 tok/s, 1 s
+[strata] thinking: 96 of max 4096 tokens, 68.7 tok/s, 2 s
+[strata] thinking: 161 of max 4096 tokens, 66.6 tok/s, 3 s
+[strata] thinking: 207 of max 4096 tokens, 60.4 tok/s, 4 s
+[strata] thinking: 269 of max 4096 tokens, 60.7 tok/s, 5 s
+[strata] thinking: 319 of max 4096 tokens, 58.6 tok/s, 6 s
+[strata] thinking: 366 of max 4096 tokens, 56.7 tok/s, 7 s
+[strata] thinking: 418 of max 4096 tokens, 55.8 tok/s, 8 s
+[strata] thinking: 494 of max 4096 tokens, 57.9 tok/s, 9 s
+[strata] thinking: 557 of max 4096 tokens, 58.4 tok/s, 10 s
+[strata] answering: 618 of max 4096 tokens, 58.3 tok/s, 11 s
+[strata] done: 668 tokens in 12 s (59.3 tok/s) (stop, cancel=False), expert cache 95.0% hit
+[strata] reading the prompt: 572 of 577 tokens, 1 s so far
+[strata] answering: 40 of max 4096 tokens, 46.1 tok/s, 2 s
+[strata] done: 70 tokens in 3 s (51.7 tok/s) (stop, cancel=False), expert cache 89.5% hit
+[strata] reading the prompt: 8,192 of 114,802 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 114,802 tokens, 8 s so far
+[strata] reading the prompt: 24,576 of 114,802 tokens, 12 s so far
+[strata] reading the prompt: 32,768 of 114,802 tokens, 16 s so far
+[strata] reading the prompt: 40,960 of 114,802 tokens, 20 s so far
+[strata] reading the prompt: 49,152 of 114,802 tokens, 25 s so far
+[strata] reading the prompt: 57,344 of 114,802 tokens, 29 s so far
+[strata] reading the prompt: 65,536 of 114,802 tokens, 33 s so far
+[strata] reading the prompt: 73,728 of 114,802 tokens, 38 s so far
+[strata] reading the prompt: 81,920 of 114,802 tokens, 43 s so far
+[strata] reading the prompt: 90,112 of 114,802 tokens, 48 s so far
+[strata] reading the prompt: 98,304 of 114,802 tokens, 53 s so far
+[strata] reading the prompt: 106,496 of 114,802 tokens, 58 s so far
+[strata] reading the prompt: 114,688 of 114,802 tokens, 64 s so far
+[strata] reading the prompt: 114,797 of 114,802 tokens, 65 s so far
+[strata] thinking: 32 of max 4096 tokens, 59.4 tok/s, 66 s
+[strata] thinking: 80 of max 4096 tokens, 51.8 tok/s, 67 s
+[strata] answering: 142 of max 4096 tokens, 55.6 tok/s, 68 s
+[strata] done: 146 tokens in 68 s (55.8 tok/s) (stop, cancel=False), expert cache 90.4% hit
+[strata] reading the prompt: 8,192 of 12,244 tokens, 4 s so far
+[strata] reading the prompt: 12,239 of 12,244 tokens, 7 s so far
+[strata] done: 1 tokens in 8 s (152.7 tok/s) (length, cancel=False), expert cache 97.7% hit
+[strata] reading the prompt: 639 of 644 tokens, 1 s so far
+[strata] writing a tool call: run_tests: 63 of max 4096 tokens, 71.7 tok/s, 2 s
+[strata] done: 67 tokens in 2 s (71.0 tok/s) (stop, cancel=False), expert cache 94.1% hit
+[strata] thinking: 24 of max 4096 tokens, 72.2 tok/s, 1 s
+[strata] thinking: 94 of max 4096 tokens, 70.5 tok/s, 2 s
+[strata] thinking: 151 of max 4096 tokens, 64.5 tok/s, 3 s
+[strata] thinking: 206 of max 4096 tokens, 61.7 tok/s, 4 s
+[strata] thinking: 267 of max 4096 tokens, 60.9 tok/s, 5 s
+[strata] thinking: 321 of max 4096 tokens, 59.5 tok/s, 6 s
+[strata] thinking: 372 of max 4096 tokens, 57.9 tok/s, 7 s
+[strata] thinking: 421 of max 4096 tokens, 56.7 tok/s, 8 s
+[strata] thinking: 459 of max 4096 tokens, 52.6 tok/s, 9 s
+[strata] thinking: 515 of max 4096 tokens, 52.9 tok/s, 10 s
+[strata] thinking: 538 of max 4096 tokens, 49.7 tok/s, 12 s
+[strata] thinking: 560 of max 4096 tokens, 43.2 tok/s, 14 s
+[strata] thinking: 576 of max 4096 tokens, 41.2 tok/s, 15 s
+[strata] thinking: 585 of max 4096 tokens, 38.5 tok/s, 16 s
+[strata] thinking: 604 of max 4096 tokens, 37.3 tok/s, 17 s
+[strata] thinking: 624 of max 4096 tokens, 35.9 tok/s, 18 s
+[strata] thinking: 632 of max 4096 tokens, 34.1 tok/s, 19 s
+[strata] thinking: 655 of max 4096 tokens, 33.4 tok/s, 20 s
+[strata] thinking: 717 of max 4096 tokens, 34.8 tok/s, 21 s
+[strata] thinking: 774 of max 4096 tokens, 35.8 tok/s, 22 s
+[strata] thinking: 826 of max 4096 tokens, 36.5 tok/s, 23 s
+[strata] thinking: 880 of max 4096 tokens, 37.1 tok/s, 24 s
+[strata] thinking: 933 of max 4096 tokens, 37.8 tok/s, 25 s
+[strata] thinking: 985 of max 4096 tokens, 38.3 tok/s, 26 s
+[strata] thinking: 1052 of max 4096 tokens, 39.4 tok/s, 27 s
+[strata] thinking: 1107 of max 4096 tokens, 39.9 tok/s, 28 s
+[strata] thinking: 1167 of max 4096 tokens, 40.6 tok/s, 29 s
+[strata] thinking: 1246 of max 4096 tokens, 41.8 tok/s, 30 s
+[strata] thinking: 1317 of max 4096 tokens, 42.8 tok/s, 31 s
+[strata] thinking: 1365 of max 4096 tokens, 42.9 tok/s, 32 s
+[strata] thinking: 1421 of max 4096 tokens, 43.3 tok/s, 33 s
+[strata] thinking: 1450 of max 4096 tokens, 42.4 tok/s, 35 s
+[strata] thinking: 1459 of max 4096 tokens, 41.3 tok/s, 36 s
+[strata] thinking: 1472 of max 4096 tokens, 40.1 tok/s, 37 s
+[strata] thinking: 1488 of max 4096 tokens, 39.5 tok/s, 38 s
+[strata] thinking: 1532 of max 4096 tokens, 39.4 tok/s, 40 s
+[strata] thinking: 1549 of max 4096 tokens, 38.8 tok/s, 41 s
+[strata] thinking: 1565 of max 4096 tokens, 38.2 tok/s, 42 s
+[strata] thinking: 1569 of max 4096 tokens, 36.6 tok/s, 44 s
+[strata] thinking: 1576 of max 4096 tokens, 35.9 tok/s, 45 s
+[strata] thinking: 1590 of max 4096 tokens, 35.4 tok/s, 46 s
+[strata] thinking: 1598 of max 4096 tokens, 34.8 tok/s, 47 s
+[strata] thinking: 1601 of max 4096 tokens, 33.9 tok/s, 48 s
+[strata] thinking: 1626 of max 4096 tokens, 33.7 tok/s, 49 s
+[strata] thinking: 1634 of max 4096 tokens, 31.3 tok/s, 53 s
+[strata] thinking: 1637 of max 4096 tokens, 30.2 tok/s, 55 s
+[strata] thinking: 1639 of max 4096 tokens, 29.6 tok/s, 56 s
+[strata] thinking: 1640 of max 4096 tokens, 28.6 tok/s, 58 s
+[strata] thinking: 1651 of max 4096 tokens, 28.2 tok/s, 59 s
+[strata] thinking: 1705 of max 4096 tokens, 28.7 tok/s, 60 s
+[strata] thinking: 1756 of max 4096 tokens, 29.0 tok/s, 61 s
+[strata] thinking: 1806 of max 4096 tokens, 29.4 tok/s, 62 s
+[strata] thinking: 1857 of max 4096 tokens, 29.7 tok/s, 63 s
+[strata] thinking: 1914 of max 4096 tokens, 30.1 tok/s, 64 s
+[strata] thinking: 1964 of max 4096 tokens, 30.4 tok/s, 65 s
+[strata] thinking: 2015 of max 4096 tokens, 30.7 tok/s, 66 s
+[strata] thinking: 2069 of max 4096 tokens, 31.1 tok/s, 67 s
+[strata] thinking: 2120 of max 4096 tokens, 31.4 tok/s, 68 s
+[strata] thinking: 2171 of max 4096 tokens, 31.6 tok/s, 69 s
+[strata] thinking: 2225 of max 4096 tokens, 32.0 tok/s, 70 s
+[strata] thinking: 2242 of max 4096 tokens, 31.7 tok/s, 71 s
+[strata] thinking: 2247 of max 4096 tokens, 31.4 tok/s, 72 s
+[strata] thinking: 2254 of max 4096 tokens, 30.7 tok/s, 74 s
+[strata] thinking: 2268 of max 4096 tokens, 30.5 tok/s, 75 s
+[strata] thinking: 2280 of max 4096 tokens, 30.2 tok/s, 76 s
+[strata] thinking: 2306 of max 4096 tokens, 30.1 tok/s, 77 s
+[strata] thinking: 2344 of max 4096 tokens, 30.2 tok/s, 78 s
+[strata] thinking: 2368 of max 4096 tokens, 30.0 tok/s, 80 s
+[strata] thinking: 2388 of max 4096 tokens, 29.7 tok/s, 81 s
+[strata] thinking: 2400 of max 4096 tokens, 29.4 tok/s, 82 s
+[strata] thinking: 2423 of max 4096 tokens, 29.2 tok/s, 84 s
+[strata] thinking: 2424 of max 4096 tokens, 28.6 tok/s, 85 s
+[strata] thinking: 2426 of max 4096 tokens, 27.6 tok/s, 88 s
+[strata] thinking: 2473 of max 4096 tokens, 27.8 tok/s, 90 s
+[strata] thinking: 2523 of max 4096 tokens, 28.1 tok/s, 91 s
+[strata] thinking: 2581 of max 4096 tokens, 28.4 tok/s, 92 s
+[strata] thinking: 2625 of max 4096 tokens, 28.6 tok/s, 93 s
+[strata] thinking: 2674 of max 4096 tokens, 28.8 tok/s, 94 s
+[strata] thinking: 2730 of max 4096 tokens, 29.1 tok/s, 95 s
+[strata] thinking: 2780 of max 4096 tokens, 29.3 tok/s, 96 s
+[strata] thinking: 2823 of max 4096 tokens, 29.4 tok/s, 97 s
+[strata] thinking: 2887 of max 4096 tokens, 29.7 tok/s, 98 s
+[strata] thinking: 2951 of max 4096 tokens, 30.1 tok/s, 99 s
+[strata] thinking: 3018 of max 4096 tokens, 30.4 tok/s, 100 s
+[strata] thinking: 3068 of max 4096 tokens, 30.6 tok/s, 101 s
+[strata] thinking: 3117 of max 4096 tokens, 30.8 tok/s, 102 s
+[strata] thinking: 3179 of max 4096 tokens, 31.1 tok/s, 103 s
+[strata] thinking: 3242 of max 4096 tokens, 31.4 tok/s, 104 s
+[strata] thinking: 3296 of max 4096 tokens, 31.6 tok/s, 105 s
+[strata] thinking: 3348 of max 4096 tokens, 31.8 tok/s, 106 s
+[strata] thinking: 3402 of max 4096 tokens, 32.0 tok/s, 107 s
+[strata] thinking: 3447 of max 4096 tokens, 32.1 tok/s, 108 s
+[strata] thinking: 3499 of max 4096 tokens, 32.3 tok/s, 109 s
+[strata] thinking: 3548 of max 4096 tokens, 32.4 tok/s, 110 s
+[strata] thinking: 3579 of max 4096 tokens, 32.4 tok/s, 111 s
+[strata] thinking: 3612 of max 4096 tokens, 32.4 tok/s, 112 s
+[strata] thinking: 3631 of max 4096 tokens, 32.3 tok/s, 113 s
+[strata] thinking: 3640 of max 4096 tokens, 32.0 tok/s, 115 s
+[strata] thinking: 3656 of max 4096 tokens, 31.8 tok/s, 116 s
+[strata] thinking: 3684 of max 4096 tokens, 31.8 tok/s, 117 s
+[strata] thinking: 3693 of max 4096 tokens, 31.5 tok/s, 118 s
+[strata] thinking: 3703 of max 4096 tokens, 31.3 tok/s, 119 s
+[strata] thinking: 3713 of max 4096 tokens, 31.1 tok/s, 120 s
+[strata] thinking: 3722 of max 4096 tokens, 30.9 tok/s, 121 s
+[strata] thinking: 3738 of max 4096 tokens, 30.8 tok/s, 122 s
+[strata] thinking: 3756 of max 4096 tokens, 30.6 tok/s, 123 s
+[strata] thinking: 3767 of max 4096 tokens, 30.5 tok/s, 124 s
+[strata] thinking: 3786 of max 4096 tokens, 30.4 tok/s, 125 s
+[strata] thinking: 3795 of max 4096 tokens, 30.2 tok/s, 126 s
+[strata] thinking: 3822 of max 4096 tokens, 30.1 tok/s, 128 s
+[strata] thinking: 3830 of max 4096 tokens, 29.9 tok/s, 129 s
+[strata] thinking: 3863 of max 4096 tokens, 29.9 tok/s, 130 s
+[strata] thinking: 3880 of max 4096 tokens, 29.7 tok/s, 131 s
+[strata] thinking: 3890 of max 4096 tokens, 29.6 tok/s, 132 s
+[strata] thinking: 3917 of max 4096 tokens, 29.6 tok/s, 133 s
+[strata] thinking: 3968 of max 4096 tokens, 29.7 tok/s, 134 s
+[strata] thinking: 4015 of max 4096 tokens, 29.9 tok/s, 135 s
+[strata] thinking: 4062 of max 4096 tokens, 30.0 tok/s, 136 s
+[strata] done: 4096 tokens in 137 s (30.1 tok/s) (length, cancel=False), expert cache 96.7% hit
+[strata] thinking: 21 of max 4096 tokens, 67.2 tok/s, 1 s
+[strata] thinking: 85 of max 4096 tokens, 63.0 tok/s, 2 s
+[strata] thinking: 134 of max 4096 tokens, 56.7 tok/s, 3 s
+[strata] thinking: 191 of max 4096 tokens, 56.8 tok/s, 4 s
+[strata] thinking: 250 of max 4096 tokens, 57.3 tok/s, 5 s
+[strata] answering: 325 of max 4096 tokens, 60.2 tok/s, 6 s
+[strata] answering: 397 of max 4096 tokens, 61.8 tok/s, 7 s
+[strata] answering: 471 of max 4096 tokens, 63.4 tok/s, 8 s
+[strata] answering: 540 of max 4096 tokens, 64.0 tok/s, 9 s
+[strata] done: 549 tokens in 9 s (63.9 tok/s) (stop, cancel=False), expert cache 92.7% hit
+[strata] thinking: 24 of max 4096 tokens, 56.1 tok/s, 1 s
+[strata] thinking: 77 of max 4096 tokens, 53.7 tok/s, 2 s
+[strata] done: 107 tokens in 3 s (52.6 tok/s) (stop, cancel=False), expert cache 92.1% hit
+[strata] reading the prompt: 665 of 670 tokens, 1 s so far
+[strata] thinking: 40 of max 4096 tokens, 46.4 tok/s, 2 s
+[strata] thinking: 96 of max 4096 tokens, 50.9 tok/s, 4 s
+[strata] thinking: 156 of max 4096 tokens, 53.6 tok/s, 5 s
+[strata] writing a tool call: get_logs: 218 of max 4096 tokens, 55.5 tok/s, 6 s
+[strata] done: 225 tokens in 6 s (56.4 tok/s) (stop, cancel=False), expert cache 91.9% hit
+[strata] thinking: 21 of max 4096 tokens, 51.5 tok/s, 1 s
+[strata] thinking: 81 of max 4096 tokens, 55.6 tok/s, 2 s
+[strata] done: 118 tokens in 3 s (54.6 tok/s) (stop, cancel=False), expert cache 91.4% hit
+[strata] reading the prompt: 593 of 598 tokens, 1 s so far
+[strata] thinking: 54 of max 4096 tokens, 62.7 tok/s, 2 s
+[strata] done: 104 tokens in 3 s (71.6 tok/s) (stop, cancel=False), expert cache 94.1% hit
+[strata] reading the prompt: 91 tokens, 10 s so far
+[strata] reading the prompt: 86 of 91 tokens, 14 s so far
+[strata] thinking: 41 of max 4096 tokens, 39.9 tok/s, 15 s
+[strata] thinking: 87 of max 4096 tokens, 38.5 tok/s, 16 s
+[strata] done: 105 tokens in 16 s (42.2 tok/s) (stop, cancel=False), expert cache 93.7% hit
+[strata] thinking: 12 of max 4096 tokens, 32.0 tok/s, 1 s
+[strata] thinking: 63 of max 4096 tokens, 45.3 tok/s, 2 s
+[strata] thinking: 108 of max 4096 tokens, 43.6 tok/s, 3 s
+[strata] thinking: 172 of max 4096 tokens, 49.0 tok/s, 4 s
+[strata] thinking: 213 of max 4096 tokens, 46.9 tok/s, 5 s
+[strata] thinking: 269 of max 4096 tokens, 48.2 tok/s, 6 s
+[strata] thinking: 308 of max 4096 tokens, 46.8 tok/s, 7 s
+[strata] thinking: 362 of max 4096 tokens, 47.6 tok/s, 8 s
+[strata] thinking: 407 of max 4096 tokens, 47.1 tok/s, 9 s
+[strata] thinking: 461 of max 4096 tokens, 47.7 tok/s, 10 s
+[strata] thinking: 519 of max 4096 tokens, 48.6 tok/s, 11 s
+[strata] thinking: 568 of max 4096 tokens, 48.6 tok/s, 12 s
+[strata] thinking: 617 of max 4096 tokens, 48.6 tok/s, 13 s
+[strata] thinking: 670 of max 4096 tokens, 48.8 tok/s, 14 s
+[strata] thinking: 725 of max 4096 tokens, 49.1 tok/s, 15 s
+[strata] thinking: 793 of max 4096 tokens, 50.3 tok/s, 16 s
+[strata] thinking: 852 of max 4096 tokens, 50.7 tok/s, 17 s
+[strata] thinking: 890 of max 4096 tokens, 50.0 tok/s, 18 s
+[strata] thinking: 957 of max 4096 tokens, 50.8 tok/s, 19 s
+[strata] thinking: 1021 of max 4096 tokens, 51.4 tok/s, 21 s
+[strata] thinking: 1091 of max 4096 tokens, 52.3 tok/s, 22 s
+[strata] thinking: 1157 of max 4096 tokens, 52.8 tok/s, 23 s
+[strata] thinking: 1210 of max 4096 tokens, 52.7 tok/s, 24 s
+[strata] thinking: 1267 of max 4096 tokens, 52.9 tok/s, 25 s
+[strata] thinking: 1324 of max 4096 tokens, 53.0 tok/s, 26 s
+[strata] thinking: 1376 of max 4096 tokens, 53.0 tok/s, 27 s
+[strata] thinking: 1424 of max 4096 tokens, 52.8 tok/s, 28 s
+[strata] thinking: 1476 of max 4096 tokens, 52.7 tok/s, 29 s
+[strata] thinking: 1530 of max 4096 tokens, 52.7 tok/s, 30 s
+[strata] thinking: 1579 of max 4096 tokens, 52.6 tok/s, 31 s
+[strata] thinking: 1637 of max 4096 tokens, 52.7 tok/s, 32 s
+[strata] thinking: 1673 of max 4096 tokens, 52.0 tok/s, 33 s
+[strata] thinking: 1722 of max 4096 tokens, 51.9 tok/s, 34 s
+[strata] thinking: 1775 of max 4096 tokens, 51.8 tok/s, 35 s
+[strata] thinking: 1834 of max 4096 tokens, 52.0 tok/s, 36 s
+[strata] thinking: 1880 of max 4096 tokens, 51.8 tok/s, 37 s
+[strata] thinking: 1940 of max 4096 tokens, 52.0 tok/s, 38 s
+[strata] thinking: 1996 of max 4096 tokens, 52.1 tok/s, 39 s
+[strata] thinking: 2059 of max 4096 tokens, 52.3 tok/s, 40 s
+[strata] thinking: 2127 of max 4096 tokens, 52.7 tok/s, 41 s
+[strata] thinking: 2197 of max 4096 tokens, 53.1 tok/s, 42 s
+[strata] thinking: 2247 of max 4096 tokens, 52.9 tok/s, 43 s
+[strata] thinking: 2294 of max 4096 tokens, 52.8 tok/s, 44 s
+[strata] thinking: 2350 of max 4096 tokens, 52.9 tok/s, 45 s
+[strata] thinking: 2396 of max 4096 tokens, 52.7 tok/s, 46 s
+[strata] thinking: 2440 of max 4096 tokens, 52.5 tok/s, 47 s
+[strata] thinking: 2491 of max 4096 tokens, 52.4 tok/s, 48 s
+[strata] thinking: 2526 of max 4096 tokens, 52.1 tok/s, 49 s
+[strata] thinking: 2548 of max 4096 tokens, 51.0 tok/s, 51 s
+[strata] thinking: 2556 of max 4096 tokens, 49.8 tok/s, 52 s
+[strata] thinking: 2560 of max 4096 tokens, 48.4 tok/s, 54 s
+[strata] thinking: 2565 of max 4096 tokens, 47.6 tok/s, 55 s
+[strata] thinking: 2593 of max 4096 tokens, 47.2 tok/s, 56 s
+[strata] thinking: 2625 of max 4096 tokens, 46.8 tok/s, 57 s
+[strata] thinking: 2649 of max 4096 tokens, 46.4 tok/s, 58 s
+[strata] thinking: 2704 of max 4096 tokens, 46.5 tok/s, 59 s
+[strata] thinking: 2770 of max 4096 tokens, 46.8 tok/s, 60 s
+[strata] thinking: 2812 of max 4096 tokens, 46.7 tok/s, 61 s
+[strata] thinking: 2857 of max 4096 tokens, 46.6 tok/s, 62 s
+[strata] thinking: 2909 of max 4096 tokens, 46.7 tok/s, 63 s
+[strata] thinking: 2956 of max 4096 tokens, 46.7 tok/s, 64 s
+[strata] thinking: 3008 of max 4096 tokens, 46.8 tok/s, 65 s
+[strata] thinking: 3050 of max 4096 tokens, 46.7 tok/s, 66 s
+[strata] thinking: 3095 of max 4096 tokens, 46.6 tok/s, 67 s
+[strata] thinking: 3144 of max 4096 tokens, 46.7 tok/s, 68 s
+[strata] thinking: 3194 of max 4096 tokens, 46.7 tok/s, 69 s
+[strata] thinking: 3240 of max 4096 tokens, 46.7 tok/s, 70 s
+[strata] thinking: 3289 of max 4096 tokens, 46.7 tok/s, 71 s
+[strata] thinking: 3352 of max 4096 tokens, 46.9 tok/s, 72 s
+[strata] thinking: 3383 of max 4096 tokens, 46.7 tok/s, 73 s
+[strata] thinking: 3402 of max 4096 tokens, 46.3 tok/s, 74 s
+[strata] thinking: 3455 of max 4096 tokens, 46.3 tok/s, 75 s
+[strata] thinking: 3510 of max 4096 tokens, 46.4 tok/s, 76 s
+[strata] thinking: 3559 of max 4096 tokens, 46.4 tok/s, 77 s
+[strata] thinking: 3617 of max 4096 tokens, 46.6 tok/s, 78 s
+[strata] thinking: 3670 of max 4096 tokens, 46.6 tok/s, 79 s
+[strata] thinking: 3719 of max 4096 tokens, 46.6 tok/s, 80 s
+[strata] thinking: 3775 of max 4096 tokens, 46.7 tok/s, 81 s
+[strata] thinking: 3832 of max 4096 tokens, 46.8 tok/s, 82 s
+[strata] thinking: 3895 of max 4096 tokens, 47.0 tok/s, 84 s
+[strata] thinking: 3949 of max 4096 tokens, 47.1 tok/s, 85 s
+[strata] thinking: 3989 of max 4096 tokens, 47.0 tok/s, 86 s
+[strata] thinking: 4005 of max 4096 tokens, 46.6 tok/s, 87 s
+[strata] thinking: 4021 of max 4096 tokens, 46.2 tok/s, 88 s
+[strata] thinking: 4023 of max 4096 tokens, 45.0 tok/s, 90 s
+[strata] thinking: 4026 of max 4096 tokens, 43.8 tok/s, 93 s
+[strata] thinking: 4032 of max 4096 tokens, 43.3 tok/s, 94 s
+[strata] thinking: 4033 of max 4096 tokens, 42.3 tok/s, 96 s
+[strata] thinking: 4034 of max 4096 tokens, 41.5 tok/s, 98 s
+[strata] thinking: 4035 of max 4096 tokens, 40.6 tok/s, 100 s
+[strata] thinking: 4036 of max 4096 tokens, 39.8 tok/s, 102 s
+[strata] thinking: 4082 of max 4096 tokens, 39.9 tok/s, 103 s
+[strata] done: 4096 tokens in 103 s (39.9 tok/s) (length, cancel=False), expert cache 95.7% hit
+[strata] reading the prompt: 625 of 630 tokens, 1 s so far
+[strata] done: 46 tokens in 2 s (59.0 tok/s) (stop, cancel=False), expert cache 85.0% hit
+[strata] reading the prompt: 1,909 of 1,914 tokens, 2 s so far
+[strata] thinking: 37 of max 4096 tokens, 46.8 tok/s, 3 s
+[strata] thinking: 104 of max 4096 tokens, 58.0 tok/s, 4 s
+[strata] thinking: 167 of max 4096 tokens, 59.6 tok/s, 5 s
+[strata] done: 186 tokens in 5 s (58.2 tok/s) (stop, cancel=False), expert cache 89.9% hit
+[strata] thinking: 19 of max 4096 tokens, 57.7 tok/s, 1 s
+[strata] thinking: 89 of max 4096 tokens, 66.2 tok/s, 2 s
+[strata] thinking: 145 of max 4096 tokens, 61.2 tok/s, 3 s
+[strata] thinking: 194 of max 4096 tokens, 57.4 tok/s, 4 s
+[strata] thinking: 242 of max 4096 tokens, 55.1 tok/s, 5 s
+[strata] thinking: 294 of max 4096 tokens, 54.1 tok/s, 6 s
+[strata] thinking: 350 of max 4096 tokens, 54.4 tok/s, 7 s
+[strata] thinking: 419 of max 4096 tokens, 56.1 tok/s, 8 s
+[strata] thinking: 494 of max 4096 tokens, 58.3 tok/s, 9 s
+[strata] thinking: 546 of max 4096 tokens, 57.6 tok/s, 10 s
+[strata] thinking: 601 of max 4096 tokens, 57.1 tok/s, 11 s
+[strata] thinking: 654 of max 4096 tokens, 56.7 tok/s, 12 s
+[strata] thinking: 707 of max 4096 tokens, 56.4 tok/s, 13 s
+[strata] thinking: 762 of max 4096 tokens, 56.3 tok/s, 14 s
+[strata] thinking: 813 of max 4096 tokens, 55.9 tok/s, 15 s
+[strata] thinking: 870 of max 4096 tokens, 55.9 tok/s, 16 s
+[strata] thinking: 922 of max 4096 tokens, 55.7 tok/s, 17 s
+[strata] thinking: 974 of max 4096 tokens, 55.5 tok/s, 18 s
+[strata] thinking: 1043 of max 4096 tokens, 56.1 tok/s, 19 s
+[strata] thinking: 1099 of max 4096 tokens, 56.1 tok/s, 20 s
+[strata] thinking: 1106 of max 4096 tokens, 47.8 tok/s, 24 s
+[strata] thinking: 1107 of max 4096 tokens, 45.4 tok/s, 25 s
+[strata] thinking: 1119 of max 4096 tokens, 43.9 tok/s, 26 s
+[strata] thinking: 1163 of max 4096 tokens, 43.9 tok/s, 27 s
+[strata] thinking: 1219 of max 4096 tokens, 44.2 tok/s, 28 s
+[strata] thinking: 1293 of max 4096 tokens, 45.2 tok/s, 29 s
+[strata] thinking: 1349 of max 4096 tokens, 45.6 tok/s, 30 s
+[strata] thinking: 1408 of max 4096 tokens, 46.0 tok/s, 31 s
+[strata] thinking: 1486 of max 4096 tokens, 46.9 tok/s, 32 s
+[strata] thinking: 1550 of max 4096 tokens, 47.4 tok/s, 33 s
+[strata] thinking: 1606 of max 4096 tokens, 47.7 tok/s, 34 s
+[strata] thinking: 1661 of max 4096 tokens, 47.9 tok/s, 35 s
+[strata] thinking: 1704 of max 4096 tokens, 47.7 tok/s, 36 s
+[strata] thinking: 1755 of max 4096 tokens, 47.8 tok/s, 37 s
+[strata] answering: 1810 of max 4096 tokens, 47.9 tok/s, 38 s
+[strata] answering: 1879 of max 4096 tokens, 48.4 tok/s, 40 s
+[strata] done: 1947 tokens in 40 s (49.0 tok/s) (stop, cancel=False), expert cache 95.0% hit
+[strata] reading the prompt: 658 of 663 tokens, 1 s so far
+[strata] writing a tool call: get_logs: 45 of max 4096 tokens, 52.5 tok/s, 2 s
+[strata] done: 94 tokens in 3 s (57.7 tok/s) (stop, cancel=False), expert cache 81.1% hit
+[strata] thinking: 15 of max 4096 tokens, 53.4 tok/s, 1 s
+[strata] thinking: 79 of max 4096 tokens, 60.9 tok/s, 2 s
+[strata] thinking: 130 of max 4096 tokens, 56.1 tok/s, 3 s
+[strata] thinking: 177 of max 4096 tokens, 53.1 tok/s, 4 s
+[strata] thinking: 232 of max 4096 tokens, 53.4 tok/s, 5 s
+[strata] thinking: 292 of max 4096 tokens, 54.6 tok/s, 6 s
+[strata] thinking: 356 of max 4096 tokens, 55.8 tok/s, 7 s
+[strata] thinking: 413 of max 4096 tokens, 55.8 tok/s, 8 s
+[strata] thinking: 461 of max 4096 tokens, 54.8 tok/s, 9 s
+[strata] thinking: 530 of max 4096 tokens, 56.2 tok/s, 10 s
+[strata] answering: 602 of max 4096 tokens, 57.6 tok/s, 11 s
+[strata] done: 628 tokens in 12 s (57.4 tok/s) (stop, cancel=False), expert cache 94.8% hit
+[strata] thinking: 6 of max 4096 tokens, 68.3 tok/s, 1 s
+[strata] thinking: 62 of max 4096 tokens, 54.7 tok/s, 2 s
+[strata] answering: 126 of max 4096 tokens, 58.9 tok/s, 3 s
+[strata] done: 137 tokens in 3 s (58.5 tok/s) (stop, cancel=False), expert cache 88.7% hit
+[strata] reading the prompt: 570 of 575 tokens, 1 s so far
+[strata] done: 58 tokens in 2 s (69.1 tok/s) (stop, cancel=False), expert cache 87.6% hit
+[strata] reading the prompt: 8,192 of 12,248 tokens, 4 s so far
+[strata] reading the prompt: 12,243 of 12,248 tokens, 7 s so far
+[strata] thinking: 26 of max 512 tokens, 48.3 tok/s, 8 s
+[strata] thinking: 76 of max 512 tokens, 48.4 tok/s, 9 s
+[strata] thinking: 122 of max 512 tokens, 47.3 tok/s, 10 s
+[strata] thinking: 143 of max 512 tokens, 39.5 tok/s, 11 s
+[strata] thinking: 186 of max 512 tokens, 40.1 tok/s, 12 s
+[strata] thinking: 240 of max 512 tokens, 42.5 tok/s, 13 s
+[strata] thinking: 288 of max 512 tokens, 43.1 tok/s, 14 s
+[strata] thinking: 348 of max 512 tokens, 45.0 tok/s, 15 s
+[strata] thinking: 404 of max 512 tokens, 46.1 tok/s, 16 s
+[strata] thinking: 453 of max 512 tokens, 46.4 tok/s, 17 s
+[strata] done: 512 tokens in 18 s (47.7 tok/s) (length, cancel=False), expert cache 94.2% hit
+[strata] reading the prompt: 576 of 581 tokens, 1 s so far
+[strata] done: 50 tokens in 2 s (59.8 tok/s) (stop, cancel=False), expert cache 94.7% hit
+[strata] thinking: 27 of max 4096 tokens, 66.0 tok/s, 1 s
+[strata] thinking: 97 of max 4096 tokens, 65.7 tok/s, 2 s
+[strata] answering: 169 of max 4096 tokens, 67.6 tok/s, 3 s
+[strata] done: 208 tokens in 4 s (66.9 tok/s) (stop, cancel=False), expert cache 89.3% hit
+[strata] reading the prompt: 1,905 of 1,910 tokens, 2 s so far
+[strata] thinking: 54 of max 4096 tokens, 63.2 tok/s, 3 s
+[strata] done: 91 tokens in 3 s (67.5 tok/s) (stop, cancel=False), expert cache 90.3% hit
+[strata] reading the prompt: 626 of 631 tokens, 1 s so far
+[strata] done: 47 tokens in 2 s (68.1 tok/s) (stop, cancel=False), expert cache 93.8% hit
+[strata] reading the prompt: 8,192 of 28,796 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 28,796 tokens, 9 s so far
+[strata] reading the prompt: 24,576 of 28,796 tokens, 13 s so far
+[strata] reading the prompt: 28,791 of 28,796 tokens, 16 s so far
+[strata] thinking: 31 of max 4096 tokens, 15.3 tok/s, 18 s
+[strata] thinking: 37 of max 4096 tokens, 6.1 tok/s, 23 s
+[strata] thinking: 55 of max 4096 tokens, 5.2 tok/s, 27 s
+[strata] thinking: 121 of max 4096 tokens, 10.3 tok/s, 28 s
+[strata] thinking: 177 of max 4096 tokens, 13.9 tok/s, 29 s
+[strata] done: 219 tokens in 30 s (16.6 tok/s) (stop, cancel=False), expert cache 94.4% hit
+[strata] thinking: 16 of max 4096 tokens, 45.9 tok/s, 1 s
+[strata] thinking: 100 of max 4096 tokens, 73.7 tok/s, 2 s
+[strata] thinking: 164 of max 4096 tokens, 68.7 tok/s, 3 s
+[strata] thinking: 217 of max 4096 tokens, 63.7 tok/s, 4 s
+[strata] thinking: 270 of max 4096 tokens, 61.1 tok/s, 5 s
+[strata] thinking: 326 of max 4096 tokens, 59.9 tok/s, 6 s
+[strata] thinking: 382 of max 4096 tokens, 59.2 tok/s, 7 s
+[strata] thinking: 440 of max 4096 tokens, 58.8 tok/s, 8 s
+[strata] thinking: 500 of max 4096 tokens, 58.8 tok/s, 9 s
+[strata] thinking: 551 of max 4096 tokens, 57.9 tok/s, 10 s
+[strata] thinking: 606 of max 4096 tokens, 57.6 tok/s, 11 s
+[strata] thinking: 660 of max 4096 tokens, 57.2 tok/s, 12 s
+[strata] thinking: 721 of max 4096 tokens, 57.3 tok/s, 13 s
+[strata] thinking: 776 of max 4096 tokens, 56.9 tok/s, 14 s
+[strata] thinking: 820 of max 4096 tokens, 56.0 tok/s, 15 s
+[strata] thinking: 857 of max 4096 tokens, 54.7 tok/s, 16 s
+[strata] thinking: 907 of max 4096 tokens, 54.3 tok/s, 17 s
+[strata] thinking: 959 of max 4096 tokens, 54.2 tok/s, 18 s
+[strata] thinking: 1006 of max 4096 tokens, 53.8 tok/s, 19 s
+[strata] thinking: 1057 of max 4096 tokens, 53.6 tok/s, 20 s
+[strata] thinking: 1102 of max 4096 tokens, 53.1 tok/s, 21 s
+[strata] thinking: 1162 of max 4096 tokens, 53.4 tok/s, 22 s
+[strata] thinking: 1208 of max 4096 tokens, 53.0 tok/s, 23 s
+[strata] thinking: 1250 of max 4096 tokens, 52.5 tok/s, 24 s
+[strata] thinking: 1296 of max 4096 tokens, 52.2 tok/s, 25 s
+[strata] thinking: 1341 of max 4096 tokens, 51.9 tok/s, 27 s
+[strata] thinking: 1392 of max 4096 tokens, 51.8 tok/s, 28 s
+[strata] thinking: 1439 of max 4096 tokens, 51.6 tok/s, 29 s
+[strata] thinking: 1485 of max 4096 tokens, 51.4 tok/s, 30 s
+[strata] thinking: 1558 of max 4096 tokens, 52.1 tok/s, 31 s
+[strata] thinking: 1621 of max 4096 tokens, 52.4 tok/s, 32 s
+[strata] thinking: 1676 of max 4096 tokens, 52.5 tok/s, 33 s
+[strata] thinking: 1732 of max 4096 tokens, 52.6 tok/s, 34 s
+[strata] thinking: 1787 of max 4096 tokens, 52.6 tok/s, 35 s
+[strata] thinking: 1842 of max 4096 tokens, 52.6 tok/s, 36 s
+[strata] thinking: 1901 of max 4096 tokens, 52.8 tok/s, 37 s
+[strata] thinking: 1953 of max 4096 tokens, 52.7 tok/s, 38 s
+[strata] thinking: 2005 of max 4096 tokens, 52.7 tok/s, 39 s
+[strata] thinking: 2056 of max 4096 tokens, 52.6 tok/s, 40 s
+[strata] thinking: 2102 of max 4096 tokens, 52.4 tok/s, 41 s
+[strata] thinking: 2153 of max 4096 tokens, 52.4 tok/s, 42 s
+[strata] thinking: 2215 of max 4096 tokens, 52.6 tok/s, 43 s
+[strata] thinking: 2279 of max 4096 tokens, 52.8 tok/s, 44 s
+[strata] thinking: 2327 of max 4096 tokens, 52.7 tok/s, 45 s
+[strata] thinking: 2375 of max 4096 tokens, 52.5 tok/s, 46 s
+[strata] thinking: 2426 of max 4096 tokens, 52.5 tok/s, 47 s
+[strata] thinking: 2467 of max 4096 tokens, 52.2 tok/s, 48 s
+[strata] thinking: 2501 of max 4096 tokens, 51.8 tok/s, 49 s
+[strata] thinking: 2550 of max 4096 tokens, 51.7 tok/s, 50 s
+[strata] thinking: 2599 of max 4096 tokens, 51.7 tok/s, 51 s
+[strata] thinking: 2642 of max 4096 tokens, 51.5 tok/s, 52 s
+[strata] thinking: 2684 of max 4096 tokens, 51.3 tok/s, 53 s
+[strata] thinking: 2728 of max 4096 tokens, 51.2 tok/s, 54 s
+[strata] thinking: 2780 of max 4096 tokens, 51.2 tok/s, 55 s
+[strata] thinking: 2829 of max 4096 tokens, 51.1 tok/s, 56 s
+[strata] thinking: 2873 of max 4096 tokens, 50.9 tok/s, 57 s
+[strata] thinking: 2914 of max 4096 tokens, 50.8 tok/s, 58 s
+[strata] thinking: 2955 of max 4096 tokens, 50.6 tok/s, 59 s
+[strata] thinking: 2996 of max 4096 tokens, 50.4 tok/s, 60 s
+[strata] thinking: 3044 of max 4096 tokens, 50.3 tok/s, 61 s
+[strata] thinking: 3098 of max 4096 tokens, 50.4 tok/s, 62 s
+[strata] thinking: 3148 of max 4096 tokens, 50.3 tok/s, 63 s
+[strata] thinking: 3202 of max 4096 tokens, 50.4 tok/s, 64 s
+[strata] thinking: 3255 of max 4096 tokens, 50.4 tok/s, 65 s
+[strata] thinking: 3321 of max 4096 tokens, 50.7 tok/s, 66 s
+[strata] thinking: 3371 of max 4096 tokens, 50.7 tok/s, 67 s
+[strata] thinking: 3429 of max 4096 tokens, 50.8 tok/s, 68 s
+[strata] thinking: 3486 of max 4096 tokens, 50.8 tok/s, 69 s
+[strata] thinking: 3531 of max 4096 tokens, 50.7 tok/s, 70 s
+[strata] thinking: 3585 of max 4096 tokens, 50.8 tok/s, 71 s
+[strata] thinking: 3644 of max 4096 tokens, 50.9 tok/s, 72 s
+[strata] thinking: 3707 of max 4096 tokens, 51.0 tok/s, 73 s
+[strata] thinking: 3766 of max 4096 tokens, 51.1 tok/s, 74 s
+[strata] thinking: 3830 of max 4096 tokens, 51.3 tok/s, 75 s
+[strata] thinking: 3893 of max 4096 tokens, 51.4 tok/s, 76 s
+[strata] thinking: 3944 of max 4096 tokens, 51.4 tok/s, 77 s
+[strata] thinking: 3991 of max 4096 tokens, 51.3 tok/s, 78 s
+[strata] thinking: 4023 of max 4096 tokens, 51.1 tok/s, 79 s
+[strata] thinking: 4065 of max 4096 tokens, 50.9 tok/s, 80 s
+[strata] done: 4096 tokens in 81 s (50.9 tok/s) (length, cancel=False), expert cache 97.2% hit
+[strata] reading the prompt: 584 of 589 tokens, 2 s so far
+[strata] writing a tool call: get_pods: 55 of max 4096 tokens, 60.7 tok/s, 3 s
+[strata] done: 58 tokens in 3 s (63.4 tok/s) (stop, cancel=False), expert cache 84.4% hit
+[strata] thinking: 11 of max 4096 tokens, 69.1 tok/s, 1 s
+[strata] answering: 75 of max 4096 tokens, 62.7 tok/s, 2 s
+[strata] done: 79 tokens in 2 s (62.2 tok/s) (stop, cancel=False), expert cache 89.7% hit
+[strata] reading the prompt: 576 of 581 tokens, 1 s so far
+[strata] thinking: 51 of max 4096 tokens, 56.3 tok/s, 2 s
+[strata] thinking: 114 of max 4096 tokens, 59.3 tok/s, 3 s
+[strata] done: 140 tokens in 4 s (61.2 tok/s) (stop, cancel=False), expert cache 95.2% hit
+[strata] thinking: 24 of max 4096 tokens, 62.7 tok/s, 1 s
+[strata] thinking: 98 of max 4096 tokens, 69.2 tok/s, 2 s
+[strata] thinking: 159 of max 4096 tokens, 64.3 tok/s, 3 s
+[strata] thinking: 216 of max 4096 tokens, 61.9 tok/s, 4 s
+[strata] thinking: 267 of max 4096 tokens, 59.4 tok/s, 5 s
+[strata] thinking: 317 of max 4096 tokens, 57.6 tok/s, 6 s
+[strata] thinking: 364 of max 4096 tokens, 55.8 tok/s, 7 s
+[strata] thinking: 417 of max 4096 tokens, 55.4 tok/s, 8 s
+[strata] thinking: 469 of max 4096 tokens, 54.7 tok/s, 9 s
+[strata] thinking: 525 of max 4096 tokens, 54.8 tok/s, 10 s
+[strata] thinking: 584 of max 4096 tokens, 55.2 tok/s, 11 s
+[strata] thinking: 655 of max 4096 tokens, 56.5 tok/s, 12 s
+[strata] thinking: 716 of max 4096 tokens, 56.7 tok/s, 13 s
+[strata] thinking: 773 of max 4096 tokens, 56.7 tok/s, 14 s
+[strata] thinking: 823 of max 4096 tokens, 56.2 tok/s, 15 s
+[strata] thinking: 879 of max 4096 tokens, 56.1 tok/s, 16 s
+[strata] thinking: 959 of max 4096 tokens, 57.4 tok/s, 17 s
+[strata] thinking: 1018 of max 4096 tokens, 57.4 tok/s, 18 s
+[strata] thinking: 1061 of max 4096 tokens, 56.6 tok/s, 19 s
+[strata] thinking: 1088 of max 4096 tokens, 55.0 tok/s, 20 s
+[strata] thinking: 1131 of max 4096 tokens, 54.4 tok/s, 21 s
+[strata] thinking: 1178 of max 4096 tokens, 54.0 tok/s, 22 s
+[strata] thinking: 1259 of max 4096 tokens, 55.1 tok/s, 23 s
+[strata] thinking: 1313 of max 4096 tokens, 55.1 tok/s, 24 s
+[strata] thinking: 1375 of max 4096 tokens, 55.3 tok/s, 25 s
+[strata] thinking: 1423 of max 4096 tokens, 55.0 tok/s, 26 s
+[strata] thinking: 1477 of max 4096 tokens, 54.9 tok/s, 28 s
+[strata] thinking: 1527 of max 4096 tokens, 54.7 tok/s, 29 s
+[strata] thinking: 1572 of max 4096 tokens, 54.4 tok/s, 30 s
+[strata] thinking: 1633 of max 4096 tokens, 54.6 tok/s, 31 s
+[strata] thinking: 1688 of max 4096 tokens, 54.5 tok/s, 32 s
+[strata] thinking: 1744 of max 4096 tokens, 54.5 tok/s, 33 s
+[strata] thinking: 1794 of max 4096 tokens, 54.3 tok/s, 34 s
+[strata] thinking: 1843 of max 4096 tokens, 54.2 tok/s, 35 s
+[strata] thinking: 1903 of max 4096 tokens, 54.3 tok/s, 36 s
+[strata] thinking: 1961 of max 4096 tokens, 54.4 tok/s, 37 s
+[strata] thinking: 2035 of max 4096 tokens, 54.9 tok/s, 38 s
+[strata] thinking: 2100 of max 4096 tokens, 55.1 tok/s, 39 s
+[strata] thinking: 2148 of max 4096 tokens, 54.9 tok/s, 40 s
+[strata] thinking: 2197 of max 4096 tokens, 54.7 tok/s, 41 s
+[strata] thinking: 2250 of max 4096 tokens, 54.6 tok/s, 42 s
+[strata] thinking: 2300 of max 4096 tokens, 54.5 tok/s, 43 s
+[strata] thinking: 2351 of max 4096 tokens, 54.4 tok/s, 44 s
+[strata] thinking: 2403 of max 4096 tokens, 54.3 tok/s, 45 s
+[strata] thinking: 2460 of max 4096 tokens, 54.4 tok/s, 46 s
+[strata] thinking: 2511 of max 4096 tokens, 54.3 tok/s, 47 s
+[strata] thinking: 2575 of max 4096 tokens, 54.5 tok/s, 48 s
+[strata] thinking: 2646 of max 4096 tokens, 54.8 tok/s, 49 s
+[strata] thinking: 2695 of max 4096 tokens, 54.7 tok/s, 50 s
+[strata] thinking: 2741 of max 4096 tokens, 54.5 tok/s, 51 s
+[strata] answering: 2799 of max 4096 tokens, 54.5 tok/s, 52 s
+[strata] answering: 2875 of max 4096 tokens, 54.9 tok/s, 53 s
+[strata] done: 2910 tokens in 53 s (55.0 tok/s) (stop, cancel=False), expert cache 95.1% hit
+[strata] reading the prompt: 636 of 641 tokens, 1 s so far
+[strata] done: 45 tokens in 2 s (57.0 tok/s) (stop, cancel=False), expert cache 82.1% hit
+[strata] thinking: 10 of max 4096 tokens, 54.1 tok/s, 1 s
+[strata] thinking: 65 of max 4096 tokens, 54.7 tok/s, 2 s
+[strata] thinking: 133 of max 4096 tokens, 59.8 tok/s, 3 s
+[strata] done: 196 tokens in 4 s (61.4 tok/s) (stop, cancel=False), expert cache 92.9% hit
+[strata] reading the prompt: 578 of 583 tokens, 1 s so far
+[strata] writing a tool call: read_file: 53 of max 4096 tokens, 61.8 tok/s, 2 s
+[strata] done: 60 tokens in 2 s (65.1 tok/s) (stop, cancel=False), expert cache 92.3% hit
+[strata] reading the prompt: 8,192 of 28,789 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 28,789 tokens, 9 s so far
+[strata] reading the prompt: 24,576 of 28,789 tokens, 13 s so far
+[strata] reading the prompt: 28,784 of 28,789 tokens, 16 s so far
+[strata] thinking: 30 of max 4096 tokens, 53.5 tok/s, 17 s
+[strata] done: 84 tokens in 18 s (59.4 tok/s) (stop, cancel=False), expert cache 91.0% hit
+[strata] reading the prompt: 129 of 130 tokens, 1 s so far
+[strata] thinking: 56 of max 4096 tokens, 53.0 tok/s, 2 s
+[strata] thinking: 121 of max 4096 tokens, 58.8 tok/s, 3 s
+[strata] thinking: 177 of max 4096 tokens, 57.8 tok/s, 4 s
+[strata] thinking: 224 of max 4096 tokens, 55.0 tok/s, 5 s
+[strata] thinking: 276 of max 4096 tokens, 54.2 tok/s, 6 s
+[strata] thinking: 331 of max 4096 tokens, 54.3 tok/s, 7 s
+[strata] thinking: 389 of max 4096 tokens, 54.8 tok/s, 8 s
+[strata] thinking: 449 of max 4096 tokens, 55.4 tok/s, 9 s
+[strata] thinking: 512 of max 4096 tokens, 56.1 tok/s, 10 s
+[strata] thinking: 571 of max 4096 tokens, 56.2 tok/s, 11 s
+[strata] thinking: 628 of max 4096 tokens, 56.3 tok/s, 12 s
+[strata] thinking: 683 of max 4096 tokens, 56.0 tok/s, 13 s
+[strata] thinking: 730 of max 4096 tokens, 55.3 tok/s, 14 s
+[strata] thinking: 790 of max 4096 tokens, 55.4 tok/s, 15 s
+[strata] thinking: 838 of max 4096 tokens, 54.9 tok/s, 16 s
+[strata] thinking: 895 of max 4096 tokens, 55.0 tok/s, 17 s
+[strata] thinking: 955 of max 4096 tokens, 55.3 tok/s, 18 s
+[strata] thinking: 1013 of max 4096 tokens, 55.4 tok/s, 19 s
+[strata] thinking: 1063 of max 4096 tokens, 55.0 tok/s, 20 s
+[strata] thinking: 1108 of max 4096 tokens, 54.4 tok/s, 21 s
+[strata] thinking: 1157 of max 4096 tokens, 54.2 tok/s, 22 s
+[strata] thinking: 1204 of max 4096 tokens, 53.8 tok/s, 23 s
+[strata] thinking: 1260 of max 4096 tokens, 53.9 tok/s, 24 s
+[strata] thinking: 1319 of max 4096 tokens, 54.1 tok/s, 25 s
+[strata] thinking: 1373 of max 4096 tokens, 54.1 tok/s, 26 s
+[strata] thinking: 1428 of max 4096 tokens, 54.0 tok/s, 27 s
+[strata] thinking: 1481 of max 4096 tokens, 53.9 tok/s, 28 s
+[strata] thinking: 1535 of max 4096 tokens, 53.9 tok/s, 30 s
+[strata] thinking: 1594 of max 4096 tokens, 54.0 tok/s, 31 s
+[strata] thinking: 1661 of max 4096 tokens, 54.4 tok/s, 32 s
+[strata] thinking: 1731 of max 4096 tokens, 54.9 tok/s, 33 s
+[strata] thinking: 1780 of max 4096 tokens, 54.7 tok/s, 34 s
+[strata] thinking: 1834 of max 4096 tokens, 54.6 tok/s, 35 s
+[strata] thinking: 1887 of max 4096 tokens, 54.6 tok/s, 36 s
+[strata] thinking: 1942 of max 4096 tokens, 54.6 tok/s, 37 s
+[strata] thinking: 1997 of max 4096 tokens, 54.6 tok/s, 38 s
+[strata] thinking: 2051 of max 4096 tokens, 54.5 tok/s, 39 s
+[strata] thinking: 2104 of max 4096 tokens, 54.4 tok/s, 40 s
+[strata] thinking: 2171 of max 4096 tokens, 54.7 tok/s, 41 s
+[strata] thinking: 2237 of max 4096 tokens, 55.0 tok/s, 42 s
+[strata] thinking: 2309 of max 4096 tokens, 55.3 tok/s, 43 s
+[strata] thinking: 2365 of max 4096 tokens, 55.4 tok/s, 44 s
+[strata] thinking: 2423 of max 4096 tokens, 55.4 tok/s, 45 s
+[strata] thinking: 2472 of max 4096 tokens, 55.2 tok/s, 46 s
+[strata] thinking: 2535 of max 4096 tokens, 55.4 tok/s, 47 s
+[strata] thinking: 2597 of max 4096 tokens, 55.5 tok/s, 48 s
+[strata] thinking: 2670 of max 4096 tokens, 55.9 tok/s, 49 s
+[strata] thinking: 2732 of max 4096 tokens, 56.0 tok/s, 50 s
+[strata] thinking: 2781 of max 4096 tokens, 55.8 tok/s, 51 s
+[strata] thinking: 2826 of max 4096 tokens, 55.6 tok/s, 52 s
+[strata] thinking: 2883 of max 4096 tokens, 55.6 tok/s, 53 s
+[strata] thinking: 2934 of max 4096 tokens, 55.5 tok/s, 54 s
+[strata] thinking: 2977 of max 4096 tokens, 55.3 tok/s, 55 s
+[strata] thinking: 3031 of max 4096 tokens, 55.2 tok/s, 56 s
+[strata] thinking: 3081 of max 4096 tokens, 55.1 tok/s, 57 s
+[strata] thinking: 3135 of max 4096 tokens, 55.0 tok/s, 58 s
+[strata] thinking: 3197 of max 4096 tokens, 55.1 tok/s, 59 s
+[strata] thinking: 3243 of max 4096 tokens, 55.0 tok/s, 60 s
+[strata] thinking: 3301 of max 4096 tokens, 55.0 tok/s, 61 s
+[strata] thinking: 3358 of max 4096 tokens, 55.0 tok/s, 62 s
+[strata] thinking: 3425 of max 4096 tokens, 55.2 tok/s, 63 s
+[strata] thinking: 3480 of max 4096 tokens, 55.2 tok/s, 64 s
+[strata] thinking: 3540 of max 4096 tokens, 55.3 tok/s, 65 s
+[strata] thinking: 3594 of max 4096 tokens, 55.2 tok/s, 66 s
+[strata] thinking: 3650 of max 4096 tokens, 55.2 tok/s, 67 s
+[strata] thinking: 3701 of max 4096 tokens, 55.2 tok/s, 68 s
+[strata] thinking: 3754 of max 4096 tokens, 55.1 tok/s, 69 s
+[strata] thinking: 3806 of max 4096 tokens, 55.1 tok/s, 70 s
+[strata] thinking: 3861 of max 4096 tokens, 55.0 tok/s, 71 s
+[strata] thinking: 3923 of max 4096 tokens, 55.1 tok/s, 72 s
+[strata] thinking: 3975 of max 4096 tokens, 55.1 tok/s, 73 s
+[strata] thinking: 4025 of max 4096 tokens, 55.0 tok/s, 74 s
+[strata] thinking: 4084 of max 4096 tokens, 55.0 tok/s, 75 s
+[strata] done: 4096 tokens in 75 s (55.1 tok/s) (length, cancel=False), expert cache 95.7% hit
+[strata] thinking: 19 of max 4096 tokens, 57.5 tok/s, 1 s
+[strata] thinking: 78 of max 4096 tokens, 57.7 tok/s, 2 s
+[strata] done: 99 tokens in 2 s (59.2 tok/s) (stop, cancel=False), expert cache 83.8% hit
+[strata] reading the prompt: 384 of 385 tokens, 1 s so far
+[strata] thinking: 59 of max 512 tokens, 59.2 tok/s, 2 s
+[strata] thinking: 112 of max 512 tokens, 56.1 tok/s, 3 s
+[strata] thinking: 168 of max 512 tokens, 55.5 tok/s, 4 s
+[strata] thinking: 230 of max 512 tokens, 56.9 tok/s, 5 s
+[strata] answering: 283 of max 512 tokens, 56.1 tok/s, 6 s
+[strata] answering: 339 of max 512 tokens, 55.9 tok/s, 7 s
+[strata] answering: 395 of max 512 tokens, 55.9 tok/s, 8 s
+[strata] answering: 451 of max 512 tokens, 55.6 tok/s, 9 s
+[strata] answering: 505 of max 512 tokens, 55.2 tok/s, 10 s
+[strata] done: 512 tokens in 10 s (55.4 tok/s) (length, cancel=False), expert cache 96.1% hit
+[strata] thinking: 21 of max 4096 tokens, 55.4 tok/s, 1 s
+[strata] thinking: 87 of max 4096 tokens, 62.2 tok/s, 2 s
+[strata] thinking: 140 of max 4096 tokens, 57.9 tok/s, 3 s
+[strata] thinking: 192 of max 4096 tokens, 55.5 tok/s, 4 s
+[strata] thinking: 245 of max 4096 tokens, 54.8 tok/s, 5 s
+[strata] thinking: 294 of max 4096 tokens, 53.5 tok/s, 6 s
+[strata] thinking: 349 of max 4096 tokens, 53.6 tok/s, 7 s
+[strata] thinking: 405 of max 4096 tokens, 53.9 tok/s, 8 s
+[strata] thinking: 460 of max 4096 tokens, 53.8 tok/s, 9 s
+[strata] thinking: 516 of max 4096 tokens, 53.9 tok/s, 10 s
+[strata] thinking: 576 of max 4096 tokens, 54.4 tok/s, 11 s
+[strata] thinking: 640 of max 4096 tokens, 55.1 tok/s, 12 s
+[strata] thinking: 708 of max 4096 tokens, 56.1 tok/s, 13 s
+[strata] thinking: 759 of max 4096 tokens, 55.6 tok/s, 14 s
+[strata] thinking: 811 of max 4096 tokens, 55.3 tok/s, 15 s
+[strata] thinking: 865 of max 4096 tokens, 55.2 tok/s, 16 s
+[strata] thinking: 922 of max 4096 tokens, 55.3 tok/s, 17 s
+[strata] thinking: 974 of max 4096 tokens, 55.0 tok/s, 18 s
+[strata] thinking: 1028 of max 4096 tokens, 55.0 tok/s, 19 s
+[strata] thinking: 1088 of max 4096 tokens, 55.1 tok/s, 20 s
+[strata] thinking: 1164 of max 4096 tokens, 56.1 tok/s, 21 s
+[strata] thinking: 1211 of max 4096 tokens, 55.6 tok/s, 22 s
+[strata] thinking: 1263 of max 4096 tokens, 55.4 tok/s, 23 s
+[strata] thinking: 1318 of max 4096 tokens, 55.4 tok/s, 24 s
+[strata] thinking: 1368 of max 4096 tokens, 55.1 tok/s, 25 s
+[strata] thinking: 1424 of max 4096 tokens, 55.1 tok/s, 26 s
+[strata] thinking: 1475 of max 4096 tokens, 54.9 tok/s, 27 s
+[strata] thinking: 1531 of max 4096 tokens, 55.0 tok/s, 28 s
+[strata] thinking: 1591 of max 4096 tokens, 55.1 tok/s, 30 s
+[strata] thinking: 1652 of max 4096 tokens, 55.3 tok/s, 31 s
+[strata] thinking: 1707 of max 4096 tokens, 55.3 tok/s, 32 s
+[strata] thinking: 1751 of max 4096 tokens, 54.9 tok/s, 33 s
+[strata] thinking: 1806 of max 4096 tokens, 54.8 tok/s, 34 s
+[strata] thinking: 1864 of max 4096 tokens, 54.9 tok/s, 35 s
+[strata] thinking: 1921 of max 4096 tokens, 54.9 tok/s, 36 s
+[strata] thinking: 1985 of max 4096 tokens, 55.2 tok/s, 37 s
+[strata] thinking: 2064 of max 4096 tokens, 55.8 tok/s, 38 s
+[strata] thinking: 2117 of max 4096 tokens, 55.7 tok/s, 39 s
+[strata] thinking: 2176 of max 4096 tokens, 55.8 tok/s, 40 s
+[strata] thinking: 2228 of max 4096 tokens, 55.7 tok/s, 41 s
+[strata] thinking: 2293 of max 4096 tokens, 55.8 tok/s, 42 s
+[strata] thinking: 2350 of max 4096 tokens, 55.8 tok/s, 43 s
+[strata] thinking: 2410 of max 4096 tokens, 55.9 tok/s, 44 s
+[strata] thinking: 2481 of max 4096 tokens, 56.3 tok/s, 45 s
+[strata] thinking: 2536 of max 4096 tokens, 56.2 tok/s, 46 s
+[strata] thinking: 2601 of max 4096 tokens, 56.4 tok/s, 47 s
+[strata] thinking: 2653 of max 4096 tokens, 56.3 tok/s, 48 s
+[strata] thinking: 2715 of max 4096 tokens, 56.4 tok/s, 49 s
+[strata] thinking: 2766 of max 4096 tokens, 56.3 tok/s, 50 s
+[strata] thinking: 2817 of max 4096 tokens, 56.2 tok/s, 51 s
+[strata] thinking: 2869 of max 4096 tokens, 56.1 tok/s, 52 s
+[strata] thinking: 2923 of max 4096 tokens, 56.0 tok/s, 53 s
+[strata] thinking: 2998 of max 4096 tokens, 56.3 tok/s, 54 s
+[strata] thinking: 3065 of max 4096 tokens, 56.5 tok/s, 55 s
+[strata] thinking: 3120 of max 4096 tokens, 56.5 tok/s, 56 s
+[strata] thinking: 3170 of max 4096 tokens, 56.3 tok/s, 57 s
+[strata] thinking: 3239 of max 4096 tokens, 56.5 tok/s, 58 s
+[strata] thinking: 3295 of max 4096 tokens, 56.5 tok/s, 59 s
+[strata] thinking: 3354 of max 4096 tokens, 56.5 tok/s, 60 s
+[strata] thinking: 3423 of max 4096 tokens, 56.7 tok/s, 61 s
+[strata] thinking: 3477 of max 4096 tokens, 56.6 tok/s, 62 s
+[strata] thinking: 3537 of max 4096 tokens, 56.7 tok/s, 63 s
+[strata] thinking: 3590 of max 4096 tokens, 56.6 tok/s, 64 s
+[strata] thinking: 3643 of max 4096 tokens, 56.5 tok/s, 65 s
+[strata] thinking: 3692 of max 4096 tokens, 56.4 tok/s, 66 s
+[strata] thinking: 3750 of max 4096 tokens, 56.4 tok/s, 67 s
+[strata] thinking: 3801 of max 4096 tokens, 56.3 tok/s, 68 s
+[strata] thinking: 3869 of max 4096 tokens, 56.5 tok/s, 69 s
+[strata] thinking: 3951 of max 4096 tokens, 56.8 tok/s, 70 s
+[strata] thinking: 4022 of max 4096 tokens, 57.0 tok/s, 71 s
+[strata] thinking: 4075 of max 4096 tokens, 56.9 tok/s, 72 s
+[strata] done: 4096 tokens in 73 s (57.0 tok/s) (length, cancel=False), expert cache 97.3% hit
+[strata] reading the prompt: 628 of 633 tokens, 1 s so far
+[strata] writing a tool call: run_tests: 44 of max 4096 tokens, 51.4 tok/s, 2 s
+[strata] done: 53 tokens in 3 s (54.7 tok/s) (stop, cancel=False), expert cache 81.8% hit
+[strata] thinking: 22 of max 4096 tokens, 63.4 tok/s, 1 s
+[strata] answering: 86 of max 4096 tokens, 60.5 tok/s, 2 s
+[strata] done: 96 tokens in 2 s (62.3 tok/s) (stop, cancel=False), expert cache 83.5% hit
+[strata] thinking: 21 of max 4096 tokens, 68.6 tok/s, 1 s
+[strata] thinking: 91 of max 4096 tokens, 68.7 tok/s, 2 s
+[strata] thinking: 148 of max 4096 tokens, 63.3 tok/s, 3 s
+[strata] thinking: 214 of max 4096 tokens, 63.6 tok/s, 4 s
+[strata] thinking: 283 of max 4096 tokens, 64.3 tok/s, 5 s
+[strata] answering: 351 of max 4096 tokens, 64.8 tok/s, 6 s
+[strata] answering: 426 of max 4096 tokens, 66.2 tok/s, 7 s
+[strata] done: 493 tokens in 8 s (67.3 tok/s) (stop, cancel=False), expert cache 94.4% hit
+[strata] reading the prompt: 577 of 582 tokens, 1 s so far
+[strata] done: 39 tokens in 2 s (65.3 tok/s) (stop, cancel=False), expert cache 90.2% hit
+[strata] thinking: 26 of max 4096 tokens, 62.7 tok/s, 1 s
+[strata] thinking: 89 of max 4096 tokens, 62.1 tok/s, 2 s
+[strata] thinking: 158 of max 4096 tokens, 64.2 tok/s, 3 s
+[strata] done: 175 tokens in 3 s (65.6 tok/s) (stop, cancel=False), expert cache 92.3% hit
+[strata] thinking: 26 of max 4096 tokens, 66.0 tok/s, 1 s
+[strata] thinking: 95 of max 4096 tokens, 66.8 tok/s, 2 s
+[strata] thinking: 160 of max 4096 tokens, 65.5 tok/s, 3 s
+[strata] thinking: 216 of max 4096 tokens, 61.8 tok/s, 4 s
+[strata] thinking: 280 of max 4096 tokens, 61.8 tok/s, 5 s
+[strata] thinking: 332 of max 4096 tokens, 60.0 tok/s, 6 s
+[strata] thinking: 385 of max 4096 tokens, 58.8 tok/s, 7 s
+[strata] thinking: 440 of max 4096 tokens, 57.9 tok/s, 8 s
+[strata] thinking: 496 of max 4096 tokens, 57.6 tok/s, 9 s
+[strata] thinking: 552 of max 4096 tokens, 57.2 tok/s, 10 s
+[strata] thinking: 627 of max 4096 tokens, 58.8 tok/s, 11 s
+[strata] thinking: 683 of max 4096 tokens, 58.6 tok/s, 12 s
+[strata] thinking: 736 of max 4096 tokens, 58.1 tok/s, 13 s
+[strata] thinking: 794 of max 4096 tokens, 58.1 tok/s, 14 s
+[strata] thinking: 848 of max 4096 tokens, 57.7 tok/s, 15 s
+[strata] thinking: 903 of max 4096 tokens, 57.4 tok/s, 16 s
+[strata] thinking: 957 of max 4096 tokens, 57.2 tok/s, 17 s
+[strata] thinking: 1015 of max 4096 tokens, 57.3 tok/s, 18 s
+[strata] thinking: 1064 of max 4096 tokens, 56.7 tok/s, 19 s
+[strata] thinking: 1127 of max 4096 tokens, 57.0 tok/s, 20 s
+[strata] answering: 1192 of max 4096 tokens, 57.3 tok/s, 21 s
+[strata] done: 1248 tokens in 22 s (57.7 tok/s) (stop, cancel=False), expert cache 95.4% hit
+[strata] reading the prompt: 385 of 386 tokens, 1 s so far
+[strata] done: 1 tokens in 1 s (10180.3 tok/s) (length, cancel=False), expert cache 91.9% hit
+[strata] thinking: 18 of max 4096 tokens, 44.2 tok/s, 1 s
+[strata] thinking: 93 of max 4096 tokens, 65.1 tok/s, 2 s
+[strata] thinking: 136 of max 4096 tokens, 55.5 tok/s, 3 s
+[strata] thinking: 187 of max 4096 tokens, 54.1 tok/s, 4 s
+[strata] thinking: 236 of max 4096 tokens, 52.9 tok/s, 5 s
+[strata] thinking: 293 of max 4096 tokens, 53.5 tok/s, 6 s
+[strata] thinking: 347 of max 4096 tokens, 53.5 tok/s, 7 s
+[strata] thinking: 404 of max 4096 tokens, 53.8 tok/s, 8 s
+[strata] thinking: 455 of max 4096 tokens, 53.3 tok/s, 9 s
+[strata] thinking: 506 of max 4096 tokens, 53.1 tok/s, 10 s
+[strata] thinking: 563 of max 4096 tokens, 53.4 tok/s, 11 s
+[strata] thinking: 632 of max 4096 tokens, 54.6 tok/s, 12 s
+[strata] thinking: 696 of max 4096 tokens, 55.2 tok/s, 13 s
+[strata] thinking: 749 of max 4096 tokens, 55.0 tok/s, 14 s
+[strata] thinking: 807 of max 4096 tokens, 55.1 tok/s, 15 s
+[strata] thinking: 862 of max 4096 tokens, 55.1 tok/s, 16 s
+[strata] thinking: 923 of max 4096 tokens, 55.4 tok/s, 17 s
+[strata] thinking: 979 of max 4096 tokens, 55.4 tok/s, 18 s
+[strata] thinking: 1035 of max 4096 tokens, 55.3 tok/s, 19 s
+[strata] thinking: 1087 of max 4096 tokens, 55.1 tok/s, 20 s
+[strata] thinking: 1161 of max 4096 tokens, 56.0 tok/s, 21 s
+[strata] thinking: 1227 of max 4096 tokens, 56.4 tok/s, 22 s
+[strata] thinking: 1244 of max 4096 tokens, 48.9 tok/s, 26 s
+[strata] thinking: 1259 of max 4096 tokens, 47.4 tok/s, 27 s
+[strata] thinking: 1268 of max 4096 tokens, 40.9 tok/s, 32 s
+[strata] thinking: 1269 of max 4096 tokens, 38.6 tok/s, 33 s
+[strata] thinking: 1304 of max 4096 tokens, 38.5 tok/s, 35 s
+[strata] thinking: 1350 of max 4096 tokens, 38.7 tok/s, 36 s
+[strata] thinking: 1401 of max 4096 tokens, 39.0 tok/s, 37 s
+[strata] thinking: 1453 of max 4096 tokens, 39.3 tok/s, 38 s
+[strata] thinking: 1503 of max 4096 tokens, 39.6 tok/s, 39 s
+[strata] thinking: 1562 of max 4096 tokens, 40.1 tok/s, 40 s
+[strata] thinking: 1611 of max 4096 tokens, 40.3 tok/s, 41 s
+[strata] thinking: 1666 of max 4096 tokens, 40.6 tok/s, 42 s
+[strata] thinking: 1723 of max 4096 tokens, 41.0 tok/s, 43 s
+[strata] thinking: 1766 of max 4096 tokens, 41.0 tok/s, 44 s
+[strata] thinking: 1822 of max 4096 tokens, 41.4 tok/s, 45 s
+[strata] thinking: 1872 of max 4096 tokens, 41.5 tok/s, 46 s
+[strata] thinking: 1905 of max 4096 tokens, 41.3 tok/s, 47 s
+[strata] thinking: 1925 of max 4096 tokens, 40.8 tok/s, 48 s
+[strata] thinking: 1963 of max 4096 tokens, 40.7 tok/s, 49 s
+[strata] thinking: 1973 of max 4096 tokens, 40.0 tok/s, 50 s
+[strata] thinking: 1981 of max 4096 tokens, 39.2 tok/s, 51 s
+[strata] thinking: 1998 of max 4096 tokens, 38.8 tok/s, 52 s
+[strata] thinking: 2053 of max 4096 tokens, 39.1 tok/s, 53 s
+[strata] thinking: 2106 of max 4096 tokens, 39.3 tok/s, 54 s
+[strata] thinking: 2159 of max 4096 tokens, 39.6 tok/s, 55 s
+[strata] thinking: 2210 of max 4096 tokens, 39.8 tok/s, 56 s
+[strata] thinking: 2265 of max 4096 tokens, 40.0 tok/s, 57 s
+[strata] thinking: 2316 of max 4096 tokens, 40.2 tok/s, 58 s
+[strata] thinking: 2370 of max 4096 tokens, 40.4 tok/s, 59 s
+[strata] thinking: 2427 of max 4096 tokens, 40.7 tok/s, 60 s
+[strata] thinking: 2479 of max 4096 tokens, 40.9 tok/s, 61 s
+[strata] thinking: 2553 of max 4096 tokens, 41.4 tok/s, 62 s
+[strata] thinking: 2610 of max 4096 tokens, 41.6 tok/s, 63 s
+[strata] thinking: 2644 of max 4096 tokens, 41.4 tok/s, 64 s
+[strata] thinking: 2659 of max 4096 tokens, 40.9 tok/s, 66 s
+[strata] thinking: 2670 of max 4096 tokens, 40.3 tok/s, 67 s
+[strata] thinking: 2679 of max 4096 tokens, 39.9 tok/s, 68 s
+[strata] thinking: 2711 of max 4096 tokens, 39.7 tok/s, 69 s
+[strata] thinking: 2772 of max 4096 tokens, 40.0 tok/s, 70 s
+[strata] thinking: 2825 of max 4096 tokens, 40.2 tok/s, 71 s
+[strata] thinking: 2872 of max 4096 tokens, 40.3 tok/s, 72 s
+[strata] thinking: 2930 of max 4096 tokens, 40.5 tok/s, 73 s
+[strata] thinking: 2981 of max 4096 tokens, 40.6 tok/s, 74 s
+[strata] thinking: 3038 of max 4096 tokens, 40.8 tok/s, 75 s
+[strata] thinking: 3087 of max 4096 tokens, 40.9 tok/s, 76 s
+[strata] thinking: 3137 of max 4096 tokens, 41.0 tok/s, 77 s
+[strata] thinking: 3187 of max 4096 tokens, 41.2 tok/s, 78 s
+[strata] thinking: 3249 of max 4096 tokens, 41.4 tok/s, 79 s
+[strata] thinking: 3282 of max 4096 tokens, 41.3 tok/s, 80 s
+[strata] thinking: 3296 of max 4096 tokens, 40.9 tok/s, 81 s
+[strata] thinking: 3312 of max 4096 tokens, 40.5 tok/s, 82 s
+[strata] thinking: 3325 of max 4096 tokens, 40.2 tok/s, 83 s
+[strata] thinking: 3337 of max 4096 tokens, 39.7 tok/s, 85 s
+[strata] thinking: 3363 of max 4096 tokens, 39.5 tok/s, 86 s
+[strata] thinking: 3384 of max 4096 tokens, 39.2 tok/s, 87 s
+[strata] thinking: 3395 of max 4096 tokens, 38.9 tok/s, 88 s
+[strata] thinking: 3411 of max 4096 tokens, 38.5 tok/s, 89 s
+[strata] thinking: 3417 of max 4096 tokens, 38.1 tok/s, 90 s
+[strata] thinking: 3432 of max 4096 tokens, 37.8 tok/s, 92 s
+[strata] thinking: 3444 of max 4096 tokens, 37.5 tok/s, 93 s
+[strata] thinking: 3447 of max 4096 tokens, 37.0 tok/s, 94 s
+[strata] thinking: 3454 of max 4096 tokens, 36.0 tok/s, 97 s
+[strata] thinking: 3456 of max 4096 tokens, 34.9 tok/s, 100 s
+[strata] thinking: 3516 of max 4096 tokens, 35.2 tok/s, 101 s
+[strata] thinking: 3563 of max 4096 tokens, 35.3 tok/s, 102 s
+[strata] thinking: 3623 of max 4096 tokens, 35.5 tok/s, 103 s
+[strata] thinking: 3669 of max 4096 tokens, 35.6 tok/s, 104 s
+[strata] thinking: 3743 of max 4096 tokens, 36.0 tok/s, 105 s
+[strata] thinking: 3797 of max 4096 tokens, 36.2 tok/s, 106 s
+[strata] thinking: 3860 of max 4096 tokens, 36.4 tok/s, 107 s
+[strata] thinking: 3931 of max 4096 tokens, 36.7 tok/s, 108 s
+[strata] thinking: 3993 of max 4096 tokens, 36.9 tok/s, 109 s
+[strata] thinking: 4040 of max 4096 tokens, 37.0 tok/s, 110 s
+[strata] done: 4096 tokens in 111 s (37.3 tok/s) (length, cancel=False), expert cache 97.1% hit
+[strata] thinking: 17 of max 4096 tokens, 57.7 tok/s, 1 s
+[strata] thinking: 97 of max 4096 tokens, 74.0 tok/s, 2 s
+[strata] thinking: 155 of max 4096 tokens, 67.1 tok/s, 3 s
+[strata] thinking: 199 of max 4096 tokens, 59.5 tok/s, 4 s
+[strata] thinking: 251 of max 4096 tokens, 57.5 tok/s, 5 s
+[strata] thinking: 305 of max 4096 tokens, 56.6 tok/s, 6 s
+[strata] thinking: 373 of max 4096 tokens, 58.2 tok/s, 7 s
+[strata] thinking: 441 of max 4096 tokens, 59.4 tok/s, 8 s
+[strata] thinking: 493 of max 4096 tokens, 58.3 tok/s, 9 s
+[strata] thinking: 544 of max 4096 tokens, 57.4 tok/s, 10 s
+[strata] thinking: 593 of max 4096 tokens, 56.5 tok/s, 11 s
+[strata] thinking: 644 of max 4096 tokens, 55.9 tok/s, 12 s
+[strata] thinking: 686 of max 4096 tokens, 54.0 tok/s, 13 s
+[strata] thinking: 707 of max 4096 tokens, 51.3 tok/s, 15 s
+[strata] thinking: 727 of max 4096 tokens, 49.0 tok/s, 16 s
+[strata] thinking: 759 of max 4096 tokens, 47.9 tok/s, 17 s
+[strata] thinking: 786 of max 4096 tokens, 46.4 tok/s, 18 s
+[strata] thinking: 831 of max 4096 tokens, 46.3 tok/s, 19 s
+[strata] thinking: 859 of max 4096 tokens, 45.0 tok/s, 20 s
+[strata] thinking: 880 of max 4096 tokens, 43.7 tok/s, 21 s
+[strata] thinking: 928 of max 4096 tokens, 43.8 tok/s, 22 s
+[strata] thinking: 1007 of max 4096 tokens, 45.4 tok/s, 23 s
+[strata] thinking: 1068 of max 4096 tokens, 46.0 tok/s, 24 s
+[strata] thinking: 1119 of max 4096 tokens, 46.2 tok/s, 25 s
+[strata] thinking: 1168 of max 4096 tokens, 46.3 tok/s, 26 s
+[strata] thinking: 1234 of max 4096 tokens, 47.0 tok/s, 27 s
+[strata] answering: 1297 of max 4096 tokens, 47.6 tok/s, 28 s
+[strata] answering: 1371 of max 4096 tokens, 48.4 tok/s, 29 s
+[strata] done: 1383 tokens in 29 s (48.6 tok/s) (stop, cancel=False), expert cache 96.3% hit
+[strata] thinking: 10 of max 4096 tokens, 43.1 tok/s, 1 s
+[strata] thinking: 62 of max 4096 tokens, 50.0 tok/s, 2 s
+[strata] thinking: 128 of max 4096 tokens, 56.2 tok/s, 3 s
+[strata] thinking: 186 of max 4096 tokens, 56.5 tok/s, 4 s
+[strata] thinking: 250 of max 4096 tokens, 58.1 tok/s, 5 s
+[strata] thinking: 316 of max 4096 tokens, 59.3 tok/s, 6 s
+[strata] thinking: 397 of max 4096 tokens, 62.2 tok/s, 7 s
+[strata] thinking: 468 of max 4096 tokens, 63.3 tok/s, 8 s
+[strata] thinking: 518 of max 4096 tokens, 61.6 tok/s, 9 s
+[strata] thinking: 570 of max 4096 tokens, 60.5 tok/s, 10 s
+[strata] thinking: 625 of max 4096 tokens, 60.0 tok/s, 11 s
+[strata] thinking: 683 of max 4096 tokens, 59.7 tok/s, 12 s
+[strata] thinking: 737 of max 4096 tokens, 59.1 tok/s, 13 s
+[strata] thinking: 797 of max 4096 tokens, 56.2 tok/s, 15 s
+[strata] thinking: 807 of max 4096 tokens, 43.3 tok/s, 19 s
+[strata] thinking: 814 of max 4096 tokens, 41.2 tok/s, 21 s
+[strata] thinking: 817 of max 4096 tokens, 38.9 tok/s, 22 s
+[strata] thinking: 819 of max 4096 tokens, 34.6 tok/s, 24 s
+[strata] thinking: 820 of max 4096 tokens, 33.1 tok/s, 26 s
+[strata] thinking: 834 of max 4096 tokens, 32.1 tok/s, 27 s
+[strata] thinking: 858 of max 4096 tokens, 31.8 tok/s, 28 s
+[strata] thinking: 906 of max 4096 tokens, 32.3 tok/s, 29 s
+[strata] thinking: 970 of max 4096 tokens, 33.2 tok/s, 30 s
+[strata] thinking: 983 of max 4096 tokens, 32.4 tok/s, 31 s
+[strata] thinking: 1024 of max 4096 tokens, 32.7 tok/s, 32 s
+[strata] thinking: 1072 of max 4096 tokens, 33.1 tok/s, 33 s
+[strata] thinking: 1121 of max 4096 tokens, 33.6 tok/s, 34 s
+[strata] thinking: 1189 of max 4096 tokens, 34.6 tok/s, 35 s
+[strata] thinking: 1261 of max 4096 tokens, 35.6 tok/s, 36 s
+[strata] thinking: 1313 of max 4096 tokens, 36.0 tok/s, 37 s
+[strata] thinking: 1365 of max 4096 tokens, 36.5 tok/s, 38 s
+[strata] thinking: 1420 of max 4096 tokens, 36.9 tok/s, 39 s
+[strata] thinking: 1478 of max 4096 tokens, 37.4 tok/s, 40 s
+[strata] thinking: 1526 of max 4096 tokens, 37.7 tok/s, 41 s
+[strata] thinking: 1581 of max 4096 tokens, 38.1 tok/s, 42 s
+[strata] thinking: 1633 of max 4096 tokens, 38.4 tok/s, 43 s
+[strata] thinking: 1687 of max 4096 tokens, 38.7 tok/s, 44 s
+[strata] thinking: 1741 of max 4096 tokens, 39.0 tok/s, 45 s
+[strata] thinking: 1794 of max 4096 tokens, 39.3 tok/s, 46 s
+[strata] thinking: 1846 of max 4096 tokens, 39.6 tok/s, 47 s
+[strata] thinking: 1898 of max 4096 tokens, 39.8 tok/s, 48 s
+[strata] thinking: 1955 of max 4096 tokens, 40.1 tok/s, 49 s
+[strata] thinking: 2011 of max 4096 tokens, 40.5 tok/s, 50 s
+[strata] thinking: 2061 of max 4096 tokens, 40.6 tok/s, 51 s
+[strata] thinking: 2111 of max 4096 tokens, 40.8 tok/s, 53 s
+[strata] thinking: 2165 of max 4096 tokens, 41.1 tok/s, 54 s
+[strata] answering: 2224 of max 4096 tokens, 41.4 tok/s, 55 s
+[strata] answering: 2288 of max 4096 tokens, 41.8 tok/s, 56 s
+[strata] done: 2313 tokens in 56 s (41.9 tok/s) (stop, cancel=False), expert cache 95.4% hit
+[strata] thinking: 14 of max 4096 tokens, 55.8 tok/s, 1 s
+[strata] thinking: 94 of max 4096 tokens, 74.9 tok/s, 2 s
+[strata] thinking: 148 of max 4096 tokens, 65.1 tok/s, 3 s
+[strata] thinking: 200 of max 4096 tokens, 60.8 tok/s, 4 s
+[strata] thinking: 256 of max 4096 tokens, 59.6 tok/s, 5 s
+[strata] thinking: 308 of max 4096 tokens, 57.8 tok/s, 6 s
+[strata] thinking: 366 of max 4096 tokens, 57.7 tok/s, 7 s
+[strata] thinking: 415 of max 4096 tokens, 56.3 tok/s, 8 s
+[strata] thinking: 463 of max 4096 tokens, 55.2 tok/s, 9 s
+[strata] thinking: 515 of max 4096 tokens, 54.8 tok/s, 10 s
+[strata] thinking: 561 of max 4096 tokens, 53.9 tok/s, 11 s
+[strata] thinking: 612 of max 4096 tokens, 53.6 tok/s, 12 s
+[strata] thinking: 684 of max 4096 tokens, 55.0 tok/s, 13 s
+[strata] thinking: 759 of max 4096 tokens, 56.2 tok/s, 14 s
+[strata] thinking: 811 of max 4096 tokens, 55.8 tok/s, 15 s
+[strata] thinking: 857 of max 4096 tokens, 55.1 tok/s, 16 s
+[strata] thinking: 921 of max 4096 tokens, 55.7 tok/s, 17 s
+[strata] thinking: 996 of max 4096 tokens, 56.7 tok/s, 18 s
+[strata] thinking: 1052 of max 4096 tokens, 56.6 tok/s, 19 s
+[strata] thinking: 1118 of max 4096 tokens, 57.1 tok/s, 20 s
+[strata] thinking: 1167 of max 4096 tokens, 56.6 tok/s, 21 s
+[strata] thinking: 1217 of max 4096 tokens, 56.3 tok/s, 22 s
+[strata] thinking: 1274 of max 4096 tokens, 56.3 tok/s, 23 s
+[strata] thinking: 1327 of max 4096 tokens, 56.0 tok/s, 24 s
+[strata] thinking: 1376 of max 4096 tokens, 55.7 tok/s, 25 s
+[strata] thinking: 1429 of max 4096 tokens, 55.6 tok/s, 26 s
+[strata] thinking: 1486 of max 4096 tokens, 55.7 tok/s, 27 s
+[strata] thinking: 1541 of max 4096 tokens, 55.6 tok/s, 28 s
+[strata] thinking: 1595 of max 4096 tokens, 55.5 tok/s, 29 s
+[strata] thinking: 1655 of max 4096 tokens, 55.7 tok/s, 30 s
+[strata] thinking: 1706 of max 4096 tokens, 55.5 tok/s, 31 s
+[strata] thinking: 1764 of max 4096 tokens, 55.5 tok/s, 33 s
+[strata] thinking: 1826 of max 4096 tokens, 55.7 tok/s, 34 s
+[strata] thinking: 1881 of max 4096 tokens, 55.6 tok/s, 35 s
+[strata] thinking: 1936 of max 4096 tokens, 55.6 tok/s, 36 s
+[strata] thinking: 1992 of max 4096 tokens, 55.6 tok/s, 37 s
+[strata] thinking: 2042 of max 4096 tokens, 55.4 tok/s, 38 s
+[strata] thinking: 2115 of max 4096 tokens, 55.9 tok/s, 39 s
+[strata] thinking: 2169 of max 4096 tokens, 55.8 tok/s, 40 s
+[strata] thinking: 2224 of max 4096 tokens, 55.7 tok/s, 41 s
+[strata] thinking: 2288 of max 4096 tokens, 55.9 tok/s, 42 s
+[strata] thinking: 2340 of max 4096 tokens, 55.8 tok/s, 43 s
+[strata] thinking: 2392 of max 4096 tokens, 55.7 tok/s, 44 s
+[strata] thinking: 2436 of max 4096 tokens, 55.4 tok/s, 45 s
+[strata] thinking: 2483 of max 4096 tokens, 55.3 tok/s, 46 s
+[strata] thinking: 2539 of max 4096 tokens, 55.2 tok/s, 47 s
+[strata] thinking: 2586 of max 4096 tokens, 55.0 tok/s, 48 s
+[strata] thinking: 2646 of max 4096 tokens, 55.1 tok/s, 49 s
+[strata] thinking: 2713 of max 4096 tokens, 55.3 tok/s, 50 s
+[strata] thinking: 2767 of max 4096 tokens, 55.3 tok/s, 51 s
+[strata] thinking: 2817 of max 4096 tokens, 55.2 tok/s, 52 s
+[strata] thinking: 2873 of max 4096 tokens, 55.2 tok/s, 53 s
+[strata] thinking: 2930 of max 4096 tokens, 55.2 tok/s, 54 s
+[strata] thinking: 2981 of max 4096 tokens, 55.1 tok/s, 55 s
+[strata] thinking: 3032 of max 4096 tokens, 55.0 tok/s, 56 s
+[strata] thinking: 3083 of max 4096 tokens, 54.9 tok/s, 57 s
+[strata] thinking: 3151 of max 4096 tokens, 55.2 tok/s, 58 s
+[strata] thinking: 3202 of max 4096 tokens, 55.1 tok/s, 59 s
+[strata] thinking: 3257 of max 4096 tokens, 55.1 tok/s, 60 s
+[strata] thinking: 3314 of max 4096 tokens, 55.0 tok/s, 61 s
+[strata] thinking: 3370 of max 4096 tokens, 55.0 tok/s, 62 s
+[strata] thinking: 3426 of max 4096 tokens, 55.1 tok/s, 63 s
+[strata] thinking: 3474 of max 4096 tokens, 54.9 tok/s, 64 s
+[strata] thinking: 3528 of max 4096 tokens, 54.9 tok/s, 65 s
+[strata] thinking: 3598 of max 4096 tokens, 55.1 tok/s, 66 s
+[strata] thinking: 3656 of max 4096 tokens, 55.2 tok/s, 67 s
+[strata] thinking: 3714 of max 4096 tokens, 55.2 tok/s, 68 s
+[strata] thinking: 3775 of max 4096 tokens, 55.2 tok/s, 69 s
+[strata] thinking: 3834 of max 4096 tokens, 55.3 tok/s, 70 s
+[strata] thinking: 3879 of max 4096 tokens, 55.1 tok/s, 71 s
+[strata] thinking: 3931 of max 4096 tokens, 55.1 tok/s, 72 s
+[strata] thinking: 3987 of max 4096 tokens, 55.1 tok/s, 73 s
+[strata] thinking: 4038 of max 4096 tokens, 55.0 tok/s, 74 s
+[strata] thinking: 4091 of max 4096 tokens, 55.0 tok/s, 75 s
+[strata] done: 4096 tokens in 75 s (54.9 tok/s) (length, cancel=False), expert cache 95.8% hit
+[strata] thinking: 23 of max 4096 tokens, 56.7 tok/s, 1 s
+[strata] thinking: 87 of max 4096 tokens, 61.1 tok/s, 2 s
+[strata] done: 102 tokens in 2 s (60.6 tok/s) (stop, cancel=False), expert cache 85.5% hit
+[strata] thinking: 18 of max 4096 tokens, 56.1 tok/s, 1 s
+[strata] thinking: 86 of max 4096 tokens, 64.1 tok/s, 2 s
+[strata] thinking: 141 of max 4096 tokens, 59.1 tok/s, 3 s
+[strata] thinking: 200 of max 4096 tokens, 58.5 tok/s, 4 s
+[strata] thinking: 258 of max 4096 tokens, 57.9 tok/s, 5 s
+[strata] thinking: 313 of max 4096 tokens, 57.0 tok/s, 6 s
+[strata] thinking: 366 of max 4096 tokens, 56.4 tok/s, 7 s
+[strata] thinking: 419 of max 4096 tokens, 55.7 tok/s, 8 s
+[strata] thinking: 482 of max 4096 tokens, 56.5 tok/s, 9 s
+[strata] thinking: 534 of max 4096 tokens, 56.0 tok/s, 10 s
+[strata] thinking: 586 of max 4096 tokens, 55.6 tok/s, 11 s
+[strata] thinking: 645 of max 4096 tokens, 55.7 tok/s, 12 s
+[strata] thinking: 701 of max 4096 tokens, 55.7 tok/s, 13 s
+[strata] thinking: 752 of max 4096 tokens, 55.3 tok/s, 14 s
+[strata] thinking: 811 of max 4096 tokens, 55.4 tok/s, 15 s
+[strata] thinking: 871 of max 4096 tokens, 55.7 tok/s, 16 s
+[strata] thinking: 920 of max 4096 tokens, 55.1 tok/s, 17 s
+[strata] thinking: 976 of max 4096 tokens, 55.2 tok/s, 18 s
+[strata] thinking: 1047 of max 4096 tokens, 55.9 tok/s, 19 s
+[strata] thinking: 1094 of max 4096 tokens, 54.7 tok/s, 21 s
+[strata] thinking: 1122 of max 4096 tokens, 53.1 tok/s, 22 s
+[strata] thinking: 1139 of max 4096 tokens, 51.1 tok/s, 23 s
+[strata] thinking: 1148 of max 4096 tokens, 48.9 tok/s, 24 s
+[strata] thinking: 1177 of max 4096 tokens, 48.1 tok/s, 25 s
+[strata] thinking: 1242 of max 4096 tokens, 48.7 tok/s, 26 s
+[strata] thinking: 1316 of max 4096 tokens, 49.6 tok/s, 27 s
+[strata] thinking: 1361 of max 4096 tokens, 49.4 tok/s, 28 s
+[strata] thinking: 1419 of max 4096 tokens, 49.7 tok/s, 29 s
+[strata] thinking: 1469 of max 4096 tokens, 49.7 tok/s, 30 s
+[strata] thinking: 1525 of max 4096 tokens, 49.9 tok/s, 31 s
+[strata] thinking: 1569 of max 4096 tokens, 49.7 tok/s, 32 s
+[strata] thinking: 1624 of max 4096 tokens, 49.8 tok/s, 33 s
+[strata] thinking: 1675 of max 4096 tokens, 49.8 tok/s, 34 s
+[strata] thinking: 1723 of max 4096 tokens, 49.7 tok/s, 35 s
+[strata] thinking: 1783 of max 4096 tokens, 50.0 tok/s, 36 s
+[strata] thinking: 1851 of max 4096 tokens, 50.5 tok/s, 37 s
+[strata] thinking: 1903 of max 4096 tokens, 50.5 tok/s, 38 s
+[strata] thinking: 1961 of max 4096 tokens, 50.7 tok/s, 39 s
+[strata] thinking: 2011 of max 4096 tokens, 50.6 tok/s, 40 s
+[strata] thinking: 2075 of max 4096 tokens, 50.9 tok/s, 41 s
+[strata] thinking: 2154 of max 4096 tokens, 51.5 tok/s, 42 s
+[strata] thinking: 2231 of max 4096 tokens, 52.1 tok/s, 44 s
+[strata] thinking: 2306 of max 4096 tokens, 52.6 tok/s, 45 s
+[strata] thinking: 2366 of max 4096 tokens, 52.7 tok/s, 46 s
+[strata] thinking: 2415 of max 4096 tokens, 52.6 tok/s, 47 s
+[strata] thinking: 2467 of max 4096 tokens, 52.6 tok/s, 48 s
+[strata] thinking: 2509 of max 4096 tokens, 52.4 tok/s, 49 s
+[strata] thinking: 2558 of max 4096 tokens, 52.3 tok/s, 50 s
+[strata] thinking: 2609 of max 4096 tokens, 52.3 tok/s, 51 s
+[strata] thinking: 2673 of max 4096 tokens, 52.5 tok/s, 52 s
+[strata] thinking: 2720 of max 4096 tokens, 52.4 tok/s, 53 s
+[strata] thinking: 2777 of max 4096 tokens, 52.4 tok/s, 54 s
+[strata] thinking: 2827 of max 4096 tokens, 52.4 tok/s, 55 s
+[strata] thinking: 2886 of max 4096 tokens, 52.5 tok/s, 56 s
+[strata] thinking: 2939 of max 4096 tokens, 52.5 tok/s, 57 s
+[strata] thinking: 2993 of max 4096 tokens, 52.5 tok/s, 58 s
+[strata] thinking: 3050 of max 4096 tokens, 52.6 tok/s, 59 s
+[strata] thinking: 3103 of max 4096 tokens, 52.6 tok/s, 60 s
+[strata] thinking: 3156 of max 4096 tokens, 52.6 tok/s, 61 s
+[strata] thinking: 3210 of max 4096 tokens, 52.6 tok/s, 62 s
+[strata] thinking: 3265 of max 4096 tokens, 52.6 tok/s, 63 s
+[strata] thinking: 3316 of max 4096 tokens, 52.6 tok/s, 64 s
+[strata] thinking: 3376 of max 4096 tokens, 52.7 tok/s, 65 s
+[strata] thinking: 3421 of max 4096 tokens, 52.6 tok/s, 66 s
+[strata] thinking: 3468 of max 4096 tokens, 52.5 tok/s, 67 s
+[strata] thinking: 3523 of max 4096 tokens, 52.5 tok/s, 68 s
+[strata] thinking: 3576 of max 4096 tokens, 52.5 tok/s, 69 s
+[strata] thinking: 3636 of max 4096 tokens, 52.6 tok/s, 70 s
+[strata] thinking: 3692 of max 4096 tokens, 52.6 tok/s, 71 s
+[strata] thinking: 3746 of max 4096 tokens, 52.7 tok/s, 72 s
+[strata] thinking: 3803 of max 4096 tokens, 52.7 tok/s, 73 s
+[strata] thinking: 3850 of max 4096 tokens, 52.6 tok/s, 74 s
+[strata] thinking: 3909 of max 4096 tokens, 52.7 tok/s, 75 s
+[strata] thinking: 3964 of max 4096 tokens, 52.7 tok/s, 76 s
+[strata] thinking: 4012 of max 4096 tokens, 52.6 tok/s, 77 s
+[strata] thinking: 4064 of max 4096 tokens, 52.6 tok/s, 78 s
+[strata] done: 4096 tokens in 79 s (52.6 tok/s) (length, cancel=False), expert cache 96.2% hit
+[strata] thinking: 16 of max 4096 tokens, 52.6 tok/s, 1 s
+[strata] thinking: 88 of max 4096 tokens, 66.0 tok/s, 2 s
+[strata] thinking: 142 of max 4096 tokens, 60.8 tok/s, 3 s
+[strata] thinking: 196 of max 4096 tokens, 58.4 tok/s, 4 s
+[strata] thinking: 258 of max 4096 tokens, 59.1 tok/s, 5 s
+[strata] thinking: 316 of max 4096 tokens, 58.6 tok/s, 6 s
+[strata] thinking: 375 of max 4096 tokens, 58.6 tok/s, 7 s
+[strata] thinking: 433 of max 4096 tokens, 58.2 tok/s, 8 s
+[strata] thinking: 484 of max 4096 tokens, 57.3 tok/s, 9 s
+[strata] thinking: 539 of max 4096 tokens, 57.0 tok/s, 10 s
+[strata] thinking: 593 of max 4096 tokens, 56.7 tok/s, 11 s
+[strata] thinking: 644 of max 4096 tokens, 56.2 tok/s, 12 s
+[strata] thinking: 694 of max 4096 tokens, 55.6 tok/s, 13 s
+[strata] thinking: 757 of max 4096 tokens, 56.1 tok/s, 14 s
+[strata] thinking: 830 of max 4096 tokens, 57.1 tok/s, 15 s
+[strata] thinking: 906 of max 4096 tokens, 58.2 tok/s, 16 s
+[strata] thinking: 958 of max 4096 tokens, 57.8 tok/s, 17 s
+[strata] thinking: 1013 of max 4096 tokens, 57.6 tok/s, 18 s
+[strata] thinking: 1072 of max 4096 tokens, 57.7 tok/s, 19 s
+[strata] thinking: 1127 of max 4096 tokens, 57.4 tok/s, 20 s
+[strata] thinking: 1184 of max 4096 tokens, 57.4 tok/s, 21 s
+[strata] thinking: 1242 of max 4096 tokens, 57.3 tok/s, 22 s
+[strata] thinking: 1298 of max 4096 tokens, 57.2 tok/s, 23 s
+[strata] thinking: 1350 of max 4096 tokens, 56.9 tok/s, 24 s
+[strata] thinking: 1408 of max 4096 tokens, 56.9 tok/s, 25 s
+[strata] thinking: 1470 of max 4096 tokens, 57.1 tok/s, 26 s
+[strata] thinking: 1520 of max 4096 tokens, 56.8 tok/s, 27 s
+[strata] thinking: 1576 of max 4096 tokens, 56.8 tok/s, 28 s
+[strata] thinking: 1637 of max 4096 tokens, 56.9 tok/s, 29 s
+[strata] thinking: 1691 of max 4096 tokens, 56.7 tok/s, 31 s
+[strata] thinking: 1747 of max 4096 tokens, 56.7 tok/s, 32 s
+[strata] thinking: 1799 of max 4096 tokens, 56.5 tok/s, 33 s
+[strata] thinking: 1876 of max 4096 tokens, 57.0 tok/s, 34 s
+[strata] thinking: 1957 of max 4096 tokens, 57.7 tok/s, 35 s
+[strata] thinking: 2019 of max 4096 tokens, 57.8 tok/s, 36 s
+[strata] thinking: 2065 of max 4096 tokens, 57.5 tok/s, 37 s
+[strata] thinking: 2118 of max 4096 tokens, 57.3 tok/s, 38 s
+[strata] thinking: 2179 of max 4096 tokens, 57.4 tok/s, 39 s
+[strata] thinking: 2227 of max 4096 tokens, 57.2 tok/s, 40 s
+[strata] thinking: 2284 of max 4096 tokens, 57.1 tok/s, 41 s
+[strata] thinking: 2342 of max 4096 tokens, 57.2 tok/s, 42 s
+[strata] thinking: 2398 of max 4096 tokens, 57.1 tok/s, 43 s
+[strata] thinking: 2458 of max 4096 tokens, 57.2 tok/s, 44 s
+[strata] thinking: 2518 of max 4096 tokens, 57.2 tok/s, 45 s
+[strata] thinking: 2572 of max 4096 tokens, 57.1 tok/s, 46 s
+[strata] thinking: 2629 of max 4096 tokens, 57.1 tok/s, 47 s
+[strata] thinking: 2685 of max 4096 tokens, 57.0 tok/s, 48 s
+[strata] thinking: 2747 of max 4096 tokens, 57.1 tok/s, 49 s
+[strata] thinking: 2807 of max 4096 tokens, 57.2 tok/s, 50 s
+[strata] thinking: 2860 of max 4096 tokens, 57.0 tok/s, 51 s
+[strata] thinking: 2919 of max 4096 tokens, 57.1 tok/s, 52 s
+[strata] thinking: 2978 of max 4096 tokens, 57.1 tok/s, 53 s
+[strata] thinking: 3042 of max 4096 tokens, 57.2 tok/s, 54 s
+[strata] thinking: 3094 of max 4096 tokens, 57.0 tok/s, 55 s
+[strata] thinking: 3146 of max 4096 tokens, 56.9 tok/s, 56 s
+[strata] thinking: 3201 of max 4096 tokens, 56.9 tok/s, 57 s
+[strata] thinking: 3251 of max 4096 tokens, 56.8 tok/s, 58 s
+[strata] thinking: 3298 of max 4096 tokens, 56.6 tok/s, 59 s
+[strata] thinking: 3350 of max 4096 tokens, 56.5 tok/s, 60 s
+[strata] thinking: 3399 of max 4096 tokens, 56.4 tok/s, 61 s
+[strata] thinking: 3449 of max 4096 tokens, 56.2 tok/s, 62 s
+[strata] thinking: 3504 of max 4096 tokens, 56.2 tok/s, 63 s
+[strata] thinking: 3564 of max 4096 tokens, 56.2 tok/s, 64 s
+[strata] thinking: 3618 of max 4096 tokens, 56.1 tok/s, 65 s
+[strata] thinking: 3682 of max 4096 tokens, 56.2 tok/s, 66 s
+[strata] thinking: 3742 of max 4096 tokens, 56.3 tok/s, 67 s
+[strata] thinking: 3797 of max 4096 tokens, 56.3 tok/s, 68 s
+[strata] thinking: 3859 of max 4096 tokens, 56.3 tok/s, 69 s
+[strata] thinking: 3920 of max 4096 tokens, 56.4 tok/s, 70 s
+[strata] thinking: 3974 of max 4096 tokens, 56.4 tok/s, 71 s
+[strata] thinking: 4038 of max 4096 tokens, 56.4 tok/s, 72 s
+[strata] done: 4096 tokens in 73 s (56.7 tok/s) (length, cancel=False), expert cache 97.0% hit
+[strata] reading the prompt: 68 of 69 tokens, 1 s so far
+[strata] thinking: 57 of max 4096 tokens, 57.5 tok/s, 2 s
+[strata] done: 101 tokens in 3 s (59.4 tok/s) (stop, cancel=False), expert cache 77.8% hit

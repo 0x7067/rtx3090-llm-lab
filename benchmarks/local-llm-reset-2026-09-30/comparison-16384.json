@@ -1,0 +1,390 @@
+{
+  "plan_sha256": "7037bfaa64ef760a7c690c59d4f6347849b8a2e208eca122eb860be24babb0cb",
+  "generated_at": "2026-10-01T03:17:21.249372+00:00",
+  "arms": {
+    "thinkingcap_llama": {
+      "quality_score": 54.0,
+      "quality_max": 54,
+      "full_passes": 54,
+      "partial_scores": 0,
+      "zero_scores": 0,
+      "statuses": {
+        "ok": 58
+      },
+      "finish_reasons": {
+        "stop": 38,
+        "tool_calls": 16,
+        "length": 4
+      },
+      "failures": [],
+      "performance": {
+        "decode-medium": {
+          "wall_s": 25.089391470999544,
+          "ttft_s": 11.971520426999632,
+          "e2e_output_tps": 20.407031417713466,
+          "server_decode_tps": 38.95498191528306,
+          "server_prefill_tps": 1049.7027884878453
+        },
+        "decode-short": {
+          "wall_s": 12.747209831999498,
+          "ttft_s": 0.6493505899998127,
+          "e2e_output_tps": 40.16565246417449,
+          "server_decode_tps": 42.238948625452856,
+          "server_prefill_tps": 779.6497388474011
+        },
+        "prefill-medium": {
+          "wall_s": 13.42399098199894,
+          "ttft_s": 13.42394071200033,
+          "e2e_output_tps": 0.07449349462026321,
+          "server_decode_tps": null,
+          "server_prefill_tps": 1050.1549295762572
+        },
+        "prefill-short": {
+          "wall_s": 0.6510060000000522,
+          "ttft_s": 0.6509574910014635,
+          "e2e_output_tps": 1.5360841528341058,
+          "server_decode_tps": null,
+          "server_prefill_tps": 774.7845067373885
+        }
+      },
+      "harness_elapsed_s": 976.2464573383331,
+      "resources": {
+        "samples": 164,
+        "min_host_available_gib": 39.804012298583984,
+        "max_memory_psi_some_avg10": 0.0,
+        "max_gpu_memory_mib": 20454,
+        "max_container_memory_gib": 8.854,
+        "thermal_samples": 110,
+        "max_core_c": 64,
+        "max_junction_c": 78,
+        "max_vram_c": 94
+      }
+    },
+    "gsq_llama": {
+      "quality_score": 53.0,
+      "quality_max": 54,
+      "full_passes": 53,
+      "partial_scores": 0,
+      "zero_scores": 1,
+      "statuses": {
+        "ok": 58
+      },
+      "finish_reasons": {
+        "stop": 38,
+        "tool_calls": 16,
+        "length": 4
+      },
+      "failures": [
+        {
+          "id": "code-sse-frames:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\nAssertionError\n",
+          "error": null
+        }
+      ],
+      "performance": {
+        "decode-medium": {
+          "wall_s": 25.920064900998113,
+          "ttft_s": 12.008262463998108,
+          "e2e_output_tps": 19.753036960192343,
+          "server_decode_tps": 36.731656060011616,
+          "server_prefill_tps": 1046.6503343520947
+        },
+        "decode-short": {
+          "wall_s": 13.531246405000275,
+          "ttft_s": 0.6585896639990096,
+          "e2e_output_tps": 37.8383472353883,
+          "server_decode_tps": 39.69693911740264,
+          "server_prefill_tps": 760.319529657348
+        },
+        "prefill-medium": {
+          "wall_s": 13.428582536998874,
+          "ttft_s": 13.428441093998117,
+          "e2e_output_tps": 0.0744680235046973,
+          "server_decode_tps": null,
+          "server_prefill_tps": 1047.4278368998873
+        },
+        "prefill-short": {
+          "wall_s": 0.6993572850005876,
+          "ttft_s": 0.6993099150022317,
+          "e2e_output_tps": 1.4298842972646804,
+          "server_decode_tps": null,
+          "server_prefill_tps": 750.3580363737527
+        }
+      },
+      "harness_elapsed_s": 1190.322651386261,
+      "resources": {
+        "samples": 208,
+        "min_host_available_gib": 39.25173568725586,
+        "max_memory_psi_some_avg10": 0.0,
+        "max_gpu_memory_mib": 17314,
+        "max_container_memory_gib": 20.31,
+        "thermal_samples": 248,
+        "max_core_c": 69,
+        "max_junction_c": 82,
+        "max_vram_c": 90
+      }
+    },
+    "w4_vllm": {
+      "quality_score": 52.0,
+      "quality_max": 54,
+      "full_passes": 52,
+      "partial_scores": 0,
+      "zero_scores": 2,
+      "statuses": {
+        "ok": 56,
+        "http_error": 2
+      },
+      "finish_reasons": {
+        "stop": 36,
+        "tool_calls": 16,
+        "None": 2,
+        "length": 4
+      },
+      "failures": [
+        {
+          "id": "retrieve-revision-4096:0:42",
+          "score": 0.0,
+          "status": "http_error",
+          "finish_reason": null,
+          "detail": "request failed or output incomplete",
+          "error": "{\"error\":{\"message\":\"This model's maximum context length is 98304 tokens. However, you requested 16384 output tokens and your prompt contains at least 81921 input tokens, for a total of at least 98305 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=81921)\",\"type\":\"BadRequestError\",\"param\":\"input_tokens\",\"code\":400}}"
+        },
+        {
+          "id": "retrieve-join-4096:0:42",
+          "score": 0.0,
+          "status": "http_error",
+          "finish_reason": null,
+          "detail": "request failed or output incomplete",
+          "error": "{\"error\":{\"message\":\"This model's maximum context length is 98304 tokens. However, you requested 16384 output tokens and your prompt contains at least 81921 input tokens, for a total of at least 98305 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=81921)\",\"type\":\"BadRequestError\",\"param\":\"input_tokens\",\"code\":400}}"
+        }
+      ],
+      "performance": {
+        "decode-medium": {
+          "wall_s": 24.7272116560016,
+          "ttft_s": 12.77855549800006,
+          "e2e_output_tps": 20.705933492332576,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        },
+        "decode-short": {
+          "wall_s": 12.12427670300167,
+          "ttft_s": 0.42785364000155823,
+          "e2e_output_tps": 42.22932324476243,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        },
+        "prefill-medium": {
+          "wall_s": 12.776139566001802,
+          "ttft_s": 12.776119013000425,
+          "e2e_output_tps": 0.07827090451180337,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        },
+        "prefill-short": {
+          "wall_s": 0.3999473889998626,
+          "ttft_s": 0.39992619899931015,
+          "e2e_output_tps": 2.500328862005256,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        }
+      },
+      "harness_elapsed_s": 670.0962698459625,
+      "resources": {
+        "samples": 158,
+        "min_host_available_gib": 42.66621017456055,
+        "max_memory_psi_some_avg10": 0.18,
+        "max_gpu_memory_mib": 21938,
+        "max_container_memory_gib": 16.24,
+        "thermal_samples": 189,
+        "max_core_c": 63,
+        "max_junction_c": 75,
+        "max_vram_c": 90
+      }
+    },
+    "orca_vllm": {
+      "quality_score": 52.0,
+      "quality_max": 54,
+      "full_passes": 52,
+      "partial_scores": 0,
+      "zero_scores": 2,
+      "statuses": {
+        "ok": 58
+      },
+      "finish_reasons": {
+        "stop": 38,
+        "tool_calls": 16,
+        "length": 4
+      },
+      "failures": [
+        {
+          "id": "code-sse-frames:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 2, in <module>\nAssertionError\n",
+          "error": null
+        },
+        {
+          "id": "code-histogram:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\n  File \"answer.py\", line 23, in histogram\nIndexError: list index out of range\n",
+          "error": null
+        }
+      ],
+      "performance": {
+        "decode-medium": {
+          "wall_s": 23.626645710999583,
+          "ttft_s": 12.867037316002097,
+          "e2e_output_tps": 21.670448114504637,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        },
+        "decode-short": {
+          "wall_s": 10.29264552099994,
+          "ttft_s": 0.5707545240002219,
+          "e2e_output_tps": 49.74425661073954,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        },
+        "prefill-medium": {
+          "wall_s": 12.810183409001183,
+          "ttft_s": 12.810162713001773,
+          "e2e_output_tps": 0.07806289481361692,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        },
+        "prefill-short": {
+          "wall_s": 0.5484192110016011,
+          "ttft_s": 0.5483976350005833,
+          "e2e_output_tps": 1.8234226298777134,
+          "server_decode_tps": null,
+          "server_prefill_tps": null
+        }
+      },
+      "harness_elapsed_s": 948.1685154438019,
+      "resources": {
+        "samples": 211,
+        "min_host_available_gib": 42.56498336791992,
+        "max_memory_psi_some_avg10": 0.0,
+        "max_gpu_memory_mib": 23268,
+        "max_container_memory_gib": 11.6,
+        "thermal_samples": 252,
+        "max_core_c": 71,
+        "max_junction_c": 83,
+        "max_vram_c": 86
+      }
+    },
+    "strata_flash_next": {
+      "quality_score": 48.666666666666664,
+      "quality_max": 54,
+      "full_passes": 48,
+      "partial_scores": 1,
+      "zero_scores": 5,
+      "statuses": {
+        "ok": 58
+      },
+      "finish_reasons": {
+        "stop": 36,
+        "tool_calls": 16,
+        "length": 6
+      },
+      "failures": [
+        {
+          "id": "code-diff-keys:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "length",
+          "detail": "request failed or output incomplete",
+          "error": null
+        },
+        {
+          "id": "extract-missing:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "invalid answer format",
+          "error": null
+        },
+        {
+          "id": "extract-quoted:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "JSON semantic equality",
+          "error": null
+        },
+        {
+          "id": "code-merge-config:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "length",
+          "detail": "request failed or output incomplete",
+          "error": null
+        },
+        {
+          "id": "support-relevant-db:0:42",
+          "score": 0.6666666666666666,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "set micro F1 within item",
+          "error": null
+        },
+        {
+          "id": "code-redact:0:42",
+          "score": 0.0,
+          "status": "ok",
+          "finish_reason": "stop",
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 3, in <module>\nAssertionError\n",
+          "error": null
+        }
+      ],
+      "performance": {
+        "decode-medium": {
+          "wall_s": 20.24168451100195,
+          "ttft_s": 9.93527541200092,
+          "e2e_output_tps": 25.294337520264826,
+          "server_decode_tps": 49.6,
+          "server_prefill_tps": 1241.1200178359697
+        },
+        "decode-short": {
+          "wall_s": 11.542861285000981,
+          "ttft_s": 1.109831279998616,
+          "e2e_output_tps": 44.35641972630329,
+          "server_decode_tps": 49.0,
+          "server_prefill_tps": 357.01174743024967
+        },
+        "prefill-medium": {
+          "wall_s": 8.069416779999301,
+          "ttft_s": 8.069324642001448,
+          "e2e_output_tps": 0.12392469335312813,
+          "server_decode_tps": null,
+          "server_prefill_tps": 1530.5408377486754
+        },
+        "prefill-short": {
+          "wall_s": 1.1171023110000533,
+          "ttft_s": 1.1170073470020725,
+          "e2e_output_tps": 0.8951731548248066,
+          "server_decode_tps": null,
+          "server_prefill_tps": 349.2613532737553
+        }
+      },
+      "harness_elapsed_s": 2656.2316703796387,
+      "resources": {
+        "samples": 458,
+        "min_host_available_gib": 25.951568603515625,
+        "max_memory_psi_some_avg10": 2.61,
+        "max_gpu_memory_mib": 23850,
+        "max_container_memory_gib": 33.48,
+        "thermal_samples": 545,
+        "max_core_c": 66,
+        "max_junction_c": 79,
+        "max_vram_c": 82
+      }
+    }
+  }
+}

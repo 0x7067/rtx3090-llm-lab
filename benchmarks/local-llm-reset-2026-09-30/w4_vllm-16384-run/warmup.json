@@ -1,0 +1,363 @@
+{
+  "status": "ok",
+  "content": "\n\nOK",
+  "reasoning": "The user asked me to reply \"OK\". This is a simple request.\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "events": [
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "role": "assistant",
+            "content": ""
+          },
+          "logprobs": null,
+          "finish_reason": null
+        }
+      ],
+      "prompt_token_ids": null,
+      "prompt_text": null
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "The"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " user"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " asked"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " me"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " to"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " reply"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " \""
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "OK"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "\"."
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " This"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " is"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " a"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " simple"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " request"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "."
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "\n"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "content": "\n\nOK"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {},
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-970d0259fd555c82",
+      "object": "chat.completion.chunk",
+      "created": 1790819749,
+      "model": "w4-qwen3.8-27b",
+      "choices": [],
+      "usage": {
+        "prompt_tokens": 55,
+        "total_tokens": 75,
+        "completion_tokens": 20,
+        "completion_tokens_details": {
+          "reasoning_tokens": 16
+        }
+      },
+      "system_fingerprint": "vllm-0.30.0-d0ec0c21"
+    }
+  ],
+  "ttft_s": 0.14669290500023635,
+  "usage": {
+    "prompt_tokens": 55,
+    "total_tokens": 75,
+    "completion_tokens": 20,
+    "completion_tokens_details": {
+      "reasoning_tokens": 16
+    }
+  },
+  "timings": {},
+  "wall_s": 0.5721557870019751,
+  "e2e_output_tps": 34.95551465938587,
+  "server_decode_tps": null,
+  "server_prefill_tps": null
+}

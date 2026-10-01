@@ -1,0 +1,19 @@
+INFO 09-30 10:55:43 [__init__.py:153] orcasaq2: embed_tokens / lm_head will receive the EXL3 quant config
+INFO 09-30 10:55:43 [__init__.py:94] orcasaq2 armed: quant_method 'exl3' is now loadable
+INFO 09-30 10:55:43 [__init__.py:112] Registered model loader `<class 'vllm_gguf_plugin.loader.GGUFModelLoader'>` with load format `gguf`
+INFO 09-30 10:55:43 [config.py:482] Registered config parser `<class 'vllm_gguf_plugin.config_parser.GGUFConfigParser'>` with config format `gguf`
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:347] 
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:347]        █     █     █▄   ▄█
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:347]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.30.0
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:347]   █▄█▀ █     █     █     █  model   /models/gguf/ThinkingCap-Qwen3.8-27B-abliterated.Q4_K_S.gguf
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:347]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:347] 
+(APIServer pid=1) INFO 09-30 10:55:43 [api_utils.py:286] non-default args: {'model_tag': '/models/gguf/ThinkingCap-Qwen3.8-27B-abliterated.Q4_K_S.gguf', 'enable_auto_tool_choice': True, 'tool_call_parser': 'qwen3_xml', 'host': '127.0.0.1', 'port': 18180, 'model': '/models/gguf/ThinkingCap-Qwen3.8-27B-abliterated.Q4_K_S.gguf', 'tokenizer': '/models/tokenizer', 'hf_config_path': '/models/tokenizer', 'max_model_len': 150000, 'served_model_name': ['thinkingcap-vllm'], 'config_format': 'gguf', 'load_format': 'gguf', 'reasoning_parser': 'qwen3', 'gpu_memory_utilization': 0.95, 'kv_cache_dtype': 'fp8', 'enable_prefix_caching': True, 'mamba_ssm_cache_dtype': 'float16', 'language_model_only': True, 'max_num_seqs': 8}
+(APIServer pid=1) INFO 09-30 10:55:43 [model.py:692] Resolved architecture: Qwen3_5ForConditionalGeneration
+(APIServer pid=1) INFO 09-30 10:55:43 [model.py:2030] Using max model len 150000
+(APIServer pid=1) INFO 09-30 10:55:45 [registry.py:146] All limits of multimodal modalities supported by the model are set to 0, running in text-only mode.
+(APIServer pid=1) INFO 09-30 10:55:45 [model.py:900] Disabled mm_prefix attention mode because multimodal inputs are configuration-disabled. Attention backends without mm_prefix support may now be selected.
+(APIServer pid=1) INFO 09-30 10:55:45 [cache.py:343] Using fp8 data type to store kv cache. It reduces the GPU memory footprint and boosts the performance. Meanwhile, it may cause accuracy drop without a proper scaling factor
+(APIServer pid=1) WARNING 09-30 10:55:45 [config.py:819] Qwen3.5 model specifies mamba_ssm_dtype='float32' in its config, but --mamba-ssm-cache-dtype='float16' was passed. Using the user-specified value.
+(APIServer pid=1) INFO 09-30 10:55:45 [config.py:625] Mamba cache mode is set to 'align' for Qwen3_5ForConditionalGeneration by default when prefix caching is enabled
+(APIServer pid=1) INFO 09-30 10:55:46 [kernel.py:416] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])

@@ -1,0 +1,470 @@
+{
+  "plan_sha256": "186ca9720d0c90d16f0d9dd1ca10505bd81c61b4da72f4c5f95ccc3990fe081d",
+  "arm": "thinkingcap_llama",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 20,
+      "clusters": 20,
+      "statuses": {
+        "ok": 9,
+        "protocol_error": 1,
+        "transport_or_protocol_error": 10
+      },
+      "finish_reasons": {
+        "stop": 9,
+        "None": 11
+      },
+      "prompt_tokens_observed": 9,
+      "prompt_tokens_min": 108,
+      "prompt_tokens_max": 135,
+      "full_score": 9,
+      "completed": 9,
+      "mean_score": 0.45
+    },
+    "extraction": {
+      "attempted": 6,
+      "clusters": 5,
+      "statuses": {
+        "ok": 3,
+        "transport_or_protocol_error": 3
+      },
+      "finish_reasons": {
+        "stop": 3,
+        "None": 3
+      },
+      "prompt_tokens_observed": 3,
+      "prompt_tokens_min": 66,
+      "prompt_tokens_max": 83,
+      "full_score": 3,
+      "completed": 3,
+      "mean_score": 0.5
+    },
+    "reasoning": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 1,
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "stop": 1,
+        "None": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 79,
+      "prompt_tokens_max": 79,
+      "full_score": 1,
+      "completed": 1,
+      "mean_score": 0.5
+    },
+    "relevance": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 1,
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "stop": 1,
+        "None": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 90,
+      "prompt_tokens_max": 90,
+      "full_score": 1,
+      "completed": 1,
+      "mean_score": 0.5
+    },
+    "retrieval": {
+      "attempted": 6,
+      "clusters": 2,
+      "statuses": {
+        "ok": 5,
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "stop": 5,
+        "None": 1
+      },
+      "prompt_tokens_observed": 5,
+      "prompt_tokens_min": 1910,
+      "prompt_tokens_max": 114809,
+      "full_score": 5,
+      "completed": 5,
+      "mean_score": 0.8333333333333334
+    },
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 12,
+        "transport_or_protocol_error": 4
+      },
+      "finish_reasons": {
+        "tool_calls": 12,
+        "None": 4
+      },
+      "prompt_tokens_observed": 12,
+      "prompt_tokens_min": 622,
+      "prompt_tokens_max": 715,
+      "full_score": 12,
+      "completed": 12,
+      "mean_score": 0.75
+    },
+    "transcript_qa": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 1,
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "stop": 1,
+        "None": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 81,
+      "prompt_tokens_max": 81,
+      "full_score": 1,
+      "completed": 1,
+      "mean_score": 0.5
+    }
+  },
+  "performance": {
+    "decode-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12246,
+      "prompt_tokens_max": 12246,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 22.537062657997012
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 10.250884727000084
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 22.718133581543857
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 41.59192058629143
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1233.0668535499005
+        }
+      }
+    },
+    "decode-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "None": 1
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "metrics": {
+        "wall_s": {
+          "n": 0,
+          "median": null
+        },
+        "ttft_s": {
+          "n": 0,
+          "median": null
+        },
+        "e2e_output_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "prefill-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12246,
+      "prompt_tokens_max": 12246,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 11.81575683200208
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 11.815607264004939
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.08463275050579713
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1235.40609713161
+        }
+      }
+    },
+    "prefill-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "None": 1
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "metrics": {
+        "wall_s": {
+          "n": 0,
+          "median": null
+        },
+        "ttft_s": {
+          "n": 0,
+          "median": null
+        },
+        "e2e_output_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "code-stable-dedupe:0:42",
+      "score": 0.0,
+      "status": "protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "episode-failed-test-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "extract-quoted:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "episode-untrusted-tool-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "retrieve-join-1024:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-histogram:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "support-transcript-pt:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "perf-decode-short:0:42",
+      "score": null,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "performance probe",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "episode-not-found-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "extract-en-correction:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-lru:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "episode-failed-test-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "support-relevant-db:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-jsonl:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "perf-prefill-short:0:42",
+      "score": null,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "performance probe",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-flatten:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-path-normalize:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-batch-bytes:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-rate-limit:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "support-reason-deps:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-topological:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "code-redact:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "id": "extract-units:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 111] Connection refused>"
+    }
+  ]
+}

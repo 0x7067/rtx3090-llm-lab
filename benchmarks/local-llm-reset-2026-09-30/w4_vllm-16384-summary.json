@@ -1,0 +1,281 @@
+{
+  "plan_sha256": "7037bfaa64ef760a7c690c59d4f6347849b8a2e208eca122eb860be24babb0cb",
+  "arm": "w4_vllm",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 20,
+      "clusters": 20,
+      "statuses": {
+        "ok": 20
+      },
+      "finish_reasons": {
+        "stop": 20
+      },
+      "prompt_tokens_observed": 20,
+      "prompt_tokens_min": 109,
+      "prompt_tokens_max": 146,
+      "full_score": 20,
+      "completed": 20,
+      "mean_score": 1.0
+    },
+    "extraction": {
+      "attempted": 6,
+      "clusters": 5,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 64,
+      "prompt_tokens_max": 84,
+      "full_score": 6,
+      "completed": 6,
+      "mean_score": 1.0
+    },
+    "reasoning": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 73,
+      "prompt_tokens_max": 75,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "relevance": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 85,
+      "prompt_tokens_max": 87,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "retrieval": {
+      "attempted": 6,
+      "clusters": 2,
+      "statuses": {
+        "http_error": 2,
+        "ok": 4
+      },
+      "finish_reasons": {
+        "None": 2,
+        "stop": 4
+      },
+      "prompt_tokens_observed": 4,
+      "prompt_tokens_min": 1909,
+      "prompt_tokens_max": 28791,
+      "full_score": 4,
+      "completed": 4,
+      "mean_score": 0.6666666666666666
+    },
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 620,
+      "prompt_tokens_max": 718,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    },
+    "transcript_qa": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 83,
+      "prompt_tokens_max": 91,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {
+    "decode-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12247,
+      "prompt_tokens_max": 12247,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 24.7272116560016
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 12.77855549800006
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 20.705933492332576
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "decode-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 389,
+      "prompt_tokens_max": 389,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 12.12427670300167
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 0.42785364000155823
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 42.22932324476243
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "prefill-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12248,
+      "prompt_tokens_max": 12248,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 12.776139566001802
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 12.776119013000425
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.07827090451180337
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "prefill-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 383,
+      "prompt_tokens_max": 383,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 0.3999473889998626
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 0.39992619899931015
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 2.500328862005256
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "retrieve-revision-4096:0:42",
+      "score": 0.0,
+      "status": "http_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "{\"error\":{\"message\":\"This model's maximum context length is 98304 tokens. However, you requested 16384 output tokens and your prompt contains at least 81921 input tokens, for a total of at least 98305 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=81921)\",\"type\":\"BadRequestError\",\"param\":\"input_tokens\",\"code\":400}}"
+    },
+    {
+      "id": "retrieve-join-4096:0:42",
+      "score": 0.0,
+      "status": "http_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "{\"error\":{\"message\":\"This model's maximum context length is 98304 tokens. However, you requested 16384 output tokens and your prompt contains at least 81921 input tokens, for a total of at least 98305 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=81921)\",\"type\":\"BadRequestError\",\"param\":\"input_tokens\",\"code\":400}}"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "strata_flash_next",
+    "base_url": "http://127.0.0.1:18182/v1",
+    "model": "qwen3.8-flash-next-iq2_xs",
+    "metadata": {
+      "runtime": "Strata engine 0.1.30 from publisher Dockerfile at commit 30ec18ec7094550fcc594fd948220d511d80464e; CUDA arch 86, text only",
+      "image": "sha256:f0aead168c875cb4035ad7e8647c015939658866e7f37089bb2a126f2f06dda4",
+      "weights": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF@ed59f92082b1e93c0e96d60a8b11aab089b52f09, IQ2_XS, shard SHA256 92cee27ae5bbadcd732416a0f7a7f0acc092399dbbe8f5a5efa707c2ec0a49d7 and 316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113",
+      "launch": "CONTEXT=150000, KV=int8, VISION=no, LOW_RAM=on, GPU=0, 44 GiB cgroup memory, 8 CPUs, publisher default sampling unless request overrides",
+      "hardware": "RTX 3090 24576 MiB, driver 595.91.07, single GPU; 61 GiB host RAM",
+      "cache_policy": "fresh server, one excluded warmup; publisher resident expert cache and conversation cache active; no explicit cache reset between measured requests",
+      "gpu_profile": "210-1350 MHz graphics lock, +100 GPC VF offset, 0 memory VF offset, 370 W power limit, VRAM fan curve and 101 C guard",
+      "host_os": "Ubuntu 26.04.1, NVIDIA driver 595.91.07"
+    }
+  }
+]

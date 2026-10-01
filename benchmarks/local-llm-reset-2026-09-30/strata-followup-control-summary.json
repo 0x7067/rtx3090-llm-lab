@@ -1,0 +1,163 @@
+{
+  "plan_sha256": "a5966572be0a43a8e83c85bdeb64035cfa6eb541ce8c06ca2d7c7f1044b3840f",
+  "arm": "strata_flash_next",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 15,
+      "clusters": 5,
+      "statuses": {
+        "ok": 15
+      },
+      "finish_reasons": {
+        "length": 9,
+        "stop": 6
+      },
+      "prompt_tokens_observed": 15,
+      "prompt_tokens_min": 118,
+      "prompt_tokens_max": 139,
+      "full_score": 6,
+      "completed": 6,
+      "mean_score": 0.4
+    },
+    "extraction": {
+      "attempted": 9,
+      "clusters": 3,
+      "statuses": {
+        "ok": 9
+      },
+      "finish_reasons": {
+        "stop": 9
+      },
+      "prompt_tokens_observed": 9,
+      "prompt_tokens_min": 66,
+      "prompt_tokens_max": 85,
+      "full_score": 9,
+      "completed": 9,
+      "mean_score": 1.0
+    },
+    "reasoning": {
+      "attempted": 3,
+      "clusters": 1,
+      "statuses": {
+        "ok": 3
+      },
+      "finish_reasons": {
+        "stop": 3
+      },
+      "prompt_tokens_observed": 3,
+      "prompt_tokens_min": 77,
+      "prompt_tokens_max": 78,
+      "full_score": 3,
+      "completed": 3,
+      "mean_score": 1.0
+    },
+    "relevance": {
+      "attempted": 3,
+      "clusters": 1,
+      "statuses": {
+        "ok": 3
+      },
+      "finish_reasons": {
+        "stop": 3
+      },
+      "prompt_tokens_observed": 3,
+      "prompt_tokens_min": 87,
+      "prompt_tokens_max": 88,
+      "full_score": 3,
+      "completed": 3,
+      "mean_score": 1.0
+    },
+    "tool_replay": {
+      "attempted": 6,
+      "clusters": 1,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "tool_calls": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 575,
+      "prompt_tokens_max": 632,
+      "full_score": 6,
+      "completed": 6,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {},
+  "failures": [
+    {
+      "id": "code-topological:0:314",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-redact:0:2718",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-merge-config:0:2718",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-diff-keys:0:2718",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-diff-keys:0:314",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-topological:0:2718",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-merge-config:0:314",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-diff-keys:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    }
+  ]
+}

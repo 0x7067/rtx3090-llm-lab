@@ -22,7 +22,14 @@ CASE_IDS = {
     "support-reason-boundary",
     "support-relevant-db",
 }
-POLICIES = ("control", "budget-512", "budget-1024", "budget-2048", "nonthinking-simple")
+POLICIES = (
+    "control",
+    "budget-512",
+    "budget-1024",
+    "budget-2048",
+    "nonthinking-simple",
+    "nonthinking-coding",
+)
 
 
 def read(path):
@@ -69,6 +76,15 @@ def make_suite(source, policy):
             request["chat_template_kwargs"] = {"enable_thinking": True}
             request["reasoning_budget_tokens"] = int(policy.removeprefix("budget-"))
         if policy == "nonthinking-simple" and case["tier"] in {"extraction", "relevance"}:
+            request.pop("reasoning_effort", None)
+            request.update(
+                temperature=0.7,
+                top_p=0.8,
+                top_k=20,
+                presence_penalty=1.5,
+                chat_template_kwargs={"enable_thinking": False},
+            )
+        if policy == "nonthinking-coding" and case["tier"] == "coding":
             request.pop("reasoning_effort", None)
             request.update(
                 temperature=0.7,

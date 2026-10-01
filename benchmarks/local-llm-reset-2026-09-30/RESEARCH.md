@@ -99,12 +99,13 @@ The baseline's six misses are not one failure mode:
 - `extract-missing` and `extract-quoted` returned wrong values;
 - `support-relevant-db` earned 2/3.
 
-First test hard reasoning budgets of 512, 1,024, and 2,048 tokens for the low
-reasoning coding requests. Strata documents hard
-`reasoning_budget_tokens` support. A bounded reasoning phase may leave enough
-of the existing 16K allowance for executable code in the two length failures.
-Do not raise the output cap again until this matrix shows that answer space,
-rather than looping reasoning, remains the cause.
+The initial research proposed hard reasoning budgets of 512, 1,024, and 2,048
+tokens. Source inspection of the pinned 0.1.30 server later showed that its
+OpenAI request path does not parse `reasoning_budget_tokens`. The 512-token arm
+therefore ran to the unchanged 4,096-token response limit and reproduced the
+control's 6/15 coding score; the 1,024 and 2,048 arms were stopped as invalid
+duplicates. The supported policy experiment uses the bundled chat template's
+`enable_thinking=false` switch instead.
 
 Second, test a non-thinking policy for extraction and simple transformation
 tasks using Qwen's official non-thinking sampler: temperature 0.7, top-p 0.8,

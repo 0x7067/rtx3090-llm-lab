@@ -1,0 +1,1059 @@
+Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)
+  [ok] GPU: GPU 0 (NVIDIA GeForce RTX 3090, 24 GB)
+
+  ----------------------------------------------------------------------------------------------------
+  Starting qwen3.8-flash-next-iq2_xs: it loads about 39 GB into RAM and locks part of it for the GPU.
+  While it does, YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES (longer the first time after a
+  restart). That is normal: please wait and don't close this window - the browser opens when it is ready.
+  Later, closing this window stops the model.
+  ----------------------------------------------------------------------------------------------------
+loading the model (the first start takes a minute or two) ...
+[strata] starting the engine: reading the model's weights ...
+[strata] loading the experts into RAM (about 39 GB) and locking part of them for the GPU.
+         YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES NOW - this is normal.
+         Please wait and don't close this window; the browser opens when it is ready.
+[strata] filling the GPU's expert cache (13103 experts, 17.56 GiB of VRAM) ...
+[strata] still starting (34 s) - please wait ...
+[strata] still starting (54 s) - please wait ...
+[strata] still starting (74 s) - please wait ...
+[strata] almost ready ...
+[strata] still starting (99 s) - please wait ...
+[strata] still starting (119 s) - please wait ...
+ready: http://127.0.0.1:18182/v1  (OpenAI: /v1/chat/completions, Anthropic: /v1/messages, context 150000 tokens)
+       open http://127.0.0.1:18182/ in a browser to chat; close this window to stop the model
+[strata] thinking: 13 of max 32 tokens, 60.6 tok/s, 1 s
+[strata] done: 26 tokens in 1 s (61.5 tok/s) (stop, cancel=False), expert cache 90.6% hit
+[strata] thinking: 17 of max 32768 tokens, 53.3 tok/s, 1 s
+[strata] thinking: 78 of max 32768 tokens, 57.0 tok/s, 2 s
+[strata] done: 82 tokens in 2 s (56.7 tok/s) (stop, cancel=False), expert cache 93.0% hit
+[strata] reading the prompt: 626 of 631 tokens, 2 s so far
+[strata] writing a tool call: run_tests: 41 of max 32768 tokens, 48.2 tok/s, 3 s
+[strata] done: 54 tokens in 3 s (51.3 tok/s) (stop, cancel=False), expert cache 90.8% hit
+[strata] reading the prompt: 8,192 of 114,811 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 114,811 tokens, 8 s so far
+[strata] reading the prompt: 24,576 of 114,811 tokens, 12 s so far
+[strata] reading the prompt: 32,768 of 114,811 tokens, 16 s so far
+[strata] reading the prompt: 40,960 of 114,811 tokens, 20 s so far
+[strata] reading the prompt: 49,152 of 114,811 tokens, 25 s so far
+[strata] reading the prompt: 57,344 of 114,811 tokens, 29 s so far
+[strata] reading the prompt: 65,536 of 114,811 tokens, 34 s so far
+[strata] reading the prompt: 73,728 of 114,811 tokens, 38 s so far
+[strata] reading the prompt: 81,920 of 114,811 tokens, 43 s so far
+[strata] reading the prompt: 90,112 of 114,811 tokens, 48 s so far
+[strata] reading the prompt: 98,304 of 114,811 tokens, 53 s so far
+[strata] reading the prompt: 106,496 of 114,811 tokens, 58 s so far
+[strata] reading the prompt: 114,688 of 114,811 tokens, 64 s so far
+[strata] reading the prompt: 114,806 of 114,811 tokens, 65 s so far
+[strata] thinking: 30 of max 32768 tokens, 54.6 tok/s, 66 s
+[strata] thinking: 91 of max 32768 tokens, 57.2 tok/s, 67 s
+[strata] thinking: 156 of max 32768 tokens, 59.0 tok/s, 68 s
+[strata] thinking: 214 of max 32768 tokens, 58.2 tok/s, 69 s
+[strata] answering: 280 of max 32768 tokens, 59.6 tok/s, 70 s
+[strata] done: 286 tokens in 70 s (59.9 tok/s) (stop, cancel=False), expert cache 94.1% hit
+[strata] thinking: 24 of max 32768 tokens, 64.3 tok/s, 1 s
+[strata] thinking: 94 of max 32768 tokens, 68.3 tok/s, 2 s
+[strata] thinking: 149 of max 32768 tokens, 61.6 tok/s, 3 s
+[strata] thinking: 202 of max 32768 tokens, 59.0 tok/s, 4 s
+[strata] thinking: 256 of max 32768 tokens, 57.6 tok/s, 5 s
+[strata] thinking: 317 of max 32768 tokens, 58.1 tok/s, 6 s
+[strata] thinking: 367 of max 32768 tokens, 56.7 tok/s, 7 s
+[strata] thinking: 429 of max 32768 tokens, 57.4 tok/s, 8 s
+[strata] thinking: 488 of max 32768 tokens, 57.5 tok/s, 9 s
+[strata] thinking: 533 of max 32768 tokens, 56.0 tok/s, 10 s
+[strata] thinking: 598 of max 32768 tokens, 56.8 tok/s, 11 s
+[strata] thinking: 651 of max 32768 tokens, 56.4 tok/s, 12 s
+[strata] thinking: 703 of max 32768 tokens, 56.0 tok/s, 13 s
+[strata] thinking: 759 of max 32768 tokens, 55.9 tok/s, 14 s
+[strata] thinking: 817 of max 32768 tokens, 55.9 tok/s, 15 s
+[strata] answering: 880 of max 32768 tokens, 56.3 tok/s, 16 s
+[strata] done: 939 tokens in 17 s (56.7 tok/s) (stop, cancel=False), expert cache 95.2% hit
+[strata] thinking: 20 of max 32768 tokens, 63.6 tok/s, 1 s
+[strata] thinking: 94 of max 32768 tokens, 69.9 tok/s, 2 s
+[strata] thinking: 148 of max 32768 tokens, 62.9 tok/s, 3 s
+[strata] thinking: 202 of max 32768 tokens, 60.0 tok/s, 4 s
+[strata] thinking: 257 of max 32768 tokens, 58.6 tok/s, 5 s
+[strata] thinking: 302 of max 32768 tokens, 55.9 tok/s, 6 s
+[strata] thinking: 350 of max 32768 tokens, 54.3 tok/s, 7 s
+[strata] thinking: 400 of max 32768 tokens, 53.7 tok/s, 8 s
+[strata] thinking: 448 of max 32768 tokens, 52.9 tok/s, 9 s
+[strata] thinking: 500 of max 32768 tokens, 52.7 tok/s, 10 s
+[strata] thinking: 564 of max 32768 tokens, 53.5 tok/s, 11 s
+[strata] thinking: 627 of max 32768 tokens, 54.2 tok/s, 12 s
+[strata] thinking: 676 of max 32768 tokens, 53.7 tok/s, 13 s
+[strata] thinking: 725 of max 32768 tokens, 53.3 tok/s, 14 s
+[strata] thinking: 775 of max 32768 tokens, 53.1 tok/s, 15 s
+[strata] thinking: 826 of max 32768 tokens, 52.9 tok/s, 16 s
+[strata] thinking: 879 of max 32768 tokens, 52.8 tok/s, 17 s
+[strata] thinking: 935 of max 32768 tokens, 53.0 tok/s, 18 s
+[strata] thinking: 997 of max 32768 tokens, 53.4 tok/s, 19 s
+[strata] thinking: 1061 of max 32768 tokens, 53.9 tok/s, 20 s
+[strata] thinking: 1115 of max 32768 tokens, 53.9 tok/s, 21 s
+[strata] thinking: 1164 of max 32768 tokens, 53.6 tok/s, 22 s
+[strata] thinking: 1219 of max 32768 tokens, 53.6 tok/s, 23 s
+[strata] thinking: 1271 of max 32768 tokens, 53.5 tok/s, 24 s
+[strata] thinking: 1325 of max 32768 tokens, 53.5 tok/s, 25 s
+[strata] thinking: 1378 of max 32768 tokens, 53.5 tok/s, 26 s
+[strata] thinking: 1441 of max 32768 tokens, 53.8 tok/s, 27 s
+[strata] thinking: 1494 of max 32768 tokens, 53.8 tok/s, 28 s
+[strata] thinking: 1566 of max 32768 tokens, 54.4 tok/s, 30 s
+[strata] thinking: 1644 of max 32768 tokens, 55.1 tok/s, 31 s
+[strata] thinking: 1699 of max 32768 tokens, 55.1 tok/s, 32 s
+[strata] thinking: 1751 of max 32768 tokens, 55.0 tok/s, 33 s
+[strata] thinking: 1805 of max 32768 tokens, 54.9 tok/s, 34 s
+[strata] thinking: 1869 of max 32768 tokens, 55.1 tok/s, 35 s
+[strata] thinking: 1930 of max 32768 tokens, 55.3 tok/s, 36 s
+[strata] thinking: 1984 of max 32768 tokens, 55.2 tok/s, 37 s
+[strata] thinking: 2040 of max 32768 tokens, 55.2 tok/s, 38 s
+[strata] thinking: 2091 of max 32768 tokens, 55.1 tok/s, 39 s
+[strata] thinking: 2155 of max 32768 tokens, 55.3 tok/s, 40 s
+[strata] thinking: 2236 of max 32768 tokens, 55.9 tok/s, 41 s
+[strata] thinking: 2309 of max 32768 tokens, 56.3 tok/s, 42 s
+[strata] thinking: 2379 of max 32768 tokens, 56.6 tok/s, 43 s
+[strata] thinking: 2431 of max 32768 tokens, 56.5 tok/s, 44 s
+[strata] thinking: 2483 of max 32768 tokens, 56.4 tok/s, 45 s
+[strata] thinking: 2539 of max 32768 tokens, 56.3 tok/s, 46 s
+[strata] thinking: 2596 of max 32768 tokens, 56.3 tok/s, 47 s
+[strata] thinking: 2644 of max 32768 tokens, 56.1 tok/s, 48 s
+[strata] thinking: 2696 of max 32768 tokens, 56.0 tok/s, 49 s
+[strata] thinking: 2751 of max 32768 tokens, 56.0 tok/s, 50 s
+[strata] thinking: 2806 of max 32768 tokens, 55.9 tok/s, 51 s
+[strata] thinking: 2860 of max 32768 tokens, 55.9 tok/s, 52 s
+[strata] thinking: 2915 of max 32768 tokens, 55.9 tok/s, 53 s
+[strata] thinking: 2968 of max 32768 tokens, 55.8 tok/s, 54 s
+[strata] thinking: 3030 of max 32768 tokens, 55.9 tok/s, 55 s
+[strata] thinking: 3105 of max 32768 tokens, 56.2 tok/s, 56 s
+[strata] thinking: 3177 of max 32768 tokens, 56.5 tok/s, 57 s
+[strata] thinking: 3239 of max 32768 tokens, 56.5 tok/s, 58 s
+[strata] thinking: 3296 of max 32768 tokens, 56.5 tok/s, 59 s
+[strata] thinking: 3348 of max 32768 tokens, 56.4 tok/s, 60 s
+[strata] thinking: 3399 of max 32768 tokens, 56.3 tok/s, 61 s
+[strata] thinking: 3451 of max 32768 tokens, 56.3 tok/s, 62 s
+[strata] thinking: 3497 of max 32768 tokens, 56.1 tok/s, 63 s
+[strata] thinking: 3544 of max 32768 tokens, 55.9 tok/s, 64 s
+[strata] thinking: 3592 of max 32768 tokens, 55.8 tok/s, 65 s
+[strata] thinking: 3640 of max 32768 tokens, 55.7 tok/s, 66 s
+[strata] answering: 3702 of max 32768 tokens, 55.7 tok/s, 67 s
+[strata] answering: 3776 of max 32768 tokens, 56.0 tok/s, 68 s
+[strata] answering: 3848 of max 32768 tokens, 56.2 tok/s, 69 s
+[strata] done: 3921 tokens in 70 s (56.5 tok/s) (stop, cancel=False), expert cache 95.9% hit
+[strata] reading the prompt: 571 of 576 tokens, 1 s so far
+[strata] answering: 35 of max 32768 tokens, 41.0 tok/s, 2 s
+[strata] done: 67 tokens in 3 s (45.4 tok/s) (stop, cancel=False), expert cache 81.2% hit
+[strata] reading the prompt: 8,192 of 114,808 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 114,808 tokens, 8 s so far
+[strata] reading the prompt: 24,576 of 114,808 tokens, 12 s so far
+[strata] reading the prompt: 32,768 of 114,808 tokens, 16 s so far
+[strata] reading the prompt: 40,960 of 114,808 tokens, 20 s so far
+[strata] reading the prompt: 49,152 of 114,808 tokens, 25 s so far
+[strata] reading the prompt: 57,344 of 114,808 tokens, 29 s so far
+[strata] reading the prompt: 65,536 of 114,808 tokens, 34 s so far
+[strata] reading the prompt: 73,728 of 114,808 tokens, 38 s so far
+[strata] reading the prompt: 81,920 of 114,808 tokens, 43 s so far
+[strata] reading the prompt: 90,112 of 114,808 tokens, 48 s so far
+[strata] reading the prompt: 98,304 of 114,808 tokens, 53 s so far
+[strata] reading the prompt: 106,496 of 114,808 tokens, 59 s so far
+[strata] reading the prompt: 114,688 of 114,808 tokens, 64 s so far
+[strata] reading the prompt: 114,803 of 114,808 tokens, 65 s so far
+[strata] thinking: 24 of max 32768 tokens, 45.3 tok/s, 66 s
+[strata] thinking: 77 of max 32768 tokens, 49.2 tok/s, 67 s
+[strata] done: 108 tokens in 68 s (53.5 tok/s) (stop, cancel=False), expert cache 84.8% hit
+[strata] reading the prompt: 8,192 of 12,248 tokens, 4 s so far
+[strata] reading the prompt: 12,243 of 12,248 tokens, 7 s so far
+[strata] done: 1 tokens in 8 s (127.3 tok/s) (length, cancel=False), expert cache 96.0% hit
+[strata] reading the prompt: 637 of 642 tokens, 1 s so far
+[strata] answering: 54 of max 32768 tokens, 62.7 tok/s, 2 s
+[strata] done: 88 tokens in 3 s (66.0 tok/s) (stop, cancel=False), expert cache 90.2% hit
+[strata] thinking: 21 of max 32768 tokens, 76.4 tok/s, 1 s
+[strata] thinking: 90 of max 32768 tokens, 70.5 tok/s, 2 s
+[strata] thinking: 155 of max 32768 tokens, 68.0 tok/s, 3 s
+[strata] thinking: 217 of max 32768 tokens, 65.6 tok/s, 4 s
+[strata] thinking: 271 of max 32768 tokens, 62.5 tok/s, 5 s
+[strata] thinking: 326 of max 32768 tokens, 61.1 tok/s, 6 s
+[strata] thinking: 386 of max 32768 tokens, 60.6 tok/s, 7 s
+[strata] thinking: 435 of max 32768 tokens, 59.0 tok/s, 8 s
+[strata] thinking: 492 of max 32768 tokens, 58.4 tok/s, 9 s
+[strata] thinking: 548 of max 32768 tokens, 58.2 tok/s, 10 s
+[strata] thinking: 597 of max 32768 tokens, 57.3 tok/s, 11 s
+[strata] thinking: 651 of max 32768 tokens, 56.9 tok/s, 12 s
+[strata] thinking: 704 of max 32768 tokens, 56.5 tok/s, 13 s
+[strata] thinking: 757 of max 32768 tokens, 56.2 tok/s, 14 s
+[strata] thinking: 802 of max 32768 tokens, 55.4 tok/s, 15 s
+[strata] thinking: 865 of max 32768 tokens, 55.9 tok/s, 16 s
+[strata] thinking: 933 of max 32768 tokens, 56.6 tok/s, 17 s
+[strata] thinking: 1002 of max 32768 tokens, 57.3 tok/s, 18 s
+[strata] thinking: 1059 of max 32768 tokens, 57.2 tok/s, 19 s
+[strata] thinking: 1125 of max 32768 tokens, 57.5 tok/s, 20 s
+[strata] thinking: 1201 of max 32768 tokens, 58.3 tok/s, 21 s
+[strata] thinking: 1267 of max 32768 tokens, 58.6 tok/s, 22 s
+[strata] thinking: 1312 of max 32768 tokens, 58.0 tok/s, 23 s
+[strata] thinking: 1362 of max 32768 tokens, 57.6 tok/s, 24 s
+[strata] thinking: 1408 of max 32768 tokens, 57.1 tok/s, 25 s
+[strata] thinking: 1469 of max 32768 tokens, 57.2 tok/s, 26 s
+[strata] thinking: 1524 of max 32768 tokens, 57.1 tok/s, 27 s
+[strata] thinking: 1581 of max 32768 tokens, 57.0 tok/s, 28 s
+[strata] thinking: 1652 of max 32768 tokens, 57.5 tok/s, 29 s
+[strata] thinking: 1707 of max 32768 tokens, 57.4 tok/s, 30 s
+[strata] thinking: 1767 of max 32768 tokens, 57.5 tok/s, 31 s
+[strata] thinking: 1816 of max 32768 tokens, 57.2 tok/s, 32 s
+[strata] thinking: 1882 of max 32768 tokens, 57.4 tok/s, 34 s
+[strata] thinking: 1945 of max 32768 tokens, 57.5 tok/s, 35 s
+[strata] thinking: 2009 of max 32768 tokens, 57.7 tok/s, 36 s
+[strata] thinking: 2082 of max 32768 tokens, 58.1 tok/s, 37 s
+[strata] thinking: 2152 of max 32768 tokens, 58.4 tok/s, 38 s
+[strata] thinking: 2210 of max 32768 tokens, 58.4 tok/s, 39 s
+[strata] thinking: 2262 of max 32768 tokens, 58.2 tok/s, 40 s
+[strata] thinking: 2315 of max 32768 tokens, 58.0 tok/s, 41 s
+[strata] thinking: 2373 of max 32768 tokens, 58.0 tok/s, 42 s
+[strata] thinking: 2432 of max 32768 tokens, 58.0 tok/s, 43 s
+[strata] thinking: 2486 of max 32768 tokens, 57.9 tok/s, 44 s
+[strata] thinking: 2534 of max 32768 tokens, 57.6 tok/s, 45 s
+[strata] thinking: 2579 of max 32768 tokens, 57.3 tok/s, 46 s
+[strata] thinking: 2624 of max 32768 tokens, 57.0 tok/s, 47 s
+[strata] thinking: 2683 of max 32768 tokens, 57.0 tok/s, 48 s
+[strata] thinking: 2733 of max 32768 tokens, 56.9 tok/s, 49 s
+[strata] thinking: 2788 of max 32768 tokens, 56.8 tok/s, 50 s
+[strata] thinking: 2841 of max 32768 tokens, 56.7 tok/s, 51 s
+[strata] thinking: 2898 of max 32768 tokens, 56.7 tok/s, 52 s
+[strata] thinking: 2971 of max 32768 tokens, 57.0 tok/s, 53 s
+[strata] thinking: 3051 of max 32768 tokens, 57.4 tok/s, 54 s
+[strata] thinking: 3106 of max 32768 tokens, 57.3 tok/s, 55 s
+[strata] thinking: 3164 of max 32768 tokens, 57.3 tok/s, 56 s
+[strata] thinking: 3230 of max 32768 tokens, 57.4 tok/s, 57 s
+[strata] thinking: 3283 of max 32768 tokens, 57.3 tok/s, 58 s
+[strata] thinking: 3335 of max 32768 tokens, 57.2 tok/s, 59 s
+[strata] thinking: 3392 of max 32768 tokens, 57.2 tok/s, 60 s
+[strata] thinking: 3445 of max 32768 tokens, 57.1 tok/s, 61 s
+[strata] thinking: 3501 of max 32768 tokens, 57.0 tok/s, 62 s
+[strata] thinking: 3559 of max 32768 tokens, 57.0 tok/s, 63 s
+[strata] thinking: 3617 of max 32768 tokens, 57.0 tok/s, 64 s
+[strata] thinking: 3692 of max 32768 tokens, 57.3 tok/s, 65 s
+[strata] thinking: 3756 of max 32768 tokens, 57.4 tok/s, 66 s
+[strata] thinking: 3813 of max 32768 tokens, 57.4 tok/s, 67 s
+[strata] thinking: 3880 of max 32768 tokens, 57.5 tok/s, 68 s
+[strata] thinking: 3931 of max 32768 tokens, 57.4 tok/s, 69 s
+[strata] thinking: 3987 of max 32768 tokens, 57.3 tok/s, 70 s
+[strata] thinking: 4035 of max 32768 tokens, 57.2 tok/s, 71 s
+[strata] thinking: 4096 of max 32768 tokens, 57.3 tok/s, 72 s
+[strata] thinking: 4156 of max 32768 tokens, 57.3 tok/s, 73 s
+[strata] thinking: 4203 of max 32768 tokens, 57.1 tok/s, 74 s
+[strata] thinking: 4272 of max 32768 tokens, 57.2 tok/s, 75 s
+[strata] thinking: 4332 of max 32768 tokens, 57.3 tok/s, 76 s
+[strata] thinking: 4385 of max 32768 tokens, 57.2 tok/s, 77 s
+[strata] thinking: 4435 of max 32768 tokens, 57.1 tok/s, 78 s
+[strata] thinking: 4503 of max 32768 tokens, 57.2 tok/s, 79 s
+[strata] thinking: 4553 of max 32768 tokens, 57.1 tok/s, 80 s
+[strata] thinking: 4608 of max 32768 tokens, 57.1 tok/s, 81 s
+[strata] thinking: 4667 of max 32768 tokens, 57.1 tok/s, 83 s
+[strata] thinking: 4716 of max 32768 tokens, 57.0 tok/s, 84 s
+[strata] thinking: 4778 of max 32768 tokens, 57.0 tok/s, 85 s
+[strata] thinking: 4827 of max 32768 tokens, 56.9 tok/s, 86 s
+[strata] thinking: 4876 of max 32768 tokens, 56.8 tok/s, 87 s
+[strata] thinking: 4933 of max 32768 tokens, 56.8 tok/s, 88 s
+[strata] thinking: 4992 of max 32768 tokens, 56.8 tok/s, 89 s
+[strata] thinking: 5047 of max 32768 tokens, 56.8 tok/s, 90 s
+[strata] thinking: 5095 of max 32768 tokens, 56.7 tok/s, 91 s
+[strata] thinking: 5150 of max 32768 tokens, 56.6 tok/s, 92 s
+[strata] thinking: 5201 of max 32768 tokens, 56.6 tok/s, 93 s
+[strata] thinking: 5250 of max 32768 tokens, 56.5 tok/s, 94 s
+[strata] thinking: 5303 of max 32768 tokens, 56.4 tok/s, 95 s
+[strata] thinking: 5360 of max 32768 tokens, 56.4 tok/s, 96 s
+[strata] thinking: 5414 of max 32768 tokens, 56.4 tok/s, 97 s
+[strata] thinking: 5471 of max 32768 tokens, 56.4 tok/s, 98 s
+[strata] thinking: 5533 of max 32768 tokens, 56.4 tok/s, 99 s
+[strata] thinking: 5585 of max 32768 tokens, 56.4 tok/s, 100 s
+[strata] thinking: 5638 of max 32768 tokens, 56.3 tok/s, 101 s
+[strata] thinking: 5691 of max 32768 tokens, 56.3 tok/s, 102 s
+[strata] thinking: 5753 of max 32768 tokens, 56.3 tok/s, 103 s
+[strata] thinking: 5812 of max 32768 tokens, 56.4 tok/s, 104 s
+[strata] thinking: 5869 of max 32768 tokens, 56.3 tok/s, 105 s
+[strata] thinking: 5946 of max 32768 tokens, 56.5 tok/s, 106 s
+[strata] thinking: 6018 of max 32768 tokens, 56.7 tok/s, 107 s
+[strata] thinking: 6084 of max 32768 tokens, 56.7 tok/s, 108 s
+[strata] thinking: 6136 of max 32768 tokens, 56.7 tok/s, 109 s
+[strata] thinking: 6193 of max 32768 tokens, 56.7 tok/s, 110 s
+[strata] thinking: 6246 of max 32768 tokens, 56.6 tok/s, 111 s
+[strata] thinking: 6301 of max 32768 tokens, 56.6 tok/s, 112 s
+[strata] thinking: 6351 of max 32768 tokens, 56.6 tok/s, 113 s
+[strata] thinking: 6401 of max 32768 tokens, 56.5 tok/s, 114 s
+[strata] thinking: 6443 of max 32768 tokens, 56.4 tok/s, 115 s
+[strata] thinking: 6492 of max 32768 tokens, 56.3 tok/s, 116 s
+[strata] thinking: 6548 of max 32768 tokens, 56.3 tok/s, 117 s
+[strata] thinking: 6608 of max 32768 tokens, 56.3 tok/s, 118 s
+[strata] thinking: 6669 of max 32768 tokens, 56.3 tok/s, 119 s
+[strata] thinking: 6730 of max 32768 tokens, 56.3 tok/s, 120 s
+[strata] thinking: 6780 of max 32768 tokens, 56.3 tok/s, 121 s
+[strata] thinking: 6846 of max 32768 tokens, 56.4 tok/s, 122 s
+[strata] thinking: 6924 of max 32768 tokens, 56.5 tok/s, 123 s
+[strata] thinking: 7002 of max 32768 tokens, 56.7 tok/s, 124 s
+[strata] thinking: 7048 of max 32768 tokens, 56.6 tok/s, 125 s
+[strata] thinking: 7107 of max 32768 tokens, 56.6 tok/s, 126 s
+[strata] thinking: 7150 of max 32768 tokens, 56.5 tok/s, 127 s
+[strata] thinking: 7201 of max 32768 tokens, 56.4 tok/s, 128 s
+[strata] thinking: 7254 of max 32768 tokens, 56.4 tok/s, 129 s
+[strata] thinking: 7301 of max 32768 tokens, 56.3 tok/s, 130 s
+[strata] thinking: 7348 of max 32768 tokens, 56.3 tok/s, 131 s
+[strata] thinking: 7401 of max 32768 tokens, 56.2 tok/s, 132 s
+[strata] thinking: 7464 of max 32768 tokens, 56.3 tok/s, 133 s
+[strata] thinking: 7526 of max 32768 tokens, 56.3 tok/s, 134 s
+[strata] thinking: 7584 of max 32768 tokens, 56.3 tok/s, 135 s
+[strata] thinking: 7636 of max 32768 tokens, 56.3 tok/s, 136 s
+[strata] thinking: 7685 of max 32768 tokens, 56.2 tok/s, 137 s
+[strata] thinking: 7746 of max 32768 tokens, 56.2 tok/s, 138 s
+[strata] thinking: 7796 of max 32768 tokens, 56.2 tok/s, 139 s
+[strata] thinking: 7852 of max 32768 tokens, 56.2 tok/s, 141 s
+[strata] thinking: 7921 of max 32768 tokens, 56.3 tok/s, 142 s
+[strata] thinking: 7995 of max 32768 tokens, 56.4 tok/s, 143 s
+[strata] thinking: 8038 of max 32768 tokens, 56.3 tok/s, 144 s
+[strata] thinking: 8100 of max 32768 tokens, 56.3 tok/s, 145 s
+[strata] thinking: 8153 of max 32768 tokens, 56.3 tok/s, 146 s
+[strata] thinking: 8205 of max 32768 tokens, 56.2 tok/s, 147 s
+[strata] thinking: 8260 of max 32768 tokens, 56.2 tok/s, 148 s
+[strata] thinking: 8310 of max 32768 tokens, 56.2 tok/s, 149 s
+[strata] thinking: 8360 of max 32768 tokens, 56.1 tok/s, 150 s
+[strata] thinking: 8408 of max 32768 tokens, 56.0 tok/s, 151 s
+[strata] thinking: 8459 of max 32768 tokens, 56.0 tok/s, 152 s
+[strata] thinking: 8511 of max 32768 tokens, 56.0 tok/s, 153 s
+[strata] thinking: 8575 of max 32768 tokens, 56.0 tok/s, 154 s
+[strata] thinking: 8649 of max 32768 tokens, 56.1 tok/s, 155 s
+[strata] thinking: 8707 of max 32768 tokens, 56.1 tok/s, 156 s
+[strata] thinking: 8761 of max 32768 tokens, 56.1 tok/s, 157 s
+[strata] thinking: 8805 of max 32768 tokens, 56.0 tok/s, 158 s
+[strata] thinking: 8856 of max 32768 tokens, 56.0 tok/s, 159 s
+[strata] thinking: 8903 of max 32768 tokens, 55.9 tok/s, 160 s
+[strata] thinking: 8957 of max 32768 tokens, 55.9 tok/s, 161 s
+[strata] thinking: 9007 of max 32768 tokens, 55.9 tok/s, 162 s
+[strata] thinking: 9055 of max 32768 tokens, 55.8 tok/s, 163 s
+[strata] thinking: 9114 of max 32768 tokens, 55.8 tok/s, 164 s
+[strata] thinking: 9159 of max 32768 tokens, 55.7 tok/s, 165 s
+[strata] thinking: 9222 of max 32768 tokens, 55.8 tok/s, 166 s
+[strata] thinking: 9277 of max 32768 tokens, 55.8 tok/s, 167 s
+[strata] thinking: 9328 of max 32768 tokens, 55.7 tok/s, 168 s
+[strata] thinking: 9383 of max 32768 tokens, 55.7 tok/s, 169 s
+[strata] thinking: 9425 of max 32768 tokens, 55.6 tok/s, 170 s
+[strata] thinking: 9474 of max 32768 tokens, 55.6 tok/s, 171 s
+[strata] thinking: 9535 of max 32768 tokens, 55.6 tok/s, 172 s
+[strata] thinking: 9602 of max 32768 tokens, 55.7 tok/s, 173 s
+[strata] thinking: 9666 of max 32768 tokens, 55.7 tok/s, 174 s
+[strata] thinking: 9729 of max 32768 tokens, 55.7 tok/s, 175 s
+[strata] thinking: 9781 of max 32768 tokens, 55.7 tok/s, 176 s
+[strata] answering: 9838 of max 32768 tokens, 55.7 tok/s, 177 s
+[strata] answering: 9917 of max 32768 tokens, 55.8 tok/s, 178 s
+[strata] answering: 9992 of max 32768 tokens, 55.9 tok/s, 179 s
+[strata] done: 10046 tokens in 180 s (56.0 tok/s) (stop, cancel=False), expert cache 95.5% hit
+[strata] thinking: 18 of max 32768 tokens, 68.5 tok/s, 1 s
+[strata] thinking: 82 of max 32768 tokens, 64.7 tok/s, 2 s
+[strata] thinking: 146 of max 32768 tokens, 63.8 tok/s, 3 s
+[strata] thinking: 210 of max 32768 tokens, 63.8 tok/s, 4 s
+[strata] thinking: 285 of max 32768 tokens, 66.2 tok/s, 5 s
+[strata] answering: 358 of max 32768 tokens, 66.9 tok/s, 6 s
+[strata] done: 432 tokens in 7 s (69.1 tok/s) (stop, cancel=False), expert cache 90.7% hit
+[strata] thinking: 16 of max 32768 tokens, 43.9 tok/s, 1 s
+[strata] thinking: 77 of max 32768 tokens, 55.6 tok/s, 2 s
+[strata] thinking: 138 of max 32768 tokens, 57.1 tok/s, 3 s
+[strata] done: 141 tokens in 3 s (58.4 tok/s) (stop, cancel=False), expert cache 89.5% hit
+[strata] reading the prompt: 663 of 668 tokens, 1 s so far
+[strata] writing a tool call: get_logs: 51 of max 32768 tokens, 58.1 tok/s, 3 s
+[strata] done: 87 tokens in 3 s (61.0 tok/s) (stop, cancel=False), expert cache 80.6% hit
+[strata] thinking: 19 of max 32768 tokens, 52.8 tok/s, 1 s
+[strata] answering: 74 of max 32768 tokens, 52.6 tok/s, 2 s
+[strata] done: 90 tokens in 2 s (55.3 tok/s) (stop, cancel=False), expert cache 88.2% hit
+[strata] reading the prompt: 590 of 595 tokens, 1 s so far
+[strata] writing a tool call: get_pods: 44 of max 32768 tokens, 50.8 tok/s, 2 s
+[strata] done: 77 tokens in 3 s (60.0 tok/s) (stop, cancel=False), expert cache 92.1% hit
+[strata] thinking: 29 of max 32768 tokens, 74.1 tok/s, 1 s
+[strata] thinking: 96 of max 32768 tokens, 68.6 tok/s, 2 s
+[strata] done: 109 tokens in 2 s (71.7 tok/s) (stop, cancel=False), expert cache 92.8% hit
+[strata] thinking: 14 of max 32768 tokens, 42.5 tok/s, 1 s
+[strata] thinking: 77 of max 32768 tokens, 56.6 tok/s, 2 s
+[strata] thinking: 124 of max 32768 tokens, 52.0 tok/s, 3 s
+[strata] thinking: 174 of max 32768 tokens, 51.2 tok/s, 4 s
+[strata] thinking: 228 of max 32768 tokens, 51.4 tok/s, 5 s
+[strata] thinking: 299 of max 32768 tokens, 54.7 tok/s, 6 s
+[strata] thinking: 373 of max 32768 tokens, 57.6 tok/s, 7 s
+[strata] thinking: 422 of max 32768 tokens, 56.4 tok/s, 8 s
+[strata] thinking: 473 of max 32768 tokens, 55.6 tok/s, 9 s
+[strata] thinking: 539 of max 32768 tokens, 56.4 tok/s, 10 s
+[strata] thinking: 585 of max 32768 tokens, 55.4 tok/s, 11 s
+[strata] thinking: 643 of max 32768 tokens, 55.5 tok/s, 12 s
+[strata] thinking: 694 of max 32768 tokens, 55.1 tok/s, 13 s
+[strata] thinking: 746 of max 32768 tokens, 54.7 tok/s, 14 s
+[strata] thinking: 813 of max 32768 tokens, 55.3 tok/s, 15 s
+[strata] thinking: 891 of max 32768 tokens, 56.6 tok/s, 16 s
+[strata] thinking: 958 of max 32768 tokens, 57.2 tok/s, 17 s
+[strata] thinking: 1010 of max 32768 tokens, 56.8 tok/s, 18 s
+[strata] thinking: 1062 of max 32768 tokens, 56.5 tok/s, 19 s
+[strata] thinking: 1118 of max 32768 tokens, 56.5 tok/s, 20 s
+[strata] thinking: 1177 of max 32768 tokens, 56.6 tok/s, 21 s
+[strata] thinking: 1227 of max 32768 tokens, 56.2 tok/s, 22 s
+[strata] thinking: 1282 of max 32768 tokens, 56.1 tok/s, 24 s
+[strata] thinking: 1332 of max 32768 tokens, 55.8 tok/s, 25 s
+[strata] answering: 1399 of max 32768 tokens, 56.2 tok/s, 26 s
+[strata] answering: 1471 of max 32768 tokens, 56.7 tok/s, 27 s
+[strata] done: 1487 tokens in 27 s (56.9 tok/s) (stop, cancel=False), expert cache 94.8% hit
+[strata] reading the prompt: 625 of 630 tokens, 1 s so far
+[strata] writing a tool call: run_tests: 51 of max 32768 tokens, 58.1 tok/s, 2 s
+[strata] done: 55 tokens in 2 s (58.5 tok/s) (stop, cancel=False), expert cache 84.5% hit
+[strata] reading the prompt: 1,911 of 1,916 tokens, 2 s so far
+[strata] thinking: 48 of max 32768 tokens, 60.8 tok/s, 3 s
+[strata] thinking: 111 of max 32768 tokens, 61.4 tok/s, 4 s
+[strata] thinking: 177 of max 32768 tokens, 62.7 tok/s, 5 s
+[strata] done: 223 tokens in 5 s (65.2 tok/s) (stop, cancel=False), expert cache 88.6% hit
+[strata] thinking: 14 of max 32768 tokens, 57.5 tok/s, 1 s
+[strata] thinking: 88 of max 32768 tokens, 69.8 tok/s, 2 s
+[strata] thinking: 154 of max 32768 tokens, 67.3 tok/s, 3 s
+[strata] thinking: 235 of max 32768 tokens, 70.8 tok/s, 4 s
+[strata] answering: 309 of max 32768 tokens, 71.2 tok/s, 5 s
+[strata] answering: 389 of max 32768 tokens, 72.1 tok/s, 6 s
+[strata] done: 459 tokens in 7 s (72.1 tok/s) (stop, cancel=False), expert cache 92.8% hit
+[strata] reading the prompt: 655 of 660 tokens, 1 s so far
+[strata] writing a tool call: get_logs: 51 of max 32768 tokens, 56.4 tok/s, 2 s
+[strata] done: 92 tokens in 3 s (62.9 tok/s) (stop, cancel=False), expert cache 87.2% hit
+[strata] thinking: 22 of max 32768 tokens, 64.5 tok/s, 1 s
+[strata] thinking: 92 of max 32768 tokens, 68.0 tok/s, 2 s
+[strata] thinking: 159 of max 32768 tokens, 66.9 tok/s, 3 s
+[strata] thinking: 216 of max 32768 tokens, 63.6 tok/s, 4 s
+[strata] answering: 276 of max 32768 tokens, 62.5 tok/s, 5 s
+[strata] answering: 346 of max 32768 tokens, 63.8 tok/s, 6 s
+[strata] answering: 423 of max 32768 tokens, 65.5 tok/s, 7 s
+[strata] done: 428 tokens in 7 s (65.9 tok/s) (stop, cancel=False), expert cache 95.4% hit
+[strata] thinking: 11 of max 32768 tokens, 63.6 tok/s, 1 s
+[strata] answering: 73 of max 32768 tokens, 62.2 tok/s, 2 s
+[strata] done: 83 tokens in 2 s (64.8 tok/s) (stop, cancel=False), expert cache 91.9% hit
+[strata] reading the prompt: 573 of 578 tokens, 1 s so far
+[strata] thinking: 50 of max 32768 tokens, 57.4 tok/s, 2 s
+[strata] done: 105 tokens in 3 s (60.3 tok/s) (stop, cancel=False), expert cache 92.9% hit
+[strata] reading the prompt: 8,192 of 12,248 tokens, 4 s so far
+[strata] reading the prompt: 12,243 of 12,248 tokens, 7 s so far
+[strata] thinking: 32 of max 512 tokens, 56.3 tok/s, 8 s
+[strata] thinking: 83 of max 512 tokens, 52.5 tok/s, 9 s
+[strata] thinking: 136 of max 512 tokens, 51.8 tok/s, 10 s
+[strata] thinking: 195 of max 512 tokens, 53.2 tok/s, 11 s
+[strata] thinking: 255 of max 512 tokens, 54.5 tok/s, 12 s
+[strata] thinking: 308 of max 512 tokens, 53.8 tok/s, 13 s
+[strata] answering: 365 of max 512 tokens, 54.3 tok/s, 14 s
+[strata] answering: 414 of max 512 tokens, 53.4 tok/s, 15 s
+[strata] answering: 471 of max 512 tokens, 53.5 tok/s, 16 s
+[strata] done: 512 tokens in 17 s (53.5 tok/s) (length, cancel=False), expert cache 95.4% hit
+[strata] reading the prompt: 578 of 583 tokens, 1 s so far
+[strata] done: 55 tokens in 2 s (73.0 tok/s) (stop, cancel=False), expert cache 94.4% hit
+[strata] thinking: 24 of max 32768 tokens, 58.6 tok/s, 1 s
+[strata] thinking: 90 of max 32768 tokens, 61.7 tok/s, 2 s
+[strata] done: 152 tokens in 3 s (63.4 tok/s) (stop, cancel=False), expert cache 91.1% hit
+[strata] reading the prompt: 1,906 of 1,911 tokens, 2 s so far
+[strata] thinking: 52 of max 32768 tokens, 62.9 tok/s, 3 s
+[strata] done: 113 tokens in 4 s (62.7 tok/s) (stop, cancel=False), expert cache 92.8% hit
+[strata] reading the prompt: 626 of 631 tokens, 1 s so far
+[strata] done: 49 tokens in 2 s (71.1 tok/s) (stop, cancel=False), expert cache 94.9% hit
+[strata] reading the prompt: 8,192 of 28,794 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 28,794 tokens, 9 s so far
+[strata] reading the prompt: 24,576 of 28,794 tokens, 13 s so far
+[strata] reading the prompt: 28,789 of 28,794 tokens, 16 s so far
+[strata] thinking: 40 of max 32768 tokens, 71.7 tok/s, 17 s
+[strata] thinking: 107 of max 32768 tokens, 66.9 tok/s, 18 s
+[strata] thinking: 159 of max 32768 tokens, 60.8 tok/s, 19 s
+[strata] done: 195 tokens in 20 s (61.6 tok/s) (stop, cancel=False), expert cache 94.7% hit
+[strata] thinking: 2 of max 32768 tokens, 48.8 tok/s, 1 s
+[strata] thinking: 75 of max 32768 tokens, 70.1 tok/s, 2 s
+[strata] thinking: 127 of max 32768 tokens, 61.2 tok/s, 3 s
+[strata] thinking: 178 of max 32768 tokens, 57.0 tok/s, 4 s
+[strata] thinking: 230 of max 32768 tokens, 55.5 tok/s, 5 s
+[strata] thinking: 287 of max 32768 tokens, 55.6 tok/s, 6 s
+[strata] thinking: 339 of max 32768 tokens, 55.0 tok/s, 7 s
+[strata] thinking: 390 of max 32768 tokens, 54.1 tok/s, 8 s
+[strata] thinking: 446 of max 32768 tokens, 54.2 tok/s, 9 s
+[strata] thinking: 503 of max 32768 tokens, 54.4 tok/s, 10 s
+[strata] thinking: 572 of max 32768 tokens, 55.7 tok/s, 11 s
+[strata] thinking: 623 of max 32768 tokens, 55.2 tok/s, 12 s
+[strata] thinking: 671 of max 32768 tokens, 54.6 tok/s, 13 s
+[strata] thinking: 728 of max 32768 tokens, 54.7 tok/s, 14 s
+[strata] thinking: 778 of max 32768 tokens, 54.3 tok/s, 15 s
+[strata] thinking: 829 of max 32768 tokens, 54.0 tok/s, 16 s
+[strata] thinking: 887 of max 32768 tokens, 54.3 tok/s, 17 s
+[strata] thinking: 965 of max 32768 tokens, 55.6 tok/s, 18 s
+[strata] thinking: 1025 of max 32768 tokens, 55.8 tok/s, 19 s
+[strata] thinking: 1074 of max 32768 tokens, 55.4 tok/s, 20 s
+[strata] thinking: 1135 of max 32768 tokens, 55.6 tok/s, 21 s
+[strata] thinking: 1180 of max 32768 tokens, 55.1 tok/s, 22 s
+[strata] thinking: 1230 of max 32768 tokens, 54.8 tok/s, 23 s
+[strata] thinking: 1274 of max 32768 tokens, 54.3 tok/s, 24 s
+[strata] thinking: 1318 of max 32768 tokens, 53.9 tok/s, 25 s
+[strata] thinking: 1364 of max 32768 tokens, 53.5 tok/s, 26 s
+[strata] thinking: 1408 of max 32768 tokens, 53.1 tok/s, 28 s
+[strata] thinking: 1450 of max 32768 tokens, 52.7 tok/s, 29 s
+[strata] thinking: 1489 of max 32768 tokens, 52.2 tok/s, 30 s
+[strata] thinking: 1531 of max 32768 tokens, 51.8 tok/s, 31 s
+[strata] thinking: 1573 of max 32768 tokens, 51.4 tok/s, 32 s
+[strata] thinking: 1628 of max 32768 tokens, 51.5 tok/s, 33 s
+[strata] thinking: 1678 of max 32768 tokens, 51.5 tok/s, 34 s
+[strata] thinking: 1735 of max 32768 tokens, 51.6 tok/s, 35 s
+[strata] thinking: 1795 of max 32768 tokens, 51.8 tok/s, 36 s
+[strata] thinking: 1861 of max 32768 tokens, 52.2 tok/s, 37 s
+[strata] thinking: 1923 of max 32768 tokens, 52.4 tok/s, 38 s
+[strata] thinking: 1976 of max 32768 tokens, 52.4 tok/s, 39 s
+[strata] thinking: 2033 of max 32768 tokens, 52.5 tok/s, 40 s
+[strata] thinking: 2081 of max 32768 tokens, 52.4 tok/s, 41 s
+[strata] thinking: 2133 of max 32768 tokens, 52.4 tok/s, 42 s
+[strata] thinking: 2186 of max 32768 tokens, 52.4 tok/s, 43 s
+[strata] thinking: 2243 of max 32768 tokens, 52.5 tok/s, 44 s
+[strata] thinking: 2287 of max 32768 tokens, 52.3 tok/s, 45 s
+[strata] thinking: 2345 of max 32768 tokens, 52.4 tok/s, 46 s
+[strata] thinking: 2405 of max 32768 tokens, 52.5 tok/s, 47 s
+[strata] thinking: 2464 of max 32768 tokens, 52.6 tok/s, 48 s
+[strata] thinking: 2531 of max 32768 tokens, 52.9 tok/s, 49 s
+[strata] thinking: 2597 of max 32768 tokens, 53.2 tok/s, 50 s
+[strata] thinking: 2652 of max 32768 tokens, 53.2 tok/s, 51 s
+[strata] thinking: 2709 of max 32768 tokens, 53.3 tok/s, 52 s
+[strata] thinking: 2764 of max 32768 tokens, 53.3 tok/s, 53 s
+[strata] thinking: 2800 of max 32768 tokens, 52.9 tok/s, 54 s
+[strata] thinking: 2837 of max 32768 tokens, 52.6 tok/s, 55 s
+[strata] thinking: 2881 of max 32768 tokens, 52.4 tok/s, 56 s
+[strata] thinking: 2923 of max 32768 tokens, 52.2 tok/s, 57 s
+[strata] thinking: 2968 of max 32768 tokens, 52.1 tok/s, 58 s
+[strata] thinking: 3009 of max 32768 tokens, 51.8 tok/s, 59 s
+[strata] thinking: 3047 of max 32768 tokens, 51.6 tok/s, 60 s
+[strata] thinking: 3092 of max 32768 tokens, 51.5 tok/s, 61 s
+[strata] thinking: 3145 of max 32768 tokens, 51.5 tok/s, 62 s
+[strata] thinking: 3198 of max 32768 tokens, 51.5 tok/s, 63 s
+[strata] thinking: 3260 of max 32768 tokens, 51.6 tok/s, 64 s
+[strata] thinking: 3312 of max 32768 tokens, 51.6 tok/s, 65 s
+[strata] thinking: 3382 of max 32768 tokens, 51.9 tok/s, 66 s
+[strata] thinking: 3456 of max 32768 tokens, 52.2 tok/s, 67 s
+[strata] thinking: 3508 of max 32768 tokens, 52.2 tok/s, 68 s
+[strata] thinking: 3561 of max 32768 tokens, 52.2 tok/s, 69 s
+[strata] thinking: 3615 of max 32768 tokens, 52.2 tok/s, 70 s
+[strata] thinking: 3670 of max 32768 tokens, 52.2 tok/s, 71 s
+[strata] thinking: 3723 of max 32768 tokens, 52.2 tok/s, 72 s
+[strata] thinking: 3776 of max 32768 tokens, 52.2 tok/s, 73 s
+[strata] thinking: 3829 of max 32768 tokens, 52.2 tok/s, 74 s
+[strata] thinking: 3887 of max 32768 tokens, 52.3 tok/s, 75 s
+[strata] thinking: 3943 of max 32768 tokens, 52.3 tok/s, 76 s
+[strata] thinking: 3993 of max 32768 tokens, 52.2 tok/s, 77 s
+[strata] thinking: 4048 of max 32768 tokens, 52.3 tok/s, 78 s
+[strata] thinking: 4105 of max 32768 tokens, 52.3 tok/s, 79 s
+[strata] thinking: 4163 of max 32768 tokens, 52.4 tok/s, 80 s
+[strata] thinking: 4234 of max 32768 tokens, 52.6 tok/s, 81 s
+[strata] answering: 4288 of max 32768 tokens, 52.6 tok/s, 83 s
+[strata] answering: 4369 of max 32768 tokens, 52.9 tok/s, 84 s
+[strata] done: 4375 tokens in 84 s (52.9 tok/s) (stop, cancel=False), expert cache 96.7% hit
+[strata] reading the prompt: 584 of 589 tokens, 1 s so far
+[strata] writing a tool call: get_pods: 47 of max 32768 tokens, 53.0 tok/s, 2 s
+[strata] done: 61 tokens in 3 s (57.0 tok/s) (stop, cancel=False), expert cache 80.5% hit
+[strata] thinking: 6 of max 32768 tokens, 62.2 tok/s, 1 s
+[strata] thinking: 66 of max 32768 tokens, 57.8 tok/s, 2 s
+[strata] done: 103 tokens in 3 s (58.1 tok/s) (stop, cancel=False), expert cache 89.0% hit
+[strata] reading the prompt: 579 of 584 tokens, 1 s so far
+[strata] thinking: 45 of max 32768 tokens, 51.1 tok/s, 2 s
+[strata] thinking: 106 of max 32768 tokens, 56.0 tok/s, 3 s
+[strata] thinking: 167 of max 32768 tokens, 57.3 tok/s, 4 s
+[strata] done: 200 tokens in 5 s (59.7 tok/s) (stop, cancel=False), expert cache 93.9% hit
+[strata] thinking: 23 of max 32768 tokens, 58.8 tok/s, 1 s
+[strata] thinking: 89 of max 32768 tokens, 62.5 tok/s, 2 s
+[strata] thinking: 138 of max 32768 tokens, 56.5 tok/s, 3 s
+[strata] thinking: 192 of max 32768 tokens, 55.4 tok/s, 4 s
+[strata] thinking: 242 of max 32768 tokens, 54.1 tok/s, 5 s
+[strata] thinking: 314 of max 32768 tokens, 57.1 tok/s, 6 s
+[strata] thinking: 372 of max 32768 tokens, 57.0 tok/s, 7 s
+[strata] thinking: 429 of max 32768 tokens, 56.9 tok/s, 8 s
+[strata] thinking: 482 of max 32768 tokens, 56.3 tok/s, 9 s
+[strata] thinking: 534 of max 32768 tokens, 55.8 tok/s, 10 s
+[strata] thinking: 587 of max 32768 tokens, 55.5 tok/s, 11 s
+[strata] thinking: 658 of max 32768 tokens, 56.8 tok/s, 12 s
+[strata] thinking: 722 of max 32768 tokens, 57.2 tok/s, 13 s
+[strata] thinking: 780 of max 32768 tokens, 57.1 tok/s, 14 s
+[strata] thinking: 828 of max 32768 tokens, 56.4 tok/s, 15 s
+[strata] thinking: 874 of max 32768 tokens, 55.5 tok/s, 16 s
+[strata] thinking: 925 of max 32768 tokens, 55.3 tok/s, 17 s
+[strata] thinking: 982 of max 32768 tokens, 55.2 tok/s, 18 s
+[strata] thinking: 1027 of max 32768 tokens, 54.5 tok/s, 19 s
+[strata] thinking: 1069 of max 32768 tokens, 53.8 tok/s, 21 s
+[strata] thinking: 1113 of max 32768 tokens, 53.3 tok/s, 22 s
+[strata] thinking: 1156 of max 32768 tokens, 52.7 tok/s, 23 s
+[strata] thinking: 1201 of max 32768 tokens, 52.4 tok/s, 24 s
+[strata] thinking: 1245 of max 32768 tokens, 52.0 tok/s, 25 s
+[strata] thinking: 1292 of max 32768 tokens, 51.8 tok/s, 26 s
+[strata] thinking: 1336 of max 32768 tokens, 51.5 tok/s, 27 s
+[strata] thinking: 1342 of max 32768 tokens, 46.5 tok/s, 29 s
+[strata] thinking: 1345 of max 32768 tokens, 41.8 tok/s, 33 s
+[strata] thinking: 1348 of max 32768 tokens, 40.3 tok/s, 34 s
+[strata] thinking: 1350 of max 32768 tokens, 38.0 tok/s, 36 s
+[strata] thinking: 1352 of max 32768 tokens, 36.6 tok/s, 38 s
+[strata] thinking: 1354 of max 32768 tokens, 35.5 tok/s, 39 s
+[strata] thinking: 1402 of max 32768 tokens, 35.8 tok/s, 40 s
+[strata] thinking: 1466 of max 32768 tokens, 36.4 tok/s, 41 s
+[strata] answering: 1523 of max 32768 tokens, 36.8 tok/s, 42 s
+[strata] done: 1581 tokens in 43 s (37.5 tok/s) (stop, cancel=False), expert cache 95.8% hit
+[strata] reading the prompt: 631 of 636 tokens, 1 s so far
+[strata] done: 42 tokens in 2 s (59.1 tok/s) (stop, cancel=False), expert cache 86.7% hit
+[strata] reading the prompt: 61 of 66 tokens, 1 s so far
+[strata] thinking: 55 of max 32768 tokens, 60.7 tok/s, 2 s
+[strata] thinking: 131 of max 32768 tokens, 67.4 tok/s, 3 s
+[strata] thinking: 192 of max 32768 tokens, 64.6 tok/s, 4 s
+[strata] done: 248 tokens in 5 s (67.1 tok/s) (stop, cancel=False), expert cache 93.0% hit
+[strata] reading the prompt: 579 of 584 tokens, 1 s so far
+[strata] thinking: 52 of max 32768 tokens, 61.1 tok/s, 2 s
+[strata] done: 76 tokens in 3 s (65.6 tok/s) (stop, cancel=False), expert cache 94.0% hit
+[strata] reading the prompt: 8,192 of 28,787 tokens, 4 s so far
+[strata] reading the prompt: 16,384 of 28,787 tokens, 9 s so far
+[strata] reading the prompt: 24,576 of 28,787 tokens, 13 s so far
+[strata] reading the prompt: 28,782 of 28,787 tokens, 16 s so far
+[strata] thinking: 33 of max 32768 tokens, 57.6 tok/s, 17 s
+[strata] answering: 106 of max 32768 tokens, 67.0 tok/s, 18 s
+[strata] done: 109 tokens in 18 s (68.6 tok/s) (stop, cancel=False), expert cache 92.6% hit
+[strata] thinking: 14 of max 32768 tokens, 43.5 tok/s, 1 s
+[strata] thinking: 72 of max 32768 tokens, 52.6 tok/s, 2 s
+[strata] thinking: 131 of max 32768 tokens, 55.2 tok/s, 3 s
+[strata] thinking: 188 of max 32768 tokens, 55.4 tok/s, 4 s
+[strata] thinking: 242 of max 32768 tokens, 55.0 tok/s, 5 s
+[strata] thinking: 299 of max 32768 tokens, 55.1 tok/s, 6 s
+[strata] thinking: 358 of max 32768 tokens, 55.3 tok/s, 7 s
+[strata] thinking: 410 of max 32768 tokens, 54.8 tok/s, 8 s
+[strata] thinking: 467 of max 32768 tokens, 54.9 tok/s, 9 s
+[strata] thinking: 520 of max 32768 tokens, 54.5 tok/s, 10 s
+[strata] thinking: 576 of max 32768 tokens, 54.7 tok/s, 11 s
+[strata] thinking: 627 of max 32768 tokens, 54.4 tok/s, 12 s
+[strata] thinking: 672 of max 32768 tokens, 53.4 tok/s, 13 s
+[strata] thinking: 725 of max 32768 tokens, 53.3 tok/s, 14 s
+[strata] thinking: 775 of max 32768 tokens, 53.0 tok/s, 15 s
+[strata] thinking: 820 of max 32768 tokens, 52.3 tok/s, 16 s
+[strata] thinking: 854 of max 32768 tokens, 50.9 tok/s, 17 s
+[strata] thinking: 890 of max 32768 tokens, 50.0 tok/s, 18 s
+[strata] thinking: 926 of max 32768 tokens, 49.0 tok/s, 20 s
+[strata] thinking: 976 of max 32768 tokens, 49.1 tok/s, 21 s
+[strata] thinking: 994 of max 32768 tokens, 47.2 tok/s, 22 s
+[strata] thinking: 1004 of max 32768 tokens, 45.2 tok/s, 23 s
+[strata] thinking: 1045 of max 32768 tokens, 44.9 tok/s, 24 s
+[strata] thinking: 1085 of max 32768 tokens, 44.4 tok/s, 25 s
+[strata] thinking: 1132 of max 32768 tokens, 44.5 tok/s, 26 s
+[strata] thinking: 1141 of max 32768 tokens, 43.2 tok/s, 27 s
+[strata] thinking: 1182 of max 32768 tokens, 43.0 tok/s, 28 s
+[strata] thinking: 1225 of max 32768 tokens, 43.0 tok/s, 29 s
+[strata] thinking: 1280 of max 32768 tokens, 43.4 tok/s, 30 s
+[strata] thinking: 1335 of max 32768 tokens, 43.8 tok/s, 31 s
+[strata] thinking: 1378 of max 32768 tokens, 43.6 tok/s, 32 s
+[strata] thinking: 1428 of max 32768 tokens, 43.8 tok/s, 33 s
+[strata] thinking: 1448 of max 32768 tokens, 43.1 tok/s, 34 s
+[strata] thinking: 1456 of max 32768 tokens, 41.9 tok/s, 35 s
+[strata] thinking: 1467 of max 32768 tokens, 40.9 tok/s, 37 s
+[strata] thinking: 1477 of max 32768 tokens, 39.9 tok/s, 38 s
+[strata] thinking: 1492 of max 32768 tokens, 39.1 tok/s, 39 s
+[strata] thinking: 1533 of max 32768 tokens, 39.2 tok/s, 40 s
+[strata] thinking: 1585 of max 32768 tokens, 39.5 tok/s, 41 s
+[strata] thinking: 1627 of max 32768 tokens, 39.5 tok/s, 42 s
+[strata] thinking: 1663 of max 32768 tokens, 39.3 tok/s, 43 s
+[strata] thinking: 1679 of max 32768 tokens, 38.7 tok/s, 44 s
+[strata] thinking: 1684 of max 32768 tokens, 37.4 tok/s, 46 s
+[strata] thinking: 1691 of max 32768 tokens, 36.6 tok/s, 47 s
+[strata] thinking: 1714 of max 32768 tokens, 36.2 tok/s, 48 s
+[strata] thinking: 1731 of max 32768 tokens, 35.4 tok/s, 50 s
+[strata] thinking: 1744 of max 32768 tokens, 34.3 tok/s, 52 s
+[strata] thinking: 1746 of max 32768 tokens, 33.3 tok/s, 53 s
+[strata] thinking: 1749 of max 32768 tokens, 32.7 tok/s, 54 s
+[strata] thinking: 1758 of max 32768 tokens, 32.2 tok/s, 55 s
+[strata] thinking: 1806 of max 32768 tokens, 32.5 tok/s, 56 s
+[strata] thinking: 1858 of max 32768 tokens, 32.8 tok/s, 57 s
+[strata] thinking: 1905 of max 32768 tokens, 33.1 tok/s, 58 s
+[strata] thinking: 1950 of max 32768 tokens, 33.3 tok/s, 59 s
+[strata] thinking: 1998 of max 32768 tokens, 33.4 tok/s, 60 s
+[strata] thinking: 2030 of max 32768 tokens, 33.4 tok/s, 61 s
+[strata] thinking: 2056 of max 32768 tokens, 33.3 tok/s, 62 s
+[strata] thinking: 2096 of max 32768 tokens, 33.3 tok/s, 64 s
+[strata] thinking: 2131 of max 32768 tokens, 33.3 tok/s, 65 s
+[strata] thinking: 2168 of max 32768 tokens, 33.4 tok/s, 66 s
+[strata] thinking: 2231 of max 32768 tokens, 33.8 tok/s, 67 s
+[strata] thinking: 2263 of max 32768 tokens, 33.5 tok/s, 68 s
+[strata] thinking: 2309 of max 32768 tokens, 33.3 tok/s, 70 s
+[strata] thinking: 2337 of max 32768 tokens, 33.2 tok/s, 71 s
+[strata] thinking: 2398 of max 32768 tokens, 33.6 tok/s, 72 s
+[strata] thinking: 2461 of max 32768 tokens, 34.0 tok/s, 73 s
+[strata] thinking: 2517 of max 32768 tokens, 34.3 tok/s, 74 s
+[strata] thinking: 2567 of max 32768 tokens, 34.5 tok/s, 75 s
+[strata] thinking: 2619 of max 32768 tokens, 34.7 tok/s, 76 s
+[strata] thinking: 2667 of max 32768 tokens, 34.9 tok/s, 77 s
+[strata] thinking: 2718 of max 32768 tokens, 35.1 tok/s, 78 s
+[strata] thinking: 2776 of max 32768 tokens, 35.4 tok/s, 79 s
+[strata] thinking: 2831 of max 32768 tokens, 35.6 tok/s, 80 s
+[strata] thinking: 2884 of max 32768 tokens, 35.8 tok/s, 81 s
+[strata] thinking: 2933 of max 32768 tokens, 36.0 tok/s, 82 s
+[strata] thinking: 2980 of max 32768 tokens, 36.1 tok/s, 83 s
+[strata] thinking: 3035 of max 32768 tokens, 36.3 tok/s, 84 s
+[strata] thinking: 3093 of max 32768 tokens, 36.6 tok/s, 85 s
+[strata] thinking: 3141 of max 32768 tokens, 36.7 tok/s, 86 s
+[strata] thinking: 3200 of max 32768 tokens, 36.9 tok/s, 87 s
+[strata] thinking: 3255 of max 32768 tokens, 37.1 tok/s, 88 s
+[strata] thinking: 3298 of max 32768 tokens, 37.2 tok/s, 89 s
+[strata] thinking: 3353 of max 32768 tokens, 37.4 tok/s, 90 s
+[strata] thinking: 3402 of max 32768 tokens, 37.5 tok/s, 91 s
+[strata] thinking: 3463 of max 32768 tokens, 37.7 tok/s, 92 s
+[strata] thinking: 3518 of max 32768 tokens, 37.9 tok/s, 94 s
+[strata] thinking: 3581 of max 32768 tokens, 38.2 tok/s, 95 s
+[strata] thinking: 3636 of max 32768 tokens, 38.3 tok/s, 96 s
+[strata] thinking: 3701 of max 32768 tokens, 38.6 tok/s, 97 s
+[strata] thinking: 3763 of max 32768 tokens, 38.8 tok/s, 98 s
+[strata] thinking: 3815 of max 32768 tokens, 39.0 tok/s, 99 s
+[strata] thinking: 3872 of max 32768 tokens, 39.1 tok/s, 100 s
+[strata] thinking: 3918 of max 32768 tokens, 39.2 tok/s, 101 s
+[strata] thinking: 3941 of max 32768 tokens, 39.0 tok/s, 102 s
+[strata] thinking: 3952 of max 32768 tokens, 38.7 tok/s, 103 s
+[strata] thinking: 3977 of max 32768 tokens, 38.6 tok/s, 104 s
+[strata] thinking: 3996 of max 32768 tokens, 38.3 tok/s, 105 s
+[strata] thinking: 4037 of max 32768 tokens, 38.3 tok/s, 106 s
+[strata] thinking: 4110 of max 32768 tokens, 38.7 tok/s, 107 s
+[strata] thinking: 4169 of max 32768 tokens, 38.8 tok/s, 108 s
+[strata] thinking: 4233 of max 32768 tokens, 39.1 tok/s, 109 s
+[strata] thinking: 4294 of max 32768 tokens, 39.3 tok/s, 110 s
+[strata] thinking: 4345 of max 32768 tokens, 39.4 tok/s, 111 s
+[strata] thinking: 4399 of max 32768 tokens, 39.5 tok/s, 112 s
+[strata] thinking: 4450 of max 32768 tokens, 39.6 tok/s, 113 s
+[strata] thinking: 4487 of max 32768 tokens, 39.6 tok/s, 114 s
+[strata] thinking: 4532 of max 32768 tokens, 39.6 tok/s, 115 s
+[strata] thinking: 4573 of max 32768 tokens, 39.6 tok/s, 116 s
+[strata] thinking: 4612 of max 32768 tokens, 39.6 tok/s, 117 s
+[strata] thinking: 4660 of max 32768 tokens, 39.6 tok/s, 118 s
+[strata] thinking: 4710 of max 32768 tokens, 39.7 tok/s, 119 s
+[strata] thinking: 4760 of max 32768 tokens, 39.8 tok/s, 120 s
+[strata] thinking: 4801 of max 32768 tokens, 39.8 tok/s, 121 s
+[strata] thinking: 4842 of max 32768 tokens, 39.8 tok/s, 122 s
+[strata] thinking: 4887 of max 32768 tokens, 39.9 tok/s, 123 s
+[strata] thinking: 4921 of max 32768 tokens, 39.8 tok/s, 124 s
+[strata] thinking: 4965 of max 32768 tokens, 39.8 tok/s, 125 s
+[strata] thinking: 5011 of max 32768 tokens, 39.9 tok/s, 126 s
+[strata] thinking: 5049 of max 32768 tokens, 39.8 tok/s, 127 s
+[strata] thinking: 5089 of max 32768 tokens, 39.9 tok/s, 128 s
+[strata] thinking: 5131 of max 32768 tokens, 39.9 tok/s, 129 s
+[strata] thinking: 5179 of max 32768 tokens, 39.9 tok/s, 130 s
+[strata] thinking: 5230 of max 32768 tokens, 40.0 tok/s, 131 s
+[strata] thinking: 5289 of max 32768 tokens, 40.1 tok/s, 132 s
+[strata] thinking: 5342 of max 32768 tokens, 40.2 tok/s, 133 s
+[strata] thinking: 5397 of max 32768 tokens, 40.3 tok/s, 135 s
+[strata] thinking: 5448 of max 32768 tokens, 40.4 tok/s, 136 s
+[strata] thinking: 5500 of max 32768 tokens, 40.5 tok/s, 137 s
+[strata] thinking: 5562 of max 32768 tokens, 40.6 tok/s, 138 s
+[strata] thinking: 5619 of max 32768 tokens, 40.8 tok/s, 139 s
+[strata] thinking: 5671 of max 32768 tokens, 40.8 tok/s, 140 s
+[strata] thinking: 5731 of max 32768 tokens, 41.0 tok/s, 141 s
+[strata] thinking: 5793 of max 32768 tokens, 41.1 tok/s, 142 s
+[strata] thinking: 5845 of max 32768 tokens, 41.2 tok/s, 143 s
+[strata] thinking: 5896 of max 32768 tokens, 41.2 tok/s, 144 s
+[strata] thinking: 5944 of max 32768 tokens, 41.3 tok/s, 145 s
+[strata] thinking: 6002 of max 32768 tokens, 41.4 tok/s, 146 s
+[strata] thinking: 6062 of max 32768 tokens, 41.5 tok/s, 147 s
+[strata] thinking: 6116 of max 32768 tokens, 41.6 tok/s, 148 s
+[strata] thinking: 6172 of max 32768 tokens, 41.7 tok/s, 149 s
+[strata] thinking: 6217 of max 32768 tokens, 41.7 tok/s, 150 s
+[strata] thinking: 6266 of max 32768 tokens, 41.7 tok/s, 151 s
+[strata] thinking: 6319 of max 32768 tokens, 41.8 tok/s, 152 s
+[strata] thinking: 6371 of max 32768 tokens, 41.9 tok/s, 153 s
+[strata] thinking: 6436 of max 32768 tokens, 42.0 tok/s, 154 s
+[strata] thinking: 6497 of max 32768 tokens, 42.1 tok/s, 155 s
+[strata] thinking: 6560 of max 32768 tokens, 42.3 tok/s, 156 s
+[strata] thinking: 6621 of max 32768 tokens, 42.4 tok/s, 157 s
+[strata] thinking: 6675 of max 32768 tokens, 42.4 tok/s, 158 s
+[strata] thinking: 6731 of max 32768 tokens, 42.5 tok/s, 159 s
+[strata] thinking: 6785 of max 32768 tokens, 42.6 tok/s, 160 s
+[strata] thinking: 6835 of max 32768 tokens, 42.6 tok/s, 161 s
+[strata] thinking: 6902 of max 32768 tokens, 42.8 tok/s, 162 s
+[strata] thinking: 6957 of max 32768 tokens, 42.8 tok/s, 163 s
+[strata] thinking: 7015 of max 32768 tokens, 42.9 tok/s, 164 s
+[strata] thinking: 7065 of max 32768 tokens, 43.0 tok/s, 165 s
+[strata] thinking: 7117 of max 32768 tokens, 43.0 tok/s, 166 s
+[strata] thinking: 7156 of max 32768 tokens, 43.0 tok/s, 167 s
+[strata] thinking: 7201 of max 32768 tokens, 43.0 tok/s, 168 s
+[strata] thinking: 7252 of max 32768 tokens, 43.0 tok/s, 169 s
+[strata] thinking: 7300 of max 32768 tokens, 43.0 tok/s, 170 s
+[strata] thinking: 7342 of max 32768 tokens, 43.0 tok/s, 171 s
+[strata] thinking: 7389 of max 32768 tokens, 43.1 tok/s, 172 s
+[strata] thinking: 7437 of max 32768 tokens, 43.1 tok/s, 173 s
+[strata] thinking: 7491 of max 32768 tokens, 43.1 tok/s, 174 s
+[strata] thinking: 7544 of max 32768 tokens, 43.2 tok/s, 175 s
+[strata] thinking: 7592 of max 32768 tokens, 43.2 tok/s, 176 s
+[strata] thinking: 7639 of max 32768 tokens, 43.2 tok/s, 177 s
+[strata] thinking: 7686 of max 32768 tokens, 43.3 tok/s, 178 s
+[strata] thinking: 7746 of max 32768 tokens, 43.3 tok/s, 179 s
+[strata] thinking: 7786 of max 32768 tokens, 43.3 tok/s, 180 s
+[strata] thinking: 7828 of max 32768 tokens, 43.3 tok/s, 181 s
+[strata] thinking: 7872 of max 32768 tokens, 43.3 tok/s, 182 s
+[strata] thinking: 7923 of max 32768 tokens, 43.3 tok/s, 184 s
+[strata] thinking: 7972 of max 32768 tokens, 43.4 tok/s, 185 s
+[strata] thinking: 8020 of max 32768 tokens, 43.4 tok/s, 186 s
+[strata] thinking: 8061 of max 32768 tokens, 43.4 tok/s, 187 s
+[strata] thinking: 8109 of max 32768 tokens, 43.4 tok/s, 188 s
+[strata] thinking: 8167 of max 32768 tokens, 43.5 tok/s, 189 s
+[strata] thinking: 8224 of max 32768 tokens, 43.5 tok/s, 190 s
+[strata] thinking: 8278 of max 32768 tokens, 43.6 tok/s, 191 s
+[strata] thinking: 8327 of max 32768 tokens, 43.6 tok/s, 192 s
+[strata] thinking: 8372 of max 32768 tokens, 43.6 tok/s, 193 s
+[strata] thinking: 8434 of max 32768 tokens, 43.7 tok/s, 194 s
+[strata] thinking: 8503 of max 32768 tokens, 43.8 tok/s, 195 s
+[strata] thinking: 8573 of max 32768 tokens, 43.9 tok/s, 196 s
+[strata] thinking: 8639 of max 32768 tokens, 44.0 tok/s, 197 s
+[strata] thinking: 8688 of max 32768 tokens, 44.1 tok/s, 198 s
+[strata] thinking: 8738 of max 32768 tokens, 44.1 tok/s, 199 s
+[strata] thinking: 8796 of max 32768 tokens, 44.2 tok/s, 200 s
+[strata] thinking: 8858 of max 32768 tokens, 44.2 tok/s, 201 s
+[strata] thinking: 8906 of max 32768 tokens, 44.2 tok/s, 202 s
+[strata] thinking: 8959 of max 32768 tokens, 44.3 tok/s, 203 s
+[strata] thinking: 9004 of max 32768 tokens, 44.3 tok/s, 204 s
+[strata] thinking: 9065 of max 32768 tokens, 44.4 tok/s, 205 s
+[strata] thinking: 9112 of max 32768 tokens, 44.4 tok/s, 206 s
+[strata] thinking: 9157 of max 32768 tokens, 44.4 tok/s, 207 s
+[strata] thinking: 9208 of max 32768 tokens, 44.4 tok/s, 208 s
+[strata] thinking: 9253 of max 32768 tokens, 44.4 tok/s, 209 s
+[strata] thinking: 9316 of max 32768 tokens, 44.5 tok/s, 210 s
+[strata] thinking: 9365 of max 32768 tokens, 44.5 tok/s, 211 s
+[strata] thinking: 9419 of max 32768 tokens, 44.5 tok/s, 212 s
+[strata] thinking: 9458 of max 32768 tokens, 44.5 tok/s, 213 s
+[strata] thinking: 9499 of max 32768 tokens, 44.5 tok/s, 214 s
+[strata] thinking: 9546 of max 32768 tokens, 44.5 tok/s, 215 s
+[strata] thinking: 9604 of max 32768 tokens, 44.5 tok/s, 216 s
+[strata] thinking: 9664 of max 32768 tokens, 44.6 tok/s, 217 s
+[strata] thinking: 9716 of max 32768 tokens, 44.6 tok/s, 218 s
+[strata] thinking: 9765 of max 32768 tokens, 44.6 tok/s, 219 s
+[strata] thinking: 9818 of max 32768 tokens, 44.7 tok/s, 220 s
+[strata] thinking: 9873 of max 32768 tokens, 44.7 tok/s, 221 s
+[strata] thinking: 9924 of max 32768 tokens, 44.8 tok/s, 222 s
+[strata] thinking: 9976 of max 32768 tokens, 44.8 tok/s, 223 s
+[strata] thinking: 10037 of max 32768 tokens, 44.9 tok/s, 224 s
+[strata] thinking: 10100 of max 32768 tokens, 44.9 tok/s, 225 s
+[strata] thinking: 10167 of max 32768 tokens, 45.0 tok/s, 226 s
+[strata] thinking: 10238 of max 32768 tokens, 45.1 tok/s, 227 s
+[strata] thinking: 10299 of max 32768 tokens, 45.2 tok/s, 229 s
+[strata] thinking: 10358 of max 32768 tokens, 45.3 tok/s, 230 s
+[strata] answering: 10419 of max 32768 tokens, 45.3 tok/s, 231 s
+[strata] answering: 10494 of max 32768 tokens, 45.4 tok/s, 232 s
+[strata] answering: 10574 of max 32768 tokens, 45.6 tok/s, 233 s
+[strata] done: 10592 tokens in 233 s (45.6 tok/s) (stop, cancel=False), expert cache 95.2% hit
+[strata] thinking: 12 of max 32768 tokens, 46.7 tok/s, 1 s
+[strata] thinking: 69 of max 32768 tokens, 54.1 tok/s, 2 s
+[strata] done: 94 tokens in 2 s (56.3 tok/s) (stop, cancel=False), expert cache 77.6% hit
+[strata] reading the prompt: 386 of 387 tokens, 1 s so far
+[strata] thinking: 47 of max 512 tokens, 46.1 tok/s, 2 s
+[strata] thinking: 98 of max 512 tokens, 48.1 tok/s, 3 s
+[strata] thinking: 146 of max 512 tokens, 48.0 tok/s, 4 s
+[strata] answering: 198 of max 512 tokens, 48.9 tok/s, 5 s
+[strata] answering: 252 of max 512 tokens, 49.9 tok/s, 6 s
+[strata] answering: 305 of max 512 tokens, 50.3 tok/s, 7 s
+[strata] answering: 356 of max 512 tokens, 50.1 tok/s, 8 s
+[strata] answering: 406 of max 512 tokens, 49.9 tok/s, 9 s
+[strata] answering: 460 of max 512 tokens, 50.3 tok/s, 10 s
+[strata] done: 512 tokens in 11 s (50.6 tok/s) (length, cancel=False), expert cache 90.3% hit
+[strata] thinking: 17 of max 32768 tokens, 49.0 tok/s, 1 s
+[strata] thinking: 83 of max 32768 tokens, 60.8 tok/s, 2 s
+[strata] thinking: 132 of max 32768 tokens, 55.8 tok/s, 3 s
+[strata] thinking: 183 of max 32768 tokens, 53.7 tok/s, 4 s
+[strata] thinking: 232 of max 32768 tokens, 52.4 tok/s, 5 s
+[strata] thinking: 285 of max 32768 tokens, 52.4 tok/s, 6 s
+[strata] thinking: 336 of max 32768 tokens, 52.2 tok/s, 7 s
+[strata] thinking: 385 of max 32768 tokens, 51.6 tok/s, 8 s
+[strata] thinking: 442 of max 32768 tokens, 52.2 tok/s, 9 s
+[strata] thinking: 490 of max 32768 tokens, 51.8 tok/s, 10 s
+[strata] thinking: 544 of max 32768 tokens, 52.0 tok/s, 11 s
+[strata] thinking: 604 of max 32768 tokens, 52.4 tok/s, 12 s
+[strata] thinking: 660 of max 32768 tokens, 52.7 tok/s, 13 s
+[strata] thinking: 714 of max 32768 tokens, 52.7 tok/s, 14 s
+[strata] thinking: 774 of max 32768 tokens, 53.2 tok/s, 15 s
+[strata] thinking: 823 of max 32768 tokens, 52.9 tok/s, 16 s
+[strata] thinking: 889 of max 32768 tokens, 53.5 tok/s, 17 s
+[strata] thinking: 941 of max 32768 tokens, 53.4 tok/s, 18 s
+[strata] thinking: 992 of max 32768 tokens, 53.3 tok/s, 19 s
+[strata] thinking: 1064 of max 32768 tokens, 54.2 tok/s, 20 s
+[strata] thinking: 1119 of max 32768 tokens, 54.1 tok/s, 21 s
+[strata] thinking: 1170 of max 32768 tokens, 53.9 tok/s, 22 s
+[strata] thinking: 1222 of max 32768 tokens, 53.8 tok/s, 23 s
+[strata] thinking: 1275 of max 32768 tokens, 53.7 tok/s, 24 s
+[strata] thinking: 1328 of max 32768 tokens, 53.7 tok/s, 25 s
+[strata] thinking: 1373 of max 32768 tokens, 53.3 tok/s, 26 s
+[strata] thinking: 1429 of max 32768 tokens, 53.4 tok/s, 27 s
+[strata] thinking: 1487 of max 32768 tokens, 53.6 tok/s, 28 s
+[strata] thinking: 1542 of max 32768 tokens, 53.6 tok/s, 29 s
+[strata] thinking: 1605 of max 32768 tokens, 53.9 tok/s, 30 s
+[strata] thinking: 1686 of max 32768 tokens, 54.8 tok/s, 31 s
+[strata] thinking: 1753 of max 32768 tokens, 55.1 tok/s, 32 s
+[strata] thinking: 1805 of max 32768 tokens, 55.0 tok/s, 34 s
+[strata] thinking: 1859 of max 32768 tokens, 54.9 tok/s, 35 s
+[strata] thinking: 1910 of max 32768 tokens, 54.8 tok/s, 36 s
+[strata] thinking: 1963 of max 32768 tokens, 54.7 tok/s, 37 s
+[strata] thinking: 2012 of max 32768 tokens, 54.5 tok/s, 38 s
+[strata] thinking: 2060 of max 32768 tokens, 54.3 tok/s, 39 s
+[strata] thinking: 2112 of max 32768 tokens, 54.3 tok/s, 40 s
+[strata] thinking: 2160 of max 32768 tokens, 54.1 tok/s, 41 s
+[strata] thinking: 2214 of max 32768 tokens, 54.1 tok/s, 42 s
+[strata] thinking: 2264 of max 32768 tokens, 53.9 tok/s, 43 s
+[strata] thinking: 2312 of max 32768 tokens, 53.8 tok/s, 44 s
+[strata] thinking: 2364 of max 32768 tokens, 53.7 tok/s, 45 s
+[strata] thinking: 2437 of max 32768 tokens, 54.1 tok/s, 46 s
+[strata] thinking: 2505 of max 32768 tokens, 54.4 tok/s, 47 s
+[strata] thinking: 2558 of max 32768 tokens, 54.4 tok/s, 48 s
+[strata] thinking: 2600 of max 32768 tokens, 48.8 tok/s, 54 s
+[strata] thinking: 2602 of max 32768 tokens, 45.6 tok/s, 58 s
+[strata] thinking: 2608 of max 32768 tokens, 44.1 tok/s, 60 s
+[strata] thinking: 2609 of max 32768 tokens, 43.1 tok/s, 61 s
+[strata] thinking: 2610 of max 32768 tokens, 41.9 tok/s, 63 s
+[strata] thinking: 2627 of max 32768 tokens, 41.5 tok/s, 64 s
+[strata] thinking: 2673 of max 32768 tokens, 41.6 tok/s, 65 s
+[strata] thinking: 2723 of max 32768 tokens, 41.7 tok/s, 66 s
+[strata] thinking: 2770 of max 32768 tokens, 41.8 tok/s, 67 s
+[strata] thinking: 2823 of max 32768 tokens, 41.9 tok/s, 68 s
+[strata] thinking: 2895 of max 32768 tokens, 42.3 tok/s, 69 s
+[strata] thinking: 2951 of max 32768 tokens, 42.5 tok/s, 70 s
+[strata] thinking: 2991 of max 32768 tokens, 42.5 tok/s, 71 s
+[strata] thinking: 3043 of max 32768 tokens, 42.6 tok/s, 72 s
+[strata] thinking: 3081 of max 32768 tokens, 42.5 tok/s, 73 s
+[strata] thinking: 3120 of max 32768 tokens, 42.5 tok/s, 74 s
+[strata] thinking: 3173 of max 32768 tokens, 42.6 tok/s, 75 s
+[strata] thinking: 3187 of max 32768 tokens, 42.0 tok/s, 77 s
+[strata] thinking: 3202 of max 32768 tokens, 41.4 tok/s, 78 s
+[strata] thinking: 3211 of max 32768 tokens, 41.0 tok/s, 79 s
+[strata] thinking: 3221 of max 32768 tokens, 40.6 tok/s, 80 s
+[strata] thinking: 3232 of max 32768 tokens, 40.2 tok/s, 81 s
+[strata] thinking: 3250 of max 32768 tokens, 39.8 tok/s, 82 s
+[strata] thinking: 3291 of max 32768 tokens, 39.8 tok/s, 83 s
+[strata] thinking: 3347 of max 32768 tokens, 40.0 tok/s, 84 s
+[strata] thinking: 3398 of max 32768 tokens, 40.2 tok/s, 85 s
+[strata] thinking: 3446 of max 32768 tokens, 40.2 tok/s, 86 s
+[strata] thinking: 3491 of max 32768 tokens, 40.3 tok/s, 87 s
+[strata] thinking: 3548 of max 32768 tokens, 40.5 tok/s, 88 s
+[strata] thinking: 3592 of max 32768 tokens, 40.5 tok/s, 89 s
+[strata] thinking: 3644 of max 32768 tokens, 40.6 tok/s, 90 s
+[strata] thinking: 3701 of max 32768 tokens, 40.8 tok/s, 91 s
+[strata] thinking: 3746 of max 32768 tokens, 40.8 tok/s, 92 s
+[strata] thinking: 3783 of max 32768 tokens, 40.8 tok/s, 93 s
+[strata] thinking: 3797 of max 32768 tokens, 40.5 tok/s, 94 s
+[strata] thinking: 3842 of max 32768 tokens, 40.5 tok/s, 96 s
+[strata] thinking: 3868 of max 32768 tokens, 40.3 tok/s, 97 s
+[strata] thinking: 3901 of max 32768 tokens, 40.2 tok/s, 98 s
+[strata] thinking: 3952 of max 32768 tokens, 40.3 tok/s, 99 s
+[strata] thinking: 4001 of max 32768 tokens, 40.4 tok/s, 100 s
+[strata] thinking: 4046 of max 32768 tokens, 40.4 tok/s, 101 s
+[strata] thinking: 4085 of max 32768 tokens, 40.4 tok/s, 102 s
+[strata] thinking: 4135 of max 32768 tokens, 40.5 tok/s, 103 s
+[strata] thinking: 4193 of max 32768 tokens, 40.6 tok/s, 104 s
+[strata] thinking: 4236 of max 32768 tokens, 40.6 tok/s, 105 s
+[strata] thinking: 4280 of max 32768 tokens, 40.7 tok/s, 106 s
+[strata] thinking: 4330 of max 32768 tokens, 40.8 tok/s, 107 s
+[strata] thinking: 4383 of max 32768 tokens, 40.9 tok/s, 108 s
+[strata] thinking: 4436 of max 32768 tokens, 41.0 tok/s, 109 s
+[strata] thinking: 4489 of max 32768 tokens, 41.1 tok/s, 110 s
+[strata] thinking: 4547 of max 32768 tokens, 41.2 tok/s, 111 s
+[strata] thinking: 4605 of max 32768 tokens, 41.4 tok/s, 112 s
+[strata] thinking: 4660 of max 32768 tokens, 41.5 tok/s, 113 s
+[strata] thinking: 4712 of max 32768 tokens, 41.6 tok/s, 114 s
+[strata] thinking: 4768 of max 32768 tokens, 41.7 tok/s, 115 s
+[strata] thinking: 4796 of max 32768 tokens, 41.6 tok/s, 116 s
+[strata] thinking: 4816 of max 32768 tokens, 39.8 tok/s, 122 s
+[strata] thinking: 4820 of max 32768 tokens, 38.6 tok/s, 126 s
+[strata] thinking: 4824 of max 32768 tokens, 36.9 tok/s, 131 s
+[strata] thinking: 4839 of max 32768 tokens, 36.7 tok/s, 133 s
+[strata] thinking: 4866 of max 32768 tokens, 36.6 tok/s, 134 s
+[strata] thinking: 4920 of max 32768 tokens, 36.7 tok/s, 135 s
+[strata] thinking: 4960 of max 32768 tokens, 36.7 tok/s, 136 s
+[strata] thinking: 4999 of max 32768 tokens, 36.8 tok/s, 137 s
+[strata] thinking: 5036 of max 32768 tokens, 36.8 tok/s, 138 s
+[strata] thinking: 5086 of max 32768 tokens, 36.8 tok/s, 139 s
+[strata] thinking: 5138 of max 32768 tokens, 37.0 tok/s, 140 s
+[strata] thinking: 5179 of max 32768 tokens, 36.9 tok/s, 141 s
+[strata] thinking: 5193 of max 32768 tokens, 36.7 tok/s, 142 s
+[strata] thinking: 5235 of max 32768 tokens, 36.7 tok/s, 143 s
+[strata] thinking: 5262 of max 32768 tokens, 36.7 tok/s, 144 s
+[strata] thinking: 5317 of max 32768 tokens, 36.8 tok/s, 145 s
+[strata] thinking: 5350 of max 32768 tokens, 36.7 tok/s, 146 s
+[strata] thinking: 5369 of max 32768 tokens, 36.6 tok/s, 147 s
+[strata] thinking: 5402 of max 32768 tokens, 36.6 tok/s, 148 s
+[strata] thinking: 5444 of max 32768 tokens, 36.6 tok/s, 149 s
+[strata] thinking: 5497 of max 32768 tokens, 36.7 tok/s, 150 s
+[strata] thinking: 5540 of max 32768 tokens, 36.8 tok/s, 151 s
+[strata] thinking: 5560 of max 32768 tokens, 36.6 tok/s, 153 s
+[strata] thinking: 5603 of max 32768 tokens, 36.6 tok/s, 154 s
+[strata] thinking: 5648 of max 32768 tokens, 36.7 tok/s, 155 s
+[strata] thinking: 5695 of max 32768 tokens, 36.7 tok/s, 156 s
+[strata] thinking: 5765 of max 32768 tokens, 36.9 tok/s, 157 s
+[strata] thinking: 5800 of max 32768 tokens, 36.9 tok/s, 158 s
+[strata] thinking: 5841 of max 32768 tokens, 36.9 tok/s, 159 s
+[strata] thinking: 5882 of max 32768 tokens, 37.0 tok/s, 160 s
+[strata] thinking: 5928 of max 32768 tokens, 37.0 tok/s, 161 s
+[strata] thinking: 5949 of max 32768 tokens, 36.8 tok/s, 162 s
+[strata] thinking: 5988 of max 32768 tokens, 36.8 tok/s, 164 s
+[strata] thinking: 6037 of max 32768 tokens, 36.8 tok/s, 165 s
+[strata] thinking: 6088 of max 32768 tokens, 36.9 tok/s, 166 s
+[strata] thinking: 6134 of max 32768 tokens, 37.0 tok/s, 167 s
+[strata] thinking: 6176 of max 32768 tokens, 37.0 tok/s, 168 s
+[strata] thinking: 6189 of max 32768 tokens, 36.8 tok/s, 169 s
+[strata] thinking: 6219 of max 32768 tokens, 36.8 tok/s, 170 s
+[strata] thinking: 6262 of max 32768 tokens, 36.8 tok/s, 171 s
+[strata] thinking: 6308 of max 32768 tokens, 36.9 tok/s, 172 s
+[strata] thinking: 6350 of max 32768 tokens, 36.9 tok/s, 173 s
+[strata] thinking: 6377 of max 32768 tokens, 36.8 tok/s, 174 s
+[strata] thinking: 6412 of max 32768 tokens, 36.8 tok/s, 175 s
+[strata] thinking: 6434 of max 32768 tokens, 36.7 tok/s, 176 s
+[strata] thinking: 6486 of max 32768 tokens, 36.8 tok/s, 177 s
+[strata] thinking: 6510 of max 32768 tokens, 36.4 tok/s, 180 s
+[strata] thinking: 6526 of max 32768 tokens, 36.1 tok/s, 181 s
+[strata] thinking: 6528 of max 32768 tokens, 35.8 tok/s, 183 s
+[strata] thinking: 6556 of max 32768 tokens, 35.6 tok/s, 185 s
+[strata] thinking: 6565 of max 32768 tokens, 35.5 tok/s, 186 s
+[strata] thinking: 6573 of max 32768 tokens, 35.2 tok/s, 187 s
+[strata] thinking: 6574 of max 32768 tokens, 35.0 tok/s, 188 s
+[strata] thinking: 6584 of max 32768 tokens, 34.9 tok/s, 189 s
+[strata] thinking: 6586 of max 32768 tokens, 34.7 tok/s, 191 s
+[strata] thinking: 6590 of max 32768 tokens, 34.5 tok/s, 192 s
+[strata] thinking: 6597 of max 32768 tokens, 34.2 tok/s, 193 s
+[strata] thinking: 6600 of max 32768 tokens, 33.8 tok/s, 196 s
+[strata] thinking: 6604 of max 32768 tokens, 33.4 tok/s, 199 s
+[strata] thinking: 6607 of max 32768 tokens, 33.1 tok/s, 200 s
+[strata] thinking: 6609 of max 32768 tokens, 32.9 tok/s, 201 s
+[strata] thinking: 6611 of max 32768 tokens, 32.7 tok/s, 203 s
+[strata] thinking: 6612 of max 32768 tokens, 32.5 tok/s, 204 s
+[strata] thinking: 6613 of max 32768 tokens, 32.1 tok/s, 207 s
+[strata] thinking: 6619 of max 32768 tokens, 31.8 tok/s, 209 s
+[strata] thinking: 6620 of max 32768 tokens, 31.6 tok/s, 210 s
+[strata] thinking: 6623 of max 32768 tokens, 31.3 tok/s, 212 s
+[strata] thinking: 6627 of max 32768 tokens, 31.2 tok/s, 213 s
+[strata] thinking: 6630 of max 32768 tokens, 31.0 tok/s, 215 s
+[strata] thinking: 6641 of max 32768 tokens, 30.9 tok/s, 216 s
+[strata] thinking: 6649 of max 32768 tokens, 30.8 tok/s, 217 s
+[strata] thinking: 6662 of max 32768 tokens, 30.6 tok/s, 218 s
+[strata] thinking: 6726 of max 32768 tokens, 30.8 tok/s, 219 s
+[strata] thinking: 6786 of max 32768 tokens, 30.9 tok/s, 221 s
+[strata] thinking: 6795 of max 32768 tokens, 30.6 tok/s, 222 s
+[strata] thinking: 6797 of max 32768 tokens, 30.4 tok/s, 224 s
+[strata] thinking: 6799 of max 32768 tokens, 30.1 tok/s, 226 s
+[strata] thinking: 6800 of max 32768 tokens, 29.9 tok/s, 228 s
+[strata] thinking: 6801 of max 32768 tokens, 29.6 tok/s, 230 s
+[strata] thinking: 6802 of max 32768 tokens, 29.4 tok/s, 232 s
+[strata] thinking: 6803 of max 32768 tokens, 29.1 tok/s, 235 s
+[strata] thinking: 6808 of max 32768 tokens, 28.8 tok/s, 237 s
+[strata] thinking: 6815 of max 32768 tokens, 28.5 tok/s, 240 s
+[strata] thinking: 6826 of max 32768 tokens, 28.4 tok/s, 241 s
+[strata] thinking: 6841 of max 32768 tokens, 28.3 tok/s, 242 s
+[strata] thinking: 6859 of max 32768 tokens, 28.2 tok/s, 244 s
+[strata] thinking: 6894 of max 32768 tokens, 28.2 tok/s, 245 s
+[strata] thinking: 6895 of max 32768 tokens, 28.0 tok/s, 247 s
+[strata] thinking: 6897 of max 32768 tokens, 27.9 tok/s, 248 s
+[strata] thinking: 6898 of max 32768 tokens, 27.6 tok/s, 251 s
+[strata] thinking: 6900 of max 32768 tokens, 27.3 tok/s, 254 s
+[strata] thinking: 6902 of max 32768 tokens, 27.0 tok/s, 257 s
+[strata] thinking: 6908 of max 32768 tokens, 26.7 tok/s, 259 s
+[strata] thinking: 6911 of max 32768 tokens, 26.6 tok/s, 261 s
+[strata] thinking: 6912 of max 32768 tokens, 26.4 tok/s, 263 s
+[strata] thinking: 6915 of max 32768 tokens, 26.2 tok/s, 265 s
+[strata] thinking: 6916 of max 32768 tokens, 25.9 tok/s, 268 s
+[strata] thinking: 6918 of max 32768 tokens, 25.5 tok/s, 272 s
+[strata] thinking: 6919 of max 32768 tokens, 25.2 tok/s, 276 s
+[strata] thinking: 6920 of max 32768 tokens, 24.6 tok/s, 282 s
+[strata] thinking: 6922 of max 32768 tokens, 24.0 tok/s, 289 s
+[strata] thinking: 6922 of max 32768 tokens, 23.2 tok/s, 299 s
+[strata] thinking: 6923 of max 32768 tokens, 22.8 tok/s, 305 s
+[strata] thinking: 6925 of max 32768 tokens, 22.1 tok/s, 314 s
+[strata] thinking: 6925 of max 32768 tokens, 21.4 tok/s, 324 s
+[strata] thinking: 6926 of max 32768 tokens, 21.4 tok/s, 325 s
+[strata] thinking: 6926 of max 32768 tokens, 20.7 tok/s, 335 s
+[strata] thinking: 6927 of max 32768 tokens, 20.4 tok/s, 340 s
+[strata] thinking: 6933 of max 32768 tokens, 19.8 tok/s, 350 s
+[strata] thinking: 6934 of max 32768 tokens, 19.5 tok/s, 356 s
+[strata] thinking: 6936 of max 32768 tokens, 19.0 tok/s, 366 s
+[strata] thinking: 6937 of max 32768 tokens, 18.7 tok/s, 371 s
+[strata] thinking: 6939 of max 32768 tokens, 18.2 tok/s, 381 s
+
+[strata] stopping (Ctrl+C again to end the engine at once) ...
+[strata] thinking: 6940 of max 32768 tokens, 18.0 tok/s, 387 s
+[strata] thinking: 6942 of max 32768 tokens, 17.5 tok/s, 397 s
+[strata] stopped

@@ -1,0 +1,3722 @@
+{
+  "plan": {
+    "schema": 1,
+    "campaign": "local-llm-reset-strata-control-2026-10-01",
+    "suite": {
+      "description": "Targeted Strata quality follow-up with corrected contracts, three fixed seeds, and one declared request policy: control.",
+      "confidence": 0.95,
+      "bootstrap_samples": 10000,
+      "min_clusters": 2,
+      "repeats": 1,
+      "seeds": [
+        42,
+        314,
+        2718
+      ],
+      "code_image": "sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4",
+      "margins": {
+        "relevance": 0.03,
+        "transcript_qa": 0.03,
+        "reasoning": 0.03,
+        "extraction": 0.03,
+        "coding": 0.03,
+        "tool_replay": 0.03,
+        "retrieval": 0.03
+      },
+      "request_defaults": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "medium",
+        "max_tokens": 4096,
+        "top_k": 20
+      },
+      "cases": [
+        {
+          "id": "code-topological",
+          "tier": "coding",
+          "cluster": "code-topological",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+          }
+        },
+        {
+          "id": "code-merge-config",
+          "tier": "coding",
+          "cluster": "code-merge-config",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+          }
+        },
+        {
+          "id": "code-lru",
+          "tier": "coding",
+          "cluster": "code-lru",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+          }
+        },
+        {
+          "id": "code-redact",
+          "tier": "coding",
+          "cluster": "code-redact",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+          }
+        },
+        {
+          "id": "code-diff-keys",
+          "tier": "coding",
+          "cluster": "code-diff-keys",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+          }
+        },
+        {
+          "id": "episode-cache-first",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "read_file",
+                "arguments": {
+                  "path": "src/cache.py"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "episode-cache-next",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              },
+              {
+                "role": "assistant",
+                "content": null,
+                "tool_calls": [
+                  {
+                    "id": "step_1",
+                    "type": "function",
+                    "function": {
+                      "name": "read_file",
+                      "arguments": "{\"path\": \"src/cache.py\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "step_1",
+                "content": "def expired(now, deadline): return now >= deadline"
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "run_tests",
+                "arguments": {
+                  "path": "tests/test_cache.py"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "extract-pt-correction",
+          "tier": "extraction",
+          "cluster": "config-correction",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "service": "api",
+              "port": 8080,
+              "replicas": 3
+            }
+          }
+        },
+        {
+          "id": "extract-missing",
+          "tier": "extraction",
+          "cluster": "missing-fields",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "id": "T-8",
+              "owner": "Ana",
+              "deadline": null
+            }
+          }
+        },
+        {
+          "id": "extract-quoted",
+          "tier": "extraction",
+          "cluster": "escaped-text",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "value": "a\"b\\c"
+            }
+          }
+        },
+        {
+          "id": "support-relevant-db",
+          "tier": "relevance",
+          "cluster": "relevant-db",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "set_f1",
+            "expected": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        {
+          "id": "support-reason-boundary",
+          "tier": "reasoning",
+          "cluster": "reason-boundary",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "exact",
+            "expected": "false"
+          }
+        }
+      ],
+      "provenance": {
+        "generator_sha256": "791ff1914c6e21204fb318fb5c0c6786d95811081acadefb2d34103e1a6b2ea4",
+        "source": "Original authored contracts and synthetic documents. Reference solutions are excluded from requests."
+      }
+    },
+    "arms": [
+      {
+        "name": "strata_flash_next",
+        "base_url": "http://127.0.0.1:18182/v1",
+        "model": "qwen3.8-flash-next-iq2_xs",
+        "metadata": {
+          "runtime": "Strata engine 0.1.30 from publisher Dockerfile at commit 30ec18ec7094550fcc594fd948220d511d80464e; CUDA arch 86, text only",
+          "image": "sha256:f0aead168c875cb4035ad7e8647c015939658866e7f37089bb2a126f2f06dda4",
+          "weights": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF@ed59f92082b1e93c0e96d60a8b11aab089b52f09, IQ2_XS, shard SHA256 92cee27ae5bbadcd732416a0f7a7f0acc092399dbbe8f5a5efa707c2ec0a49d7 and 316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113",
+          "launch": "CONTEXT=150000, KV=int8, VISION=no, LOW_RAM=on, GPU=0, 44 GiB cgroup memory, 8 CPUs, publisher default sampling unless request overrides",
+          "hardware": "RTX 3090 24576 MiB, driver 595.91.07, single GPU; 61 GiB host RAM",
+          "cache_policy": "fresh server, one excluded warmup; publisher resident expert cache and conversation cache active; no explicit cache reset between measured requests",
+          "gpu_profile": "210-1350 MHz graphics lock, +100 GPC VF offset, 0 memory VF offset, 370 W power limit, VRAM fan curve and 101 C guard",
+          "host_os": "Ubuntu 26.04.1, NVIDIA driver 595.91.07"
+        }
+      }
+    ],
+    "jobs": [
+      {
+        "id": "extract-quoted:0:42",
+        "case": {
+          "id": "extract-quoted",
+          "tier": "extraction",
+          "cluster": "escaped-text",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "value": "a\"b\\c"
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 522e697060bf7eae05f9."
+            },
+            {
+              "role": "user",
+              "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "acf0cd00814cb9aa04e0b9406271eebedbdebb49fbb81711b51a37876427e0aa"
+      },
+      {
+        "id": "code-topological:0:314",
+        "case": {
+          "id": "code-topological",
+          "tier": "coding",
+          "cluster": "code-topological",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: db58fd2ac6beaae3d611."
+            },
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "86f38d27ffd1cfbdea3cf92b415abdc304e4b18269a222ec2db7241ce20a6ab7"
+      },
+      {
+        "id": "episode-cache-first:0:42",
+        "case": {
+          "id": "episode-cache-first",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "read_file",
+                "arguments": {
+                  "path": "src/cache.py"
+                }
+              }
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 92b3eb5ce489353199b3."
+            },
+            {
+              "role": "user",
+              "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "description": "Read one repository file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Run tests for one path",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_pods",
+                "description": "Read pod status in a namespace",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "selector"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_logs",
+                "description": "Read bounded container logs",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "pod": {
+                      "type": "string"
+                    },
+                    "tail": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "pod",
+                    "tail"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "apply_patch",
+                "description": "Apply a patch to one file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "patch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "patch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "e7f9a14f50b646d95c022006c34d25f28266fbc07b993343ad03c5456132096c"
+      },
+      {
+        "id": "code-redact:0:2718",
+        "case": {
+          "id": "code-redact",
+          "tier": "coding",
+          "cluster": "code-redact",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: fd471de75ca2063cdd47."
+            },
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "ac1fa7ab293ccade0410f9af329804f03a06f290066934741910551c823c6bda"
+      },
+      {
+        "id": "extract-missing:0:2718",
+        "case": {
+          "id": "extract-missing",
+          "tier": "extraction",
+          "cluster": "missing-fields",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "id": "T-8",
+              "owner": "Ana",
+              "deadline": null
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 93dddd9e8b0b9e1305f3."
+            },
+            {
+              "role": "user",
+              "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "c497ed29823a52e62135868d289d3a94a21fc7d96fc5743640a9ad5884f8e89d"
+      },
+      {
+        "id": "extract-pt-correction:0:314",
+        "case": {
+          "id": "extract-pt-correction",
+          "tier": "extraction",
+          "cluster": "config-correction",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "service": "api",
+              "port": 8080,
+              "replicas": 3
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 3118c158a719c0acc075."
+            },
+            {
+              "role": "user",
+              "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "4c9b0b0353ebfb43809e922ea8f1d09142ffd1300b7fb838ac41331e8afed4e3"
+      },
+      {
+        "id": "episode-cache-next:0:2718",
+        "case": {
+          "id": "episode-cache-next",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              },
+              {
+                "role": "assistant",
+                "content": null,
+                "tool_calls": [
+                  {
+                    "id": "step_1",
+                    "type": "function",
+                    "function": {
+                      "name": "read_file",
+                      "arguments": "{\"path\": \"src/cache.py\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "step_1",
+                "content": "def expired(now, deadline): return now >= deadline"
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "run_tests",
+                "arguments": {
+                  "path": "tests/test_cache.py"
+                }
+              }
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 01055b89084793f3f87d."
+            },
+            {
+              "role": "user",
+              "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+            },
+            {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "step_1",
+                  "type": "function",
+                  "function": {
+                    "name": "read_file",
+                    "arguments": "{\"path\": \"src/cache.py\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "step_1",
+              "content": "def expired(now, deadline): return now >= deadline"
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "description": "Read one repository file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Run tests for one path",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_pods",
+                "description": "Read pod status in a namespace",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "selector"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_logs",
+                "description": "Read bounded container logs",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "pod": {
+                      "type": "string"
+                    },
+                    "tail": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "pod",
+                    "tail"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "apply_patch",
+                "description": "Apply a patch to one file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "patch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "patch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "d2951ba7a4abbab19386c1c25da5a521cff44b43682faf0e3b791e2d7bfa2709"
+      },
+      {
+        "id": "code-merge-config:0:2718",
+        "case": {
+          "id": "code-merge-config",
+          "tier": "coding",
+          "cluster": "code-merge-config",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 39f85adc858eda0cb126."
+            },
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "4cac9870aee6f190ea60e3971c038ab5e92dae7349625656dbe09ea22785bdd9"
+      },
+      {
+        "id": "support-relevant-db:0:314",
+        "case": {
+          "id": "support-relevant-db",
+          "tier": "relevance",
+          "cluster": "relevant-db",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "set_f1",
+            "expected": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: f0a66debe71543921b96."
+            },
+            {
+              "role": "user",
+              "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "1c6be1175a630b29e3993b150377f5567fbdd21616b91370aed5fec49111807e"
+      },
+      {
+        "id": "code-lru:0:2718",
+        "case": {
+          "id": "code-lru",
+          "tier": "coding",
+          "cluster": "code-lru",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: c02f56bf16fe4303daa2."
+            },
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "6fa576b40c2eae9301f2293f5c9a4727c269d4afd50c81c637f9e3819ee5b0cf"
+      },
+      {
+        "id": "extract-pt-correction:0:2718",
+        "case": {
+          "id": "extract-pt-correction",
+          "tier": "extraction",
+          "cluster": "config-correction",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "service": "api",
+              "port": 8080,
+              "replicas": 3
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: ff6e60a90ee1b4c10edd."
+            },
+            {
+              "role": "user",
+              "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "bce073b2c1f7d06e4e6d38b6df9681f55f1d1adc4e3cc4d15ef8b93b01e37e57"
+      },
+      {
+        "id": "support-relevant-db:0:42",
+        "case": {
+          "id": "support-relevant-db",
+          "tier": "relevance",
+          "cluster": "relevant-db",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "set_f1",
+            "expected": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 7651194de4460c4fd485."
+            },
+            {
+              "role": "user",
+              "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "463fb1a34cb6aeeb3c1d2582e285e959f51e085540d2971124875555992a2086"
+      },
+      {
+        "id": "support-reason-boundary:0:42",
+        "case": {
+          "id": "support-reason-boundary",
+          "tier": "reasoning",
+          "cluster": "reason-boundary",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "exact",
+            "expected": "false"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 4d48b5fe7d45be861921."
+            },
+            {
+              "role": "user",
+              "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "66d089ddb1204284d75b5072189d03abf24155ccb6cde7331307057c4923a94f"
+      },
+      {
+        "id": "code-diff-keys:0:2718",
+        "case": {
+          "id": "code-diff-keys",
+          "tier": "coding",
+          "cluster": "code-diff-keys",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 58522ceecb31b5073050."
+            },
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "5f2ac2cb6a65f4b0dea04f1200f80f75af18a79c202d915ed719552f1bc31e01"
+      },
+      {
+        "id": "extract-missing:0:42",
+        "case": {
+          "id": "extract-missing",
+          "tier": "extraction",
+          "cluster": "missing-fields",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "id": "T-8",
+              "owner": "Ana",
+              "deadline": null
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: fd1e9aef0b6f45b96052."
+            },
+            {
+              "role": "user",
+              "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "694dbd58febb5a589bb0cbe10d9f337691579d98cecfc4ec8cecf8a2717b1e8c"
+      },
+      {
+        "id": "extract-missing:0:314",
+        "case": {
+          "id": "extract-missing",
+          "tier": "extraction",
+          "cluster": "missing-fields",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "id": "T-8",
+              "owner": "Ana",
+              "deadline": null
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 3487e83ef4cee604b1b2."
+            },
+            {
+              "role": "user",
+              "content": "Ticket T-8 owner is Ana. No deadline was provided. Return only JSON with id, owner, deadline. Use null for missing values."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "c99a14fc3719697dcb7ce602eb5d947e607a98c4cad7dae250814653c22448d0"
+      },
+      {
+        "id": "code-diff-keys:0:314",
+        "case": {
+          "id": "code-diff-keys",
+          "tier": "coding",
+          "cluster": "code-diff-keys",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 2cfd970a47375f268724."
+            },
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "00177bcadbcac2a7e5421ea7f925ae7c18b990c48275cd770ae5116594d9563b"
+      },
+      {
+        "id": "support-reason-boundary:0:2718",
+        "case": {
+          "id": "support-reason-boundary",
+          "tier": "reasoning",
+          "cluster": "reason-boundary",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "exact",
+            "expected": "false"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 6514d773402edf751fec."
+            },
+            {
+              "role": "user",
+              "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "3b8c45c502d376f9e401d594e6d157fcbf1968101c258576a4bdbf4d2021f441"
+      },
+      {
+        "id": "episode-cache-next:0:42",
+        "case": {
+          "id": "episode-cache-next",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              },
+              {
+                "role": "assistant",
+                "content": null,
+                "tool_calls": [
+                  {
+                    "id": "step_1",
+                    "type": "function",
+                    "function": {
+                      "name": "read_file",
+                      "arguments": "{\"path\": \"src/cache.py\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "step_1",
+                "content": "def expired(now, deadline): return now >= deadline"
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "run_tests",
+                "arguments": {
+                  "path": "tests/test_cache.py"
+                }
+              }
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: a1fcbb00b6148d3db1b3."
+            },
+            {
+              "role": "user",
+              "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+            },
+            {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "step_1",
+                  "type": "function",
+                  "function": {
+                    "name": "read_file",
+                    "arguments": "{\"path\": \"src/cache.py\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "step_1",
+              "content": "def expired(now, deadline): return now >= deadline"
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "description": "Read one repository file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Run tests for one path",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_pods",
+                "description": "Read pod status in a namespace",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "selector"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_logs",
+                "description": "Read bounded container logs",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "pod": {
+                      "type": "string"
+                    },
+                    "tail": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "pod",
+                    "tail"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "apply_patch",
+                "description": "Apply a patch to one file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "patch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "patch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "964550b42a569a85f5f703be49e36e4c8d3575d8c732cb7276c192793538b8d6"
+      },
+      {
+        "id": "code-topological:0:2718",
+        "case": {
+          "id": "code-topological",
+          "tier": "coding",
+          "cluster": "code-topological",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: b9df6fae142722832947."
+            },
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "ed72cb857f94456a381a3641d0f72ef62497d79df2d3a0119735b346ad17a42e"
+      },
+      {
+        "id": "code-topological:0:42",
+        "case": {
+          "id": "code-topological",
+          "tier": "coding",
+          "cluster": "code-topological",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: db02fbb10e8356a79f13."
+            },
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "025800e68d0e3c50fa8f77896a48b131efeaf6e92a41912eff3e75d5eb58fba4"
+      },
+      {
+        "id": "support-relevant-db:0:2718",
+        "case": {
+          "id": "support-relevant-db",
+          "tier": "relevance",
+          "cluster": "relevant-db",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "set_f1",
+            "expected": [
+              "A",
+              "C"
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 19187816c00d26fcef16."
+            },
+            {
+              "role": "user",
+              "content": "Question: Where is the database backed up? A: backup.sh copies app.sqlite to /backup nightly. B: style.css defines colors. C: restore.md says restore from /backup/app.sqlite. Return only a JSON array of relevant document IDs."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "6f85cb8f1e9b1f6310072b5e43e574331404cda2cccc062154532a0c98246e0e"
+      },
+      {
+        "id": "code-merge-config:0:314",
+        "case": {
+          "id": "code-merge-config",
+          "tier": "coding",
+          "cluster": "code-merge-config",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 06cbb637ee595ec70cda."
+            },
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "d177303a826047d477f06dec3a206e15f54042f22ddb87d9f0169342b5eb9fbd"
+      },
+      {
+        "id": "episode-cache-next:0:314",
+        "case": {
+          "id": "episode-cache-next",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              },
+              {
+                "role": "assistant",
+                "content": null,
+                "tool_calls": [
+                  {
+                    "id": "step_1",
+                    "type": "function",
+                    "function": {
+                      "name": "read_file",
+                      "arguments": "{\"path\": \"src/cache.py\"}"
+                    }
+                  }
+                ]
+              },
+              {
+                "role": "tool",
+                "tool_call_id": "step_1",
+                "content": "def expired(now, deadline): return now >= deadline"
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "run_tests",
+                "arguments": {
+                  "path": "tests/test_cache.py"
+                }
+              }
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 10aa32cb270f290363ef."
+            },
+            {
+              "role": "user",
+              "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+            },
+            {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "step_1",
+                  "type": "function",
+                  "function": {
+                    "name": "read_file",
+                    "arguments": "{\"path\": \"src/cache.py\"}"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "step_1",
+              "content": "def expired(now, deadline): return now >= deadline"
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "description": "Read one repository file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Run tests for one path",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_pods",
+                "description": "Read pod status in a namespace",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "selector"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_logs",
+                "description": "Read bounded container logs",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "pod": {
+                      "type": "string"
+                    },
+                    "tail": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "pod",
+                    "tail"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "apply_patch",
+                "description": "Apply a patch to one file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "patch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "patch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "27956c7d95d8a386714d9a5a63897ab436d7168f82d77079e26e2e419dfc3fbc"
+      },
+      {
+        "id": "code-lru:0:42",
+        "case": {
+          "id": "code-lru",
+          "tier": "coding",
+          "cluster": "code-lru",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 6d4557ccb4a04a64912f."
+            },
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "42dfcc59b8a828c6b97f3ff08b1f19351ac51baee1693805f62b9ad15e167b2a"
+      },
+      {
+        "id": "extract-quoted:0:2718",
+        "case": {
+          "id": "extract-quoted",
+          "tier": "extraction",
+          "cluster": "escaped-text",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "value": "a\"b\\c"
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: d5bb9b13939ae55a16d3."
+            },
+            {
+              "role": "user",
+              "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+            }
+          ],
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "5ae93cea7829264701e4335503d187fc00fd43aed9dec8b79f2596f3fcdbd1e3"
+      },
+      {
+        "id": "episode-cache-first:0:2718",
+        "case": {
+          "id": "episode-cache-first",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "read_file",
+                "arguments": {
+                  "path": "src/cache.py"
+                }
+              }
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 2e4dc0ac816ba5296d99."
+            },
+            {
+              "role": "user",
+              "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "description": "Read one repository file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Run tests for one path",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_pods",
+                "description": "Read pod status in a namespace",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "selector"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_logs",
+                "description": "Read bounded container logs",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "pod": {
+                      "type": "string"
+                    },
+                    "tail": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "pod",
+                    "tail"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "apply_patch",
+                "description": "Apply a patch to one file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "patch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "patch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "seed": 2718,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "9da76e3de0ca4c8902aa1fa9126ea8f2c5fe487a2f6147b849ab2b4977bd12c8"
+      },
+      {
+        "id": "extract-quoted:0:314",
+        "case": {
+          "id": "extract-quoted",
+          "tier": "extraction",
+          "cluster": "escaped-text",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "value": "a\"b\\c"
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: dc31e66d4bdb472d4180."
+            },
+            {
+              "role": "user",
+              "content": "Extract the text between the delimiters into a JSON object whose key is literally \"value\": <<<a\"b\\c>>>. Preserve the extracted text exactly. Return only JSON."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "4828dc61e94752245e83cccb61d1c2e3864f50795a58d198d47d1c34939d0116"
+      },
+      {
+        "id": "code-redact:0:42",
+        "case": {
+          "id": "code-redact",
+          "tier": "coding",
+          "cluster": "code-redact",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 4b419179f6509ddcd82f."
+            },
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "e8c124cf694b7d522095ce272d3531b19695813eea96a4df2c082f591e788b8d"
+      },
+      {
+        "id": "support-reason-boundary:0:314",
+        "case": {
+          "id": "support-reason-boundary",
+          "tier": "reasoning",
+          "cluster": "reason-boundary",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "exact",
+            "expected": "false"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 0f93635aa90fc0258779."
+            },
+            {
+              "role": "user",
+              "content": "A cache entry is created at time 10 with TTL 5. It expires when now >= created + TTL. At now=15 is the entry valid? Reply only true or false."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "dbba5cb9ab680e47e511904bc0e899895120a1451c488a1ee5658d1204e16677"
+      },
+      {
+        "id": "code-diff-keys:0:42",
+        "case": {
+          "id": "code-diff-keys",
+          "tier": "coding",
+          "cluster": "code-diff-keys",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 6205873d651f36f380ff."
+            },
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "10282638b6f82c9824969b6082a29953795378d8a2eb596fc9a183ea6c25c75d"
+      },
+      {
+        "id": "code-lru:0:314",
+        "case": {
+          "id": "code-lru",
+          "tier": "coding",
+          "cluster": "code-lru",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: cf11622f703419e84bb6."
+            },
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "9fe6c2fd16eed4ba0b962399dce0f3731f7bb9c8f938bda37062474c3a271607"
+      },
+      {
+        "id": "code-redact:0:314",
+        "case": {
+          "id": "code-redact",
+          "tier": "coding",
+          "cluster": "code-redact",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 87022ab3427d142f9691."
+            },
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. sensitive is a list of strings. Replace any dictionary value whose key case-insensitively matches any sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "d6896ed4d3ca80307eadd4da4d7cb7a8d638f28a3743940fcc6d1456b86d20ee"
+      },
+      {
+        "id": "episode-cache-first:0:314",
+        "case": {
+          "id": "episode-cache-first",
+          "tier": "tool_replay",
+          "cluster": "episode-cache",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+              }
+            ],
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_file",
+                  "description": "Read one repository file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "run_tests",
+                  "description": "Run tests for one path",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_pods",
+                  "description": "Read pod status in a namespace",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "selector": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "selector"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "get_logs",
+                  "description": "Read bounded container logs",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "pod": {
+                        "type": "string"
+                      },
+                      "tail": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "namespace",
+                      "pod",
+                      "tail"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "apply_patch",
+                  "description": "Apply a patch to one file",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "patch": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "patch"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ],
+            "tool_choice": "auto"
+          },
+          "grader": {
+            "kind": "tool",
+            "expected": [
+              {
+                "name": "read_file",
+                "arguments": {
+                  "path": "src/cache.py"
+                }
+              }
+            ]
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 6520ac35c5504f71cc5d."
+            },
+            {
+              "role": "user",
+              "content": "Read src/cache.py, then run tests/test_cache.py. On each response issue exactly one tool call for the next requested step, with no extra tool calls."
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "description": "Read one repository file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Run tests for one path",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_pods",
+                "description": "Read pod status in a namespace",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "selector"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "get_logs",
+                "description": "Read bounded container logs",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "pod": {
+                      "type": "string"
+                    },
+                    "tail": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "namespace",
+                    "pod",
+                    "tail"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "apply_patch",
+                "description": "Apply a patch to one file",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "patch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "patch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "seed": 314,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "6814adaae9bc67d408ceec19c59d394bb9828ca2377a9eb2b095a9c9a1001322"
+      },
+      {
+        "id": "code-merge-config:0:42",
+        "case": {
+          "id": "code-merge-config",
+          "tier": "coding",
+          "cluster": "code-merge-config",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+              }
+            ],
+            "reasoning_effort": "low"
+          },
+          "grader": {
+            "kind": "python",
+            "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "low",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 4a89b76c10201a468999."
+            },
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "b4f3630f8dbfb8ffa606c323c24a4cda785f75ef7564166a45b98ee0662279dc"
+      },
+      {
+        "id": "extract-pt-correction:0:42",
+        "case": {
+          "id": "extract-pt-correction",
+          "tier": "extraction",
+          "cluster": "config-correction",
+          "phase": "quality",
+          "request": {
+            "messages": [
+              {
+                "role": "user",
+                "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+              }
+            ]
+          },
+          "grader": {
+            "kind": "json",
+            "expected": {
+              "service": "api",
+              "port": 8080,
+              "replicas": 3
+            }
+          }
+        },
+        "request": {
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "reasoning_effort": "medium",
+          "max_tokens": 4096,
+          "top_k": 20,
+          "messages": [
+            {
+              "role": "system",
+              "content": "Evaluation ID: 4ef02c44ce53ee431cfd."
+            },
+            {
+              "role": "user",
+              "content": "O serviço api usava porta 8000 e 3 réplicas. Correção aprovada: porta 8080; réplicas continuam 3. Responda apenas JSON com service, port, replicas."
+            }
+          ],
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          }
+        },
+        "request_sha256": "232a9fd8e887b2fb53a577193063e011019967926c3ed997ca579f0a31264baa"
+      }
+    ],
+    "harness_sha256": "fdbdc69fe1a818b9f2177a5ee8ed786ec887ed272b3898880149d1b1fa57952c",
+    "sha256": "a5966572be0a43a8e83c85bdeb64035cfa6eb541ce8c06ca2d7c7f1044b3840f"
+  },
+  "arm": "strata_flash_next",
+  "started_unix": 1790846953.9214034,
+  "timeout_s": 1800.0
+}

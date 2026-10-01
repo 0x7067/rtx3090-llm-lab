@@ -12,7 +12,7 @@
       314,
       2718
     ],
-    "code_image": "sha256:613c5454f914638dc2bfcab71c8630de0089f7ebff0a7239b54f34866c4b6051",
+    "code_image": "sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4",
     "margins": {
       "relevance": 0.03,
       "transcript_qa": 0.03,
@@ -3873,5 +3873,5 @@
     }
   ],
   "harness_sha256": "fdbdc69fe1a818b9f2177a5ee8ed786ec887ed272b3898880149d1b1fa57952c",
-  "sha256": "c8b9285e20af4f669b393b0bffa49e64459f57cd3bb39db330c0ddf9335113ae"
+  "sha256": "1e599ff31f7c23701d1bbc98cb4b7ec6092e91fafad6be6c69196a4b081cad56"
 }

@@ -5,7 +5,8 @@ quality screen keeps the tested Strata artifact, runtime, context, KV type, GPU
 profile, output allowance, and graders fixed. It changes one request policy at
 a time.
 
-`build-followup-plans.py` creates five frozen 36-observation plans:
+`build-followup-plans.py` creates a corrected full 58-observation plan with a
+32,768-token quality allowance, plus five frozen 36-observation plans:
 
 - corrected control;
 - 512, 1,024, and 2,048-token hard reasoning budgets for coding cases;
@@ -18,6 +19,11 @@ contract defects are corrected in every plan: `code-redact` now says that
 `sensitive` is a list, matching its executable grader, and `extract-quoted`
 names the literal JSON key `value`. These plans form a new policy campaign and
 must not be used to rewrite the frozen 48.67/54 baseline.
+
+The full plan changes only the common quality output allowance and the
+`code-redact` executable grader. The prompt documents `sensitive` as one string,
+so the corrected grader calls the function with one string and separately tests
+both recursive redaction and case-insensitive matching.
 
 Generate the plans from the campaign directory:
 

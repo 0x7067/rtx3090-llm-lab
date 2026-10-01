@@ -80,13 +80,55 @@ def make_suite(source, policy):
     return suite
 
 
+def make_full_32768_suite(source):
+    suite = copy.deepcopy(source)
+    suite["description"] = (
+        "Authored synthetic infrastructure regression suite v2; 32,768-token quality allowance "
+        "and corrected singular-string code-redact grader."
+    )
+    suite["request_defaults"]["max_tokens"] = 32768
+    case = next(case for case in suite["cases"] if case["id"] == "code-redact")
+    case["grader"]["tests"] = (
+        "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\n"
+        "r=redact(a,'PASSWORD')\n"
+        "assert r=={'TOKEN':'abc','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\n"
+        "assert a=={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\n"
+        "r['items'].append(4)\n"
+        "assert len(a['items'])==1\n"
+        "assert redact(a,'token')=={'TOKEN':'[REDACTED]','items':[{'password':'x','password_hint':'h'}],'n':3}\n"
+        "assert redact(None,'x') is None"
+    )
+    return suite
+
+
 def main():
-    source = read(ROOT / "suite.json")
+    source = read(ROOT / "suite-post-upgrade.json")
     arms = read(ROOT / "arms-post-upgrade.json")
     strata = next(arm for arm in arms if arm["name"] == "strata_flash_next")
     out = ROOT / "followup-plans"
     out.mkdir(exist_ok=True)
     write(out / "arms-strata.json", [strata])
+    full_suite_path = out / "suite-full-32768.json"
+    full_plan_path = out / "plan-full-32768.json"
+    write(full_suite_path, make_full_32768_suite(source))
+    if full_plan_path.exists():
+        full_plan_path.unlink()
+    subprocess.run(
+        [
+            sys.executable,
+            str(HARNESS),
+            "freeze",
+            "--suite",
+            str(full_suite_path),
+            "--arms",
+            str(out / "arms-strata.json"),
+            "--campaign",
+            "local-llm-reset-strata-full-32768-2026-10-01",
+            "--out",
+            str(full_plan_path),
+        ],
+        check=True,
+    )
     for policy in POLICIES:
         suite_path = out / f"suite-{policy}.json"
         plan_path = out / f"plan-{policy}.json"

@@ -1,0 +1,243 @@
+{
+  "status": "ok",
+  "content": "\n\nOK",
+  "reasoning": "We need to respond to user: \"Reply OK.\" Just output OK. Final only OK.\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "events": [
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": null,
+            "role": "assistant",
+            "content": ""
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": "We"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " need to respond to"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " user: \"Reply"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " OK.\""
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " Just"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " output"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " OK. Final"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " only"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": " OK.\n"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": null,
+            "content": "\n\nOK"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "matched_stop": null
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning_content": null
+          },
+          "logprobs": null,
+          "finish_reason": "stop",
+          "matched_stop": 248046
+        }
+      ]
+    },
+    {
+      "id": "6f60fced379b4276bb86657352315a43",
+      "object": "chat.completion.chunk",
+      "created": 1791984558,
+      "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+      "choices": [],
+      "usage": {
+        "prompt_tokens": 55,
+        "total_tokens": 79,
+        "completion_tokens": 24,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 21
+      }
+    }
+  ],
+  "ttft_s": 0.11635700898477808,
+  "usage": {
+    "prompt_tokens": 55,
+    "total_tokens": 79,
+    "completion_tokens": 24,
+    "prompt_tokens_details": null,
+    "reasoning_tokens": 21
+  },
+  "timings": {},
+  "wall_s": 0.3825501319952309,
+  "e2e_output_tps": 62.73687549086821,
+  "server_decode_tps": null,
+  "server_prefill_tps": null
+}

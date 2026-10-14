@@ -1,0 +1,337 @@
+Setting up iq3_xxs from the GGUF files in /gguf (the engine is already in the image).
+Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)
+
+=== Step 1: checking your PC ===
+  [ok] GPU: NVIDIA GeForce RTX 3090, 24.0 GB VRAM, compute capability 8.6, driver 595.91.07
+  [ok] RAM: 62 GB
+  [ok] CPU: Intel(R) Core(TM) i9-10850K CPU @ 3.60GHz (AVX2)
+  [ok] PCIe: 3.0 x16 (the card supports 4.0, the board 3.0)
+
+=== Step 2: your choices ===
+  [ok] model: Qwen3.8-Flash-Next
+
+  1) Q2_0     2-bit, the fastest; download 66 GB, uses ~34 GB of RAM
+  2) IQ2_XS   2-bit i-quant, a little better quality, close in speed; download 68 GB, uses ~36 GB of RAM
+  3) IQ3_XXS  3-bit i-quant, better quality, slower (more CPU work per token); download 76 GB, uses ~43 GB of RAM
+  4) IQ3_S    (recommended) 3.5-bit i-quant, the best quality (matches the full model), the slowest; needs a 64 GB PC with little else running; download 84 GB, uses ~50 GB of RAM   <- needs 62 GB RAM, you have 62
+  [ok] size: IQ3_XXS
+  [ok] context: 150000 tokens
+  [ok] KV cache: 8-bit
+  [ok] images: off
+  [ok] low-RAM mode: the GPU holds ~41% of IQ3_XXS's experts (43 GB) and the other ~26 GB stay in RAM (62 GB), read once from a copy in the model folder
+
+  EXPERIMENTAL - speed projection: a small control vector applied while the model runs (layers 4-44).
+  It changes how the model answers: its package describes it as a refusal-direction projection (the
+  model declines far fewer requests). Off unless you choose it; when on, the web app can switch it off
+  per chat. Details: data/experimental-speed-projection/README.md
+  [ok] experimental speed projection: off
+
+=== Step 3: Python packages ===
+  Installing numpy, jinja2, regex, pyyaml, tqdm, requests, cmake, ninja, pillow, psutil ...
+  > /opt/strata/.venv/bin/python -m pip install --quiet --disable-pip-version-check numpy==2.5.3; python_version >= "3.12" numpy==2.4.6; python_version == "3.11" numpy==2.2.6; python_version < "3.11" jinja2==3.1.6 regex==2026.9.10 pyyaml==6.0.3 tqdm==4.70.1 requests==2.34.2 cmake==4.4.3 ninja==1.13.2 pillow==12.3.0 psutil==7.2.2 markupsafe==3.0.3 certifi==2026.7.22 charset-normalizer==3.5.1 idna==3.20 urllib3==2.8.0 colorama==0.4.6; sys_platform == "win32"
+  [ok] numpy, jinja2, regex, pyyaml, tqdm, requests, cmake, ninja, pillow, psutil installed
+
+=== Step 4: the Strata engine ===
+  [ok] llama.cpp 3cf0325 (gguf-py, ggml, mtmd)
+  [ok] engine already built for this PC
+  [ok] engine: /opt/strata/engine/strata
+
+=== Step 5: downloading Qwen3.8-Flash-Next IQ3_XXS ===
+  [ok] model files present
+
+=== Step 6: preparing the model for Strata ===
+  > /opt/strata/.venv/bin/python /opt/strata/tools/iq_pack.py --gguf /gguf/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf --out /data/packs/iq3_xxs
+model shards: Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf, Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf
+index.txt: 1079 tensors, 302 served natively, 0 in extra.bin, arena 1.43 GiB
+tokenizer/: vocab 248320, merges 247587, pre qwen35, specials {'tokenizer.ggml.eos_token_id': 248046, 'tokenizer.ggml.padding_token_id': 248044, 'tokenizer.ggml.bos_token_id': 248044}
+  Writing the experts into one file for the low-RAM mode (one time, 43 GB) ...
+  > /opt/strata/.venv/bin/python /opt/strata/tools/iq_pack.py --gguf /gguf/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf --out /data/packs/iq3_xxs --experts-bin
+model shards: Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf, Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf
+index.txt: 1079 tensors, 302 served natively, 0 in extra.bin, arena 1.43 GiB
+  layer  0  IQ2_XS  /IQ4_NL  blob  1868800  at 0.00 GiB
+  layer  8  IQ3_S   /Q2_0    blob  1868800  at 5.83 GiB
+  layer 16  IQ2_XXS /Q2_0    blob  1305600  at 11.43 GiB
+  layer 24  IQ3_S   /Q2_0    blob  1868800  at 17.72 GiB
+  layer 32  IQ3_S   /IQ4_NL  blob  2329600  at 24.63 GiB
+  layer 40  IQ2_S   /Q2_0    blob  1510400  at 32.54 GiB
+experts.bin: 48 layers, 39.97 GiB
+  [ok] model prepared: /data/packs/iq3_xxs
+  The MTP draft layer (speculative decoding, ~2x faster output) comes from the original Qwen checkpoint:
+  only its ~5 GB of MTP tensors are downloaded.
+  > /opt/strata/.venv/bin/python /opt/strata/tools/mtp_fetch.py fetch --out /data/mtp
+# MTP block in the BF16 checkpoint
+
+31 tensors, 5.214 GB, in 28 shards.
+
+| tensor | dtype | shape | MB |
+|---|---|---|---:|
+| `mtp.fc_embedding.weight` | BF16 | 2560x2560 | 13.1 |
+| `mtp.fc_hidden.weight` | BF16 | 2560x2560 | 13.1 |
+| `mtp.hyper_connection_mixer.hc_norm.weight` | BF16 | 10240 | 0.0 |
+| `mtp.hyper_connection_mixer.input_mix_weight_down.weight` | BF16 | 320x10240 | 6.6 |
+| `mtp.hyper_connection_mixer.input_mix_weight_up.weight` | BF16 | 10240x320 | 6.6 |
+| `mtp.layers.0.attn_hyper_connection.block_inject_weight.weight` | BF16 | 4x10240 | 0.1 |
+| `mtp.layers.0.attn_hyper_connection.hc_norm.weight` | BF16 | 10240 | 0.0 |
+| `mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight` | BF16 | 320x10240 | 6.6 |
+| `mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight` | BF16 | 10240x320 | 6.6 |
+| `mtp.layers.0.mlp.experts.down_proj` | BF16 | 512x2560x640 | 1677.7 |
+| `mtp.layers.0.mlp.experts.gate_up_proj` | BF16 | 512x1280x2560 | 3355.4 |
+| `mtp.layers.0.mlp.gate.weight` | BF16 | 512x2560 | 2.6 |
+| `mtp.layers.0.mlp.shared_expert.down_proj.weight` | BF16 | 2560x640 | 3.3 |
+| `mtp.layers.0.mlp.shared_expert.gate_proj.weight` | BF16 | 640x2560 | 3.3 |
+| `mtp.layers.0.mlp.shared_expert.up_proj.weight` | BF16 | 640x2560 | 3.3 |
+| `mtp.layers.0.mlp.shared_expert_gate.weight` | BF16 | 1x2560 | 0.0 |
+| `mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight` | BF16 | 4x10240 | 0.1 |
+| `mtp.layers.0.mlp_hyper_connection.hc_norm.weight` | BF16 | 10240 | 0.0 |
+| `mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight` | BF16 | 320x10240 | 6.6 |
+| `mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight` | BF16 | 10240x320 | 6.6 |
+| `mtp.layers.0.self_attn.indexer.index_qk_proj.weight` | BF16 | 640x2560 | 3.3 |
+| `mtp.layers.0.self_attn.indexer.k_layernorm.weight` | BF16 | 128 | 0.0 |
+| `mtp.layers.0.self_attn.indexer.q_layernorm.weight` | BF16 | 128 | 0.0 |
+| `mtp.layers.0.self_attn.k_norm.weight` | BF16 | 256 | 0.0 |
+| `mtp.layers.0.self_attn.k_proj.weight` | BF16 | 512x2560 | 2.6 |
+| `mtp.layers.0.self_attn.o_proj.weight` | BF16 | 2560x6144 | 31.5 |
+| `mtp.layers.0.self_attn.q_norm.weight` | BF16 | 256 | 0.0 |
+| `mtp.layers.0.self_attn.q_proj.weight` | BF16 | 12288x2560 | 62.9 |
+| `mtp.layers.0.self_attn.v_proj.weight` | BF16 | 512x2560 | 2.6 |
+| `mtp.pre_fc_norm_embedding.weight` | BF16 | 2560 | 0.0 |
+| `mtp.pre_fc_norm_hidden.weight` | BF16 | 10240 | 0.0 |
+
+mtp.fc_embedding.weight 100%
+mtp.fc_hidden.weight 100%
+mtp.hyper_connection_mixer.hc_norm.weight 100%
+mtp.hyper_connection_mixer.input_mix_weight_down.weight 100%
+mtp.hyper_connection_mixer.input_mix_weight_up.weight 100%
+mtp.layers.0.attn_hyper_connection.block_inject_weight.weight 100%
+mtp.layers.0.attn_hyper_connection.hc_norm.weight 100%
+mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight 100%
+mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight 100%
+mtp.layers.0.mlp.experts.down_proj 4%
+mtp.layers.0.mlp.experts.down_proj 8%
+mtp.layers.0.mlp.experts.down_proj 12%
+mtp.layers.0.mlp.experts.down_proj 16%
+mtp.layers.0.mlp.experts.down_proj 20%
+mtp.layers.0.mlp.experts.down_proj 24%
+mtp.layers.0.mlp.experts.down_proj 28%
+mtp.layers.0.mlp.experts.down_proj 32%
+mtp.layers.0.mlp.experts.down_proj 36%
+mtp.layers.0.mlp.experts.down_proj 40%
+mtp.layers.0.mlp.experts.down_proj 44%
+mtp.layers.0.mlp.experts.down_proj 48%
+mtp.layers.0.mlp.experts.down_proj 52%
+mtp.layers.0.mlp.experts.down_proj 56%
+mtp.layers.0.mlp.experts.down_proj 60%
+mtp.layers.0.mlp.experts.down_proj 64%
+mtp.layers.0.mlp.experts.down_proj 68%
+mtp.layers.0.mlp.experts.down_proj 72%
+mtp.layers.0.mlp.experts.down_proj 76%
+mtp.layers.0.mlp.experts.down_proj 80%
+mtp.layers.0.mlp.experts.down_proj 84%
+mtp.layers.0.mlp.experts.down_proj 88%
+mtp.layers.0.mlp.experts.down_proj 92%
+mtp.layers.0.mlp.experts.down_proj 96%
+mtp.layers.0.mlp.experts.down_proj 100%
+mtp.layers.0.mlp.experts.gate_up_proj 2%
+mtp.layers.0.mlp.experts.gate_up_proj 4%
+mtp.layers.0.mlp.experts.gate_up_proj 6%
+mtp.layers.0.mlp.experts.gate_up_proj 8%
+mtp.layers.0.mlp.experts.gate_up_proj 10%
+mtp.layers.0.mlp.experts.gate_up_proj 12%
+mtp.layers.0.mlp.experts.gate_up_proj 14%
+mtp.layers.0.mlp.experts.gate_up_proj 16%
+mtp.layers.0.mlp.experts.gate_up_proj 18%
+mtp.layers.0.mlp.experts.gate_up_proj 20%
+mtp.layers.0.mlp.experts.gate_up_proj 22%
+mtp.layers.0.mlp.experts.gate_up_proj 24%
+mtp.layers.0.mlp.experts.gate_up_proj 26%
+mtp.layers.0.mlp.experts.gate_up_proj 28%
+mtp.layers.0.mlp.experts.gate_up_proj 30%
+mtp.layers.0.mlp.experts.gate_up_proj 32%
+mtp.layers.0.mlp.experts.gate_up_proj 34%
+mtp.layers.0.mlp.experts.gate_up_proj 36%
+mtp.layers.0.mlp.experts.gate_up_proj 38%
+mtp.layers.0.mlp.experts.gate_up_proj 40%
+mtp.layers.0.mlp.experts.gate_up_proj 42%
+mtp.layers.0.mlp.experts.gate_up_proj 44%
+mtp.layers.0.mlp.experts.gate_up_proj 46%
+mtp.layers.0.mlp.experts.gate_up_proj 48%
+mtp.layers.0.mlp.experts.gate_up_proj 50%
+mtp.layers.0.mlp.experts.gate_up_proj 52%
+mtp.layers.0.mlp.experts.gate_up_proj 54%
+mtp.layers.0.mlp.experts.gate_up_proj 56%
+mtp.layers.0.mlp.experts.gate_up_proj 58%
+mtp.layers.0.mlp.experts.gate_up_proj 60%
+mtp.layers.0.mlp.experts.gate_up_proj 62%
+mtp.layers.0.mlp.experts.gate_up_proj 64%
+mtp.layers.0.mlp.experts.gate_up_proj 66%
+mtp.layers.0.mlp.experts.gate_up_proj 68%
+mtp.layers.0.mlp.experts.gate_up_proj 70%
+mtp.layers.0.mlp.experts.gate_up_proj 72%
+mtp.layers.0.mlp.experts.gate_up_proj 74%
+mtp.layers.0.mlp.experts.gate_up_proj 76%
+mtp.layers.0.mlp.experts.gate_up_proj 78%
+mtp.layers.0.mlp.experts.gate_up_proj 80%
+mtp.layers.0.mlp.experts.gate_up_proj 82%
+mtp.layers.0.mlp.experts.gate_up_proj 84%
+mtp.layers.0.mlp.experts.gate_up_proj 86%
+mtp.layers.0.mlp.experts.gate_up_proj 88%
+mtp.layers.0.mlp.experts.gate_up_proj 90%
+mtp.layers.0.mlp.experts.gate_up_proj 92%
+mtp.layers.0.mlp.experts.gate_up_proj 94%
+mtp.layers.0.mlp.experts.gate_up_proj 96%
+mtp.layers.0.mlp.experts.gate_up_proj 98%
+mtp.layers.0.mlp.experts.gate_up_proj 100%
+mtp.layers.0.mlp.gate.weight 100%
+mtp.layers.0.mlp.shared_expert.down_proj.weight 100%
+mtp.layers.0.mlp.shared_expert.gate_proj.weight 100%
+mtp.layers.0.mlp.shared_expert.up_proj.weight 100%
+mtp.layers.0.mlp.shared_expert_gate.weight 100%
+mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight 100%
+mtp.layers.0.mlp_hyper_connection.hc_norm.weight 100%
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight 100%
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight 100%
+mtp.layers.0.self_attn.indexer.index_qk_proj.weight 100%
+mtp.layers.0.self_attn.indexer.k_layernorm.weight 100%
+mtp.layers.0.self_attn.indexer.q_layernorm.weight 100%
+mtp.layers.0.self_attn.k_norm.weight 100%
+mtp.layers.0.self_attn.k_proj.weight 100%
+mtp.layers.0.self_attn.o_proj.weight 100%
+mtp.layers.0.self_attn.q_norm.weight 100%
+mtp.layers.0.self_attn.q_proj.weight 100%
+mtp.layers.0.self_attn.v_proj.weight 100%
+mtp.pre_fc_norm_embedding.weight 100%
+mtp.pre_fc_norm_hidden.weight 100%
+  > /opt/strata/.venv/bin/python /opt/strata/tools/mtp_pack.py --src /data/mtp --experts q2_0 --out /data/mtp/mtp-q2_0.gguf
+mtp.fc_embedding.weight: BF16 13.1 MB
+mtp.fc_hidden.weight: BF16 13.1 MB
+mtp.hyper_connection_mixer.hc_norm.weight: F32 0.0 MB
+mtp.hyper_connection_mixer.input_mix_weight_down.weight: BF16 6.6 MB
+mtp.hyper_connection_mixer.input_mix_weight_up.weight: BF16 6.6 MB
+mtp.layers.0.attn_hyper_connection.block_inject_weight.weight: BF16 0.1 MB
+mtp.layers.0.attn_hyper_connection.hc_norm.weight: F32 0.0 MB
+mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight: BF16 6.6 MB
+mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight: BF16 6.6 MB
+mtp.layers.0.mlp.experts.down_proj: q2_0 235.9 MB
+mtp.layers.0.mlp.experts.gate_up_proj: q2_0 471.9 MB
+mtp.layers.0.mlp.gate.weight: BF16 2.6 MB
+mtp.layers.0.mlp.shared_expert.down_proj.weight: BF16 3.3 MB
+mtp.layers.0.mlp.shared_expert.gate_proj.weight: BF16 3.3 MB
+mtp.layers.0.mlp.shared_expert.up_proj.weight: BF16 3.3 MB
+mtp.layers.0.mlp.shared_expert_gate.weight: BF16 0.0 MB
+mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight: BF16 0.1 MB
+mtp.layers.0.mlp_hyper_connection.hc_norm.weight: F32 0.0 MB
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight: BF16 6.6 MB
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight: BF16 6.6 MB
+mtp.layers.0.self_attn.indexer.index_qk_proj.weight: BF16 3.3 MB
+mtp.layers.0.self_attn.indexer.k_layernorm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.indexer.q_layernorm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.k_norm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.k_proj.weight: BF16 2.6 MB
+mtp.layers.0.self_attn.o_proj.weight: BF16 31.5 MB
+mtp.layers.0.self_attn.q_norm.weight: F32 0.0 MB
+mtp.layers.0.self_attn.q_proj.weight: BF16 62.9 MB
+mtp.layers.0.self_attn.v_proj.weight: BF16 2.6 MB
+mtp.pre_fc_norm_embedding.weight: F32 0.0 MB
+mtp.pre_fc_norm_hidden.weight: F32 0.0 MB
+wrote /data/mtp/mtp-q2_0.gguf: 0.889 GB of tensor data
+  > /opt/strata/.venv/bin/python /opt/strata/tools/mtp_rt.py --gguf /data/mtp/mtp-q2_0.gguf --out /data/mtp/rt
+experts.bin 707788800 B, dense.bin 116099072 B, 29 tensors -> /data/mtp/rt
+  fc_embedding.weight q8_0 2560 2560 0 6963200
+  fc_hidden.weight q8_0 2560 2560 6963200 6963200
+  hyper_connection_mixer.hc_norm.weight f32 1 10240 13926400 40960
+  hyper_connection_mixer.input_mix_weight_down.weight bf16 320 10240 13967360 6553600
+  hyper_connection_mixer.input_mix_weight_up.weight bf16 10240 320 20520960 6553600
+  attn_hyper_connection.block_inject_weight.weight bf16 4 10240 27074560 81920
+  attn_hyper_connection.hc_norm.weight f32 1 10240 27156480 40960
+  attn_hyper_connection.input_mix_weight_down.weight bf16 320 10240 27197440 6553600
+  attn_hyper_connection.input_mix_weight_up.weight bf16 10240 320 33751040 6553600
+  mlp.gate.weight bf16 512 2560 40304640 2621440
+  mlp.shared_expert.down_proj.weight q8_0 2560 640 42926080 1740800
+  mlp.shared_expert.gate_proj.weight q8_0 640 2560 44666880 1740800
+  mlp.shared_expert.up_proj.weight q8_0 640 2560 46407680 1740800
+  mlp.shared_expert_gate.weight bf16 1 2560 48148480 5120
+  mlp_hyper_connection.block_inject_weight.weight bf16 4 10240 48153600 81920
+  mlp_hyper_connection.hc_norm.weight f32 1 10240 48235520 40960
+  mlp_hyper_connection.input_mix_weight_down.weight bf16 320 10240 48276480 6553600
+  mlp_hyper_connection.input_mix_weight_up.weight bf16 10240 320 54830080 6553600
+  self_attn.indexer.index_qk_proj.weight q8_0 640 2560 61383680 1740800
+  self_attn.indexer.k_layernorm.weight f32 1 128 63124480 512
+  self_attn.indexer.q_layernorm.weight f32 1 128 63124992 512
+  self_attn.k_norm.weight f32 1 256 63125504 1024
+  self_attn.k_proj.weight q8_0 512 2560 63126528 1392640
+  self_attn.o_proj.weight q8_0 2560 6144 64519168 16711680
+  self_attn.q_norm.weight f32 1 256 81230848 1024
+  self_attn.q_proj.weight q8_0 12288 2560 81231872 33423360
+  self_attn.v_proj.weight q8_0 512 2560 114655232 1392640
+  pre_fc_norm_embedding.weight f32 1 2560 116047872 10240
+  pre_fc_norm_hidden.weight f32 1 10240 116058112 40960
+  [ok] MTP draft layer: /data/mtp/rt
+
+=== Step 7: writing the start script ===
+  [ok] KV streaming off: it needs ~2.1 GB of RAM beside the ~60 GB IQ3_XXS uses, and this PC has 62; the KV cache stays in VRAM (fewer cached experts). --kv-streaming on turns it on anyway
+  [ok] start script: run-iq3_xxs.sh
+
+All set.
+  API (OpenAI):     http://127.0.0.1:18182/v1   (any API key; model name: anything)
+  API (Anthropic):  http://127.0.0.1:18182/v1/messages
+  Other devices:    the server window prints this PC's address (http://<IP>:18182/) - no API key set: anyone on your network can use it
+  Next time:        just run ./setup.sh (or run-iq3_xxs.sh) - it starts right away
+  Several requests at once: left at one at a time - parallel N reduces waiting for several users but costs about 10-25% speed per request on this card (docs/BATCHING.md).
+Config: /data/config/strata-iq3_xxs.json (from MODEL IQ3_XXS, just set up)
+Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)
+  [ok] GPU: GPU 0 (NVIDIA GeForce RTX 3090, 24 GB)
+
+  ----------------------------------------------------------------------------------------------------
+  Starting qwen3.8-flash-next-iq3_xxs: it loads about 47 GB into RAM and locks part of it for the GPU.
+  While it does, YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES (longer the first time after a
+  restart). That is normal: please wait and don't close this window - the browser opens when it is ready.
+  Later, closing this window stops the model.
+  ----------------------------------------------------------------------------------------------------
+  Settings (strata-iq3_xxs.json): --expert-cache auto --prefill auto --spec 4 --spec-min-p 0.5
+    --max-context 150000 --kv int8 --resident-experts; server 0.0.0.0:18182, gpu 0
+loading the model (the first start takes a minute or two) ...
+[strata] starting the engine: reading the model's weights ...
+[strata] loading the experts the GPU does not hold into RAM (of about 47 GB) and locking part of them for the GPU.
+         YOUR PC CAN BE SLOW OR STOP RESPONDING FOR 1-3 MINUTES NOW - this is normal.
+         Please wait and don't close this window; the browser opens when it is ready.
+[strata] filling the GPU's expert cache (9517 experts, 15.43 GiB of VRAM) ...
+[strata] still starting (30 s) - please wait ...
+[strata] almost ready ...
+[strata] still starting (61 s) - please wait ...
+[strata] still starting (81 s) - please wait ...
+[strata] still starting (101 s) - please wait ...
+ready: http://127.0.0.1:18182/v1  (OpenAI: /v1/chat/completions, Anthropic: /v1/messages, context 150000 tokens)
+       open http://127.0.0.1:18182/ in a browser to chat; close this window to stop the model
+       from other devices: http://172.17.0.2:18182/   (API: http://172.17.0.2:18182/v1)
+       WARNING: no API key - anyone on your network can use this model. Add "api_key": "..." to the config (clients send it as their API key; the web page asks for it)
+[strata] thinking: 15 of max 32 tokens, 59.1 tok/s, 1 s
+[strata] done: 26 tokens in 1 s (59.6 tok/s) (stop, cancel=False), expert cache 83.7% hit (+3.9% of the routed experts over PCIe)
+[strata] thinking: 18 of max 16384 tokens, 66.8 tok/s, 1 s
+[strata] thinking: 82 of max 16384 tokens, 63.2 tok/s, 2 s
+[strata] done: 97 tokens in 2 s (64.8 tok/s) (stop, cancel=False), expert cache 91.2% hit (+2.1% of the routed experts over PCIe)
+[strata] reading the prompt: 624 of 629 tokens, 2 s so far
+[strata] thinking: 53 of max 16384 tokens, 59.8 tok/s, 3 s
+[strata] done: 83 tokens in 3 s (63.4 tok/s) (stop, cancel=False), expert cache 91.0% hit (+1.1% of the routed experts over PCIe)
+[strata] reading the prompt: 8,192 of 114,812 tokens, 8 s so far
+[strata] reading the prompt: 16,384 of 114,812 tokens, 12 s so far
+[strata] reading the prompt: 24,576 of 114,812 tokens, 16 s so far
+[strata] reading the prompt: 32,768 of 114,812 tokens, 21 s so far
+[strata] reading the prompt: 40,960 of 114,812 tokens, 25 s so far
+[strata] reading the prompt: 49,152 of 114,812 tokens, 30 s so far
+[strata] reading the prompt: 57,344 of 114,812 tokens, 35 s so far
+[strata] reading the prompt: 65,536 of 114,812 tokens, 39 s so far
+[strata] reading the prompt: 73,728 of 114,812 tokens, 44 s so far
+[strata] reading the prompt: 81,920 of 114,812 tokens, 49 s so far
+[strata] reading the prompt: 90,112 of 114,812 tokens, 53 s so far
+[strata] reading the prompt: 98,304 of 114,812 tokens, 58 s so far
+[strata] reading the prompt: 106,496 of 114,812 tokens, 63 s so far
+[strata] reading the prompt: 114,688 of 114,812 tokens, 68 s so far
+[strata] reading the prompt: 114,807 of 114,812 tokens, 70 s so far
+[strata] thinking: 29 of max 16384 tokens, 64.9 tok/s, 71 s
+[strata] thinking: 87 of max 16384 tokens, 59.8 tok/s, 72 s
+[strata] thinking: 142 of max 16384 tokens, 57.3 tok/s, 73 s
+[strata] thinking: 205 of max 16384 tokens, 58.5 tok/s, 74 s
+
+[strata] stopping (Ctrl+C again to end the engine at once) ...
+[strata] done: 237 tokens in 74 s (59.5 tok/s) (stop, cancel=False)
+[strata] stopped

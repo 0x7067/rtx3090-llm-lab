@@ -1,0 +1,719 @@
+{
+  "plan_sha256": "a7a533d2e02c5b2b36df4c979e2468db09be2bb606eaa85a0bf97ff48a236149",
+  "arm": "strata_flashnext_iq3xxs",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 20,
+      "clusters": 20,
+      "statuses": {
+        "transport_or_protocol_error": 20
+      },
+      "finish_reasons": {
+        "None": 20
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "full_score": 0,
+      "completed": 0,
+      "mean_score": 0.0
+    },
+    "extraction": {
+      "attempted": 6,
+      "clusters": 5,
+      "statuses": {
+        "transport_or_protocol_error": 6
+      },
+      "finish_reasons": {
+        "None": 6
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "full_score": 0,
+      "completed": 0,
+      "mean_score": 0.0
+    },
+    "reasoning": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "transport_or_protocol_error": 2
+      },
+      "finish_reasons": {
+        "None": 2
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "full_score": 0,
+      "completed": 0,
+      "mean_score": 0.0
+    },
+    "relevance": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "transport_or_protocol_error": 2
+      },
+      "finish_reasons": {
+        "None": 2
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "full_score": 0,
+      "completed": 0,
+      "mean_score": 0.0
+    },
+    "retrieval": {
+      "attempted": 6,
+      "clusters": 2,
+      "statuses": {
+        "protocol_error": 1,
+        "transport_or_protocol_error": 5
+      },
+      "finish_reasons": {
+        "None": 6
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "full_score": 0,
+      "completed": 0,
+      "mean_score": 0.0
+    },
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 1,
+        "transport_or_protocol_error": 15
+      },
+      "finish_reasons": {
+        "tool_calls": 1,
+        "None": 15
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 629,
+      "prompt_tokens_max": 629,
+      "full_score": 1,
+      "completed": 1,
+      "mean_score": 0.0625
+    },
+    "transcript_qa": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 1,
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "stop": 1,
+        "None": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 82,
+      "prompt_tokens_max": 82,
+      "full_score": 1,
+      "completed": 1,
+      "mean_score": 0.5
+    }
+  },
+  "performance": {
+    "decode-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "None": 1
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "metrics": {
+        "wall_s": {
+          "n": 0,
+          "median": null
+        },
+        "ttft_s": {
+          "n": 0,
+          "median": null
+        },
+        "e2e_output_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "decode-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "None": 1
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "metrics": {
+        "wall_s": {
+          "n": 0,
+          "median": null
+        },
+        "ttft_s": {
+          "n": 0,
+          "median": null
+        },
+        "e2e_output_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "prefill-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "None": 1
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "metrics": {
+        "wall_s": {
+          "n": 0,
+          "median": null
+        },
+        "ttft_s": {
+          "n": 0,
+          "median": null
+        },
+        "e2e_output_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    },
+    "prefill-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "transport_or_protocol_error": 1
+      },
+      "finish_reasons": {
+        "None": 1
+      },
+      "prompt_tokens_observed": 0,
+      "prompt_tokens_min": null,
+      "prompt_tokens_max": null,
+      "metrics": {
+        "wall_s": {
+          "n": 0,
+          "median": null
+        },
+        "ttft_s": {
+          "n": 0,
+          "median": null
+        },
+        "e2e_output_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 0,
+          "median": null
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "retrieve-revision-4096:0:42",
+      "score": 0.0,
+      "status": "protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": {
+        "type": "server_error",
+        "message": "I/O operation on closed file."
+      }
+    },
+    {
+      "id": "code-env-lines:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "Remote end closed connection without response"
+    },
+    {
+      "id": "code-reconcile:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-cache-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "retrieve-join-4096:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 104] Connection reset by peer>"
+    },
+    {
+      "id": "perf-prefill-medium:0:42",
+      "score": null,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "performance probe",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-untrusted-tool-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-diff-keys:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-rolling-window:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "support-reason-boundary:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-pt-pods-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "extract-pt-correction:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-pt-pods-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "support-relevant-config:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-range-coalesce:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-cache-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "retrieve-revision-64:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-retry-budget:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-pod-logs-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-pagination:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "extract-missing:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-unicode-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "perf-decode-medium:0:42",
+      "score": null,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "performance probe",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-quoted-path-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-ttl:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "retrieve-join-64:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-quoted-path-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "retrieve-revision-1024:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-sse-frames:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-pod-logs-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "extract-boolean:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-not-found-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-stable-dedupe:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-failed-test-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "extract-quoted:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-untrusted-tool-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "retrieve-join-1024:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-histogram:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "support-transcript-pt:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "perf-decode-short:0:42",
+      "score": null,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "performance probe",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-not-found-next:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "<urlopen error [Errno 32] Broken pipe>"
+    },
+    {
+      "id": "extract-en-correction:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-lru:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "episode-failed-test-first:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "Remote end closed connection without response"
+    },
+    {
+      "id": "support-relevant-db:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-jsonl:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "Remote end closed connection without response"
+    },
+    {
+      "id": "perf-prefill-short:0:42",
+      "score": null,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "performance probe",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-flatten:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-path-normalize:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-batch-bytes:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-rate-limit:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "support-reason-deps:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-topological:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "code-redact:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "id": "extract-units:0:42",
+      "score": 0.0,
+      "status": "transport_or_protocol_error",
+      "finish_reason": null,
+      "detail": "request failed or output incomplete",
+      "error": "[Errno 104] Connection reset by peer"
+    }
+  ]
+}

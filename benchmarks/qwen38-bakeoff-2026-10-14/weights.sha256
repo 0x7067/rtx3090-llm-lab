@@ -1,0 +1,21 @@
+# bartowski/Qwen3.8-27B-GGUF@87410e7b9a5c21e6ca70c0c9cc5237de909fe621 (/data/models/qwen3.8/bartowski/Qwen3.8-27B-GGUF)
+668942fa3f7cbe6692fed21663d6f3d272212b0c6a07e4bbdc8cecf22f4ca447  Qwen3.8-27B-Q4_K_S.gguf
+cb0a71fe9b84af2552fc6260acf8e9773a29d115c683aba01c72a7ac537b212b  mmproj-Qwen3.8-27B-f16.gguf
+# ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF@d562806dbafae37109975e970aae91b43e73b440
+58fd826723939933dc86f45b7fe04545cbc2de1c70f6fe2cdd3858c87a98c12f  Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf
+13cb7bebccbd04afc8f4090cb949ecf8937cdf7377c5799b1a0c594e7c0d3e16  mmproj-Qwen3.8-27B-BF16.gguf
+# ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF@ed59f92082b1e93c0e96d60a8b11aab089b52f09 IQ3_XXS (/data/bakeoff-ssd/flash-next-IQ3_XXS)
+219ea929900dfa9ef091f3aa473fdba6874b65fcb36526d7d851ac9e95856d15  Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf
+316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113  Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf
+# turboderp/Qwen3.8-27B-exl3@6fe61ad620abfe97c5b49f9722c2bceeea4ccc28 3.00bpw: publisher crc32.txt
+cf59f3ab  chat_template.jinja
+ac8d98f1  generation_config.json
+1824fcb5  merges.txt
+030e383a  preprocessor_config.json
+6b61f895  tokenizer.json
+7adf2118  tokenizer_config.json
+44c041dc  video_preprocessor_config.json
+da8db314  vocab.json
+# HyperQwen prepared models: see weights-hyperqwen.sha256 (source dbirks/Qwen3.8-27B-W4A16-AutoRound@1f05c441c4e64ae0549de44fa9ea5a6d43610314)
+f9f4afe5fc1a2d67ca547c8dcde0f043eb226018257cdbde7c50a0956cddb822  model-00001-of-00002.safetensors
+d13331e7a531dc2a6e94df6470d5bffa07b13e15912466242b7283469cd58179  model-00002-of-00002.safetensors

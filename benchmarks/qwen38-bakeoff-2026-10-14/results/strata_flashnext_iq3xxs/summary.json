@@ -1,0 +1,296 @@
+{
+  "plan_sha256": "a7a533d2e02c5b2b36df4c979e2468db09be2bb606eaa85a0bf97ff48a236149",
+  "arm": "strata_flashnext_iq3xxs",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 20,
+      "clusters": 20,
+      "statuses": {
+        "ok": 20
+      },
+      "finish_reasons": {
+        "stop": 19,
+        "length": 1
+      },
+      "prompt_tokens_observed": 20,
+      "prompt_tokens_min": 109,
+      "prompt_tokens_max": 145,
+      "full_score": 17,
+      "completed": 19,
+      "mean_score": 0.85
+    },
+    "extraction": {
+      "attempted": 6,
+      "clusters": 5,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 64,
+      "prompt_tokens_max": 86,
+      "full_score": 5,
+      "completed": 6,
+      "mean_score": 0.8333333333333334
+    },
+    "reasoning": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 71,
+      "prompt_tokens_max": 77,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "relevance": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 85,
+      "prompt_tokens_max": 88,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    },
+    "retrieval": {
+      "attempted": 6,
+      "clusters": 2,
+      "statuses": {
+        "ok": 6
+      },
+      "finish_reasons": {
+        "stop": 6
+      },
+      "prompt_tokens_observed": 6,
+      "prompt_tokens_min": 1911,
+      "prompt_tokens_max": 114812,
+      "full_score": 6,
+      "completed": 6,
+      "mean_score": 1.0
+    },
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 575,
+      "prompt_tokens_max": 670,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    },
+    "transcript_qa": {
+      "attempted": 2,
+      "clusters": 2,
+      "statuses": {
+        "ok": 2
+      },
+      "finish_reasons": {
+        "stop": 2
+      },
+      "prompt_tokens_observed": 2,
+      "prompt_tokens_min": 82,
+      "prompt_tokens_max": 91,
+      "full_score": 2,
+      "completed": 2,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {
+    "decode-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12245,
+      "prompt_tokens_max": 12245,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 16.09346116503002
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 7.836617888009641
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 31.814163202663988
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 61.9
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1567.2797552765298
+        }
+      }
+    },
+    "decode-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 386,
+      "prompt_tokens_max": 386,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 9.817540784017183
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 1.0710908350301906
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 52.151553150003586
+        },
+        "server_decode_tps": {
+          "n": 1,
+          "median": 58.4
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 366.92015209125475
+        }
+      }
+    },
+    "prefill-medium": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 12248,
+      "prompt_tokens_max": 12248,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 7.895541696983855
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 7.895395968982484
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.12665375453365108
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 1556.5270435136233
+        }
+      }
+    },
+    "prefill-short": {
+      "attempted": 1,
+      "clusters": 1,
+      "statuses": {
+        "ok": 1
+      },
+      "finish_reasons": {
+        "length": 1
+      },
+      "prompt_tokens_observed": 1,
+      "prompt_tokens_min": 384,
+      "prompt_tokens_max": 384,
+      "metrics": {
+        "wall_s": {
+          "n": 1,
+          "median": 1.1009680409915745
+        },
+        "ttft_s": {
+          "n": 1,
+          "median": 1.0887034920160659
+        },
+        "e2e_output_tps": {
+          "n": 1,
+          "median": 0.9082915786541462
+        },
+        "server_decode_tps": {
+          "n": 0,
+          "median": null
+        },
+        "server_prefill_tps": {
+          "n": 1,
+          "median": 358.3761082594494
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "code-env-lines:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"answer.py\", line 1\n    ```python\n    ^\nSyntaxError: invalid syntax\n",
+      "error": null
+    },
+    {
+      "id": "code-diff-keys:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "length",
+      "detail": "request failed or output incomplete",
+      "error": null
+    },
+    {
+      "id": "extract-en-correction:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "JSON semantic equality",
+      "error": null
+    },
+    {
+      "id": "code-redact:0:42",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"answer.py\", line 1\n    ```python\n    ^\nSyntaxError: invalid syntax\n",
+      "error": null
+    }
+  ]
+}

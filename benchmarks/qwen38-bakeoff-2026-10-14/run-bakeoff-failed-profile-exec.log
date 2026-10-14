@@ -1,0 +1,3 @@
+
+sudo: cannot execute '/data/docker-services/rtx3090-llm-lab/benchmarks/local-llm-reset-2026-09-30/gpu-cool-profile.sh': Permission denied (os error 13)
+precheck: could not apply GPU profile

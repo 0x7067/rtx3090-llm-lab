@@ -1,0 +1,18 @@
+
+GPU clocks set to "(gpuClkMin 210, gpuClkMax 1350)" for GPU 00000000:01:00.0
+All done.
+1350 MHz, 9751 MHz, 370.00 W, 107.79 W
+graphics VF offset: 100 memory VF offset: 0
+active
+active
+inactive
+== strata_flashnext_iq3xxs 2026-10-14T14:30:29Z
+   strata_flashnext_iq3xxs: ok
+done; see /data/docker-services/rtx3090-llm-lab/benchmarks/qwen38-bakeoff-2026-10-14/results
+
+All done.
+210 MHz, 405 MHz, 370.00 W, 34.34 W
+graphics VF offset: 0 memory VF offset: 750
+active
+active
+active

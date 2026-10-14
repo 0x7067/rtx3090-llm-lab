@@ -1,0 +1,5 @@
+{"probe": "short-prose", "error": "ConnectionResetError: [Errno 104] Connection reset by peer", "wall_s": 0.0, "chunks": 0, "usage": null}
+{"probe": "short-code", "error": "ConnectionResetError: [Errno 104] Connection reset by peer", "wall_s": 0.0, "chunks": 0, "usage": null}
+{"probe": "ctx-64k", "error": "URLError: <urlopen error [Errno 104] Connection reset by peer>", "wall_s": 0.0, "chunks": 0, "usage": null}
+{"probe": "ctx-120k", "error": "URLError: <urlopen error [Errno 104] Connection reset by peer>", "wall_s": 0.0, "chunks": 0, "usage": null}
+{"probe": "concurrent-4", "wall_s": 0.007, "completion_tokens": 0, "aggregate_tok_s": null, "errors": ["URLError: <urlopen error [Errno 32] Broken pipe>", "URLError: <urlopen error [Errno 104] Connection reset by peer>", "URLError: <urlopen error [Errno 32] Broken pipe>", "ConnectionResetError: [Errno 104] Connection reset by peer"], "streams": [{"error": "URLError: <urlopen error [Errno 32] Broke

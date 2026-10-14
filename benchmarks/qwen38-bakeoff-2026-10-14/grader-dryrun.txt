@@ -1,0 +1,4 @@
+image sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316
+positive: (1.0, '')
+real case wrong answer (expect 0): code-env-lines 0.0
+network blocked: (1.0, '')

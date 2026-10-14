@@ -1,0 +1,186 @@
+{
+  "status": "ok",
+  "content": "\n\nOK",
+  "reasoning": "The user asked me to reply \"OK\". This is a simple request.\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "events": [
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "role": "assistant",
+            "content": ""
+          },
+          "logprobs": null,
+          "finish_reason": null
+        }
+      ],
+      "prompt_token_ids": null,
+      "prompt_text": null
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "The"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " user asked"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " me to reply \""
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "OK\". This is"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " a simple request"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": ".\n"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "content": "\n\nOK"
+          },
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-b652b529c44d7bf2",
+      "object": "chat.completion.chunk",
+      "created": 1791983313,
+      "model": "qwen3.8-27b",
+      "choices": [],
+      "usage": {
+        "prompt_tokens": 55,
+        "total_tokens": 75,
+        "completion_tokens": 20,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 16
+        }
+      },
+      "system_fingerprint": "vllm-0.31.0-d3d93366"
+    }
+  ],
+  "ttft_s": 0.14390542200999334,
+  "usage": {
+    "prompt_tokens": 55,
+    "total_tokens": 75,
+    "completion_tokens": 20,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "created_cache_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 16
+    }
+  },
+  "timings": {},
+  "wall_s": 0.3312451409874484,
+  "e2e_output_tps": 60.378244161950875,
+  "server_decode_tps": null,
+  "server_prefill_tps": null
+}

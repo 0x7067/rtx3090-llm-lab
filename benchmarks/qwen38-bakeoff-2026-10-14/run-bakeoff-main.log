@@ -1,0 +1,25 @@
+
+GPU clocks set to "(gpuClkMin 210, gpuClkMax 1350)" for GPU 00000000:01:00.0
+All done.
+210 MHz, 405 MHz, 370.00 W, 30.83 W
+graphics VF offset: 100 memory VF offset: 0
+active
+active
+inactive
+skip llamacpp_q4ks: /data/docker-services/rtx3090-llm-lab/benchmarks/qwen38-bakeoff-2026-10-14/results/llamacpp_q4ks exists (move it away to rerun)
+== llamacpp_gsq 2026-10-14T12:40:39Z
+   llamacpp_gsq: ok
+== vllm_hyperqwen 2026-10-14T13:02:26Z
+   vllm_hyperqwen: ok
+== sglang_exl3 2026-10-14T13:26:20Z
+   sglang_exl3: ok
+== strata_flashnext_iq3xxs 2026-10-14T13:43:54Z
+   strata_flashnext_iq3xxs: speed-errors,memory-abort
+done; see /data/docker-services/rtx3090-llm-lab/benchmarks/qwen38-bakeoff-2026-10-14/results
+
+All done.
+210 MHz, 405 MHz, 370.00 W, 35.16 W
+graphics VF offset: 0 memory VF offset: 750
+active
+active
+active

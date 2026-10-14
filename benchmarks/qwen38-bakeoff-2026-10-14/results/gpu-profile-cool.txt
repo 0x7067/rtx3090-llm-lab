@@ -1,0 +1,2 @@
+driver_version, power.limit [W], clocks.max.sm [MHz]
+595.91.07, 370.00 W, 2205 MHz

@@ -1,0 +1,67 @@
+[
+  {
+    "name": "llamacpp_q4ks",
+    "base_url": "http://127.0.0.1:18181/v1",
+    "model": "q4ks-qwen3.8-27b",
+    "metadata": {
+      "runtime": "upstream llama.cpp build 11580 commit 4413a1924 (0.6.0-dev), server-cuda",
+      "image": "ghcr.io/ggml-org/llama.cpp@sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00",
+      "weights": "bartowski/Qwen3.8-27B-GGUF@87410e7b9a5c21e6ca70c0c9cc5237de909fe621 Qwen3.8-27B-Q4_K_S.gguf sha256:668942fa3f7cbe6692fed21663d6f3d272212b0c6a07e4bbdc8cecf22f4ca447 (embedded nextn/MTP layer), mmproj-Qwen3.8-27B-f16.gguf sha256:cb0a71fe9b84af2552fc6260acf8e9773a29d115c683aba01c72a7ac537b212b",
+      "launch": "ctx=135168, parallel=1, full GPU offload, flash attention, q8_0 K and V, --fit off, Jinja, mmproj loaded, --spec-type draft-mtp --spec-draft-n-max 2",
+      "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4",
+      "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests"
+    }
+  },
+  {
+    "name": "llamacpp_gsq",
+    "base_url": "http://127.0.0.1:18181/v1",
+    "model": "gsq-qwen3.8-27b",
+    "metadata": {
+      "runtime": "upstream llama.cpp build 11580 commit 4413a1924 (0.6.0-dev), server-cuda",
+      "image": "ghcr.io/ggml-org/llama.cpp@sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00",
+      "weights": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF@d562806dbafae37109975e970aae91b43e73b440 Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf sha256:58fd826723939933dc86f45b7fe04545cbc2de1c70f6fe2cdd3858c87a98c12f, mmproj-Qwen3.8-27B-BF16.gguf sha256:13cb7bebccbd04afc8f4090cb949ecf8937cdf7377c5799b1a0c594e7c0d3e16",
+      "launch": "ctx=200704, parallel=1, full GPU offload, flash attention, q8_0 K and V, --fit off, Jinja, mmproj loaded, --spec-type draft-mtp --spec-draft-n-max 2",
+      "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4",
+      "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests"
+    }
+  },
+  {
+    "name": "vllm_hyperqwen",
+    "base_url": "http://127.0.0.1:18180/v1",
+    "model": "qwen3.8-27b",
+    "metadata": {
+      "runtime": "HyperQwen (patched vLLM 0.31.0) syv-ai/HyperQwen commit 95ee3b64b0df7014ee2626529524d6b99c3dcdd1",
+      "image": "ghcr.io/syv-ai/hyperqwen@sha256:e99df7e6dc73208971ae0d1f1063deb100c997308248f253174176cf0514cb9e",
+      "weights": "HyperQwen 'prepare' output at that commit from dbirks/Qwen3.8-27B-W4A16-AutoRound@1f05c441 (int8 lm_head/embed/MTP, 40k draft vocab); launcher selects the -fast variant (int4-GPTQ lm_head/MTP). File hashes in weights-hyperqwen.sha256",
+      "launch": "publisher single profile SPEC=mtp CTX=long PREFIX_CACHE=1; resolved argv (hyperqwen-argv-dryrun.txt): max-model-len 150000, max-num-seqs 8, gpu-mem-util 0.93, fp8 KV, fp16 mamba cache, MTP k=3 probabilistic, language-model-only (no vision), prefix caching align mode, reasoning-parser qwen3, tool-call-parser qwen3_coder",
+      "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4",
+      "cache_policy": "fresh container; one excluded warmup; prefix caching enabled; no cache reset between measured requests"
+    }
+  },
+  {
+    "name": "sglang_exl3",
+    "base_url": "http://127.0.0.1:18183/v1",
+    "model": "turboderp-Qwen3.8-27B-exl3-3.00bpw",
+    "metadata": {
+      "runtime": "sglang-exl3 v0.7.0-ampere (0xSero/local-ai-registry launch profile sglang-qwen3.8-27b-exl3-3bpw-mtp-vision-208k)",
+      "image": "ghcr.io/0xsero/sglang-exl3@sha256:c8922bd7256caf1b273af7ac49221e652be9e6072c1cdec4b959f506fd415d79",
+      "weights": "turboderp/Qwen3.8-27B-exl3@6fe61ad620abfe97c5b49f9722c2bceeea4ccc28 3.00bpw (includes mtp.* tensors)",
+      "launch": "publisher profile verbatim except port: ctx 212992, mem-fraction 0.82, fp8_e4m3 KV, bf16 mamba state, max-running-requests 1, NEXTN 3/1/4 + hot32k token map, reasoning-parser qwen3, tool-call-parser qwen3_coder, vision on",
+      "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4",
+      "cache_policy": "fresh container; one excluded warmup; radix cache enabled; no cache reset between measured requests"
+    }
+  },
+  {
+    "name": "strata_flashnext_iq3xxs",
+    "base_url": "http://127.0.0.1:18182/v1",
+    "model": "qwen3.8-flash-next",
+    "metadata": {
+      "runtime": "Strata v0.1.44.1 commit 296b59d2f73c8f04a805df29c2fa97655adace78, built locally with CUDA_ARCHITECTURES=86",
+      "image": "local/strata-bakeoff:v0.1.44.1 (image ID recorded in images.lock)",
+      "weights": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF@ed59f92082b1e93c0e96d60a8b11aab089b52f09 IQ3_XXS shard 1 sha256:219ea929900dfa9ef091f3aa473fdba6874b65fcb36526d7d851ac9e95856d15, shard 2 (n-gram table) sha256:316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113",
+      "launch": "FAMILY=qwen MODEL=IQ3_XXS, GGUF_DIR and /data volume on the SSD root LV (/data/bakeoff-ssd), CONTEXT=150000, KV=int8, LOW_RAM=on (container capped at 44 GiB), VISION=no, GPU=0; n-gram shard read from SSD (P3-2TB SATA, same disk as etcd)",
+      "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4",
+      "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests"
+    }
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "scope": "Diagnostic only: first code block extracted after strict submitted-response failure. Does not alter frozen score.",
+  "strict_score": 0.0,
+  "request_sha256": "722f8e9978432ee294eefbb81d811594914ff5ffb8b3950abe49de8706be0f59",
+  "first_block_score": 1.0,
+  "detail": ""
+}

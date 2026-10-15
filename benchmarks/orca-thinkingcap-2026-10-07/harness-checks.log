@@ -1,0 +1,7 @@
+.....s/usr/lib/python3.14/tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 400: 'Bad Request'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+............
+----------------------------------------------------------------------
+Ran 18 tests in 0.558s
+
+OK (skipped=1)

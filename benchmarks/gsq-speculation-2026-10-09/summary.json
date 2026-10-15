@@ -1,0 +1,124 @@
+{
+  "baseline": [
+    {
+      "callers": 1,
+      "filler_lines": 0,
+      "wall_s": [
+        13.630902584001888,
+        13.504929685004754
+      ],
+      "median_wall_s": 13.56791613450332,
+      "median_aggregate_output_tps": 37.73689557685138,
+      "prompt_tokens": [
+        [
+          77
+        ],
+        [
+          77
+        ]
+      ]
+    },
+    {
+      "callers": 2,
+      "filler_lines": 0,
+      "wall_s": [
+        16.321170315997733,
+        16.34940928799915
+      ],
+      "median_wall_s": 16.335289801998442,
+      "median_aggregate_output_tps": 62.68641557342447,
+      "prompt_tokens": [
+        [
+          73,
+          69
+        ],
+        [
+          75,
+          71
+        ]
+      ]
+    },
+    {
+      "callers": 2,
+      "filler_lines": 2400,
+      "wall_s": [
+        123.69431123800314,
+        147.06468052799755
+      ],
+      "median_wall_s": 135.37949588300035,
+      "median_aggregate_output_tps": 7.620697777765417,
+      "prompt_tokens": [
+        [
+          38466,
+          38477
+        ],
+        [
+          38471,
+          38473
+        ]
+      ]
+    }
+  ],
+  "baseline_telemetry_peak_gpu_mib": 24041.0,
+  "ubatch256": [
+    {
+      "callers": 1,
+      "filler_lines": 0,
+      "wall_s": [
+        13.16944538900134,
+        13.373406977996638
+      ],
+      "median_wall_s": 13.271426183498988,
+      "median_aggregate_output_tps": 38.58140240776445,
+      "prompt_tokens": [
+        [
+          77
+        ],
+        [
+          77
+        ]
+      ]
+    },
+    {
+      "callers": 2,
+      "filler_lines": 0,
+      "wall_s": [
+        16.187100021001243,
+        16.388785649003694
+      ],
+      "median_wall_s": 16.287942835002468,
+      "median_aggregate_output_tps": 62.87099994646606,
+      "prompt_tokens": [
+        [
+          73,
+          69
+        ],
+        [
+          75,
+          71
+        ]
+      ]
+    },
+    {
+      "callers": 2,
+      "filler_lines": 2400,
+      "wall_s": [
+        127.2093469370011,
+        151.19004183200013
+      ],
+      "median_wall_s": 139.19969438450062,
+      "median_aggregate_output_tps": 7.4113278989596,
+      "prompt_tokens": [
+        [
+          38466,
+          38477
+        ],
+        [
+          38471,
+          38473
+        ]
+      ]
+    }
+  ],
+  "ubatch256_telemetry_peak_gpu_mib": 23827.0
+}

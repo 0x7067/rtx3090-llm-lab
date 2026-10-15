@@ -1,0 +1,248 @@
+[
+  {
+    "sha": "7ddffb12c00c24b8bc6b1164723c04ac490a91bc",
+    "node_id": "C_kwDOUocPUNoAKDdkZGZmYjEyYzAwYzI0YjhiYzZiMTE2NDcyM2MwNGFjNDkwYTkxYmM",
+    "commit": {
+      "author": {
+        "name": "kai.shen",
+        "email": "kai.shen@myflashcloud.com",
+        "date": "2026-09-24T03:27:43Z"
+      },
+      "committer": {
+        "name": "kai.shen",
+        "email": "kai.shen@myflashcloud.com",
+        "date": "2026-09-24T03:27:43Z"
+      },
+      "message": "16gb preset: the pool figure came from a 16K run, not the 32K it ships\n\n59,753 tokens / 64.5 tok/s were measured with --max-model-len 16384. The preset sets\n32768, and no measurement exists at that length with these other settings, so the\ncomment was attributing a number to a configuration that was never run.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "24795f992fd67cd6cd5095fd346b17e865520d00",
+        "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/git/trees/24795f992fd67cd6cd5095fd346b17e865520d00"
+      },
+      "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/git/commits/7ddffb12c00c24b8bc6b1164723c04ac490a91bc",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/7ddffb12c00c24b8bc6b1164723c04ac490a91bc",
+    "html_url": "https://github.com/Continuum-AI-Corp/OrcaSAQ2-kernel/commit/7ddffb12c00c24b8bc6b1164723c04ac490a91bc",
+    "comments_url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/7ddffb12c00c24b8bc6b1164723c04ac490a91bc/comments",
+    "author": {
+      "login": "FakerVSdonk",
+      "id": 230506786,
+      "node_id": "U_kgDODb1BIg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230506786?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FakerVSdonk",
+      "html_url": "https://github.com/FakerVSdonk",
+      "followers_url": "https://api.github.com/users/FakerVSdonk/followers",
+      "following_url": "https://api.github.com/users/FakerVSdonk/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FakerVSdonk/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FakerVSdonk/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FakerVSdonk/subscriptions",
+      "organizations_url": "https://api.github.com/users/FakerVSdonk/orgs",
+      "repos_url": "https://api.github.com/users/FakerVSdonk/repos",
+      "events_url": "https://api.github.com/users/FakerVSdonk/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FakerVSdonk/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "FakerVSdonk",
+      "id": 230506786,
+      "node_id": "U_kgDODb1BIg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230506786?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FakerVSdonk",
+      "html_url": "https://github.com/FakerVSdonk",
+      "followers_url": "https://api.github.com/users/FakerVSdonk/followers",
+      "following_url": "https://api.github.com/users/FakerVSdonk/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FakerVSdonk/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FakerVSdonk/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FakerVSdonk/subscriptions",
+      "organizations_url": "https://api.github.com/users/FakerVSdonk/orgs",
+      "repos_url": "https://api.github.com/users/FakerVSdonk/repos",
+      "events_url": "https://api.github.com/users/FakerVSdonk/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FakerVSdonk/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "4d830eae6cb7707f225bd6d428ebbb5d8880eaf4",
+        "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/4d830eae6cb7707f225bd6d428ebbb5d8880eaf4",
+        "html_url": "https://github.com/Continuum-AI-Corp/OrcaSAQ2-kernel/commit/4d830eae6cb7707f225bd6d428ebbb5d8880eaf4"
+      }
+    ]
+  },
+  {
+    "sha": "4d830eae6cb7707f225bd6d428ebbb5d8880eaf4",
+    "node_id": "C_kwDOUocPUNoAKDRkODMwZWFlNmNiNzcwN2YyMjViZDZkNDI4ZWJiYjVkODg4MGVhZjQ",
+    "commit": {
+      "author": {
+        "name": "kai.shen",
+        "email": "kai.shen@myflashcloud.com",
+        "date": "2026-09-24T03:20:09Z"
+      },
+      "committer": {
+        "name": "kai.shen",
+        "email": "kai.shen@myflashcloud.com",
+        "date": "2026-09-24T03:20:09Z"
+      },
+      "message": "Rename to OrcaSAQ2: package, entry point, image and paths\n\nThe plugin shipped under its internal working name (orca_exl3 / Orca-Qtip-SAQ-Kernel),\nwhich nothing user-facing calls it. Everything exposed is now OrcaSAQ2:\n\n  pip name      orca-exl3        -> orcasaq2-kernel\n  module        orca_exl3        -> orcasaq2\n  entry point   orca_exl3        -> orcasaq2\n  image         orca-exl3-vllm   -> orcasaq2-vllm\n  in-container  /opt/orca-exl3   -> /opt/orcasaq2\n\nAlso makes the package actually installable for the native path. patches/ sat outside\nthe package while setuptools was told `packages = [\"orca_exl3\"]`, so `pip install` gave\nusers the vLLM plugin and silently no embedding patch -- the exllamav3 route was\nundocumentedly broken for anyone who did not clone the repo. It now lives at\norcasaq2/patches and installs with the rest.\n\nexllamav3 is checked at plugin registration instead of at the first GEMM. It is not on\nPyPI and cannot be a declared dependency (the wheel is ABI-linked to both torch and the\nCUDA major version), so the check raises with the two commands needed to pick the right\nrelease asset, rather than letting a bare ModuleNotFoundError surface from inside a\ncustom op on the first request.\n\nVerified: package imports, the patch applies to the installed exllamav3, all three\npresets source and assemble correct arguments, shell syntax clean.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "abfc3723d876072505c054d8e2a942837f1f4387",
+        "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/git/trees/abfc3723d876072505c054d8e2a942837f1f4387"
+      },
+      "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/git/commits/4d830eae6cb7707f225bd6d428ebbb5d8880eaf4",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/4d830eae6cb7707f225bd6d428ebbb5d8880eaf4",
+    "html_url": "https://github.com/Continuum-AI-Corp/OrcaSAQ2-kernel/commit/4d830eae6cb7707f225bd6d428ebbb5d8880eaf4",
+    "comments_url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/4d830eae6cb7707f225bd6d428ebbb5d8880eaf4/comments",
+    "author": {
+      "login": "FakerVSdonk",
+      "id": 230506786,
+      "node_id": "U_kgDODb1BIg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230506786?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FakerVSdonk",
+      "html_url": "https://github.com/FakerVSdonk",
+      "followers_url": "https://api.github.com/users/FakerVSdonk/followers",
+      "following_url": "https://api.github.com/users/FakerVSdonk/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FakerVSdonk/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FakerVSdonk/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FakerVSdonk/subscriptions",
+      "organizations_url": "https://api.github.com/users/FakerVSdonk/orgs",
+      "repos_url": "https://api.github.com/users/FakerVSdonk/repos",
+      "events_url": "https://api.github.com/users/FakerVSdonk/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FakerVSdonk/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "FakerVSdonk",
+      "id": 230506786,
+      "node_id": "U_kgDODb1BIg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230506786?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FakerVSdonk",
+      "html_url": "https://github.com/FakerVSdonk",
+      "followers_url": "https://api.github.com/users/FakerVSdonk/followers",
+      "following_url": "https://api.github.com/users/FakerVSdonk/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FakerVSdonk/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FakerVSdonk/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FakerVSdonk/subscriptions",
+      "organizations_url": "https://api.github.com/users/FakerVSdonk/orgs",
+      "repos_url": "https://api.github.com/users/FakerVSdonk/repos",
+      "events_url": "https://api.github.com/users/FakerVSdonk/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FakerVSdonk/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "a514f85b09afe827ffc55a8e18e0808cd8fdbd24",
+        "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/a514f85b09afe827ffc55a8e18e0808cd8fdbd24",
+        "html_url": "https://github.com/Continuum-AI-Corp/OrcaSAQ2-kernel/commit/a514f85b09afe827ffc55a8e18e0808cd8fdbd24"
+      }
+    ]
+  },
+  {
+    "sha": "a514f85b09afe827ffc55a8e18e0808cd8fdbd24",
+    "node_id": "C_kwDOUocPUNoAKGE1MTRmODViMDlhZmU4MjdmZmM1NWE4ZTE4ZTA4MDhjZDhmZGJkMjQ",
+    "commit": {
+      "author": {
+        "name": "kai.shen",
+        "email": "kai.shen@myflashcloud.com",
+        "date": "2026-09-23T16:29:51Z"
+      },
+      "committer": {
+        "name": "kai.shen",
+        "email": "kai.shen@myflashcloud.com",
+        "date": "2026-09-23T16:29:51Z"
+      },
+      "message": "Fix silent zeroing of the int8 embedding scales under deferred load\n\nThe native path shipped broken: every token embedded to zero, so exllamav3 emitted a\nstream of \"!\" and nothing else. It loaded, it ran, it was fast, and it was garbage.\n\nInside model.load() exllamav3 runs a DEFERRED load -- get_tensor returns an unfilled\nzeroed tensor immediately, queues the read, and fills that same tensor object later.\nThe patch stored qweight by reference, so the fill reached it; scales went through\n.to(out_dtype), which copied the still-zero buffer, and the fill landed in a tensor\nnobody held. qweight was right, scales were 0, every row came out 0.\n\nBoth tensors now load with no_defer=True, and the dtype cast moved to forward() where\nit acts on the gathered rows. Reading eagerly costs a one-off load pause and makes the\ntensors safe to touch, which the alias approach never was -- any later .to(), .clone()\nor non-view reshape would silently reintroduce this.\n\nVerified after the fix: scales 248320/248320 non-zero; embedding rel err vs the bf16\nbase 0.0247 (the int8 quantization error, as intended); \"The capital of France is\" ->\n\" Paris.\\nThe capital of Germany is Berlin. ...\" instead of \"!!!!!!\".\n\nCaught by benchmarking, not by the unit check -- the unit check built the table from\ntensors it had loaded itself, outside a deferred-load bracket, so it could never see\nthis.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "77336d836e78039ba75c4a6cf251a962be3fd0ed",
+        "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/git/trees/77336d836e78039ba75c4a6cf251a962be3fd0ed"
+      },
+      "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/git/commits/a514f85b09afe827ffc55a8e18e0808cd8fdbd24",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/a514f85b09afe827ffc55a8e18e0808cd8fdbd24",
+    "html_url": "https://github.com/Continuum-AI-Corp/OrcaSAQ2-kernel/commit/a514f85b09afe827ffc55a8e18e0808cd8fdbd24",
+    "comments_url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/a514f85b09afe827ffc55a8e18e0808cd8fdbd24/comments",
+    "author": {
+      "login": "FakerVSdonk",
+      "id": 230506786,
+      "node_id": "U_kgDODb1BIg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230506786?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FakerVSdonk",
+      "html_url": "https://github.com/FakerVSdonk",
+      "followers_url": "https://api.github.com/users/FakerVSdonk/followers",
+      "following_url": "https://api.github.com/users/FakerVSdonk/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FakerVSdonk/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FakerVSdonk/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FakerVSdonk/subscriptions",
+      "organizations_url": "https://api.github.com/users/FakerVSdonk/orgs",
+      "repos_url": "https://api.github.com/users/FakerVSdonk/repos",
+      "events_url": "https://api.github.com/users/FakerVSdonk/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FakerVSdonk/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "FakerVSdonk",
+      "id": 230506786,
+      "node_id": "U_kgDODb1BIg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/230506786?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FakerVSdonk",
+      "html_url": "https://github.com/FakerVSdonk",
+      "followers_url": "https://api.github.com/users/FakerVSdonk/followers",
+      "following_url": "https://api.github.com/users/FakerVSdonk/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FakerVSdonk/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FakerVSdonk/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FakerVSdonk/subscriptions",
+      "organizations_url": "https://api.github.com/users/FakerVSdonk/orgs",
+      "repos_url": "https://api.github.com/users/FakerVSdonk/repos",
+      "events_url": "https://api.github.com/users/FakerVSdonk/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FakerVSdonk/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "6f52745cb7ed79256151041869549e7e0b07f690",
+        "url": "https://api.github.com/repos/Continuum-AI-Corp/OrcaSAQ2-kernel/commits/6f52745cb7ed79256151041869549e7e0b07f690",
+        "html_url": "https://github.com/Continuum-AI-Corp/OrcaSAQ2-kernel/commit/6f52745cb7ed79256151041869549e7e0b07f690"
+      }
+    ]
+  }
+]

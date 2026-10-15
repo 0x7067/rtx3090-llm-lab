@@ -1,0 +1,23 @@
+{
+  "concurrent_coding_identical_request_hashes": 24,
+  "cold_long_identical_request_hashes": 4,
+  "warm_setup_identical_actual_assistant_answers_model_dependent": true,
+  "restorations": [
+    {
+      "restored": true,
+      "failures": [],
+      "original_replicas": "1",
+      "original_flux_suspended": false
+    },
+    {
+      "restored": true,
+      "failures": [],
+      "original_replicas": "1",
+      "original_flux_suspended": false
+    },
+    {
+      "restored": true,
+      "failures": []
+    }
+  ]
+}

@@ -1,0 +1,276 @@
+{
+  "screen": {
+    "ampere-mtp2-f32": {
+      "1_callers_0_lines": {
+        "aggregate_tps_mean": 60.952526121082684,
+        "wall_s": [
+          8.337360399003956,
+          8.463547344013932
+        ],
+        "prompt_tokens": [
+          [
+            77
+          ],
+          [
+            77
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_0_lines": {
+        "aggregate_tps_mean": 87.68284494253348,
+        "wall_s": [
+          11.53427841499797,
+          11.826277858999674
+        ],
+        "prompt_tokens": [
+          [
+            73,
+            69
+          ],
+          [
+            75,
+            71
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_2400_lines": {
+        "aggregate_tps_mean": 7.466969312483757,
+        "wall_s": [
+          127.18997256500006,
+          148.77256487999693
+        ],
+        "prompt_tokens": [
+          [
+            38466,
+            38477
+          ],
+          [
+            38471,
+            38473
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "gpu_peak_mib": 23727,
+      "paused_samples": 0
+    },
+    "ampere-mtp2-q8-state": {
+      "1_callers_0_lines": {
+        "aggregate_tps_mean": 60.279185650534075,
+        "wall_s": [
+          8.433071904990356,
+          8.555431045999285
+        ],
+        "prompt_tokens": [
+          [
+            77
+          ],
+          [
+            77
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_0_lines": {
+        "aggregate_tps_mean": 89.52636962875454,
+        "wall_s": [
+          11.579445951007074,
+          11.299910911009647
+        ],
+        "prompt_tokens": [
+          [
+            73,
+            69
+          ],
+          [
+            75,
+            71
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_2400_lines": {
+        "aggregate_tps_mean": 6.925251391959305,
+        "wall_s": [
+          146.6335471009952,
+          149.11663729599968
+        ],
+        "prompt_tokens": [
+          [
+            38466,
+            38477
+          ],
+          [
+            38471,
+            38473
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "gpu_peak_mib": 23097,
+      "paused_samples": 9
+    },
+    "ampere-no-spec": {
+      "1_callers_0_lines": {
+        "aggregate_tps_mean": 39.45769911376204,
+        "wall_s": [
+          12.878376207998372,
+          13.074955431002309
+        ],
+        "prompt_tokens": [
+          [
+            77
+          ],
+          [
+            77
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_0_lines": {
+        "aggregate_tps_mean": 64.81538111265652,
+        "wall_s": [
+          15.719652640007553,
+          15.878584969002986
+        ],
+        "prompt_tokens": [
+          [
+            73,
+            69
+          ],
+          [
+            75,
+            71
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_2400_lines": {
+        "aggregate_tps_mean": 7.477726527139007,
+        "wall_s": [
+          127.14889986498747,
+          148.3648735260067
+        ],
+        "prompt_tokens": [
+          [
+            38466,
+            38477
+          ],
+          [
+            38471,
+            38473
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "gpu_peak_mib": 22755,
+      "paused_samples": 0
+    },
+    "stock-no-spec": {
+      "1_callers_0_lines": {
+        "aggregate_tps_mean": 38.515562363179484,
+        "wall_s": [
+          13.205065428992384,
+          13.3827782139997
+        ],
+        "prompt_tokens": [
+          [
+            77
+          ],
+          [
+            77
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_0_lines": {
+        "aggregate_tps_mean": 62.85623356496659,
+        "wall_s": [
+          16.19552666800155,
+          16.387898610002594
+        ],
+        "prompt_tokens": [
+          [
+            73,
+            69
+          ],
+          [
+            75,
+            71
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "2_callers_2400_lines": {
+        "aggregate_tps_mean": 6.990415162780736,
+        "wall_s": [
+          135.99108283600071,
+          158.73692914699495
+        ],
+        "prompt_tokens": [
+          [
+            38466,
+            38477
+          ],
+          [
+            38471,
+            38473
+          ]
+        ],
+        "all_requests_ok": true
+      },
+      "gpu_peak_mib": 23717,
+      "paused_samples": 0
+    }
+  },
+  "qualification": {
+    "coding": {
+      "passed": 24,
+      "total": 24
+    },
+    "tools": {
+      "passed": 16,
+      "total": 16
+    },
+    "long_retrieval": {
+      "passed": 42,
+      "total": 42
+    },
+    "cold_wall_s": 752.4656334359897,
+    "cold_prompt_tokens": [
+      148904,
+      148902
+    ],
+    "followup_wall_mean_s": 3.6526364115481558,
+    "cached_generation": {
+      "batch_wall_s": 21.071912479004823,
+      "aggregate_output_tps": 48.59549416885017
+    },
+    "cached_prompt_tokens": [
+      150230,
+      150215
+    ],
+    "gpu_peak_mib": 23857,
+    "paused_samples": 0,
+    "thermal_trips": 0,
+    "swap_peak_bytes": 0
+  },
+  "historical_non_speculative_long_reference": {
+    "source": "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-resident-2026-10-08/gsq_q8_resident-long-2x9300.jsonl",
+    "caveat": "Previous campaign, microbatch512 and non-MTP file; not a fresh matched timing control.",
+    "cold_wall_s": 744.4387840559939,
+    "followup_wall_mean_s": 9.230468863507848,
+    "cached_generation": {
+      "batch_wall_s": 47.44102148199454,
+      "aggregate_output_tps": 21.584695438917613
+    }
+  },
+  "restoration": {
+    "template": true,
+    "config": true,
+    "replicas": true,
+    "suspend": true
+  }
+}

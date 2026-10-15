@@ -1,0 +1,79 @@
+{
+  "coordinator_class": "HybridKVCacheCoordinator",
+  "eagle_group_ids": [
+    3
+  ],
+  "enable_partial_hash_hits": true,
+  "groups": [
+    {
+      "block_size": 1600,
+      "index": 0,
+      "is_eagle_group": false,
+      "mamba_cache_mode": "align",
+      "num_prefill_checkpoint_blocks": 0,
+      "prefix_cacheable": true,
+      "spec_class": "MambaSpec"
+    },
+    {
+      "block_size": 1600,
+      "index": 1,
+      "is_eagle_group": false,
+      "mamba_cache_mode": "align",
+      "num_prefill_checkpoint_blocks": 0,
+      "prefix_cacheable": true,
+      "spec_class": "MambaSpec"
+    },
+    {
+      "block_size": 1600,
+      "index": 2,
+      "is_eagle_group": false,
+      "mamba_cache_mode": "align",
+      "num_prefill_checkpoint_blocks": 0,
+      "prefix_cacheable": true,
+      "spec_class": "MambaSpec"
+    },
+    {
+      "block_size": 1600,
+      "index": 3,
+      "is_eagle_group": true,
+      "mamba_cache_mode": null,
+      "num_prefill_checkpoint_blocks": null,
+      "prefix_cacheable": true,
+      "spec_class": "FullAttentionSpec"
+    }
+  ],
+  "hash_block_size": 64,
+  "mamba_shared_prefix_checkpoint": true,
+  "managers": [
+    {
+      "block_size": 1600,
+      "cache_hit_alignment_tokens": 64,
+      "class": "MambaManager",
+      "shared_prefix_checkpoint": true,
+      "use_eagle": false
+    },
+    {
+      "block_size": 1600,
+      "cache_hit_alignment_tokens": 64,
+      "class": "MambaManager",
+      "shared_prefix_checkpoint": true,
+      "use_eagle": false
+    },
+    {
+      "block_size": 1600,
+      "cache_hit_alignment_tokens": 64,
+      "class": "MambaManager",
+      "shared_prefix_checkpoint": true,
+      "use_eagle": false
+    },
+    {
+      "block_size": 1600,
+      "cache_hit_alignment_tokens": 64,
+      "class": "FullAttentionManager",
+      "shared_prefix_checkpoint": false,
+      "use_eagle": true
+    }
+  ],
+  "num_reprefillable_tokens": 0,
+  "scheduler_block_size": 1600
+}

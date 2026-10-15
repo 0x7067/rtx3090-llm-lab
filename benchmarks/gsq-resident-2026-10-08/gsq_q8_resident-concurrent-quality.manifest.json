@@ -1,0 +1,1102 @@
+{
+  "arm": {
+    "name": "gsq_q8_resident",
+    "model": "gsq-rco-27b",
+    "base_url": "http://127.0.0.1:18185/v1",
+    "metadata": {
+      "kv": "q8_0",
+      "image": "ghcr.io/ggml-org/llama.cpp@sha256:a863a2d1dc2cbc5326c995ae380eec9c57f37a7e1cac944f0c6f43e4e9afff23",
+      "weight_sha256": "64b53b64c7aa39f20a7e54bd80582fe595b1d745624ee8a72e92508c0326d810",
+      "vision": false,
+      "speculation": false,
+      "cuda_no_pinned": true,
+      "shared_pool": 320000,
+      "cache_idle_slots": false
+    }
+  },
+  "source_plan_sha256": "f22ea1e3fe8326b8d1b9b6404faf08bbcfaddf454c7889bf2f0269f3f1f1d6cc",
+  "jobs": [
+    {
+      "id": "code-env-lines:0:42",
+      "case": {
+        "id": "code-env-lines",
+        "tier": "coding",
+        "cluster": "code-env-lines",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert env_lines(' # hi\\n A=x=y\\nB=\\nA=z # literal')=={'A':'z # literal','B':''}\nassert env_lines('Q=\"hello\"')=={'Q':'\"hello\"'}\nassert env_lines('')=={}\nfor text in ['=x','NO_EQUALS']:\n    try: env_lines(text)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-env-lines:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "70b421424c155bd988908f382651043c938593960270c0ee486852564924b56e"
+    },
+    {
+      "id": "code-reconcile:0:42",
+      "case": {
+        "id": "code-reconcile",
+        "tier": "coding",
+        "cluster": "code-reconcile",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'a':1,'b':2,'d':None}; b={'a':1,'b':3,'c':4}\nassert reconcile(a,b)=={'create':['d'],'update':['b'],'delete':['c']}\nassert a=={'a':1,'b':2,'d':None}\nassert reconcile({},{})=={'create':[],'update':[],'delete':[]}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-reconcile:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "6641165d8cdf86a779f1fb0d7c106981e0717c4e9e1dbd1c8440f0957f34d3b5"
+    },
+    {
+      "id": "code-diff-keys:0:42",
+      "case": {
+        "id": "code-diff-keys",
+        "tier": "coding",
+        "cluster": "code-diff-keys",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-diff-keys:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "32636f872b10302c0f0610b5a86b0e65e22b7b723380425df6083882a9b3016c"
+    },
+    {
+      "id": "code-rolling-window:0:42",
+      "case": {
+        "id": "code-rolling-window",
+        "tier": "coding",
+        "cluster": "code-rolling-window",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert rolling_sums([1,-2,3,4],2)==[-1,1,7]\nassert rolling_sums([],1)==[]\nassert rolling_sums([2],2)==[]\nassert rolling_sums([1,2],1)==[1,2]\nassert rolling_sums([1,2],2)==[3]\ntry: rolling_sums([],0)\nexcept ValueError: pass\nelse: raise AssertionError('width accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-rolling-window:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "e4de8837e47d2e60724b756a9f7e1681986ed854e1a0261f973ca03a1291bb42"
+    },
+    {
+      "id": "code-range-coalesce:0:42",
+      "case": {
+        "id": "code-range-coalesce",
+        "tier": "coding",
+        "cluster": "code-range-coalesce",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[(5,8),(1,3),(3,5),(9,9)]\nassert coalesce(a)==[(1,8)] and len(a)==4\nassert coalesce([])==[]\nassert coalesce([(1,9),(2,3),(10,11)])==[(1,9),(10,11)]\ntry: coalesce([(3,2)])\nexcept ValueError: pass\nelse: raise AssertionError('backwards accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-range-coalesce:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "6a28511b8537b6aa415b5cee8dd9d41edb1e8075db04f5bda3d0e66542f0f9e4"
+    },
+    {
+      "id": "code-retry-budget:0:42",
+      "case": {
+        "id": "code-retry-budget",
+        "tier": "coding",
+        "cluster": "code-retry-budget",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert delays(1,2,8)==[]\nassert delays(6,2,7)==[2,4,7,7,7]\nassert delays(3,0,8)==[0,0]\nassert delays(3,4,0)==[0,0]\nfor a,b,c in [(0,1,1),(1,-1,1),(1,1,-1)]:\n    try: delays(a,b,c)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-retry-budget:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "3cfe60f0e0b0ad0215836a8164d313d821037e565548e271ba5d6ba020ea735d"
+    },
+    {
+      "id": "code-pagination:0:42",
+      "case": {
+        "id": "code-pagination",
+        "tier": "coding",
+        "cluster": "code-pagination",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert paginate([1,3,5,8],3,2)==[5,8]\nassert paginate([1,3,5],2,1)==[3]\nassert paginate([1,3],None,0)==[]\nassert paginate([1,3],None,1)==[1]\nassert paginate([1,3],9,2)==[]\ntry: paginate([],None,-1)\nexcept ValueError: pass\nelse: raise AssertionError('negative limit')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-pagination:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "fd5308f3fa0289da1a66bc9b88ac8bf5f41aafa378134807ce7ab96726751549"
+    },
+    {
+      "id": "code-ttl:0:42",
+      "case": {
+        "id": "code-ttl",
+        "tier": "coding",
+        "cluster": "code-ttl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'x':('a',3),'y':('b',None),'z':('c',4)}\nassert live(a,3)=={'y':('b',None),'z':('c',4)}\nassert len(a)==3\nassert live({},0)=={}\nassert live(a,2)==a\nassert live(a,2) is not a"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-ttl:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "250bc898b6264eae1a5ec82f38d677e32fefd05ec1958d922baa54999f85472c"
+    },
+    {
+      "id": "code-sse-frames:0:42",
+      "case": {
+        "id": "code-sse-frames",
+        "tier": "coding",
+        "cluster": "code-sse-frames",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-sse-frames:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload. Return a list of strings, not an iterator or generator."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "42736022abeecb7275dcc56159ecd653e314c377b6dd3b3264c0f5cb13e53c90"
+    },
+    {
+      "id": "code-stable-dedupe:0:42",
+      "case": {
+        "id": "code-stable-dedupe",
+        "tier": "coding",
+        "cluster": "code-stable-dedupe",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[{'id':'b','timestamp':2,'v':1},{'id':'a','timestamp':5},{'id':'b','timestamp':1},{'id':'b','timestamp':2,'v':9}]\nassert unique_latest(a)==[a[3],a[1]]\nassert len(a)==4\nassert unique_latest([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-stable-dedupe:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "1da9f6ca9625192936e9cf1edc91c0eab6deb834844d7bc1dfc289e93a221c5e"
+    },
+    {
+      "id": "code-histogram:0:42",
+      "case": {
+        "id": "code-histogram",
+        "tier": "coding",
+        "cluster": "code-histogram",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert histogram([0,1,2],[-1,0,0.5,1,2,3])==[2,2]\nassert histogram([0,10],[])==[0]\nfor edges in [[],[0],[0,0],[2,1]]:\n    try: histogram(edges,[])\n    except ValueError: pass\n    else: raise AssertionError('invalid edges')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-histogram:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "722f8e9978432ee294eefbb81d811594914ff5ffb8b3950abe49de8706be0f59"
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "case": {
+        "id": "code-merge-config",
+        "tier": "coding",
+        "cluster": "code-merge-config",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-merge-config:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "8285112f77c652d0b44756561915764fbc0cee454ab40ab6a5273649b2dbb12a"
+    },
+    {
+      "id": "code-lru:0:42",
+      "case": {
+        "id": "code-lru",
+        "tier": "coding",
+        "cluster": "code-lru",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-lru:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "988f6f5d42228d7538ac6365a6fc64eb538072b5283d66e63837f67e91d29831"
+    },
+    {
+      "id": "code-jsonl:0:42",
+      "case": {
+        "id": "code-jsonl",
+        "tier": "coding",
+        "cluster": "code-jsonl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert parse_jsonl('  \\n{\"a\":1}\\nnull\\n[2]\\n')==[{'a':1},None,[2]]\nassert parse_jsonl('')==[]\ntry: parse_jsonl('{}\\n\\nINVALID')\nexcept ValueError as e: assert '3' in str(e)\nelse: raise AssertionError('invalid JSON accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-jsonl:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "5d359576e412253ea1e6ba37f4dc4a221320ca98e7daabfa53b49a6a7d014be8"
+    },
+    {
+      "id": "code-flatten:0:42",
+      "case": {
+        "id": "code-flatten",
+        "tier": "coding",
+        "cluster": "code-flatten",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert flatten({})=={}\nassert flatten({'a':{'b':1,'c':{}},'d':[1,2],'e':None})=={'a.b':1,'a.c':{},'d':[1,2],'e':None}\na={'x':{'y':2}}\nassert flatten(a)=={'x.y':2} and a=={'x':{'y':2}}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-flatten:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "1a9430806283a063cd973538f5833f6a3dc7e9e962ba50091fc22db837d4ab24"
+    },
+    {
+      "id": "code-path-normalize:0:42",
+      "case": {
+        "id": "code-path-normalize",
+        "tier": "coding",
+        "cluster": "code-path-normalize",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert normalize('/a//b/../c/.')=='/a/c'\nassert normalize('/../../')=='/'\nassert normalize('/a/.../')=='/a/...'\nfor p in ['', 'a/b']:\n    try: normalize(p)\n    except ValueError: pass\n    else: raise AssertionError('relative accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-path-normalize:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "b8cf5e45b733106a73e38ed19451f9ff91bc366ab66edd37ec389ee26c257065"
+    },
+    {
+      "id": "code-batch-bytes:0:42",
+      "case": {
+        "id": "code-batch-bytes",
+        "tier": "coding",
+        "cluster": "code-batch-bytes",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert pack(['é','a','b'],3)==[['é','a'],['b']]\nassert pack(['abc','','x'],3)==[['abc',''],['x']]\nassert pack([],1)==[]\nassert pack(['',''],1)==[['','']]\nfor items,n in [(['é'],1),([],0)]:\n    try: pack(items,n)\n    except ValueError: pass\n    else: raise AssertionError('oversize accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-batch-bytes:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "8eeef5171f4a135c1e36b830a15e21b683578681def0010a2b82230110427c07"
+    },
+    {
+      "id": "code-rate-limit:0:42",
+      "case": {
+        "id": "code-rate-limit",
+        "tier": "coding",
+        "cluster": "code-rate-limit",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert admit([0,0,1,5,5,6],2,5)==[True,True,False,True,True,False]\nassert admit([0,4,5],1,5)==[True,False,True]\nassert admit([],1,1)==[]\nfor limit,w in [(0,1),(1,0)]:\n    try: admit([],limit,w)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-rate-limit:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "dee65974b2be1feb01bfa55595523cec4a578003269822533720bcdb85f1383d"
+    },
+    {
+      "id": "code-topological:0:42",
+      "case": {
+        "id": "code-topological",
+        "tier": "coding",
+        "cluster": "code-topological",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-topological:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "08f946c3bb8debb811d4196f620a4cb8c098251fb485f9885c037e490910edc8"
+    },
+    {
+      "id": "code-redact:0:42",
+      "case": {
+        "id": "code-redact",
+        "tier": "coding",
+        "cluster": "code-redact",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-redact:0:42"
+          },
+          {
+            "role": "user",
+            "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+          }
+        ],
+        "seed": 42,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "8ab44e0ad33bcb1bf11fa5a116233eb1e9def2f883a1eeff89bc03b915b1ede5"
+    },
+    {
+      "id": "code-sse-frames:concurrent:314",
+      "case": {
+        "id": "code-sse-frames",
+        "tier": "coding",
+        "cluster": "code-sse-frames",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-sse-frames:concurrent:314"
+          },
+          {
+            "role": "user",
+            "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload. Return a list of strings, not an iterator or generator."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "fee12c444dc6a911d52bcdb7ae0a98b1010181461d5dc01e2056789ca7c68155"
+    },
+    {
+      "id": "code-sse-frames:concurrent:2718",
+      "case": {
+        "id": "code-sse-frames",
+        "tier": "coding",
+        "cluster": "code-sse-frames",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-sse-frames:concurrent:2718"
+          },
+          {
+            "role": "user",
+            "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload. Return a list of strings, not an iterator or generator."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "848e4d5efc69d1f908f698d99e881ca9c5b4586f0b786447838e1583c7ea598c"
+    },
+    {
+      "id": "code-histogram:concurrent:314",
+      "case": {
+        "id": "code-histogram",
+        "tier": "coding",
+        "cluster": "code-histogram",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert histogram([0,1,2],[-1,0,0.5,1,2,3])==[2,2]\nassert histogram([0,10],[])==[0]\nfor edges in [[],[0],[0,0],[2,1]]:\n    try: histogram(edges,[])\n    except ValueError: pass\n    else: raise AssertionError('invalid edges')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-histogram:concurrent:314"
+          },
+          {
+            "role": "user",
+            "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "e86460c0baec3735f3b88395f8e0e7d889782324f0870901d78d6f3340ddb844"
+    },
+    {
+      "id": "code-histogram:concurrent:2718",
+      "case": {
+        "id": "code-histogram",
+        "tier": "coding",
+        "cluster": "code-histogram",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert histogram([0,1,2],[-1,0,0.5,1,2,3])==[2,2]\nassert histogram([0,10],[])==[0]\nfor edges in [[],[0],[0,0],[2,1]]:\n    try: histogram(edges,[])\n    except ValueError: pass\n    else: raise AssertionError('invalid edges')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Concurrent coding evaluation: code-histogram:concurrent:2718"
+          },
+          {
+            "role": "user",
+            "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "cced288faf57187bc692c402ae53e6570f102b67308cc11aa9e9210a6359ffde"
+    }
+  ],
+  "callers": 2,
+  "contract_change": "Explicitly require a list return for SSE frames. New panel; historical strict scores unchanged."
+}

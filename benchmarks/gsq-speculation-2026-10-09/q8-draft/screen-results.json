@@ -1,0 +1,16 @@
+[
+  {
+    "arm": "baseline-ub256",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  },
+  {
+    "arm": "mtp1-q8-ub256",
+    "error": "Server exited before ready"
+  },
+  {
+    "arm": "mtp2-q8-ub256",
+    "error": "Server exited before ready"
+  }
+]

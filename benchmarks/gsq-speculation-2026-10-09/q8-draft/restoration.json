@@ -1,0 +1,6 @@
+{
+  "template": true,
+  "config": true,
+  "replicas": true,
+  "suspend": true
+}

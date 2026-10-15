@@ -1,0 +1,31 @@
+{
+  "status": "ok",
+  "content": "42",
+  "reasoning": "The user wants me to add 17 and 25 together.\n\n17 + 25 = 42\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "ttft_s": 0.53115844399872,
+  "usage": {
+    "completion_tokens": 32,
+    "prompt_tokens": 52,
+    "total_tokens": 84,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 52,
+    "prompt_ms": 527.227,
+    "prompt_per_token_ms": 10.138980769230768,
+    "prompt_per_second": 98.62924319126297,
+    "predicted_n": 32,
+    "predicted_ms": 806.384,
+    "predicted_per_token_ms": 26.012387096774194,
+    "predicted_per_second": 38.44322307982301
+  },
+  "wall_s": 1.3363590320004732,
+  "e2e_output_tps": 23.945660734673485,
+  "server_decode_tps": 38.44322307982301,
+  "server_prefill_tps": 98.62924319126297
+}

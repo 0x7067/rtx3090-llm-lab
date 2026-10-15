@@ -1,0 +1,301 @@
+{
+  "default_safe": {
+    "settings": {
+      "name": "publisher-control",
+      "mtp_depth": 2,
+      "batch_tokens": 2048,
+      "shared_prefix_checkpoint": false,
+      "prefix_match_unit": null,
+      "gpu_fraction": "0.92",
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c"
+    },
+    "runtime_kv_groups": {
+      "coordinator_class": "HybridKVCacheCoordinator",
+      "eagle_group_ids": [
+        3
+      ],
+      "enable_partial_hash_hits": false,
+      "groups": [
+        {
+          "block_size": 1600,
+          "index": 0,
+          "is_eagle_group": false,
+          "mamba_cache_mode": "align",
+          "num_prefill_checkpoint_blocks": 0,
+          "prefix_cacheable": true,
+          "spec_class": "MambaSpec"
+        },
+        {
+          "block_size": 1600,
+          "index": 1,
+          "is_eagle_group": false,
+          "mamba_cache_mode": "align",
+          "num_prefill_checkpoint_blocks": 0,
+          "prefix_cacheable": true,
+          "spec_class": "MambaSpec"
+        },
+        {
+          "block_size": 1600,
+          "index": 2,
+          "is_eagle_group": false,
+          "mamba_cache_mode": "align",
+          "num_prefill_checkpoint_blocks": 0,
+          "prefix_cacheable": true,
+          "spec_class": "MambaSpec"
+        },
+        {
+          "block_size": 1600,
+          "index": 3,
+          "is_eagle_group": true,
+          "mamba_cache_mode": null,
+          "num_prefill_checkpoint_blocks": null,
+          "prefix_cacheable": true,
+          "spec_class": "FullAttentionSpec"
+        }
+      ],
+      "hash_block_size": 1600,
+      "mamba_shared_prefix_checkpoint": false,
+      "managers": [
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 1600,
+          "class": "MambaManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": false
+        },
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 1600,
+          "class": "MambaManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": false
+        },
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 1600,
+          "class": "MambaManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": false
+        },
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 1600,
+          "class": "FullAttentionManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": true
+        }
+      ],
+      "num_reprefillable_tokens": 0,
+      "scheduler_block_size": 1600
+    },
+    "runtime_scheduler": {
+      "block_size": 1600,
+      "hash_block_size": 1600,
+      "mamba_partial_cache_hit": false,
+      "mamba_shared_prefix_checkpoint": false,
+      "manager_mamba_shared_prefix_checkpoint": false
+    },
+    "reported_kv_capacity_tokens": 256132,
+    "sessions": {
+      "turns_per_agent": 21,
+      "passed": 42,
+      "count": 42,
+      "cold_pair_seconds": 245.2252001010056,
+      "followup_pair_median_seconds": 11.242445310490439,
+      "followup_pair_p95_seconds": 13.107015696004964,
+      "followup_pair_max_seconds": 13.165660503000254,
+      "followup_agent_ttft_median_seconds": 8.711840836505871,
+      "followup_total_seconds": 220.91860759889823,
+      "followup_cached_tokens_median": 81600.0,
+      "followup_cached_tokens_observed": 40,
+      "prompt_tokens_range": [
+        83288,
+        84711
+      ]
+    },
+    "long_generation": {
+      "pair_seconds": 26.421173834009096,
+      "aggregate_output_tps": 38.75679432084567,
+      "scope": "Stable low effort with cached long histories; wall includes residual prefill and generation.",
+      "cached_tokens": [
+        81600,
+        81600
+      ],
+      "ttft_seconds": [
+        9.456641619995935,
+        12.52733678300865
+      ],
+      "completion_tokens": [
+        512,
+        512
+      ],
+      "finish_reasons": [
+        "length",
+        "length"
+      ]
+    }
+  },
+  "fine_safe": {
+    "settings": {
+      "name": "publisher-control",
+      "mtp_depth": 2,
+      "batch_tokens": 2048,
+      "shared_prefix_checkpoint": false,
+      "prefix_match_unit": 64,
+      "gpu_fraction": "0.92",
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c"
+    },
+    "runtime_kv_groups": {
+      "coordinator_class": "HybridKVCacheCoordinator",
+      "eagle_group_ids": [
+        3
+      ],
+      "enable_partial_hash_hits": true,
+      "groups": [
+        {
+          "block_size": 1600,
+          "index": 0,
+          "is_eagle_group": false,
+          "mamba_cache_mode": "align",
+          "num_prefill_checkpoint_blocks": 0,
+          "prefix_cacheable": true,
+          "spec_class": "MambaSpec"
+        },
+        {
+          "block_size": 1600,
+          "index": 1,
+          "is_eagle_group": false,
+          "mamba_cache_mode": "align",
+          "num_prefill_checkpoint_blocks": 0,
+          "prefix_cacheable": true,
+          "spec_class": "MambaSpec"
+        },
+        {
+          "block_size": 1600,
+          "index": 2,
+          "is_eagle_group": false,
+          "mamba_cache_mode": "align",
+          "num_prefill_checkpoint_blocks": 0,
+          "prefix_cacheable": true,
+          "spec_class": "MambaSpec"
+        },
+        {
+          "block_size": 1600,
+          "index": 3,
+          "is_eagle_group": true,
+          "mamba_cache_mode": null,
+          "num_prefill_checkpoint_blocks": null,
+          "prefix_cacheable": true,
+          "spec_class": "FullAttentionSpec"
+        }
+      ],
+      "hash_block_size": 64,
+      "mamba_shared_prefix_checkpoint": false,
+      "managers": [
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 64,
+          "class": "MambaManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": false
+        },
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 64,
+          "class": "MambaManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": false
+        },
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 64,
+          "class": "MambaManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": false
+        },
+        {
+          "block_size": 1600,
+          "cache_hit_alignment_tokens": 64,
+          "class": "FullAttentionManager",
+          "shared_prefix_checkpoint": false,
+          "use_eagle": true
+        }
+      ],
+      "num_reprefillable_tokens": 0,
+      "scheduler_block_size": 1600
+    },
+    "runtime_scheduler": {
+      "block_size": 1600,
+      "hash_block_size": 64,
+      "mamba_partial_cache_hit": true,
+      "mamba_shared_prefix_checkpoint": false,
+      "manager_mamba_shared_prefix_checkpoint": false
+    },
+    "reported_kv_capacity_tokens": 256132,
+    "sessions": {
+      "turns_per_agent": 21,
+      "passed": 42,
+      "count": 42,
+      "cold_pair_seconds": 245.57125814800384,
+      "followup_pair_median_seconds": 2.6402301130001433,
+      "followup_pair_p95_seconds": 2.9384586550004315,
+      "followup_pair_max_seconds": 8.836299254995538,
+      "followup_agent_ttft_median_seconds": 1.2321676650026347,
+      "followup_total_seconds": 58.48807047700393,
+      "followup_cached_tokens_median": 83872.0,
+      "followup_cached_tokens_observed": 40,
+      "prompt_tokens_range": [
+        83288,
+        84711
+      ]
+    },
+    "long_generation": {
+      "pair_seconds": 15.611676679982338,
+      "aggregate_output_tps": 65.59192974531666,
+      "scope": "Stable low effort with cached long histories; wall includes residual prefill and generation.",
+      "cached_tokens": [
+        84608,
+        84608
+      ],
+      "ttft_seconds": [
+        1.0125497020198964,
+        1.013461210008245
+      ],
+      "completion_tokens": [
+        512,
+        512
+      ],
+      "finish_reasons": [
+        "length",
+        "length"
+      ]
+    }
+  },
+  "fine_quality": {
+    "paired_coding_passed": 24,
+    "paired_coding_count": 24,
+    "tool_replay_passed": 16,
+    "tool_replay_count": 16,
+    "coding_failed_ids": [],
+    "tool_failed_ids": []
+  },
+  "identical_growing_and_generation_request_hashes": true,
+  "cache_followup_speedup": 4.2581308557667485,
+  "fine_rejection_reasons": [],
+  "recommended": {
+    "name": "publisher-control",
+    "mtp_depth": 2,
+    "batch_tokens": 2048,
+    "shared_prefix_checkpoint": false,
+    "prefix_match_unit": 64,
+    "gpu_fraction": "0.92",
+    "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c"
+  },
+  "prior_095_failure": {
+    "root": "../prefix-default/default",
+    "completed_pairs": 5,
+    "symptom": "CUDA OOM in Orca MTP shard_gemm reconstruction, 170MiB allocation; engine died on next growing pair.",
+    "scope": "Infrastructure failure; not a model quality score. Individual failed response bodies were not saved in this first run; server stack and scheduler dump were saved."
+  },
+  "scope": "Two independent83K histories, twenty growing follow-up pairs, cached512-output-token generation pair, then24 coding and16 tool checks; no forced eviction, longer two-request histories, or isolated decode-only timing."
+}

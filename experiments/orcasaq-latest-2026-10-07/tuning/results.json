@@ -1,0 +1,288 @@
+{
+  "screens": {
+    "control-before": {
+      "mtp_depth": 2,
+      "batch_tokens": 2048,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 89.59212793598999,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 11.133870500998455,
+          "aggregate_output_tps": 92.66993804565148,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 33.66219346699654,
+          "aggregate_output_tps": 30.4198921325876,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 251886,
+      "spec_acceptance_fraction": 0.6242700729927008,
+      "preemptions": 0.0
+    },
+    "mtp1-b2048": {
+      "mtp_depth": 1,
+      "batch_tokens": 2048,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 93.92305962502724,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 11.969956911503687,
+          "aggregate_output_tps": 85.5511509642728,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 34.99157290100993,
+          "aggregate_output_tps": 29.264257628908446,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 260679,
+      "spec_acceptance_fraction": 0.7785157377995957,
+      "preemptions": 0.0
+    },
+    "mtp3-b2048": {
+      "mtp_depth": 3,
+      "batch_tokens": 2048,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 86.88741030701203,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 10.667173244000878,
+          "aggregate_output_tps": 96.63503866637797,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 32.77653190950514,
+          "aggregate_output_tps": 31.242540182330295,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 244954,
+      "spec_acceptance_fraction": 0.5341917024320458,
+      "preemptions": 0.0
+    },
+    "mtp0-b2048": {
+      "mtp_depth": 0,
+      "batch_tokens": 2048,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 113.48746929000481,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 16.720280637498945,
+          "aggregate_output_tps": 61.24301390554233,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 40.02345400750346,
+          "aggregate_output_tps": 25.584998231616318,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 294117,
+      "spec_acceptance_fraction": null,
+      "preemptions": 0.0
+    },
+    "mtp2-b4096": {
+      "mtp_depth": 2,
+      "batch_tokens": 4096,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 86.60044873092556,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 10.748044153486262,
+          "aggregate_output_tps": 95.7818639969598,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 32.55218021197652,
+          "aggregate_output_tps": 31.458346682487974,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 250471,
+      "spec_acceptance_fraction": 0.6322556943423953,
+      "preemptions": 0.0
+    },
+    "mtp3-b4096": {
+      "mtp_depth": 3,
+      "batch_tokens": 4096,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 85.36531079199631,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 10.865395825501764,
+          "aggregate_output_tps": 94.6949526994072,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 31.81725957049639,
+          "aggregate_output_tps": 32.18381024809659,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 242201,
+      "spec_acceptance_fraction": 0.5197951273532669,
+      "preemptions": 0.0
+    },
+    "control-after": {
+      "mtp_depth": 2,
+      "batch_tokens": 2048,
+      "sequence_slots": 4,
+      "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c",
+      "screen_seconds": 87.65287554898532,
+      "fixed_output_complete": true,
+      "concurrency": {
+        "lines0-warmFalse": {
+          "median_seconds": 10.27926276549988,
+          "aggregate_output_tps": 99.62922121318199,
+          "retrieval_checks": []
+        },
+        "lines700-warmFalse": {
+          "median_seconds": 33.54717500899278,
+          "aggregate_output_tps": 30.524482288750136,
+          "retrieval_checks": []
+        }
+      },
+      "kv_capacity_tokens": 275943,
+      "spec_acceptance_fraction": 0.6294462779611294,
+      "preemptions": 0.0
+    }
+  },
+  "request_audit": {
+    "control-before": true,
+    "mtp1-b2048": true,
+    "mtp3-b2048": true,
+    "mtp0-b2048": true,
+    "mtp2-b4096": true,
+    "mtp3-b4096": true,
+    "control-after": true
+  },
+  "selection": {
+    "control_drift_fraction": 0.021645343532750938,
+    "screen_gate_seconds": 83.27023177153605,
+    "panels": [
+      {
+        "name": "mtp3-b4096",
+        "screen_seconds": 85.36531079199631,
+        "fixed_output_complete": true,
+        "panel": {
+          "passed": 22,
+          "count": 24,
+          "inference_seconds": 228.0485789659724,
+          "failures": [
+            "code-rolling-window:0:42",
+            "code-range-coalesce:0:42"
+          ]
+        },
+        "mtp_depth": 3,
+        "batch_tokens": 4096
+      },
+      {
+        "name": "mtp2-b4096",
+        "screen_seconds": 86.60044873092556,
+        "fixed_output_complete": true,
+        "panel": {
+          "passed": 22,
+          "count": 24,
+          "inference_seconds": 263.20617747100187,
+          "failures": [
+            "code-flatten:0:42",
+            "code-histogram:concurrent:2718"
+          ]
+        },
+        "mtp_depth": 2,
+        "batch_tokens": 4096
+      }
+    ],
+    "selected": {
+      "name": "publisher-control",
+      "mtp_depth": 2,
+      "batch_tokens": 2048
+    },
+    "scope": "Provisional screen selection; full suite and long-context validation follow."
+  },
+  "selected_full_quality": {
+    "passed": 53,
+    "count": 54,
+    "failed_ids": [
+      "code-sse-frames:0:42"
+    ]
+  },
+  "baseline_full_quality": {
+    "passed": 53,
+    "count": 54,
+    "failed_ids": [
+      "code-sse-frames:0:42"
+    ]
+  },
+  "selected_long_context": {
+    "lines5200-warmFalse": {
+      "median_seconds": 246.0142663319857,
+      "aggregate_output_tps": 0.9999562094215753,
+      "retrieval_checks": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "lines5200-warmTrue": {
+      "median_seconds": 8.375173341992195,
+      "aggregate_output_tps": 17.130621319776534,
+      "retrieval_checks": [
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "baseline_long_context": {
+    "lines0-warmFalse": {
+      "median_seconds": 10.266567750513786,
+      "aggregate_output_tps": 99.7506638932372,
+      "retrieval_checks": []
+    },
+    "lines5200-warmFalse": {
+      "median_seconds": 246.17393814600655,
+      "aggregate_output_tps": 0.9566456351113992,
+      "retrieval_checks": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "lines5200-warmTrue": {
+      "median_seconds": 8.279613611492096,
+      "aggregate_output_tps": 17.32257728900256,
+      "retrieval_checks": [
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "validation_rejections": [],
+  "recommended": {
+    "name": "publisher-control",
+    "mtp_depth": 2,
+    "batch_tokens": 2048
+  },
+  "scope": "Local screening with two repetitions per context and fixed output; limited fixtures, no claim of general quality equivalence."
+}

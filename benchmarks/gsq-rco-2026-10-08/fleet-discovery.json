@@ -1,0 +1,35 @@
+{
+  "Pro": {
+    "available": false,
+    "reason": "ssh: connect to host 192.168.3.35 port 22: Connection timed out",
+    "scope": "catalog discovery; no credentials transferred"
+  },
+  "Ravn": {
+    "available": true,
+    "scope": "native catalog discovery, not remote inference",
+    "evidence": {
+      "pi": {
+        "returncode": 0,
+        "catalog_output": "provider    model        context  max-out  thinking  images\nllama-swap  gsq-rco-27b  262.1K   32.8K    yes       no    \n",
+        "default_model": "cline-pass/deepseek-v4.1-flash",
+        "defaults_unchanged": true,
+        "passed": true
+      },
+      "prime-agent": {
+        "returncode": 0,
+        "catalog_output": "provider   model        context  max-out  thinking  images\nhome-qwen  gsq-rco-27b  262.1K   32.8K    yes       no    \n",
+        "default_model": "orca-saq2-27b",
+        "defaults_unchanged": true,
+        "passed": true
+      },
+      "passed": true
+    },
+    "passed": true,
+    "default_policy": "Preserve observed current defaults; earlier Orca choice does not override a subsequently changed client default."
+  },
+  "Studio": {
+    "available": false,
+    "reason": "ssh: connect to host 100.64.0.7 port 22: Connection timed out",
+    "scope": "catalog discovery; no credentials transferred"
+  }
+}

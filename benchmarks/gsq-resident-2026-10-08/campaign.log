@@ -1,0 +1,55 @@
+READY gsq_q8_resident pool=320000 phase=quality
+gsq_q8_resident full 1/16 episode-unicode-next:0:42 score=1.0
+gsq_q8_resident full 2/16 episode-cache-first:0:42 score=1.0
+gsq_q8_resident full 3/16 episode-untrusted-tool-next:0:42 score=1.0
+gsq_q8_resident full 4/16 episode-pt-pods-next:0:42 score=1.0
+gsq_q8_resident full 5/16 episode-pt-pods-first:0:42 score=1.0
+gsq_q8_resident full 6/16 episode-cache-next:0:42 score=1.0
+gsq_q8_resident full 7/16 episode-pod-logs-next:0:42 score=1.0
+gsq_q8_resident full 8/16 episode-unicode-first:0:42 score=1.0
+gsq_q8_resident full 9/16 episode-quoted-path-first:0:42 score=1.0
+gsq_q8_resident full 10/16 episode-quoted-path-next:0:42 score=1.0
+gsq_q8_resident full 11/16 episode-pod-logs-first:0:42 score=1.0
+gsq_q8_resident full 12/16 episode-not-found-first:0:42 score=1.0
+gsq_q8_resident full 13/16 episode-failed-test-next:0:42 score=1.0
+gsq_q8_resident full 14/16 episode-untrusted-tool-first:0:42 score=1.0
+gsq_q8_resident full 15/16 episode-not-found-next:0:42 score=1.0
+gsq_q8_resident full 16/16 episode-failed-test-first:0:42 score=1.0
+READY gsq_q8_resident pool=320000 phase=concurrent-coding
+gsq_q8_resident concurrent coding 2/24 score=2.0/2
+gsq_q8_resident concurrent coding 4/24 score=2.0/2
+gsq_q8_resident concurrent coding 6/24 score=2.0/2
+gsq_q8_resident concurrent coding 8/24 score=2.0/2
+gsq_q8_resident concurrent coding 10/24 score=2.0/2
+gsq_q8_resident concurrent coding 12/24 score=2.0/2
+gsq_q8_resident concurrent coding 14/24 score=2.0/2
+gsq_q8_resident concurrent coding 16/24 score=2.0/2
+gsq_q8_resident concurrent coding 18/24 score=2.0/2
+gsq_q8_resident concurrent coding 20/24 score=2.0/2
+gsq_q8_resident concurrent coding 22/24 score=2.0/2
+gsq_q8_resident concurrent coding 24/24 score=2.0/2
+READY gsq_q8_resident pool=320000 phase=long-2x9300
+gsq_q8_resident cold wall=744.44s pass=[True, True] prompt=[148904, 148902]
+gsq_q8_resident followup-1 wall=10.89s pass=[True, True] prompt=[149003, 148999]
+gsq_q8_resident followup-2 wall=7.58s pass=[True, True] prompt=[149066, 149059]
+gsq_q8_resident followup-3 wall=9.01s pass=[True, True] prompt=[149130, 149118]
+gsq_q8_resident followup-4 wall=7.42s pass=[True, True] prompt=[149193, 149181]
+gsq_q8_resident followup-5 wall=7.04s pass=[True, True] prompt=[149254, 149244]
+gsq_q8_resident followup-6 wall=7.26s pass=[True, True] prompt=[149315, 149305]
+gsq_q8_resident followup-7 wall=7.06s pass=[True, True] prompt=[149375, 149364]
+gsq_q8_resident followup-8 wall=7.29s pass=[True, True] prompt=[149438, 149427]
+gsq_q8_resident followup-9 wall=7.21s pass=[True, True] prompt=[149503, 149489]
+RESOURCE PAUSE gsq-resident-gsq_q8_resident-long-2x9300-3
+RESOURCE RESUME gsq-resident-gsq_q8_resident-long-2x9300-3
+gsq_q8_resident followup-10 wall=39.74s pass=[True, True] prompt=[149563, 149552]
+gsq_q8_resident followup-11 wall=8.29s pass=[True, True] prompt=[149624, 149616]
+gsq_q8_resident followup-12 wall=6.91s pass=[True, True] prompt=[149685, 149679]
+gsq_q8_resident followup-13 wall=7.21s pass=[True, True] prompt=[149744, 149741]
+gsq_q8_resident followup-14 wall=6.81s pass=[True, True] prompt=[149805, 149801]
+gsq_q8_resident followup-15 wall=7.37s pass=[True, True] prompt=[149865, 149860]
+gsq_q8_resident followup-16 wall=7.61s pass=[True, True] prompt=[149928, 149922]
+gsq_q8_resident followup-17 wall=7.81s pass=[True, True] prompt=[149991, 149985]
+gsq_q8_resident followup-18 wall=7.39s pass=[True, True] prompt=[150053, 150047]
+gsq_q8_resident followup-19 wall=7.77s pass=[True, True] prompt=[150116, 150107]
+gsq_q8_resident followup-20 wall=6.95s pass=[True, True] prompt=[150179, 150167]
+gsq_q8_resident cached-generation-512 wall=47.44s pass=[None, None] prompt=[150230, 150215]

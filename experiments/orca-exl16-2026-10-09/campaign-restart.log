@@ -1,0 +1,47 @@
+BENCHMARK RESTART REQUESTED
+PREFLIGHT IO full_avg10=40.35
+PREFLIGHT IO full_avg10=38.0
+PREFLIGHT IO full_avg10=39.78
+PREFLIGHT IO full_avg10=34.85
+PREFLIGHT IO full_avg10=48.26
+PREFLIGHT IO full_avg10=58.62
+PREFLIGHT IO full_avg10=59.99
+PREFLIGHT IO full_avg10=61.4
+PREFLIGHT IO full_avg10=64.56
+PREFLIGHT IO full_avg10=66.17
+PREFLIGHT IO full_avg10=59.27
+PREFLIGHT IO full_avg10=55.91
+PREFLIGHT IO full_avg10=38.3
+PREFLIGHT IO full_avg10=20.96
+PREFLIGHT IO full_avg10=21.13
+PREFLIGHT IO full_avg10=17.44
+PREFLIGHT IO full_avg10=13.66
+PREFLIGHT IO full_avg10=16.4
+PREFLIGHT IO full_avg10=19.52
+PREFLIGHT IO full_avg10=21.14
+PREFLIGHT IO full_avg10=16.61
+PREFLIGHT IO full_avg10=11.47
+PREFLIGHT IO full_avg10=14.36
+PREFLIGHT IO full_avg10=16.81
+PREFLIGHT IO full_avg10=15.59
+PREFLIGHT IO full_avg10=13.3
+PREFLIGHT IO full_avg10=14.64
+PREFLIGHT IO full_avg10=15.8
+PREFLIGHT IO full_avg10=16.23
+PREFLIGHT IO full_avg10=12.7
+PREFLIGHT IO full_avg10=5.58
+PREFLIGHT IO full_avg10=2.05
+PREFLIGHT IO full_avg10=0.75
+PREFLIGHT IO full_avg10=0.27
+PREFLIGHT IO full_avg10=0.1
+PREFIX RESTORED True
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart.py", line 137, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart.py", line 131, in main
+    p.main(profiles=[('control',False,64,True,True),('exl16',False,64,True,True),('dflash2',False,64,True,True)],gpu_fraction='0.92',generation_effort='low')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orcasaq-latest-2026-10-07/run-prefix.py", line 142, in main
+    raise RuntimeError('GPU remains occupied')
+RuntimeError: GPU remains occupied

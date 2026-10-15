@@ -1,0 +1,31 @@
+{
+  "status": "ok",
+  "content": "OK.",
+  "reasoning": "The user is asking me to simply reply \"OK.\" This is a straightforward request.\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "ttft_s": 0.2424659809912555,
+  "usage": {
+    "completion_tokens": 23,
+    "prompt_tokens": 13,
+    "total_tokens": 36,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 13,
+    "prompt_ms": 240.377,
+    "prompt_per_token_ms": 18.490538461538463,
+    "prompt_per_second": 54.081713308677614,
+    "predicted_n": 23,
+    "predicted_ms": 572.404,
+    "predicted_per_token_ms": 26.018363636363635,
+    "predicted_per_second": 38.43439249201613
+  },
+  "wall_s": 0.8148921800311655,
+  "e2e_output_tps": 28.22459285241928,
+  "server_decode_tps": 38.43439249201613,
+  "server_prefill_tps": 54.081713308677614
+}

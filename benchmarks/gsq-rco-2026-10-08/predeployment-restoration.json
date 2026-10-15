@@ -1,0 +1,9 @@
+{
+  "configmap_data_unchanged": true,
+  "pod_template_unchanged": true,
+  "replicas": 1,
+  "ready_replicas": 1,
+  "flux_suspended": false,
+  "temporary_containers": "",
+  "passed": true
+}

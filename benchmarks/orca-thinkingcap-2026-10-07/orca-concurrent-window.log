@@ -1,0 +1,17 @@
+orca_vllm concurrent coding 2/24 score=2.0/2
+orca_vllm concurrent coding 4/24 score=2.0/2
+orca_vllm concurrent coding 6/24 score=2.0/2
+orca_vllm concurrent coding 8/24 score=2.0/2
+orca_vllm concurrent coding 10/24 score=2.0/2
+orca_vllm concurrent coding 12/24 score=2.0/2
+orca_vllm concurrent coding 14/24 score=2.0/2
+orca_vllm concurrent coding 16/24 score=2.0/2
+orca_vllm concurrent coding 18/24 score=2.0/2
+orca_vllm concurrent coding 20/24 score=2.0/2
+orca_vllm concurrent coding 22/24 score=2.0/2
+orca_vllm concurrent coding 24/24 score=1.0/2
+orca_vllm concurrency callers=2 lines=5200 wall=232.63s
+orca_vllm warm two-agent follow-up wall=8.01s
+orca_vllm concurrency callers=2 lines=5200 wall=232.35s
+orca_vllm warm two-agent follow-up wall=8.29s
+Orca concurrent-quality restoration: True

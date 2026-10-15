@@ -1,0 +1,139 @@
+Starting thinkingcap_llama
+thinkingcap_llama support-transcript-en:0:42: ok score=1.0
+thinkingcap_llama episode-unicode-next:0:42: ok score=1.0
+thinkingcap_llama retrieve-revision-4096:0:42: ok score=1.0
+thinkingcap_llama code-env-lines:0:42: ok score=1.0
+thinkingcap_llama code-reconcile:0:42: ok score=1.0
+thinkingcap_llama episode-cache-first:0:42: ok score=1.0
+thinkingcap_llama retrieve-join-4096:0:42: ok score=1.0
+thinkingcap_llama perf-prefill-medium:0:42: ok score=None
+thinkingcap_llama episode-untrusted-tool-next:0:42: ok score=1.0
+thinkingcap_llama code-diff-keys:0:42: ok score=1.0
+thinkingcap_llama code-rolling-window:0:42: ok score=1.0
+thinkingcap_llama support-reason-boundary:0:42: ok score=1.0
+thinkingcap_llama episode-pt-pods-next:0:42: ok score=1.0
+thinkingcap_llama extract-pt-correction:0:42: ok score=1.0
+thinkingcap_llama episode-pt-pods-first:0:42: ok score=1.0
+thinkingcap_llama support-relevant-config:0:42: ok score=1.0
+thinkingcap_llama code-range-coalesce:0:42: ok score=1.0
+thinkingcap_llama episode-cache-next:0:42: ok score=1.0
+thinkingcap_llama retrieve-revision-64:0:42: ok score=1.0
+thinkingcap_llama code-retry-budget:0:42: ok score=1.0
+thinkingcap_llama episode-pod-logs-next:0:42: ok score=1.0
+thinkingcap_llama code-pagination:0:42: ok score=1.0
+thinkingcap_llama extract-missing:0:42: ok score=1.0
+thinkingcap_llama episode-unicode-first:0:42: ok score=1.0
+thinkingcap_llama perf-decode-medium:0:42: ok score=None
+thinkingcap_llama episode-quoted-path-first:0:42: ok score=1.0
+thinkingcap_llama code-ttl:0:42: ok score=1.0
+thinkingcap_llama retrieve-join-64:0:42: ok score=1.0
+thinkingcap_llama episode-quoted-path-next:0:42: ok score=1.0
+thinkingcap_llama retrieve-revision-1024:0:42: ok score=1.0
+thinkingcap_llama code-sse-frames:0:42: ok score=1.0
+thinkingcap_llama episode-pod-logs-first:0:42: ok score=1.0
+thinkingcap_llama extract-boolean:0:42: ok score=1.0
+thinkingcap_llama episode-not-found-first:0:42: ok score=1.0
+thinkingcap_llama code-stable-dedupe:0:42: ok score=1.0
+thinkingcap_llama episode-failed-test-next:0:42: ok score=1.0
+thinkingcap_llama extract-quoted:0:42: ok score=1.0
+thinkingcap_llama episode-untrusted-tool-first:0:42: ok score=1.0
+thinkingcap_llama retrieve-join-1024:0:42: ok score=1.0
+thinkingcap_llama code-histogram:0:42: ok score=1.0
+thinkingcap_llama support-transcript-pt:0:42: ok score=1.0
+thinkingcap_llama perf-decode-short:0:42: ok score=None
+thinkingcap_llama code-merge-config:0:42: ok score=1.0
+thinkingcap_llama episode-not-found-next:0:42: ok score=1.0
+thinkingcap_llama extract-en-correction:0:42: ok score=1.0
+thinkingcap_llama code-lru:0:42: ok score=1.0
+thinkingcap_llama episode-failed-test-first:0:42: ok score=1.0
+thinkingcap_llama support-relevant-db:0:42: ok score=1.0
+thinkingcap_llama code-jsonl:0:42: ok score=1.0
+thinkingcap_llama perf-prefill-short:0:42: ok score=None
+thinkingcap_llama code-flatten:0:42: ok score=1.0
+thinkingcap_llama code-path-normalize:0:42: ok score=1.0
+thinkingcap_llama code-batch-bytes:0:42: ok score=1.0
+thinkingcap_llama code-rate-limit:0:42: ok score=1.0
+thinkingcap_llama support-reason-deps:0:42: ok score=1.0
+thinkingcap_llama code-topological:0:42: ok score=1.0
+thinkingcap_llama code-redact:0:42: ok score=1.0
+thinkingcap_llama extract-units:0:42: ok score=1.0
+Completed thinkingcap_llama full
+thinkingcap_llama code-rolling-window:0:314: ok score=1.0
+thinkingcap_llama code-range-coalesce:0:314: ok score=1.0
+thinkingcap_llama code-pagination:0:314: ok score=1.0
+thinkingcap_llama code-reconcile:0:2718: ok score=1.0
+thinkingcap_llama code-lru:0:2718: ok score=1.0
+thinkingcap_llama code-retry-budget:0:2718: ok score=1.0
+thinkingcap_llama code-pagination:0:2718: ok score=1.0
+thinkingcap_llama code-env-lines:0:314: ok score=1.0
+thinkingcap_llama code-retry-budget:0:314: ok score=1.0
+thinkingcap_llama code-stable-dedupe:0:2718: ok score=1.0
+thinkingcap_llama code-topological:0:2718: ok score=1.0
+thinkingcap_llama code-flatten:0:2718: ok score=1.0
+thinkingcap_llama code-range-coalesce:0:2718: ok score=1.0
+thinkingcap_llama code-sse-frames:0:314: ok score=1.0
+thinkingcap_llama code-stable-dedupe:0:314: ok score=1.0
+thinkingcap_llama code-path-normalize:0:2718: ok score=1.0
+thinkingcap_llama code-batch-bytes:0:2718: ok score=0.0
+thinkingcap_llama code-jsonl:0:2718: ok score=1.0
+thinkingcap_llama code-histogram:0:314: ok score=1.0
+thinkingcap_llama code-merge-config:0:2718: ok score=1.0
+thinkingcap_llama code-ttl:0:2718: ok score=1.0
+thinkingcap_llama code-env-lines:0:2718: ok score=1.0
+thinkingcap_llama code-rate-limit:0:2718: ok score=1.0
+thinkingcap_llama code-rolling-window:0:2718: ok score=1.0
+thinkingcap_llama code-diff-keys:0:314: ok score=1.0
+thinkingcap_llama code-reconcile:0:314: ok score=1.0
+thinkingcap_llama code-diff-keys:0:2718: ok score=1.0
+thinkingcap_llama code-histogram:0:2718: ok score=0.0
+thinkingcap_llama code-merge-config:0:314: ok score=1.0
+thinkingcap_llama code-ttl:0:314: ok score=1.0
+thinkingcap_llama code-sse-frames:0:2718: ok score=1.0
+thinkingcap_llama code-redact:0:2718: ok score=1.0
+thinkingcap_llama code-lru:0:314: ok score=1.0
+thinkingcap_llama code-jsonl:0:314: ok score=1.0
+thinkingcap_llama code-flatten:0:314: ok score=1.0
+thinkingcap_llama code-path-normalize:0:314: ok score=1.0
+thinkingcap_llama code-batch-bytes:0:314: ok score=0.0
+thinkingcap_llama code-rate-limit:0:314: ok score=1.0
+thinkingcap_llama code-topological:0:314: ok score=1.0
+thinkingcap_llama code-redact:0:314: ok score=1.0
+Completed thinkingcap_llama coding-repeat
+thinkingcap_llama perf-decode-medium:0:314: ok score=None
+thinkingcap_llama perf-prefill-short:0:2718: ok score=None
+thinkingcap_llama perf-prefill-medium:0:2718: ok score=None
+thinkingcap_llama perf-decode-medium:0:2718: ok score=None
+thinkingcap_llama perf-prefill-medium:0:314: ok score=None
+thinkingcap_llama perf-decode-short:0:2718: ok score=None
+thinkingcap_llama perf-prefill-short:0:314: ok score=None
+thinkingcap_llama perf-decode-short:0:314: ok score=None
+Completed thinkingcap_llama speed-repeat
+thinkingcap_llama concurrency callers=1 lines=0 wall=12.43s
+thinkingcap_llama concurrency callers=1 lines=0 wall=12.35s
+thinkingcap_llama concurrency callers=2 lines=0 wall=14.53s
+thinkingcap_llama concurrency callers=2 lines=0 wall=14.82s
+thinkingcap_llama concurrency callers=4 lines=0 wall=29.66s
+thinkingcap_llama concurrency callers=4 lines=0 wall=29.64s
+thinkingcap_llama concurrency callers=8 lines=0 wall=59.28s
+thinkingcap_llama concurrency callers=8 lines=0 wall=59.20s
+thinkingcap_llama concurrency callers=1 lines=2400 wall=56.93s
+thinkingcap_llama concurrency callers=1 lines=2400 wall=57.23s
+thinkingcap_llama concurrency callers=2 lines=2400 wall=121.10s
+thinkingcap_llama concurrency callers=2 lines=2400 wall=121.96s
+thinkingcap_llama concurrency callers=2 lines=5200 wall=295.88s
+thinkingcap_llama warm two-agent follow-up wall=6.36s
+thinkingcap_llama concurrency callers=2 lines=5200 wall=296.82s
+thinkingcap_llama warm two-agent follow-up wall=4.81s
+thinkingcap_llama concurrent coding 2/24 score=2.0/2
+thinkingcap_llama concurrent coding 4/24 score=2.0/2
+thinkingcap_llama concurrent coding 6/24 score=2.0/2
+thinkingcap_llama concurrent coding 8/24 score=2.0/2
+thinkingcap_llama concurrent coding 10/24 score=2.0/2
+thinkingcap_llama concurrent coding 12/24 score=2.0/2
+thinkingcap_llama concurrent coding 14/24 score=2.0/2
+thinkingcap_llama concurrent coding 16/24 score=2.0/2
+thinkingcap_llama concurrent coding 18/24 score=2.0/2
+thinkingcap_llama concurrent coding 20/24 score=2.0/2
+thinkingcap_llama concurrent coding 22/24 score=2.0/2
+thinkingcap_llama concurrent coding 24/24 score=1.0/2
+Restoration: True

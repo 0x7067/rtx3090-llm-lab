@@ -1,0 +1,8 @@
+FROM local/gsq-llamampere-build-objects:72f90b5 AS build
+RUN ln -s libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && cmake -S /src -B /src/build-sm86 -DCMAKE_EXE_LINKER_FLAGS=-Wl,-rpath-link,/usr/local/cuda/lib64/stubs && cmake --build /src/build-sm86 -j4 --target llama-server
+FROM nvidia/cuda:12.8.1-runtime-ubuntu24.04
+RUN apt-get update && apt-get install -y --no-install-recommends libcurl4t64 libgomp1 ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY --from=build /src/build-sm86/bin/ /app/
+ENV LD_LIBRARY_PATH=/app:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+WORKDIR /app
+ENTRYPOINT ["/app/llama-server"]

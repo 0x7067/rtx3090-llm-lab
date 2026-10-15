@@ -1,0 +1,24 @@
+{
+  "image": "127.0.0.1:5000/home-llm-gsq@sha256:bf9541f6529ef0e9e88c3d2d3b96d23c8c6d4dc79a9bb5d468a0f1e2d61b7fc6",
+  "replicas": 1,
+  "ready_replicas": 1,
+  "flux_suspended": false,
+  "flux_revision": "main@sha1:f1e57785974b5a2e47165bccf15ba655f6f0a38d",
+  "flux_ready": true,
+  "pods": [
+    {
+      "name": "llama-57bddd864-56w74",
+      "phase": "Running",
+      "containers": [
+        {
+          "name": "llama-swap",
+          "ready": true,
+          "restarts": 0,
+          "image_id": "127.0.0.1:5000/home-llm-gsq@sha256:bf9541f6529ef0e9e88c3d2d3b96d23c8c6d4dc79a9bb5d468a0f1e2d61b7fc6"
+        }
+      ]
+    }
+  ],
+  "temporary_containers": "",
+  "passed": true
+}

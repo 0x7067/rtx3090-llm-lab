@@ -1,0 +1,12 @@
+{
+  "name": "publisher-control",
+  "mtp_depth": 2,
+  "batch_tokens": 2048,
+  "shared_prefix_checkpoint": false,
+  "prefix_match_unit": 64,
+  "gpu_fraction": "0.92",
+  "image": "sha256:55c96bdd11d4e09ffea2ee6cc85605b18e1f5eb84fdb8a64b51271d1c1661872",
+  "exllamav3": "1.6.0",
+  "speculation": "mtp2",
+  "inherited_settings": true
+}

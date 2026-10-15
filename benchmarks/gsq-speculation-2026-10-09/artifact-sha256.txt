@@ -1,0 +1,2 @@
+58fd826723939933dc86f45b7fe04545cbc2de1c70f6fe2cdd3858c87a98c12f  /data/models/qwen3.8/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf
+1a25c56858e1ebe93f2718ac1d49d1151f9323325c1bbfd6209370f4db131ebd  /data/models/qwen3.8/z-lab/Qwen3.8-27B-DFlash2-GGUF/Qwen3.8-27B-DFlash2-Q4_K_M.gguf

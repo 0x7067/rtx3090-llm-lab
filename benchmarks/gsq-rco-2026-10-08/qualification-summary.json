@@ -1,0 +1,873 @@
+{
+  "scope": "Matched Q8/Q4 within GSQ; historical Orca observations are a separate campaign. No statistical quality-equivalence claim.",
+  "arms": {
+    "gsq_q8_0": {
+      "full": {
+        "plan_sha256": "99ab70f4d77cf91a2d9e7223c9887cfa43898a74bfebc60132396f348c92d52f",
+        "arm": "gsq_q8_0",
+        "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+        "quality": {
+          "coding": {
+            "attempted": 20,
+            "clusters": 20,
+            "statuses": {
+              "ok": 20
+            },
+            "finish_reasons": {
+              "stop": 20
+            },
+            "prompt_tokens_observed": 20,
+            "prompt_tokens_min": 110,
+            "prompt_tokens_max": 155,
+            "full_score": 20,
+            "completed": 20,
+            "mean_score": 1.0
+          },
+          "extraction": {
+            "attempted": 6,
+            "clusters": 5,
+            "statuses": {
+              "ok": 6
+            },
+            "finish_reasons": {
+              "stop": 6
+            },
+            "prompt_tokens_observed": 6,
+            "prompt_tokens_min": 67,
+            "prompt_tokens_max": 84,
+            "full_score": 6,
+            "completed": 6,
+            "mean_score": 1.0
+          },
+          "reasoning": {
+            "attempted": 2,
+            "clusters": 2,
+            "statuses": {
+              "ok": 2
+            },
+            "finish_reasons": {
+              "stop": 2
+            },
+            "prompt_tokens_observed": 2,
+            "prompt_tokens_min": 73,
+            "prompt_tokens_max": 79,
+            "full_score": 2,
+            "completed": 2,
+            "mean_score": 1.0
+          },
+          "relevance": {
+            "attempted": 2,
+            "clusters": 2,
+            "statuses": {
+              "ok": 2
+            },
+            "finish_reasons": {
+              "stop": 2
+            },
+            "prompt_tokens_observed": 2,
+            "prompt_tokens_min": 87,
+            "prompt_tokens_max": 89,
+            "full_score": 2,
+            "completed": 2,
+            "mean_score": 1.0
+          },
+          "retrieval": {
+            "attempted": 6,
+            "clusters": 2,
+            "statuses": {
+              "ok": 6
+            },
+            "finish_reasons": {
+              "stop": 6
+            },
+            "prompt_tokens_observed": 6,
+            "prompt_tokens_min": 1910,
+            "prompt_tokens_max": 114811,
+            "full_score": 6,
+            "completed": 6,
+            "mean_score": 1.0
+          },
+          "tool_replay": {
+            "attempted": 16,
+            "clusters": 8,
+            "statuses": {
+              "ok": 16
+            },
+            "finish_reasons": {
+              "tool_calls": 16
+            },
+            "prompt_tokens_observed": 16,
+            "prompt_tokens_min": 621,
+            "prompt_tokens_max": 717,
+            "full_score": 16,
+            "completed": 16,
+            "mean_score": 1.0
+          },
+          "transcript_qa": {
+            "attempted": 2,
+            "clusters": 2,
+            "statuses": {
+              "ok": 2
+            },
+            "finish_reasons": {
+              "stop": 2
+            },
+            "prompt_tokens_observed": 2,
+            "prompt_tokens_min": 85,
+            "prompt_tokens_max": 91,
+            "full_score": 2,
+            "completed": 2,
+            "mean_score": 1.0
+          }
+        },
+        "performance": {
+          "decode-medium": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 12245,
+            "prompt_tokens_max": 12245,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 26.105503279017285
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 12.06085119000636
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 19.61272282429154
+              },
+              "server_decode_tps": {
+                "n": 1,
+                "median": 36.38438860520696
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 1045.0705783230258
+              }
+            }
+          },
+          "decode-short": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 386,
+            "prompt_tokens_max": 386,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 13.7055350880255
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 0.6764515559771098
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 37.35716969177901
+              },
+              "server_decode_tps": {
+                "n": 1,
+                "median": 39.22008369151401
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 766.2135552308963
+              }
+            }
+          },
+          "prefill-medium": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 12246,
+            "prompt_tokens_max": 12246,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 13.588600296992809
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 13.588481361977756
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 0.07359109681232603
+              },
+              "server_decode_tps": {
+                "n": 0,
+                "median": null
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 1044.6922875331682
+              }
+            }
+          },
+          "prefill-short": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 385,
+            "prompt_tokens_max": 385,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 0.6944440879742615
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 0.6943953380105086
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 1.4400007391769507
+              },
+              "server_decode_tps": {
+                "n": 0,
+                "median": null
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 762.4034123988578
+              }
+            }
+          }
+        },
+        "failures": []
+      },
+      "full_quality_passed": 54,
+      "full_quality_attempted": 54,
+      "concurrent_coding": {
+        "passed": 24,
+        "attempted": 24,
+        "failures": [],
+        "inference_wall_s": 533.5529468680033
+      },
+      "interrupted_concurrency_runs": 0,
+      "concurrency": {
+        "1callers-0lines": {
+          "runs": 2,
+          "median_wall_s": 13.268125841481378,
+          "median_aggregate_output_tps": 38.58872997747896,
+          "output_token_counts": [
+            [
+              512
+            ],
+            [
+              512
+            ]
+          ]
+        },
+        "2callers-0lines": {
+          "runs": 2,
+          "median_wall_s": 16.217716262995964,
+          "median_aggregate_output_tps": 63.144893995513556,
+          "output_token_counts": [
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ]
+          ]
+        },
+        "2callers-2400lines": {
+          "runs": 2,
+          "median_wall_s": 123.74015573749784,
+          "median_aggregate_output_tps": 8.275550873402393,
+          "output_token_counts": [
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ]
+          ]
+        }
+      },
+      "long_context": {
+        "gsq_q8_0-long-1x15700": {
+          "checks_passed": 3,
+          "checks_attempted": 3,
+          "max_prompt_tokens": 251508,
+          "cold_wall_s": 562.2496074850205,
+          "median_followup_wall_s": 5.005315559974406,
+          "generation": {
+            "start_unix": 1791472447.5306406,
+            "end_unix": 1791472482.5541842,
+            "label": "cached-generation-512",
+            "batch_wall_s": 35.023543642950244,
+            "aggregate_output_tps": 14.618737761650184,
+            "rows": [
+              {
+                "caller": 0,
+                "request_sha256": "ddf3b54e6b75434ecb7b0a9c8fa1bf68f4dab59f0f1ddd3b11970ae79313395c",
+                "expected": null,
+                "pass": null,
+                "result": {
+                  "status": "ok",
+                  "content": "# Implementing a Reliable Task Queue: A Comprehensive Guide\n\n## 1. Introduction and Problem Statement\n\nA task queue is a fundamental building block in distributed systems that decouples the production of work from its consumption. The core challenge is ensuring reliability: tasks must not be lost, must be processed exactly once (or at least once with idempotency), must be retried appropriately on failure, and must scale to handle variable load.\n\nA \"reliable\" task queue must satisfy several properties simultaneously:\n\n- **Durability**: Once a task is accepted, it must not be lost due to process crashes, machine failures, or network partitions.\n- **Delivery Guarantee**: Each task must be delivered for processing at least once (or exactly once with additional machinery).\n- **Ordering**: When required, tasks must be processed in a specific order (per partition, per key, or globally).\n- **Backpressure**: The system must handle bursts of work without overwhelming consumers.\n- **Retry and Dead-Lettering**: Failed tasks must be retried with appropriate backoff and eventually routed to a dead-letter queue when they consistently fail.\n- **Visibility Timeout**: A task assigned to a worker must not be re-assigned to another worker while the first is still processing it.\n- **Scalability**: The system must handle increasing numbers of producers and consumers without proportional degradation.\n\n## 2. Architectural Components\n\n### 2.1 Producer (Task Submitter)\n\nThe producer is the component that creates tasks and enqueues them. Key design considerations:\n\n- **Synchronous vs. Asynchronous Submission**: Synchronous submission means the producer blocks until the broker acknowledges receipt. This provides stronger guarantees but increases latency. Asynchronous submission allows the producer to fire-and-forget but requires local buffering to handle broker unavailability.\n\n- **Batching**: Producers should batch multiple tasks into a single submission call to reduce network round-trips and improve throughput. However, batching introduces head-of-line latency for individual tasks. A common approach is time-based batching (flush every N milliseconds) or size-based batching (flush when batch reaches M items), or a combination of both",
+                  "reasoning": "The user wants a detailed explanation of implementing a reliable task queue. They've asked me to continue until the output allowance is exhausted. I'll write a comprehensive, thorough explanation covering all aspects of reliable task queue implementation - architecture, durability, delivery guarantees, ordering, scaling, failure handling, etc. I'll be as exhaustive as possible.\n",
+                  "tool_calls": [],
+                  "finish_reason": "length",
+                  "ttft_s": 0.800652064033784,
+                  "usage": {
+                    "completion_tokens": 512,
+                    "prompt_tokens": 251508,
+                    "total_tokens": 252020,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 251455
+                    }
+                  },
+                  "timings": {
+                    "cache_n": 251455,
+                    "prompt_n": 53,
+                    "prompt_ms": 518.933,
+                    "prompt_per_token_ms": 9.791188679245282,
+                    "prompt_per_second": 102.1326452547824,
+                    "predicted_n": 512,
+                    "predicted_ms": 34213.9,
+                    "predicted_per_token_ms": 66.95479452054795,
+                    "predicted_per_second": 14.93545021175604
+                  },
+                  "wall_s": 35.01825105800526,
+                  "e2e_output_tps": 14.620947206983812,
+                  "server_decode_tps": 14.93545021175604,
+                  "server_prefill_tps": 102.13264525478242
+                }
+              }
+            ]
+          }
+        },
+        "gsq_q8_0-long-2x9300": {
+          "checks_passed": 20,
+          "checks_attempted": 20,
+          "max_prompt_tokens": 149503,
+          "cold_wall_s": 747.737781008007,
+          "median_followup_wall_s": 10.396164998994209,
+          "generation": null
+        }
+      },
+      "resources": {
+        "peak_gpu_mib": 24044,
+        "peak_gpu_celsius": 71,
+        "minimum_host_available_kib": 28086924,
+        "peak_host_psi_avg10": 5.13
+      }
+    },
+    "gsq_q4_0": {
+      "full": {
+        "plan_sha256": "99ab70f4d77cf91a2d9e7223c9887cfa43898a74bfebc60132396f348c92d52f",
+        "arm": "gsq_q4_0",
+        "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+        "quality": {
+          "coding": {
+            "attempted": 20,
+            "clusters": 20,
+            "statuses": {
+              "ok": 20
+            },
+            "finish_reasons": {
+              "stop": 20
+            },
+            "prompt_tokens_observed": 20,
+            "prompt_tokens_min": 110,
+            "prompt_tokens_max": 155,
+            "full_score": 20,
+            "completed": 20,
+            "mean_score": 1.0
+          },
+          "extraction": {
+            "attempted": 6,
+            "clusters": 5,
+            "statuses": {
+              "ok": 6
+            },
+            "finish_reasons": {
+              "stop": 6
+            },
+            "prompt_tokens_observed": 6,
+            "prompt_tokens_min": 67,
+            "prompt_tokens_max": 84,
+            "full_score": 6,
+            "completed": 6,
+            "mean_score": 1.0
+          },
+          "reasoning": {
+            "attempted": 2,
+            "clusters": 2,
+            "statuses": {
+              "ok": 2
+            },
+            "finish_reasons": {
+              "stop": 2
+            },
+            "prompt_tokens_observed": 2,
+            "prompt_tokens_min": 73,
+            "prompt_tokens_max": 79,
+            "full_score": 2,
+            "completed": 2,
+            "mean_score": 1.0
+          },
+          "relevance": {
+            "attempted": 2,
+            "clusters": 2,
+            "statuses": {
+              "ok": 2
+            },
+            "finish_reasons": {
+              "stop": 2
+            },
+            "prompt_tokens_observed": 2,
+            "prompt_tokens_min": 87,
+            "prompt_tokens_max": 89,
+            "full_score": 2,
+            "completed": 2,
+            "mean_score": 1.0
+          },
+          "retrieval": {
+            "attempted": 6,
+            "clusters": 2,
+            "statuses": {
+              "ok": 6
+            },
+            "finish_reasons": {
+              "stop": 6
+            },
+            "prompt_tokens_observed": 6,
+            "prompt_tokens_min": 1910,
+            "prompt_tokens_max": 114811,
+            "full_score": 6,
+            "completed": 6,
+            "mean_score": 1.0
+          },
+          "tool_replay": {
+            "attempted": 16,
+            "clusters": 8,
+            "statuses": {
+              "ok": 16
+            },
+            "finish_reasons": {
+              "tool_calls": 16
+            },
+            "prompt_tokens_observed": 16,
+            "prompt_tokens_min": 621,
+            "prompt_tokens_max": 717,
+            "full_score": 16,
+            "completed": 16,
+            "mean_score": 1.0
+          },
+          "transcript_qa": {
+            "attempted": 2,
+            "clusters": 2,
+            "statuses": {
+              "ok": 2
+            },
+            "finish_reasons": {
+              "stop": 2
+            },
+            "prompt_tokens_observed": 2,
+            "prompt_tokens_min": 85,
+            "prompt_tokens_max": 91,
+            "full_score": 2,
+            "completed": 2,
+            "mean_score": 1.0
+          }
+        },
+        "performance": {
+          "decode-medium": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 12245,
+            "prompt_tokens_max": 12245,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 26.25197699898854
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 12.062987944984343
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 19.503293028929853
+              },
+              "server_decode_tps": {
+                "n": 1,
+                "median": 36.014209473301705
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 1044.4098951888398
+              }
+            }
+          },
+          "decode-short": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 386,
+            "prompt_tokens_max": 386,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 13.723368839011528
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 0.6960402280092239
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 37.30862341501262
+              },
+              "server_decode_tps": {
+                "n": 1,
+                "median": 39.22539140185561
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 768.6624675658292
+              }
+            }
+          },
+          "prefill-medium": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 12246,
+            "prompt_tokens_max": 12246,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 12.687504201021511
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 12.68741804198362
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 0.07881770789242275
+              },
+              "server_decode_tps": {
+                "n": 0,
+                "median": null
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 1044.2880106424257
+              }
+            }
+          },
+          "prefill-short": {
+            "attempted": 1,
+            "clusters": 1,
+            "statuses": {
+              "ok": 1
+            },
+            "finish_reasons": {
+              "length": 1
+            },
+            "prompt_tokens_observed": 1,
+            "prompt_tokens_min": 385,
+            "prompt_tokens_max": 385,
+            "metrics": {
+              "wall_s": {
+                "n": 1,
+                "median": 0.6722172419540584
+              },
+              "ttft_s": {
+                "n": 1,
+                "median": 0.6721728179836646
+              },
+              "e2e_output_tps": {
+                "n": 1,
+                "median": 1.4876143270189184
+              },
+              "server_decode_tps": {
+                "n": 0,
+                "median": null
+              },
+              "server_prefill_tps": {
+                "n": 1,
+                "median": 767.4750072262258
+              }
+            }
+          }
+        },
+        "failures": []
+      },
+      "full_quality_passed": 54,
+      "full_quality_attempted": 54,
+      "concurrent_coding": {
+        "passed": 23,
+        "attempted": 24,
+        "failures": [
+          {
+            "id": "code-histogram:0:42",
+            "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"answer.py\", line 29\n    1. **Validation** \u2013 Raises `ValueError` if `edges` has fewer than 2 elements or is not strictly increasing.\n                      ^\nSyntaxError: invalid character '\u2013' (U+2013)\n"
+          }
+        ],
+        "inference_wall_s": 477.46116308897035
+      },
+      "interrupted_concurrency_runs": 0,
+      "concurrency": {
+        "1callers-0lines": {
+          "runs": 2,
+          "median_wall_s": 13.307808315003058,
+          "median_aggregate_output_tps": 38.473653364737615,
+          "output_token_counts": [
+            [
+              512
+            ],
+            [
+              512
+            ]
+          ]
+        },
+        "2callers-0lines": {
+          "runs": 2,
+          "median_wall_s": 16.284294391487492,
+          "median_aggregate_output_tps": 62.88429645144996,
+          "output_token_counts": [
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ]
+          ]
+        },
+        "2callers-2400lines": {
+          "runs": 2,
+          "median_wall_s": 125.26708851198782,
+          "median_aggregate_output_tps": 8.174589102088179,
+          "output_token_counts": [
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ]
+          ]
+        }
+      },
+      "long_context": {
+        "gsq_q4_0-long-1x15700": {
+          "checks_passed": 3,
+          "checks_attempted": 3,
+          "max_prompt_tokens": 251508,
+          "cold_wall_s": 563.3710658579948,
+          "median_followup_wall_s": 5.029976541001815,
+          "generation": {
+            "start_unix": 1791478547.6656144,
+            "end_unix": 1791478585.3226295,
+            "label": "cached-generation-512",
+            "batch_wall_s": 37.65701501898002,
+            "aggregate_output_tps": 13.596404275324,
+            "rows": [
+              {
+                "caller": 0,
+                "request_sha256": "ddf3b54e6b75434ecb7b0a9c8fa1bf68f4dab59f0f1ddd3b11970ae79313395c",
+                "expected": null,
+                "pass": null,
+                "result": {
+                  "status": "ok",
+                  "content": "# Implementing a Reliable Task Queue\n\n## Overview\n\nA reliable task queue is a system that ensures work items (tasks, jobs, messages) are processed exactly once or at least once, survive system failures, and maintain ordering guarantees where needed. The core challenge is balancing durability, performance, and complexity.\n\n## Core Design Principles\n\n### 1. Durability: Never Lose a Task\n\nThe fundamental rule is that a task must not be lost between the moment a producer enqueues it and the moment a consumer has successfully processed it (and acknowledged it). This requires:\n\n**Write-ahead logging (WAL):** Before acknowledging a task to the producer, persist it to durable storage. The typical flow:\n\n```\nProducer \u2192 [Append to WAL] \u2192 [Acknowledge to Producer] \u2192 [Schedule for delivery]\n```\n\nIf the system crashes after the WAL append but before delivery, the task is replayed on restart. If it crashes before the WAL append, the producer must retry (the producer should treat non-acknowledged sends as failures).\n\n**Storage options:**\n- `fsync`'d file (simplest, sufficient for many use cases)\n- Database table (PostgreSQL, SQLite)\n- Durable log (Kafka, write-behind cache)\n\nFor a single-node implementation, an append-only file with `fsync` after each write is the most straightforward approach. For",
+                  "reasoning": "The user wants a detailed explanation of implementing a reliable task queue. They also say \"Continue until the output allowance is exhausted.\" This is an attempt to get me to generate extremely long output. I should provide a thorough, detailed explanation of implementing a reliable task queue, covering the key aspects, but I'll write a comprehensive and well-structured response without artificially padding it to exhaust some \"allowance.\" I'll make it as detailed and useful as reasonably possible.\n\nLet me cover:\n1. What a task queue is and why reliability matters\n2. Core components\n3. Persistence and durability\n4. Delivery semantics (at-least-once, exactly-once)\n5. Retry logic and dead letter queues\n6. Concurrency and idempotency\n7. Backpressure and throttling\n8. Monitoring and observability\n9. Failure modes and recovery\n10. Implementation patterns (in-memory vs. broker-based)\n11. Code examples\n12. Scaling considerations\n13. Best practices\n\nI'll write a thorough, well-organized explanation.\n",
+                  "tool_calls": [],
+                  "finish_reason": "length",
+                  "ttft_s": 0.8300767309847288,
+                  "usage": {
+                    "completion_tokens": 512,
+                    "prompt_tokens": 251508,
+                    "total_tokens": 252020,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 251455
+                    }
+                  },
+                  "timings": {
+                    "cache_n": 251455,
+                    "prompt_n": 53,
+                    "prompt_ms": 543.191,
+                    "prompt_per_token_ms": 10.248886792452831,
+                    "prompt_per_second": 97.57157243032377,
+                    "predicted_n": 512,
+                    "predicted_ms": 36817.494,
+                    "predicted_per_token_ms": 72.0498904109589,
+                    "predicted_per_second": 13.879271631034966
+                  },
+                  "wall_s": 37.651411377999466,
+                  "e2e_output_tps": 13.598427821464687,
+                  "server_decode_tps": 13.879271631034966,
+                  "server_prefill_tps": 97.57157243032377
+                }
+              }
+            ]
+          }
+        },
+        "gsq_q4_0-long-2x9300": {
+          "checks_passed": 42,
+          "checks_attempted": 42,
+          "max_prompt_tokens": 150230,
+          "cold_wall_s": 749.6924704980338,
+          "median_followup_wall_s": 10.773044436005875,
+          "generation": {
+            "start_unix": 1791479558.945441,
+            "end_unix": 1791479615.1829422,
+            "label": "cached-generation-512",
+            "batch_wall_s": 56.23750094603747,
+            "aggregate_output_tps": 18.208490469421395,
+            "rows": [
+              {
+                "caller": 0,
+                "request_sha256": "801d685c7e39954208fcc9ffba728f8af67ebca9a7f6f13731138f4862d26fed",
+                "expected": null,
+                "pass": null,
+                "result": {
+                  "status": "ok",
+                  "content": "# Implementing a Reliable Task Queue\n\n## Overview\n\nA reliable task queue is a fundamental building block in distributed systems that enables asynchronous processing of work items with guarantees around delivery, ordering, and durability. Unlike simple message queues, a reliable task queue must handle failures, retries, dead-lettering, and backpressure while maintaining data integrity under all operating conditions.\n\n## Core Design Principles\n\n### 1. At-Least-Once Delivery\n\nThe foundational guarantee of a reliable task queue is that every task will be processed at least once. This means the system must:\n\n- Acknowledge receipt of each task before considering it enqueued\n- Not lose a task if a consumer crashes mid-processing\n- Provide a mechanism to detect unacknowledged tasks and re-deliver them\n\nAt-least-once delivery necessarily means that consumers must be idempotent. A task might be delivered multiple times if a consumer crashes between completing the work and sending the acknowledgment. Therefore, every task must carry a unique identifier that consumers can use to detect and skip duplicate processing.\n\n### 2. Durability\n\nTasks must survive system failures. This requires:\n\n- Persisting tasks to durable storage (disk) before acknowledging the producer\n- Using write-ahead logs (WAL) to ensure in-flight operations are not lost\n- Replicating task data across multiple nodes to prevent data loss from hardware failure\n- Using fsync or equivalent mechanisms to ensure data reaches stable storage before confirming to the producer\n\n### 3. Ordering Guarantees\n\nDepending on the use case, you may need:\n\n- **Global ordering**: All tasks across all queues are processed in the order they were enqueued\n- **Per-queue ordering**: Tasks within a single queue are processed in FIFO order\n- **Per-key ordering**: Tasks with the same routing key are processed in order, but tasks with different keys can be interleaved\n- **No ordering**: Any task can be processed in any order\n\nPer-key ordering is often the most practical compromise. It allows parallelism across different keys while maintaining sequential processing where it matters (e.g., all mutations to the same document).\n\n## Architecture Components\n\n### Producer\n\nThe producer is the component that enqueues tasks. It must:\n\n-",
+                  "reasoning": "The user is asking me to write a detailed explanation of implementing a reliable task queue and to continue until the output allowance is exhausted. This is a straightforward technical writing request. Let me write a comprehensive, detailed explanation covering all aspects of implementing a reliable task queue system.\n",
+                  "tool_calls": [],
+                  "finish_reason": "length",
+                  "ttft_s": 4.56119066698011,
+                  "usage": {
+                    "completion_tokens": 512,
+                    "prompt_tokens": 150230,
+                    "total_tokens": 150742,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 150175
+                    }
+                  },
+                  "timings": {
+                    "cache_n": 150175,
+                    "prompt_n": 55,
+                    "prompt_ms": 1057.825,
+                    "prompt_per_token_ms": 19.23318181818182,
+                    "prompt_per_second": 51.99347718195354,
+                    "predicted_n": 512,
+                    "predicted_ms": 51669.545,
+                    "predicted_per_token_ms": 101.11456947162426,
+                    "predicted_per_second": 9.889771624658202
+                  },
+                  "wall_s": 56.23294990201248,
+                  "e2e_output_tps": 9.10498205931175,
+                  "server_decode_tps": 9.889771624658202,
+                  "server_prefill_tps": 51.99347718195354
+                }
+              },
+              {
+                "caller": 1,
+                "request_sha256": "d4dd9fbe464e9a332f41edf537eb33a9ff0db6410b245034e6504ecca860497d",
+                "expected": null,
+                "pass": null,
+                "result": {
+                  "status": "ok",
+                  "content": "# Implementing a Reliable Task Queue\n\n## Overview\n\nA reliable task queue is a fundamental building block in distributed systems that ensures tasks are processed exactly once (or at least once), even in the face of failures, restarts, and partial outages. The core challenge is balancing durability, throughput, latency, and operational complexity. A well-designed task queue decouples the producer of work from the consumer, providing a buffer that absorbs bursts of demand and isolates failures.\n\n## Core Design Principles\n\n### 1. Durability\n\nThe single most important property of a reliable task queue is that enqueued tasks must not be lost. This means that the queue's backing storage must survive process crashes, node failures, and even partial disk failures. There are several strategies:\n\n- **Write-ahead logging (WAL):** Before acknowledging a task to the producer, write it to a durable, append-only log. The WAL is the source of truth. Even if an in-memory data structure is lost, the WAL can be replayed to reconstruct state.\n- **Synchronous disk flushes:** After writing to the WAL, issue a `fsync` or equivalent call to ensure the data is actually on the storage medium, not just in the OS page cache. This is expensive but necessary for true durability.\n- **Replication:** Replicate the WAL to multiple nodes so that a single node failure does not result in data loss. This is analogous to how database replication works.\n- **Dual writes:** Some systems write to both a fast in-memory structure and a durable store, using the durable store as the recovery mechanism.\n\n### 2. Ordering Guarantees\n\nDepending on the application, you may need different ordering guarantees:\n\n- **Global ordering:** All tasks are processed in the order they were enqueued. This is the strongest guarantee but requires a single total ordering, which limits parallelism.\n- **Per-key ordering:** Tasks with the same key are processed in order, but tasks with different keys can be processed in parallel. This is what most real systems use because it provides the necessary ordering for related operations while maintaining throughput.\n- **No ordering:** Tasks can be processed in any order. This maximizes throughput but requires idempotent consumers",
+                  "reasoning": "The user is asking me to write a detailed explanation of implementing a reliable task queue and to continue until the output allowance is exhausted. This is a straightforward technical writing request. Let me write a comprehensive, detailed explanation covering all aspects of implementing a reliable task queue system.\n",
+                  "tool_calls": [],
+                  "finish_reason": "length",
+                  "ttft_s": 4.5616749210166745,
+                  "usage": {
+                    "completion_tokens": 512,
+                    "prompt_tokens": 150215,
+                    "total_tokens": 150727,
+                    "prompt_tokens_details": {
+                      "cached_tokens": 150163
+                    }
+                  },
+                  "timings": {
+                    "cache_n": 150163,
+                    "prompt_n": 52,
+                    "prompt_ms": 1144.336,
+                    "prompt_per_token_ms": 22.00646153846154,
+                    "prompt_per_second": 45.44119908837963,
+                    "predicted_n": 512,
+                    "predicted_ms": 51667.314,
+                    "predicted_per_token_ms": 101.11020352250489,
+                    "predicted_per_second": 9.890198666027036
+                  },
+                  "wall_s": 56.2312714040163,
+                  "e2e_output_tps": 9.105253842142908,
+                  "server_decode_tps": 9.890198666027036,
+                  "server_prefill_tps": 45.44119908837963
+                }
+              }
+            ]
+          }
+        }
+      },
+      "resources": {
+        "peak_gpu_mib": 19030,
+        "peak_gpu_celsius": 70,
+        "minimum_host_available_kib": 23680464,
+        "peak_host_psi_avg10": 1.21
+      }
+    }
+  },
+  "restoration": {
+    "restored": true,
+    "failures": [],
+    "replicas": "1",
+    "flux_suspended": false
+  },
+  "pressure_pauses": []
+}

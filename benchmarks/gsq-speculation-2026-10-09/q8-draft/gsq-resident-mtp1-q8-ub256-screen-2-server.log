@@ -1,0 +1,15 @@
+warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+0.00.101.450 I srv  llama_server: initializing ...
+0.00.101.460 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.101.941 W srv  llama_server: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.103.601 I srv    load_model: loading model '/models/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf'
+1.03.322.673 W llama_context: n_ctx_seq (320000) > n_ctx_train (262144) -- possible training context overflow
+1.03.361.692 E ggml_backend_cuda_buffer_type_alloc_buffer: allocating 1456.53 MiB on device 0: cudaMalloc failed: out of memory
+1.03.361.698 E ggml_gallocr_reserve_n_impl: failed to allocate CUDA0 buffer of size 1527277824
+1.03.361.699 E graph_reserve: failed to allocate compute buffers
+1.03.368.277 E llama_init_from_model: failed to initialize the context: failed to allocate compute pp buffers
+1.03.368.284 E cmn  common_init_: failed to create context with model '/models/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf'
+1.03.368.287 E cmn  common_init_: failed to create context with model '/models/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf'
+1.03.368.290 E srv    load_model: failed to create_context with model '/models/Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf'
+1.03.368.291 I srv    operator(): operator(): cleaning up before exit...
+1.03.368.603 E srv  llama_server: exiting due to model loading error

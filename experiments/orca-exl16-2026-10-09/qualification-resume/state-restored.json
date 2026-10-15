@@ -1,0 +1,9 @@
+{
+  "restored": false,
+  "failures": [
+    "cleanup: Command '['docker', 'logs', 'orca-exl16-control']' timed out after 60 seconds",
+    "Command '['kubectl', '--kubeconfig', '/home/denguinho/.kube/config', '-n', 'apps', 'scale', 'deployment', 'llama', '--replicas=1']' returned non-zero exit status 1.",
+    "Command '['flux', '--kubeconfig', '/home/denguinho/.kube/config', 'resume', 'kustomization', 'apps']' returned non-zero exit status 1.",
+    "Command '['kubectl', '--kubeconfig', '/home/denguinho/.kube/config', '-n', 'apps', 'rollout', 'status', 'deployment/llama', '--timeout=15m']' returned non-zero exit status 1."
+  ]
+}

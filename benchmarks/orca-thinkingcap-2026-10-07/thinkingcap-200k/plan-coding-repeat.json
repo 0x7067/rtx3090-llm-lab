@@ -1,0 +1,2239 @@
+{
+  "schema": 1,
+  "campaign": "orca-thinkingcap-coding-repeat-2026-10-07",
+  "suite": {
+    "description": "OrcaSAQ2 production speed settings versus ThinkingCap two-slot Q8 unified cache. Authored development regression suite; not held-out production data.",
+    "confidence": 0.95,
+    "bootstrap_samples": 10000,
+    "min_clusters": 20,
+    "repeats": 1,
+    "seeds": [
+      314,
+      2718
+    ],
+    "code_image": "sha256:9e87977b867847e186d066f531ef783b006d582a985c341c269446088d90f2c4",
+    "margins": {
+      "relevance": 0.03,
+      "transcript_qa": 0.03,
+      "reasoning": 0.03,
+      "extraction": 0.03,
+      "coding": 0.03,
+      "tool_replay": 0.03,
+      "retrieval": 0.03
+    },
+    "request_defaults": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "reasoning_effort": "medium",
+      "max_tokens": 16384,
+      "top_k": 20
+    },
+    "cases": [
+      {
+        "id": "code-ttl",
+        "tier": "coding",
+        "cluster": "code-ttl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'x':('a',3),'y':('b',None),'z':('c',4)}\nassert live(a,3)=={'y':('b',None),'z':('c',4)}\nassert len(a)==3\nassert live({},0)=={}\nassert live(a,2)==a\nassert live(a,2) is not a"
+        }
+      },
+      {
+        "id": "code-topological",
+        "tier": "coding",
+        "cluster": "code-topological",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+        }
+      },
+      {
+        "id": "code-merge-config",
+        "tier": "coding",
+        "cluster": "code-merge-config",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+        }
+      },
+      {
+        "id": "code-range-coalesce",
+        "tier": "coding",
+        "cluster": "code-range-coalesce",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[(5,8),(1,3),(3,5),(9,9)]\nassert coalesce(a)==[(1,8)] and len(a)==4\nassert coalesce([])==[]\nassert coalesce([(1,9),(2,3),(10,11)])==[(1,9),(10,11)]\ntry: coalesce([(3,2)])\nexcept ValueError: pass\nelse: raise AssertionError('backwards accepted')"
+        }
+      },
+      {
+        "id": "code-retry-budget",
+        "tier": "coding",
+        "cluster": "code-retry-budget",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert delays(1,2,8)==[]\nassert delays(6,2,7)==[2,4,7,7,7]\nassert delays(3,0,8)==[0,0]\nassert delays(3,4,0)==[0,0]\nfor a,b,c in [(0,1,1),(1,-1,1),(1,1,-1)]:\n    try: delays(a,b,c)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      {
+        "id": "code-lru",
+        "tier": "coding",
+        "cluster": "code-lru",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+        }
+      },
+      {
+        "id": "code-jsonl",
+        "tier": "coding",
+        "cluster": "code-jsonl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert parse_jsonl('  \\n{\"a\":1}\\nnull\\n[2]\\n')==[{'a':1},None,[2]]\nassert parse_jsonl('')==[]\ntry: parse_jsonl('{}\\n\\nINVALID')\nexcept ValueError as e: assert '3' in str(e)\nelse: raise AssertionError('invalid JSON accepted')"
+        }
+      },
+      {
+        "id": "code-redact",
+        "tier": "coding",
+        "cluster": "code-redact",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+        }
+      },
+      {
+        "id": "code-flatten",
+        "tier": "coding",
+        "cluster": "code-flatten",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert flatten({})=={}\nassert flatten({'a':{'b':1,'c':{}},'d':[1,2],'e':None})=={'a.b':1,'a.c':{},'d':[1,2],'e':None}\na={'x':{'y':2}}\nassert flatten(a)=={'x.y':2} and a=={'x':{'y':2}}"
+        }
+      },
+      {
+        "id": "code-rolling-window",
+        "tier": "coding",
+        "cluster": "code-rolling-window",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert rolling_sums([1,-2,3,4],2)==[-1,1,7]\nassert rolling_sums([],1)==[]\nassert rolling_sums([2],2)==[]\nassert rolling_sums([1,2],1)==[1,2]\nassert rolling_sums([1,2],2)==[3]\ntry: rolling_sums([],0)\nexcept ValueError: pass\nelse: raise AssertionError('width accepted')"
+        }
+      },
+      {
+        "id": "code-pagination",
+        "tier": "coding",
+        "cluster": "code-pagination",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert paginate([1,3,5,8],3,2)==[5,8]\nassert paginate([1,3,5],2,1)==[3]\nassert paginate([1,3],None,0)==[]\nassert paginate([1,3],None,1)==[1]\nassert paginate([1,3],9,2)==[]\ntry: paginate([],None,-1)\nexcept ValueError: pass\nelse: raise AssertionError('negative limit')"
+        }
+      },
+      {
+        "id": "code-env-lines",
+        "tier": "coding",
+        "cluster": "code-env-lines",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert env_lines(' # hi\\n A=x=y\\nB=\\nA=z # literal')=={'A':'z # literal','B':''}\nassert env_lines('Q=\"hello\"')=={'Q':'\"hello\"'}\nassert env_lines('')=={}\nfor text in ['=x','NO_EQUALS']:\n    try: env_lines(text)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      {
+        "id": "code-stable-dedupe",
+        "tier": "coding",
+        "cluster": "code-stable-dedupe",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[{'id':'b','timestamp':2,'v':1},{'id':'a','timestamp':5},{'id':'b','timestamp':1},{'id':'b','timestamp':2,'v':9}]\nassert unique_latest(a)==[a[3],a[1]]\nassert len(a)==4\nassert unique_latest([])==[]"
+        }
+      },
+      {
+        "id": "code-histogram",
+        "tier": "coding",
+        "cluster": "code-histogram",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert histogram([0,1,2],[-1,0,0.5,1,2,3])==[2,2]\nassert histogram([0,10],[])==[0]\nfor edges in [[],[0],[0,0],[2,1]]:\n    try: histogram(edges,[])\n    except ValueError: pass\n    else: raise AssertionError('invalid edges')"
+        }
+      },
+      {
+        "id": "code-path-normalize",
+        "tier": "coding",
+        "cluster": "code-path-normalize",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert normalize('/a//b/../c/.')=='/a/c'\nassert normalize('/../../')=='/'\nassert normalize('/a/.../')=='/a/...'\nfor p in ['', 'a/b']:\n    try: normalize(p)\n    except ValueError: pass\n    else: raise AssertionError('relative accepted')"
+        }
+      },
+      {
+        "id": "code-batch-bytes",
+        "tier": "coding",
+        "cluster": "code-batch-bytes",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert pack(['é','a','b'],3)==[['é','a'],['b']]\nassert pack(['abc','','x'],3)==[['abc',''],['x']]\nassert pack([],1)==[]\nassert pack(['',''],1)==[['','']]\nfor items,n in [(['é'],1),([],0)]:\n    try: pack(items,n)\n    except ValueError: pass\n    else: raise AssertionError('oversize accepted')"
+        }
+      },
+      {
+        "id": "code-reconcile",
+        "tier": "coding",
+        "cluster": "code-reconcile",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'a':1,'b':2,'d':None}; b={'a':1,'b':3,'c':4}\nassert reconcile(a,b)=={'create':['d'],'update':['b'],'delete':['c']}\nassert a=={'a':1,'b':2,'d':None}\nassert reconcile({},{})=={'create':[],'update':[],'delete':[]}"
+        }
+      },
+      {
+        "id": "code-rate-limit",
+        "tier": "coding",
+        "cluster": "code-rate-limit",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert admit([0,0,1,5,5,6],2,5)==[True,True,False,True,True,False]\nassert admit([0,4,5],1,5)==[True,False,True]\nassert admit([],1,1)==[]\nfor limit,w in [(0,1),(1,0)]:\n    try: admit([],limit,w)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      {
+        "id": "code-sse-frames",
+        "tier": "coding",
+        "cluster": "code-sse-frames",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+        }
+      },
+      {
+        "id": "code-diff-keys",
+        "tier": "coding",
+        "cluster": "code-diff-keys",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+        }
+      }
+    ],
+    "provenance": {
+      "generator_sha256": "791ff1914c6e21204fb318fb5c0c6786d95811081acadefb2d34103e1a6b2ea4",
+      "source": "Original authored contracts and synthetic documents. Reference solutions are excluded from requests."
+    }
+  },
+  "arms": [
+    {
+      "name": "thinkingcap_llama",
+      "base_url": "http://127.0.0.1:18185/v1",
+      "model": "thinkingcap-qwen3.8-27b",
+      "metadata": {
+        "runtime": "upstream llama.cpp build b11277 commit eae11d221",
+        "image": "ghcr.io/ggml-org/llama.cpp@sha256:7149a45c80596644320de1d565db1b3b8e70b22c66fed612e69b73f6b1e0d746",
+        "weights": "mradermacher/ThinkingCap-Qwen3.8-27B-abliterated-GGUF@467cdc441658c6c7dbf2babfcb33323ccfab84c7, Q4_K_S, sha256:1cd114864f9ab26a508e3943b55b0c38b556ac368f618dbac63602a00e02d0ed",
+        "launch": "b11277, Q8 K/V, unified 200000-token pool, parallel 2, no speculation, flash attention, full GPU offload",
+        "hardware": "RTX 3090 24576 MiB, driver 595.91.07, single GPU",
+        "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests",
+        "gpu_profile": "Existing host profile, unchanged; record actual clocks and guard state",
+        "host_os": "Ubuntu 26.04.1, NVIDIA driver 595.91.07"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "id": "code-rolling-window:0:314",
+      "case": {
+        "id": "code-rolling-window",
+        "tier": "coding",
+        "cluster": "code-rolling-window",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert rolling_sums([1,-2,3,4],2)==[-1,1,7]\nassert rolling_sums([],1)==[]\nassert rolling_sums([2],2)==[]\nassert rolling_sums([1,2],1)==[1,2]\nassert rolling_sums([1,2],2)==[3]\ntry: rolling_sums([],0)\nexcept ValueError: pass\nelse: raise AssertionError('width accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 1326ce947cbe4ca0ab12."
+          },
+          {
+            "role": "user",
+            "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "b4c3016d7ee925614aa7aea6c916ded31513bec7cc4d4994067b3f05633b78b7"
+    },
+    {
+      "id": "code-range-coalesce:0:314",
+      "case": {
+        "id": "code-range-coalesce",
+        "tier": "coding",
+        "cluster": "code-range-coalesce",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[(5,8),(1,3),(3,5),(9,9)]\nassert coalesce(a)==[(1,8)] and len(a)==4\nassert coalesce([])==[]\nassert coalesce([(1,9),(2,3),(10,11)])==[(1,9),(10,11)]\ntry: coalesce([(3,2)])\nexcept ValueError: pass\nelse: raise AssertionError('backwards accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 344ad5be38bcaf34f93b."
+          },
+          {
+            "role": "user",
+            "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "a5bdd88e87d0779c790c74ffdefcc07075bc95b8ae568e483ed61d17abb7704b"
+    },
+    {
+      "id": "code-pagination:0:314",
+      "case": {
+        "id": "code-pagination",
+        "tier": "coding",
+        "cluster": "code-pagination",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert paginate([1,3,5,8],3,2)==[5,8]\nassert paginate([1,3,5],2,1)==[3]\nassert paginate([1,3],None,0)==[]\nassert paginate([1,3],None,1)==[1]\nassert paginate([1,3],9,2)==[]\ntry: paginate([],None,-1)\nexcept ValueError: pass\nelse: raise AssertionError('negative limit')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 48f631e358eb9b5da8c2."
+          },
+          {
+            "role": "user",
+            "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "086e7df16581bb8aa697474e45edab3ca3df7272d014da43cdfa8e7c9a8c0367"
+    },
+    {
+      "id": "code-reconcile:0:2718",
+      "case": {
+        "id": "code-reconcile",
+        "tier": "coding",
+        "cluster": "code-reconcile",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'a':1,'b':2,'d':None}; b={'a':1,'b':3,'c':4}\nassert reconcile(a,b)=={'create':['d'],'update':['b'],'delete':['c']}\nassert a=={'a':1,'b':2,'d':None}\nassert reconcile({},{})=={'create':[],'update':[],'delete':[]}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 98d6afa81c528c871bac."
+          },
+          {
+            "role": "user",
+            "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "5409d93e1e6e1eef63f05c486edfb7c1b8887dc9b038623131928bfac7dd7d5a"
+    },
+    {
+      "id": "code-lru:0:2718",
+      "case": {
+        "id": "code-lru",
+        "tier": "coding",
+        "cluster": "code-lru",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: d270d410d98b87dbce0c."
+          },
+          {
+            "role": "user",
+            "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "06939e11a8c4da7dd834e2bb2fc04c9a26a921e65f4f6067929f6caa04104b5d"
+    },
+    {
+      "id": "code-retry-budget:0:2718",
+      "case": {
+        "id": "code-retry-budget",
+        "tier": "coding",
+        "cluster": "code-retry-budget",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert delays(1,2,8)==[]\nassert delays(6,2,7)==[2,4,7,7,7]\nassert delays(3,0,8)==[0,0]\nassert delays(3,4,0)==[0,0]\nfor a,b,c in [(0,1,1),(1,-1,1),(1,1,-1)]:\n    try: delays(a,b,c)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 5f89067b65e7dc116229."
+          },
+          {
+            "role": "user",
+            "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "b6734fdeeff70b4f4d7c1a0080bae3eb9d483fba967d29eb5574c08ec53f68c2"
+    },
+    {
+      "id": "code-pagination:0:2718",
+      "case": {
+        "id": "code-pagination",
+        "tier": "coding",
+        "cluster": "code-pagination",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert paginate([1,3,5,8],3,2)==[5,8]\nassert paginate([1,3,5],2,1)==[3]\nassert paginate([1,3],None,0)==[]\nassert paginate([1,3],None,1)==[1]\nassert paginate([1,3],9,2)==[]\ntry: paginate([],None,-1)\nexcept ValueError: pass\nelse: raise AssertionError('negative limit')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 3a4b0e22a8e4d11221b7."
+          },
+          {
+            "role": "user",
+            "content": "Implement paginate(items, after, limit). items is an already ascending list of distinct integer IDs. Return at most limit IDs strictly greater than after; after=None starts at the beginning. limit>=0 else ValueError. Do not mutate items. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "18ded3ceec34ec95c987f06843cd92ef43832d465f3648f076ebe1f174d942bf"
+    },
+    {
+      "id": "code-env-lines:0:314",
+      "case": {
+        "id": "code-env-lines",
+        "tier": "coding",
+        "cluster": "code-env-lines",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert env_lines(' # hi\\n A=x=y\\nB=\\nA=z # literal')=={'A':'z # literal','B':''}\nassert env_lines('Q=\"hello\"')=={'Q':'\"hello\"'}\nassert env_lines('')=={}\nfor text in ['=x','NO_EQUALS']:\n    try: env_lines(text)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 1b429583bdd3822a9ebf."
+          },
+          {
+            "role": "user",
+            "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "7059c0d057af7fcca7621cf415b6d8ffcbecf307141c662e35b24d98a278f0ab"
+    },
+    {
+      "id": "code-retry-budget:0:314",
+      "case": {
+        "id": "code-retry-budget",
+        "tier": "coding",
+        "cluster": "code-retry-budget",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert delays(1,2,8)==[]\nassert delays(6,2,7)==[2,4,7,7,7]\nassert delays(3,0,8)==[0,0]\nassert delays(3,4,0)==[0,0]\nfor a,b,c in [(0,1,1),(1,-1,1),(1,1,-1)]:\n    try: delays(a,b,c)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: d006c22c2653e36d22b6."
+          },
+          {
+            "role": "user",
+            "content": "Implement delays(attempts, base, cap): a list of attempts-1 retry delays base*2**i capped at cap, i starts at zero. attempts includes the original request and must be >=1; base and cap must be >=0. Raise ValueError on invalid arguments. All inputs are integers. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "9fb36d5174eb582ea99954662fb2f2afc9bcc522597ed920927e3ac6ad913f10"
+    },
+    {
+      "id": "code-stable-dedupe:0:2718",
+      "case": {
+        "id": "code-stable-dedupe",
+        "tier": "coding",
+        "cluster": "code-stable-dedupe",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[{'id':'b','timestamp':2,'v':1},{'id':'a','timestamp':5},{'id':'b','timestamp':1},{'id':'b','timestamp':2,'v':9}]\nassert unique_latest(a)==[a[3],a[1]]\nassert len(a)==4\nassert unique_latest([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 1c8f9405fc3178d60d65."
+          },
+          {
+            "role": "user",
+            "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "58080758f8000ab831ed49a3221e9974a54e385b02af218a5917dd9dc35a90f5"
+    },
+    {
+      "id": "code-topological:0:2718",
+      "case": {
+        "id": "code-topological",
+        "tier": "coding",
+        "cluster": "code-topological",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 99ac37c75d2835b41ab6."
+          },
+          {
+            "role": "user",
+            "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "7b2a04a225faef63a23fcc603416a380806c70f746fc057b07eb483d7781a9ea"
+    },
+    {
+      "id": "code-flatten:0:2718",
+      "case": {
+        "id": "code-flatten",
+        "tier": "coding",
+        "cluster": "code-flatten",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert flatten({})=={}\nassert flatten({'a':{'b':1,'c':{}},'d':[1,2],'e':None})=={'a.b':1,'a.c':{},'d':[1,2],'e':None}\na={'x':{'y':2}}\nassert flatten(a)=={'x.y':2} and a=={'x':{'y':2}}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: bb4b1492bc202a70a279."
+          },
+          {
+            "role": "user",
+            "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "95cba3ee077f545f41ccdffbb606c4b01d2f37946502efc9ff64758d966cda09"
+    },
+    {
+      "id": "code-range-coalesce:0:2718",
+      "case": {
+        "id": "code-range-coalesce",
+        "tier": "coding",
+        "cluster": "code-range-coalesce",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[(5,8),(1,3),(3,5),(9,9)]\nassert coalesce(a)==[(1,8)] and len(a)==4\nassert coalesce([])==[]\nassert coalesce([(1,9),(2,3),(10,11)])==[(1,9),(10,11)]\ntry: coalesce([(3,2)])\nexcept ValueError: pass\nelse: raise AssertionError('backwards accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: e83518b2fbbb6c5a4fb2."
+          },
+          {
+            "role": "user",
+            "content": "Implement coalesce(intervals): merge overlapping OR touching half-open integer intervals (start,end), discard empty intervals, raise ValueError if start>end. Return sorted tuples without mutating input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "271f9e06d48e1abc5cc6a4e1c4a8f88cadffbd8b01459f99e3f6ac8b9fe59879"
+    },
+    {
+      "id": "code-sse-frames:0:314",
+      "case": {
+        "id": "code-sse-frames",
+        "tier": "coding",
+        "cluster": "code-sse-frames",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: ae1f252a8bc1af8a406a."
+          },
+          {
+            "role": "user",
+            "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "4ef64438f93d2b3f6baa7e9ead4e79d90b97713271c226c28ba472f0ea338071"
+    },
+    {
+      "id": "code-stable-dedupe:0:314",
+      "case": {
+        "id": "code-stable-dedupe",
+        "tier": "coding",
+        "cluster": "code-stable-dedupe",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a=[{'id':'b','timestamp':2,'v':1},{'id':'a','timestamp':5},{'id':'b','timestamp':1},{'id':'b','timestamp':2,'v':9}]\nassert unique_latest(a)==[a[3],a[1]]\nassert len(a)==4\nassert unique_latest([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: f85420cf9e6603a4b1ed."
+          },
+          {
+            "role": "user",
+            "content": "Implement unique_latest(records). Each dict has string id and integer timestamp. Return one original record per ID: greatest timestamp wins, ties choose the last occurrence. Return records ordered by FIRST appearance of their IDs. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "7989b97afb6219d80d9fac8e3770666b9192e27fb10b5042b99f3cd3e053cbec"
+    },
+    {
+      "id": "code-path-normalize:0:2718",
+      "case": {
+        "id": "code-path-normalize",
+        "tier": "coding",
+        "cluster": "code-path-normalize",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert normalize('/a//b/../c/.')=='/a/c'\nassert normalize('/../../')=='/'\nassert normalize('/a/.../')=='/a/...'\nfor p in ['', 'a/b']:\n    try: normalize(p)\n    except ValueError: pass\n    else: raise AssertionError('relative accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 303b84d3bc7e1c146b17."
+          },
+          {
+            "role": "user",
+            "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "1467937631c40e4b389c8f6093432c6d6e7ec9d05ad5a3d98c35167c267780cc"
+    },
+    {
+      "id": "code-batch-bytes:0:2718",
+      "case": {
+        "id": "code-batch-bytes",
+        "tier": "coding",
+        "cluster": "code-batch-bytes",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert pack(['é','a','b'],3)==[['é','a'],['b']]\nassert pack(['abc','','x'],3)==[['abc',''],['x']]\nassert pack([],1)==[]\nassert pack(['',''],1)==[['','']]\nfor items,n in [(['é'],1),([],0)]:\n    try: pack(items,n)\n    except ValueError: pass\n    else: raise AssertionError('oversize accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 7376c17865d0eaa68f7f."
+          },
+          {
+            "role": "user",
+            "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "7952787324c2dc4b0635bd22f4ac1235e59cc7242212bd00ee8bc42915084f53"
+    },
+    {
+      "id": "code-jsonl:0:2718",
+      "case": {
+        "id": "code-jsonl",
+        "tier": "coding",
+        "cluster": "code-jsonl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert parse_jsonl('  \\n{\"a\":1}\\nnull\\n[2]\\n')==[{'a':1},None,[2]]\nassert parse_jsonl('')==[]\ntry: parse_jsonl('{}\\n\\nINVALID')\nexcept ValueError as e: assert '3' in str(e)\nelse: raise AssertionError('invalid JSON accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 19fc02af74bb25852197."
+          },
+          {
+            "role": "user",
+            "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "f9592f30e709324b69f732c7d08268a0128c3f99e939ca74102241be5e15834e"
+    },
+    {
+      "id": "code-histogram:0:314",
+      "case": {
+        "id": "code-histogram",
+        "tier": "coding",
+        "cluster": "code-histogram",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert histogram([0,1,2],[-1,0,0.5,1,2,3])==[2,2]\nassert histogram([0,10],[])==[0]\nfor edges in [[],[0],[0,0],[2,1]]:\n    try: histogram(edges,[])\n    except ValueError: pass\n    else: raise AssertionError('invalid edges')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 1eb3f833c4ed4ab66d7d."
+          },
+          {
+            "role": "user",
+            "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "5632f10adf673899020131b9f140455ca1c777cb3c672e3b426430e3b64a8a90"
+    },
+    {
+      "id": "code-merge-config:0:2718",
+      "case": {
+        "id": "code-merge-config",
+        "tier": "coding",
+        "cluster": "code-merge-config",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 02911383e5c496669a55."
+          },
+          {
+            "role": "user",
+            "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "376bf6b16db127b3d39204e4a97aadf8c47464445d9accf68592f2aad69f2bfc"
+    },
+    {
+      "id": "code-ttl:0:2718",
+      "case": {
+        "id": "code-ttl",
+        "tier": "coding",
+        "cluster": "code-ttl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'x':('a',3),'y':('b',None),'z':('c',4)}\nassert live(a,3)=={'y':('b',None),'z':('c',4)}\nassert len(a)==3\nassert live({},0)=={}\nassert live(a,2)==a\nassert live(a,2) is not a"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 8fc4b1d4a6d85d9f6f6a."
+          },
+          {
+            "role": "user",
+            "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "c2b2a0ec293db1e7bcb06b0061cb1e06b01a1b1facd430314a72cdf36fc10682"
+    },
+    {
+      "id": "code-env-lines:0:2718",
+      "case": {
+        "id": "code-env-lines",
+        "tier": "coding",
+        "cluster": "code-env-lines",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert env_lines(' # hi\\n A=x=y\\nB=\\nA=z # literal')=={'A':'z # literal','B':''}\nassert env_lines('Q=\"hello\"')=={'Q':'\"hello\"'}\nassert env_lines('')=={}\nfor text in ['=x','NO_EQUALS']:\n    try: env_lines(text)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 6c120e7c494de72a4ed2."
+          },
+          {
+            "role": "user",
+            "content": "Implement env_lines(text). Ignore blank lines and lines whose stripped form starts with #. Split other lines at the FIRST =, trim the key and value, preserve quotes and inline # literally. Duplicate keys use the last value. Empty keys or missing = raise ValueError. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "49e9bf17fa051967d01c14ae8a65355fe55dd5fb48ee369713a9102b8db1a412"
+    },
+    {
+      "id": "code-rate-limit:0:2718",
+      "case": {
+        "id": "code-rate-limit",
+        "tier": "coding",
+        "cluster": "code-rate-limit",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert admit([0,0,1,5,5,6],2,5)==[True,True,False,True,True,False]\nassert admit([0,4,5],1,5)==[True,False,True]\nassert admit([],1,1)==[]\nfor limit,w in [(0,1),(1,0)]:\n    try: admit([],limit,w)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 8659c7ab225bc453e8a4."
+          },
+          {
+            "role": "user",
+            "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "30e67bf10ced5f7a8f20bec3a9fde384e16dde89e3aedd1a7f747a499c3a8976"
+    },
+    {
+      "id": "code-rolling-window:0:2718",
+      "case": {
+        "id": "code-rolling-window",
+        "tier": "coding",
+        "cluster": "code-rolling-window",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert rolling_sums([1,-2,3,4],2)==[-1,1,7]\nassert rolling_sums([],1)==[]\nassert rolling_sums([2],2)==[]\nassert rolling_sums([1,2],1)==[1,2]\nassert rolling_sums([1,2],2)==[3]\ntry: rolling_sums([],0)\nexcept ValueError: pass\nelse: raise AssertionError('width accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 117dc70feeb02c69d2bf."
+          },
+          {
+            "role": "user",
+            "content": "Implement rolling_sums(values,width), returning sums of each contiguous full window. width must be >=1 else ValueError. If width exceeds input length return []. Do not mutate values. Linear time required. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "e7c70f9e5c4f19da824c3926f35123b237ffc1a14a5c40f75d860883835a11c3"
+    },
+    {
+      "id": "code-diff-keys:0:314",
+      "case": {
+        "id": "code-diff-keys",
+        "tier": "coding",
+        "cluster": "code-diff-keys",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: ed97586a041c78cd09c8."
+          },
+          {
+            "role": "user",
+            "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "8d8b397393c9ea130aabc6d136b6457adcd828b2cef07dc914b691f1f36cd9e5"
+    },
+    {
+      "id": "code-reconcile:0:314",
+      "case": {
+        "id": "code-reconcile",
+        "tier": "coding",
+        "cluster": "code-reconcile",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'a':1,'b':2,'d':None}; b={'a':1,'b':3,'c':4}\nassert reconcile(a,b)=={'create':['d'],'update':['b'],'delete':['c']}\nassert a=={'a':1,'b':2,'d':None}\nassert reconcile({},{})=={'create':[],'update':[],'delete':[]}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: eb6b5f265aa28b2ca221."
+          },
+          {
+            "role": "user",
+            "content": "Implement reconcile(desired, actual), dictionaries from string name to JSON-like value. Return a dict with sorted name lists: create (only desired), update (both with unequal values), delete (only actual). Do not mutate inputs. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "7b8f61625b8cd763ca2e38d2d650cafb23892c28ea7b4d9136fe142efd6e83f1"
+    },
+    {
+      "id": "code-diff-keys:0:2718",
+      "case": {
+        "id": "code-diff-keys",
+        "tier": "coding",
+        "cluster": "code-diff-keys",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert changed_paths({'a':{'x':1,'y':2},'b':[1]},{'a':{'x':3,'y':2},'b':[2],'c':{'z':1}})==['a.x','b','c']\nassert changed_paths({'a':{}},{})==['a']\nassert changed_paths({'a':{}},{'a':None})==['a']\nassert changed_paths({},{})==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 843ada1af4ec64ac095c."
+          },
+          {
+            "role": "user",
+            "content": "Implement changed_paths(before,after) for JSON-like dict roots. Return sorted dot-separated paths for additions, removals, or unequal leaves. Recurse only where BOTH values are dictionaries; treat lists atomically. If an entire dictionary key is added/removed, return that parent path only. String keys never contain dots. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "c8099d003c9163afa2798914ce600dad79d717aedb3d7f772962434bc4cd8925"
+    },
+    {
+      "id": "code-histogram:0:2718",
+      "case": {
+        "id": "code-histogram",
+        "tier": "coding",
+        "cluster": "code-histogram",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert histogram([0,1,2],[-1,0,0.5,1,2,3])==[2,2]\nassert histogram([0,10],[])==[0]\nfor edges in [[],[0],[0,0],[2,1]]:\n    try: histogram(edges,[])\n    except ValueError: pass\n    else: raise AssertionError('invalid edges')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 812b52151d5c713bf363."
+          },
+          {
+            "role": "user",
+            "content": "Implement histogram(edges, values): edges is a strictly increasing list with at least two numbers, otherwise ValueError. Count values in half-open bins [edge_i,edge_i+1); the final bin also includes the very last edge. Ignore out-of-range values. Return integer counts. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "1712fc14552dcb30c48bd14ec57ddb61cb4a9b795bcc52726f9aae233677de18"
+    },
+    {
+      "id": "code-merge-config:0:314",
+      "case": {
+        "id": "code-merge-config",
+        "tier": "coding",
+        "cluster": "code-merge-config",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'db':{'port':1,'hosts':['a']},'x':3}\nb={'db':{'port':2},'x':None}\nr=merge(a,b)\nassert r=={'db':{'port':2,'hosts':['a']},'x':None}\nr['db']['hosts'].append('z')\nassert a['db']['hosts']==['a']\nassert b=={'db':{'port':2},'x':None}\nassert merge({'a':[1]},{'a':[2]})=={'a':[2]}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 4224103f35ff8b70cfc5."
+          },
+          {
+            "role": "user",
+            "content": "Implement merge(base, overlay): recursively merge dictionaries into a deep-independent result. Overlay values replace base values, including lists and None; a None value does not delete a key. Inputs are JSON-like dictionaries. Do not mutate or alias nested input data. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "ca3eb8b6325d273f31a0801d201710d0b86b58acc867e7f16d1f1f5366c449f9"
+    },
+    {
+      "id": "code-ttl:0:314",
+      "case": {
+        "id": "code-ttl",
+        "tier": "coding",
+        "cluster": "code-ttl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'x':('a',3),'y':('b',None),'z':('c',4)}\nassert live(a,3)=={'y':('b',None),'z':('c',4)}\nassert len(a)==3\nassert live({},0)=={}\nassert live(a,2)==a\nassert live(a,2) is not a"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: f06ebc770b2dd4224b12."
+          },
+          {
+            "role": "user",
+            "content": "Implement live(entries, now), returning a new dict of entries whose deadline is None or strictly greater than now. Values are (payload, deadline) tuples. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "36ae4213a4717df1cd3abcab196c2f18574b42d58c4d9957e72ea510fa73b4c1"
+    },
+    {
+      "id": "code-sse-frames:0:2718",
+      "case": {
+        "id": "code-sse-frames",
+        "tier": "coding",
+        "cluster": "code-sse-frames",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert frames([': ping','data: a','data: b','','data: tail'])==['a\\nb']\nassert frames(['data:  x','','data:','',''])==[' x','']\nassert frames(['event: x',''])==[]\nassert frames([])==[]"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 286e3b3b10d080b35f4c."
+          },
+          {
+            "role": "user",
+            "content": "Implement frames(lines), where lines is a list of decoded SSE lines WITHOUT newline endings. Collect data: fields until a blank line; join their values with newline. Remove at most ONE space following the colon. Ignore comments and other fields. Return payload strings; discard a final event without its blank-line terminator. Return only complete Python code using the standard library. Skip events with no data fields; a data field with an empty value still produces an empty payload."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "d77ce951f74401e0b12646ac208ef8f4632c1184c5de5948df2cdc618add95cd"
+    },
+    {
+      "id": "code-redact:0:2718",
+      "case": {
+        "id": "code-redact",
+        "tier": "coding",
+        "cluster": "code-redact",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 984664abb8e64d930c83."
+          },
+          {
+            "role": "user",
+            "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+          }
+        ],
+        "seed": 2718,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "6e0b54969a425201f94dd3d5d64d015d7b5465a988093d036c1338b198c5f692"
+    },
+    {
+      "id": "code-lru:0:314",
+      "case": {
+        "id": "code-lru",
+        "tier": "coding",
+        "cluster": "code-lru",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "c=LRU(2)\nc.put('a','1'); c.put('b','2')\nassert c.get('a')=='1'\nc.put('c','3')\nassert c.get('b') is None\nc.put('a','4'); c.put('d','5')\nassert c.get('c') is None and c.get('a')=='4'\nc=LRU(1); c.put('x','a'); c.put('x','b')\nassert c.get('x')=='b'\ntry: LRU(0)\nexcept ValueError: pass\nelse: raise AssertionError('bad capacity')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 7f73c22a973e4b9a5860."
+          },
+          {
+            "role": "user",
+            "content": "Implement class LRU(capacity), capacity>=1 else ValueError. get(key) returns value or None and makes existing key most recently used. put(key,value) inserts/updates and evicts the least recently used key if over capacity. Keys and values are strings. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "2afe2a3d7add2a0b0423eb28e142eddb492437ee65abca2105baf47799940a50"
+    },
+    {
+      "id": "code-jsonl:0:314",
+      "case": {
+        "id": "code-jsonl",
+        "tier": "coding",
+        "cluster": "code-jsonl",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert parse_jsonl('  \\n{\"a\":1}\\nnull\\n[2]\\n')==[{'a':1},None,[2]]\nassert parse_jsonl('')==[]\ntry: parse_jsonl('{}\\n\\nINVALID')\nexcept ValueError as e: assert '3' in str(e)\nelse: raise AssertionError('invalid JSON accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: a5f4a71fbc78234c0068."
+          },
+          {
+            "role": "user",
+            "content": "Implement parse_jsonl(text): parse nonblank lines as JSON, returning values in order. Ignore whitespace-only lines. On invalid JSON raise ValueError whose message includes the one-based physical line number, counting blank lines. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "679a423c5f87021109a9ba195d69b7499945103790147d099eba4d6538304daa"
+    },
+    {
+      "id": "code-flatten:0:314",
+      "case": {
+        "id": "code-flatten",
+        "tier": "coding",
+        "cluster": "code-flatten",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert flatten({})=={}\nassert flatten({'a':{'b':1,'c':{}},'d':[1,2],'e':None})=={'a.b':1,'a.c':{},'d':[1,2],'e':None}\na={'x':{'y':2}}\nassert flatten(a)=={'x.y':2} and a=={'x':{'y':2}}"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 1bd2bea737fd4f1bf1d5."
+          },
+          {
+            "role": "user",
+            "content": "Implement flatten(value), flattening nested dictionaries with string keys into dot-separated keys. Preserve lists and scalar leaves as values. Represent an empty dictionary leaf as {} at its path. An empty root produces {}. Keys never contain dots. Do not mutate input. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "93294ffe27890e77fe612a88efed5d912b1442cedff94cab8179c00d6406c54e"
+    },
+    {
+      "id": "code-path-normalize:0:314",
+      "case": {
+        "id": "code-path-normalize",
+        "tier": "coding",
+        "cluster": "code-path-normalize",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert normalize('/a//b/../c/.')=='/a/c'\nassert normalize('/../../')=='/'\nassert normalize('/a/.../')=='/a/...'\nfor p in ['', 'a/b']:\n    try: normalize(p)\n    except ValueError: pass\n    else: raise AssertionError('relative accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: a725bfb4ca1dc01887e9."
+          },
+          {
+            "role": "user",
+            "content": "Implement normalize(path) for absolute POSIX-like paths. Reject non-absolute paths with ValueError. Collapse repeated /, ignore ., and resolve .. without going above root. Return / for root, and never a trailing slash elsewhere. No filesystem access. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "4f8da4dbdf71fa7de846526d9d26d4218acae35d5a163da92817406a961e10e1"
+    },
+    {
+      "id": "code-batch-bytes:0:314",
+      "case": {
+        "id": "code-batch-bytes",
+        "tier": "coding",
+        "cluster": "code-batch-bytes",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert pack(['é','a','b'],3)==[['é','a'],['b']]\nassert pack(['abc','','x'],3)==[['abc',''],['x']]\nassert pack([],1)==[]\nassert pack(['',''],1)==[['','']]\nfor items,n in [(['é'],1),([],0)]:\n    try: pack(items,n)\n    except ValueError: pass\n    else: raise AssertionError('oversize accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 507de391c62eb79af12a."
+          },
+          {
+            "role": "user",
+            "content": "Implement pack(items, max_bytes). items is a list of strings. Greedily pack consecutive items into lists whose sum of UTF-8 byte lengths is <=max_bytes. Do not split items, reorder, or count separators. max_bytes>=1 and every individual item must fit, otherwise ValueError. Empty input returns []; empty strings may share a full batch. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "e9f67adf512cd5f0a66e3c8bf9ef6c3a802f93fc2d2e2b7a8abceaeb081d1f42"
+    },
+    {
+      "id": "code-rate-limit:0:314",
+      "case": {
+        "id": "code-rate-limit",
+        "tier": "coding",
+        "cluster": "code-rate-limit",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert admit([0,0,1,5,5,6],2,5)==[True,True,False,True,True,False]\nassert admit([0,4,5],1,5)==[True,False,True]\nassert admit([],1,1)==[]\nfor limit,w in [(0,1),(1,0)]:\n    try: admit([],limit,w)\n    except ValueError: pass\n    else: raise AssertionError('invalid accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: ad340d83ed483f7b2249."
+          },
+          {
+            "role": "user",
+            "content": "Implement admit(times, limit, window) for nondecreasing integer arrival times. Accept a request only if fewer than limit PREVIOUSLY ACCEPTED requests lie in (t-window,t]. Rejected requests do not count. Return booleans in arrival order. limit and window must be >=1 else ValueError. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "294882e2f2ca5fb8fe2f98a3ee41fa478cd772dc0e63ab14369ec2d7d3313995"
+    },
+    {
+      "id": "code-topological:0:314",
+      "case": {
+        "id": "code-topological",
+        "tier": "coding",
+        "cluster": "code-topological",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "assert order({})==[]\nassert order({'b':['a'],'d':['b'],'c':[]})==['a','b','c','d']\na={'b':['a','a']}\nassert order(a)==['a','b'] and a=={'b':['a','a']}\nfor d in ({'x':['x']},{'a':['b'],'b':['a']}):\n    try: order(d)\n    except ValueError: pass\n    else: raise AssertionError('cycle accepted')"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 2451f009114667dd921d."
+          },
+          {
+            "role": "user",
+            "content": "Implement order(deps). deps maps every node (strings) to its prerequisites. Include prerequisite-only nodes. Return a topological ordering, always choosing the alphabetically smallest currently ready node. Raise ValueError on a cycle. Do not mutate deps. Return only complete Python code using the standard library."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "93b9f873247117b53bd38a727f56b4640d0907139d296cd6cef091eaa7365b9b"
+    },
+    {
+      "id": "code-redact:0:314",
+      "case": {
+        "id": "code-redact",
+        "tier": "coding",
+        "cluster": "code-redact",
+        "phase": "quality",
+        "request": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+            }
+          ],
+          "reasoning_effort": "low"
+        },
+        "grader": {
+          "kind": "python",
+          "tests": "a={'TOKEN':'abc','items':[{'password':'x','password_hint':'h'}],'n':3}\nr=redact(a,['token','PASSWORD'])\nassert r=={'TOKEN':'[REDACTED]','items':[{'password':'[REDACTED]','password_hint':'h'}],'n':3}\nassert a['TOKEN']=='abc'\nr['items'].append(4)\nassert len(a['items'])==1\nassert redact(None,['x']) is None"
+        }
+      },
+      "request": {
+        "temperature": 1.0,
+        "top_p": 0.95,
+        "reasoning_effort": "low",
+        "max_tokens": 16384,
+        "top_k": 20,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Evaluation ID: 2acd0d1824295992534b."
+          },
+          {
+            "role": "user",
+            "content": "Implement redact(value, sensitive), recursively copying JSON-like dictionaries/lists. Replace any dictionary value whose key case-insensitively matches a sensitive string with \"[REDACTED]\". Preserve unrelated scalars and do not mutate input. Sensitive matching is exact, not substring. Return only complete Python code using the standard library. The sensitive argument is a list of strings."
+          }
+        ],
+        "seed": 314,
+        "stream": true,
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "request_sha256": "bcae2bffd1fc14e519c2ef4bdb946eee07d7062b0cc9e6191991a604a518ed0f"
+    }
+  ],
+  "harness_sha256": "fdbdc69fe1a818b9f2177a5ee8ed786ec887ed272b3898880149d1b1fa57952c",
+  "sha256": "532cb7a2c50dc26fcfddba47d2b41cff1c6ca9cd57f5e5437370824f504d946c"
+}

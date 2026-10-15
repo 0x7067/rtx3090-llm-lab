@@ -1,0 +1,25 @@
+{
+  "plan_sha256": "f1d82cf6e5270bb92f241be39e9a26d7f0f6ab65117d06a1a1d78347cc10404b",
+  "arm": "orca_vllm",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 621,
+      "prompt_tokens_max": 717,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {},
+  "failures": []
+}

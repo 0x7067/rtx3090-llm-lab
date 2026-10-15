@@ -1,0 +1,14 @@
+{
+  "status": "protocol_error",
+  "content": "",
+  "reasoning": "",
+  "tool_calls": [],
+  "finish_reason": null,
+  "ttft_s": null,
+  "usage": {},
+  "timings": {},
+  "wall_s": 582.5952735320316,
+  "e2e_output_tps": null,
+  "server_decode_tps": null,
+  "server_prefill_tps": null
+}

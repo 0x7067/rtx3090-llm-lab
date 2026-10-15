@@ -1,0 +1,5 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            BuildKit is currently disabled; enable it by removing the DOCKER_BUILDKIT=0
+            environment-variable.
+
+unable to prepare context: unable to evaluate symlinks in Dockerfile path: lstat /data/docker-services/Dockerfile.qualification: no such file or directory

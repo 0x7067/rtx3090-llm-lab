@@ -1,0 +1,6 @@
+{
+  "mtp_depth": 0,
+  "batch_tokens": 2048,
+  "sequence_slots": 4,
+  "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c"
+}

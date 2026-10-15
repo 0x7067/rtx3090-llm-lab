@@ -1,0 +1,360 @@
+{
+  "thinkingcap_plan_sha256": "532cb7a2c50dc26fcfddba47d2b41cff1c6ca9cd57f5e5437370824f504d946c",
+  "orca_plan_sha256": "f9cf4db9eeb997c8dfbb82492baa94d8fac268e40df3749283fd7d8137100e9d",
+  "matched_request_and_grader_bytes": true,
+  "quality_observations": 40,
+  "thinkingcap_score": 37.0,
+  "orca_score": 38.0,
+  "orca_only_failures": [
+    {
+      "id": "code-sse-frames:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 0.0,
+      "thinkingcap_wall_s": 23.095300777989905,
+      "orca_wall_s": 18.317540395015385
+    }
+  ],
+  "thinkingcap_only_failures": [
+    {
+      "id": "code-batch-bytes:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 0.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 19.89660237499629,
+      "orca_wall_s": 17.89070299398736
+    },
+    {
+      "id": "code-batch-bytes:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 0.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 20.395730796008138,
+      "orca_wall_s": 13.393234375020256
+    }
+  ],
+  "pairs": [
+    {
+      "id": "code-rolling-window:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 12.955710829992313,
+      "orca_wall_s": 7.869465316005517
+    },
+    {
+      "id": "code-range-coalesce:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 21.288942776009208,
+      "orca_wall_s": 17.476576225977624
+    },
+    {
+      "id": "code-pagination:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 14.714888793008868,
+      "orca_wall_s": 10.492673779983306
+    },
+    {
+      "id": "code-reconcile:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 8.459380015992792,
+      "orca_wall_s": 7.804618853988359
+    },
+    {
+      "id": "code-lru:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 9.61835194300511,
+      "orca_wall_s": 9.098211870994419
+    },
+    {
+      "id": "code-retry-budget:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 19.57437839001068,
+      "orca_wall_s": 14.986430566001218
+    },
+    {
+      "id": "code-pagination:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 17.202831589005655,
+      "orca_wall_s": 13.28178752399981
+    },
+    {
+      "id": "code-env-lines:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 16.252108226995915,
+      "orca_wall_s": 10.524146993004251
+    },
+    {
+      "id": "code-retry-budget:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 15.576218731002882,
+      "orca_wall_s": 18.504166865022853
+    },
+    {
+      "id": "code-stable-dedupe:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 15.130332943983376,
+      "orca_wall_s": 12.759181768982671
+    },
+    {
+      "id": "code-topological:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 48.59967569197761,
+      "orca_wall_s": 21.2876861540135
+    },
+    {
+      "id": "code-flatten:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 26.980676806997508,
+      "orca_wall_s": 25.003806510998402
+    },
+    {
+      "id": "code-range-coalesce:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 17.327117989974795,
+      "orca_wall_s": 11.919224857992958
+    },
+    {
+      "id": "code-sse-frames:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 0.0,
+      "thinkingcap_wall_s": 23.095300777989905,
+      "orca_wall_s": 18.317540395015385
+    },
+    {
+      "id": "code-stable-dedupe:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 13.02872694999678,
+      "orca_wall_s": 15.407166523014894
+    },
+    {
+      "id": "code-path-normalize:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 23.536052165,
+      "orca_wall_s": 13.233235486986814
+    },
+    {
+      "id": "code-batch-bytes:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 0.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 19.89660237499629,
+      "orca_wall_s": 17.89070299398736
+    },
+    {
+      "id": "code-jsonl:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 12.698599947994808,
+      "orca_wall_s": 9.211195162002696
+    },
+    {
+      "id": "code-histogram:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 36.682269395998446,
+      "orca_wall_s": 21.445615992008243
+    },
+    {
+      "id": "code-merge-config:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 25.109190676012076,
+      "orca_wall_s": 15.671354020014405
+    },
+    {
+      "id": "code-ttl:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 6.979809625976486,
+      "orca_wall_s": 5.798369096009992
+    },
+    {
+      "id": "code-env-lines:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 13.716390809015138,
+      "orca_wall_s": 11.741446931002429
+    },
+    {
+      "id": "code-rate-limit:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 24.035692202014616,
+      "orca_wall_s": 20.7873411400069
+    },
+    {
+      "id": "code-rolling-window:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 13.552749836002477,
+      "orca_wall_s": 8.803758381982334
+    },
+    {
+      "id": "code-diff-keys:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 25.792720186000224,
+      "orca_wall_s": 16.854777536995243
+    },
+    {
+      "id": "code-reconcile:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 11.031661190994782,
+      "orca_wall_s": 5.868679434992373
+    },
+    {
+      "id": "code-diff-keys:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 24.0948195370147,
+      "orca_wall_s": 20.54893183801323
+    },
+    {
+      "id": "code-histogram:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 0.0,
+      "orca_score": 0.0,
+      "thinkingcap_wall_s": 22.547709647013107,
+      "orca_wall_s": 20.923997134988895
+    },
+    {
+      "id": "code-merge-config:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 23.792122034996282,
+      "orca_wall_s": 16.31801931298105
+    },
+    {
+      "id": "code-ttl:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 3.82373681399622,
+      "orca_wall_s": 3.72230268700514
+    },
+    {
+      "id": "code-sse-frames:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 27.04560685501201,
+      "orca_wall_s": 25.69140978300129
+    },
+    {
+      "id": "code-redact:0:2718",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 20.492388472979655,
+      "orca_wall_s": 12.185230694012716
+    },
+    {
+      "id": "code-lru:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 14.452685304015176,
+      "orca_wall_s": 9.05468720299541
+    },
+    {
+      "id": "code-jsonl:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 15.056407083000522,
+      "orca_wall_s": 10.914316621987382
+    },
+    {
+      "id": "code-flatten:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 23.041860406985506,
+      "orca_wall_s": 25.43077185098082
+    },
+    {
+      "id": "code-path-normalize:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 15.91999293200206,
+      "orca_wall_s": 14.358915874006925
+    },
+    {
+      "id": "code-batch-bytes:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 0.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 20.395730796008138,
+      "orca_wall_s": 13.393234375020256
+    },
+    {
+      "id": "code-rate-limit:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 28.43465107100201,
+      "orca_wall_s": 22.555866856011562
+    },
+    {
+      "id": "code-topological:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 28.06873115399503,
+      "orca_wall_s": 22.192156801989768
+    },
+    {
+      "id": "code-redact:0:314",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 14.628115287981927,
+      "orca_wall_s": 14.582358554005623
+    }
+  ],
+  "performance": {},
+  "interpretation": "Descriptive paired observations across separately frozen arm metadata. No statistical equivalence claim."
+}

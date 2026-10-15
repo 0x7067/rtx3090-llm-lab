@@ -1,0 +1,207 @@
+{
+  "request_audit": {
+    "full": {
+      "count": 58,
+      "identical_ids_and_request_hashes": true
+    },
+    "speed-repeat": {
+      "count": 8,
+      "identical_ids_and_request_hashes": true
+    },
+    "concurrent_coding": {
+      "count": 24,
+      "identical_ids_and_request_hashes": true
+    },
+    "long_context": {
+      "count": 8,
+      "identical_ids_and_request_hashes": true
+    }
+  },
+  "scope": "Latest engines plus publisher preset compared with previous engines plus locally tuned preset; changes are confounded.",
+  "previous": {
+    "quality": {
+      "passed": 54,
+      "count": 54,
+      "failures": []
+    },
+    "performance": {
+      "perf-prefill-medium": {
+        "n": 3,
+        "median_output_tps": 0.0836332821063485,
+        "median_ttft_s": 11.95694024101249
+      },
+      "perf-decode-medium": {
+        "n": 3,
+        "median_output_tps": 24.125119834978666,
+        "median_ttft_s": 12.006525485980092
+      },
+      "perf-decode-short": {
+        "n": 3,
+        "median_output_tps": 51.278161655862526,
+        "median_ttft_s": 0.5771186949859839
+      },
+      "perf-prefill-short": {
+        "n": 3,
+        "median_output_tps": 1.88079821061151,
+        "median_ttft_s": 0.5316684389836155
+      }
+    },
+    "paired_coding": {
+      "passed": 23,
+      "count": 24,
+      "failures": [
+        {
+          "id": "code-histogram:concurrent:2718",
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\n  File \"answer.py\", line 19, in histogram\nIndexError: list index out of range\n"
+        }
+      ],
+      "inference_seconds": 241.87280578096397
+    },
+    "concurrency": {
+      "(2, 5200, True, False)": {
+        "batches": 2,
+        "median_seconds": 232.49051389949454,
+        "median_output_tps": 1.0150903944008476,
+        "retrieval_passes": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "prompt_tokens": [
+          83267,
+          83267,
+          83277,
+          83273
+        ]
+      },
+      "(2, 5200, True, True)": {
+        "batches": 2,
+        "median_seconds": 8.153237603997695,
+        "median_output_tps": 18.377814838253858,
+        "retrieval_passes": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "prompt_tokens": [
+          83309,
+          83309,
+          83324,
+          83318
+        ]
+      },
+      "(2, 0, False, False)": {
+        "batches": 2,
+        "median_seconds": 9.95365943601064,
+        "median_output_tps": 103.08055653207848,
+        "retrieval_passes": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "prompt_tokens": [
+          73,
+          69,
+          75,
+          71
+        ]
+      }
+    }
+  },
+  "latest_vendor_preset": {
+    "quality": {
+      "passed": 53,
+      "count": 54,
+      "failures": [
+        {
+          "id": "code-sse-frames:0:42",
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n"
+        }
+      ]
+    },
+    "performance": {
+      "perf-prefill-medium": {
+        "n": 3,
+        "median_output_tps": 0.07826978291851658,
+        "median_ttft_s": 12.776235209021252
+      },
+      "perf-decode-medium": {
+        "n": 3,
+        "median_output_tps": 22.386006207978106,
+        "median_ttft_s": 12.821913360006874
+      },
+      "perf-decode-short": {
+        "n": 3,
+        "median_output_tps": 50.491253158591974,
+        "median_ttft_s": 0.570133574976353
+      },
+      "perf-prefill-short": {
+        "n": 3,
+        "median_output_tps": 1.8944371321383353,
+        "median_ttft_s": 0.5277753210102674
+      }
+    },
+    "paired_coding": {
+      "passed": 24,
+      "count": 24,
+      "failures": [],
+      "inference_seconds": 255.17988904405502
+    },
+    "concurrency": {
+      "(2, 0, False, False)": {
+        "batches": 2,
+        "median_seconds": 10.266567750513786,
+        "median_output_tps": 99.7506638932372,
+        "retrieval_passes": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "prompt_tokens": [
+          73,
+          69,
+          75,
+          71
+        ]
+      },
+      "(2, 5200, True, False)": {
+        "batches": 2,
+        "median_seconds": 246.17393814600655,
+        "median_output_tps": 0.9566456351113992,
+        "retrieval_passes": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "prompt_tokens": [
+          83267,
+          83267,
+          83277,
+          83273
+        ]
+      },
+      "(2, 5200, True, True)": {
+        "batches": 2,
+        "median_seconds": 8.279613611492096,
+        "median_output_tps": 17.32257728900256,
+        "retrieval_passes": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "prompt_tokens": [
+          83309,
+          83309,
+          83324,
+          83318
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "profile": "gsq_q8_resident",
+  "cache_idle_slots": false,
+  "full_quality_source": "gsq-rco-2026-10-08 baseline; final policy has targeted tool/coding and sustained-session gates",
+  "tools": {
+    "plan_sha256": "104c8c939c0faad5080dc780bbd5ddae35add2799f642c8805db4edde31e7c69",
+    "arm": "gsq_q8_resident",
+    "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+    "quality": {
+      "tool_replay": {
+        "attempted": 16,
+        "clusters": 8,
+        "statuses": {
+          "ok": 16
+        },
+        "finish_reasons": {
+          "tool_calls": 16
+        },
+        "prompt_tokens_observed": 16,
+        "prompt_tokens_min": 621,
+        "prompt_tokens_max": 717,
+        "full_score": 16,
+        "completed": 16,
+        "mean_score": 1.0
+      }
+    },
+    "performance": {},
+    "failures": []
+  },
+  "paired_coding": {
+    "passed": 24,
+    "attempted": 24,
+    "inference_wall_s": 539.214776916022,
+    "failures": []
+  },
+  "long_sessions": {
+    "checks_passed": 42,
+    "checks_attempted": 42,
+    "completed_followup_pairs": 20,
+    "cold_wall_s": 744.4387840559939,
+    "median_followup_wall_s": 7.379746614024043,
+    "maximum_prompt_tokens": 150230,
+    "generation": {
+      "start_unix": 1791477552.7093194,
+      "end_unix": 1791477600.1503408,
+      "label": "cached-generation-512",
+      "batch_wall_s": 47.44102148199454,
+      "aggregate_output_tps": 21.584695438917613,
+      "rows": [
+        {
+          "caller": 0,
+          "request_sha256": "801d685c7e39954208fcc9ffba728f8af67ebca9a7f6f13731138f4862d26fed",
+          "expected": null,
+          "pass": null,
+          "result": {
+            "status": "ok",
+            "content": "# Implementing a Reliable Task Queue: A Comprehensive Guide\n\n## 1. Introduction and Problem Definition\n\nA reliable task queue is a fundamental building block in distributed systems. It decouples the producers of work from the consumers that process that work, providing durability, ordering guarantees, load leveling, and fault tolerance. The term \"reliable\" in this context means that tasks are not lost, are processed at least once (or exactly once, in stronger formulations), and that the system can recover from failures without data corruption or indefinite blocking.\n\nThe core problem we are solving is this: a producer has a unit of work that must eventually be executed by a consumer, but the producer and consumer may be in different processes, on different machines, with different availability schedules, and the system as a whole may experience crashes, network partitions, and hardware failures. The task queue must guarantee that work is not silently dropped, that progress is always made (liveness), and that the state of the system is always consistent (safety).\n\nThis document walks through the design, implementation, and operational concerns of building such a system from first principles.\n\n## 2. Core Abstractions\n\n### 2.1 Task\n\nA task is the atomic unit of work. At minimum, it contains:\n\n- **Task ID**: A unique identifier (typically a UUID or a combination of partition sequence number",
+            "reasoning": "The user is asking me to write a detailed explanation of implementing a reliable task queue and to continue until the output allowance is exhausted. This is a straightforward technical writing request. Let me write a comprehensive, detailed explanation covering all aspects of implementing a reliable task queue, and keep going as long as possible.\n\nI'll cover:\n1. Introduction and problem definition\n2. Core components\n3. Data structures\n4. Message persistence\n5. Reliability mechanisms (at-least-once, exactly-once delivery)\n6. Ordering guarantees\n7. Backpressure and flow control\n8. Dead letter queues\n9. Retry logic\n10. Monitoring and observability\n11. Scaling and partitioning\n12. Failure scenarios and recovery\n13. Implementation patterns (in-process, distributed)\n14. Code examples\n15. Best practices\n16. Common pitfalls\n17. Testing strategies\n18. Performance considerations\n19. Security\n20. Integration patterns\n21. Comparison with existing solutions\n22. Advanced topics\n\nLet me write this out as thoroughly as possible.\n",
+            "tool_calls": [],
+            "finish_reason": "length",
+            "ttft_s": 1.3113900560420007,
+            "usage": {
+              "completion_tokens": 512,
+              "prompt_tokens": 150230,
+              "total_tokens": 150742,
+              "prompt_tokens_details": {
+                "cached_tokens": 150175
+              }
+            },
+            "timings": {
+              "cache_n": 150175,
+              "prompt_n": 55,
+              "prompt_ms": 1128.38,
+              "prompt_per_token_ms": 20.516000000000002,
+              "prompt_per_second": 48.74244492103723,
+              "predicted_n": 512,
+              "predicted_ms": 46040.844,
+              "predicted_per_token_ms": 90.09949902152641,
+              "predicted_per_second": 11.09884084661871
+            },
+            "wall_s": 47.354430339008104,
+            "e2e_output_tps": 10.812082340229129,
+            "server_decode_tps": 11.09884084661871,
+            "server_prefill_tps": 48.74244492103723
+          }
+        },
+        {
+          "caller": 1,
+          "request_sha256": "d4dd9fbe464e9a332f41edf537eb33a9ff0db6410b245034e6504ecca860497d",
+          "expected": null,
+          "pass": null,
+          "result": {
+            "status": "ok",
+            "content": "# Implementing a Reliable Task Queue: A Comprehensive Guide\n\n## 1. Introduction and Problem Definition\n\nA task queue (also called a message queue or job queue) is a fundamental building block in distributed systems that decouples the production of work from its consumption. The core problem it solves is: how do you ensure that a unit of work submitted by one component is reliably picked up and processed by another component, even in the face of failures, restarts, network partitions, and transient errors?\n\nThe word \"reliable\" in this context encompasses several distinct but related properties:\n\n- **Durability**: Messages must survive process crashes, machine failures, and even data center events.\n- **Delivery guarantees**: Each message must be delivered at least once (and ideally exactly once to the logical effect).\n- **Ordering**: Where required, messages within a partition or stream must be processed in the order they were produced.\n- **Bounded latency**: Messages should not sit in the queue indefinitely waiting for a consumer.\n- **Backpressure handling**: Producers should not overwhelm consumers, and consumers should not overwhelm downstream services.\n- **Observability**: Operators must be able to see queue depth, processing rates, error rates, and per-task latency.\n\nThe remainder of this document walks through the architecture, implementation strategies, failure modes, and operational concerns involved in building such a system.\n\n---\n\n## 2. Core Abstractions\n\nBefore",
+            "reasoning": "The user is asking me to write a detailed explanation of implementing a reliable task queue and to continue until the output allowance is exhausted. This is a straightforward technical writing request. Let me write a comprehensive, detailed explanation covering all aspects of implementing a reliable task queue, and make it as long and thorough as I reasonably can while maintaining quality and relevance.\n\nI'll cover:\n1. Fundamentals of task queues\n2. Architecture patterns\n3. Reliability mechanisms (at-least-once, exactly-once delivery)\n4. Persistence and durability\n5. Message brokers and their tradeoffs\n6. Consumer patterns\n7. Error handling and retries\n8. Dead letter queues\n9. Ordering guarantees\n10. Backpressure and flow control\n11. Monitoring and observability\n12. Scaling considerations\n13. Idempotency\n14. Transactional outbox pattern\n15. Code examples\n16. Common pitfalls\n17. Performance optimization\n18. Testing strategies\n\nLet me write this comprehensively.\n",
+            "tool_calls": [],
+            "finish_reason": "length",
+            "ttft_s": 1.5786907030269504,
+            "usage": {
+              "completion_tokens": 512,
+              "prompt_tokens": 150215,
+              "total_tokens": 150727,
+              "prompt_tokens_details": {
+                "cached_tokens": 150163
+              }
+            },
+            "timings": {
+              "cache_n": 150163,
+              "prompt_n": 52,
+              "prompt_ms": 1189.652,
+              "prompt_per_token_ms": 22.87792307692308,
+              "prompt_per_second": 43.710261488233535,
+              "predicted_n": 512,
+              "predicted_ms": 45856.405,
+              "predicted_per_token_ms": 89.73856164383561,
+              "predicted_per_second": 11.143481483121061
+            },
+            "wall_s": 47.43726587400306,
+            "e2e_output_tps": 10.793202149548636,
+            "server_decode_tps": 11.143481483121061,
+            "server_prefill_tps": 43.710261488233535
+          }
+        }
+      ]
+    }
+  },
+  "resources": {
+    "peak_gpu_mib": 24030,
+    "peak_gpu_celsius": 71,
+    "minimum_host_available_kib": 27773252,
+    "peak_global_psi_avg10": 15.92,
+    "swap_observed": false
+  },
+  "restoration": {
+    "restored": true,
+    "failures": [],
+    "replicas": "1",
+    "flux_suspended": false
+  }
+}

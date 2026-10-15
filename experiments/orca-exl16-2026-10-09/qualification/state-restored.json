@@ -1,0 +1,8 @@
+{
+  "restored": false,
+  "failures": [
+    "Command '['kubectl', '-n', 'apps', 'scale', 'deployment', 'llama', '--replicas=1']' returned non-zero exit status 1.",
+    "Command '['flux', 'resume', 'kustomization', 'apps']' returned non-zero exit status 1.",
+    "Command '['kubectl', '-n', 'apps', 'rollout', 'status', 'deployment/llama', '--timeout=15m']' returned non-zero exit status 1."
+  ]
+}

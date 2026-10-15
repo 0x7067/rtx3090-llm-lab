@@ -1,0 +1,1 @@
+{"ready_replicas": 1, "unauthenticated_status": 401, "authenticated_status": 200, "model_ids": ["humanlike-2.0", "orca-saq2-27b"], "completion_status": 200, "completion_exact": true, "passed": true}

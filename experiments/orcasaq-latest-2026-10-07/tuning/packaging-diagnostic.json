@@ -1,0 +1,34 @@
+[
+  {
+    "arm": "panel-mtp2-b4096",
+    "id": "code-flatten:0:42",
+    "strict_score_unchanged": 0.0,
+    "diagnostic_first_block_score": 1.0,
+    "detail": "",
+    "scope": "Diagnostic only; discards extra output and does not replace original scores."
+  },
+  {
+    "arm": "panel-mtp2-b4096",
+    "id": "code-histogram:concurrent:2718",
+    "strict_score_unchanged": 0.0,
+    "diagnostic_first_block_score": 1.0,
+    "detail": "",
+    "scope": "Diagnostic only; discards extra output and does not replace original scores."
+  },
+  {
+    "arm": "panel-mtp3-b4096",
+    "id": "code-rolling-window:0:42",
+    "strict_score_unchanged": 0.0,
+    "diagnostic_first_block_score": 1.0,
+    "detail": "",
+    "scope": "Diagnostic only; discards extra output and does not replace original scores."
+  },
+  {
+    "arm": "panel-mtp3-b4096",
+    "id": "code-range-coalesce:0:42",
+    "strict_score_unchanged": 0.0,
+    "diagnostic_first_block_score": 1.0,
+    "detail": "",
+    "scope": "Diagnostic only; discards extra output and does not replace original scores."
+  }
+]

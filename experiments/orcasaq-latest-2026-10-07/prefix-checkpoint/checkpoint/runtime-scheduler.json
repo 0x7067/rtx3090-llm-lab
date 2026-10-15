@@ -1,0 +1,7 @@
+{
+  "block_size": 1600,
+  "hash_block_size": 64,
+  "mamba_partial_cache_hit": true,
+  "mamba_shared_prefix_checkpoint": true,
+  "manager_mamba_shared_prefix_checkpoint": true
+}

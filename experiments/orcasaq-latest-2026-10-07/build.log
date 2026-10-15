@@ -1,0 +1,132 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.43kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/vllm/vllm-openai@sha256:c1c9f6fd5c109ba7f0546a59f5b2f15fb87f64c77782e90a27b648b42a8e67c3
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 50.33kB done
+#4 DONE 0.0s
+
+#5 [1/8] FROM docker.io/vllm/vllm-openai@sha256:c1c9f6fd5c109ba7f0546a59f5b2f15fb87f64c77782e90a27b648b42a8e67c3
+#5 DONE 0.4s
+
+#6 [2/8] RUN apt-get update && apt-get install -y --no-install-recommends g++ ninja-build curl ca-certificates && rm -rf /var/lib/apt/lists/*
+#6 0.456 Get:1 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64  InRelease [1578 B]
+#6 0.620 Get:2 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64  Packages [1886 kB]
+#6 0.704 Get:3 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+#6 0.767 Get:4 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+#6 1.205 Get:5 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble InRelease [17.8 kB]
+#6 1.599 Get:6 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1545 kB]
+#6 1.625 Get:7 https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu noble/main amd64 Packages [52.1 kB]
+#6 1.973 Get:8 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+#6 2.273 Get:9 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+#6 2.521 Get:10 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1943 kB]
+#6 2.574 Get:11 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+#6 2.651 Get:12 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+#6 2.732 Get:13 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [50.0 kB]
+#6 2.735 Get:14 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1323 kB]
+#6 4.043 Get:15 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+#6 4.051 Get:16 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+#6 4.053 Get:17 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2138 kB]
+#6 4.069 Get:18 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [56.2 kB]
+#6 4.070 Get:19 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1701 kB]
+#6 4.093 Get:20 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2165 kB]
+#6 4.118 Get:21 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [36.0 kB]
+#6 4.118 Get:22 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.0 kB]
+#6 4.119 Get:23 http://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [671 B]
+#6 5.038 Fetched 35.2 MB in 5s (7435 kB/s)
+#6 5.038 Reading package lists...
+#6 5.945 W: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+#6 5.950 Reading package lists...
+#6 6.815 Building dependency tree...
+#6 7.039 Reading state information...
+#6 7.365 g++ is already the newest version (4:13.2.0-7ubuntu1).
+#6 7.365 g++ set to manually installed.
+#6 7.365 curl is already the newest version (8.5.0-2ubuntu10.15).
+#6 7.365 The following NEW packages will be installed:
+#6 7.366   ninja-build
+#6 7.367 The following packages will be upgraded:
+#6 7.369   ca-certificates
+#6 7.834 1 upgraded, 1 newly installed, 0 to remove and 38 not upgraded.
+#6 7.834 Need to get 268 kB of archives.
+#6 7.834 After this operation, 309 kB of additional disk space will be used.
+#6 7.834 Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 ca-certificates all 20260601~24.04.1 [139 kB]
+#6 8.852 Get:2 http://archive.ubuntu.com/ubuntu noble/universe amd64 ninja-build amd64 1.11.1-2 [129 kB]
+#6 9.184 debconf: delaying package configuration, since apt-utils is not installed
+#6 9.211 Fetched 268 kB in 2s (166 kB/s)
+#6 9.240 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 21720 files and directories currently installed.)
+#6 9.316 Preparing to unpack .../ca-certificates_20260601~24.04.1_all.deb ...
+#6 9.323 Unpacking ca-certificates (20260601~24.04.1) over (20240203) ...
+#6 9.565 Selecting previously unselected package ninja-build.
+#6 9.567 Preparing to unpack .../ninja-build_1.11.1-2_amd64.deb ...
+#6 9.570 Unpacking ninja-build (1.11.1-2) ...
+#6 9.609 Setting up ninja-build (1.11.1-2) ...
+#6 9.618 Setting up ca-certificates (20260601~24.04.1) ...
+#6 10.50 Updating certificates in /etc/ssl/certs...
+#6 10.99 rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+#6 11.00 14 added, 39 removed; done.
+#6 11.02 Processing triggers for ca-certificates (20260601~24.04.1) ...
+#6 11.02 Updating certificates in /etc/ssl/certs...
+#6 11.29 0 added, 0 removed; done.
+#6 11.29 Running hooks in /etc/ca-certificates/update.d...
+#6 11.29 done.
+#6 DONE 11.4s
+
+#7 [3/8] RUN curl -fL 'https://github.com/turboderp-org/exllamav3/releases/download/v1.5.4/exllamav3-1.5.4%2Bcu132.torch2.13.0-cp312-cp312-linux_x86_64.whl' -o '/tmp/exllamav3-1.5.4+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl'  && echo 'e95ed89809435d6463c3c51f86b3af4266f6bb35bd4ca65c0c0113d4a1f6c0be  /tmp/exllamav3-1.5.4+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl' | sha256sum -c -  && uv pip install --system --no-deps '/tmp/exllamav3-1.5.4+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl'  && rm '/tmp/exllamav3-1.5.4+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl'
+#7 0.169   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+#7 0.169                                  Dload  Upload   Total   Spent    Left  Speed
+#7 0.169   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+#7 0.686   0  141M    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 21  141M   21 30.0M    0     0  19.4M      0  0:00:07  0:00:01  0:00:06 29.3M 40  141M   40 57.1M    0     0  23.2M      0  0:00:06  0:00:02  0:00:04 29.4M 60  141M   60 85.3M    0     0  24.5M      0  0:00:05  0:00:03  0:00:02 28.8M 73  141M   73  103M    0     0  23.3M      0  0:00:06  0:00:04  0:00:02 26.3M 90  141M   90  128M    0     0  23.5M      0  0:00:06  0:00:05  0:00:01 25.9M100  141M  100  141M    0     0  23.6M      0  0:00:05  0:00:05 --:--:-- 25.1M
+#7 6.402 /tmp/exllamav3-1.5.4+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl: OK
+#7 6.582 Using Python 3.12.3 environment at: /usr
+#7 6.623 Resolved 1 package in 21ms
+#7 6.899 Prepared 1 package in 273ms
+#7 7.450 Installed 1 package in 550ms
+#7 7.451  + exllamav3==1.5.4+cu132.torch2.13.0 (from file:///tmp/exllamav3-1.5.4+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl)
+#7 DONE 8.0s
+
+#8 [4/8] RUN python3 - <<'PY'
+#8 2.593 Using Python 3.12.3 environment at: /usr
+#8 2.781 Resolved 1 package in 183ms
+#8 2.805 Downloading nvidia-cuda-nvcc (35.7MiB)
+#8 3.140  Downloaded nvidia-cuda-nvcc
+#8 3.140 Prepared 1 package in 359ms
+#8 3.142 Uninstalled 1 package in 1ms
+#8 3.377 Installed 1 package in 235ms
+#8 3.378  - nvidia-cuda-nvcc==13.4.92
+#8 3.378  + nvidia-cuda-nvcc==13.0.88
+#8 DONE 3.9s
+
+#9 [5/8] COPY upstream/pyproject.toml upstream/README.md /opt/orcasaq2/
+#9 DONE 0.0s
+
+#10 [6/8] COPY upstream/orcasaq2 /opt/orcasaq2/orcasaq2
+#10 DONE 0.0s
+
+#11 [7/8] COPY upstream/presets /opt/orcasaq2/presets
+#11 DONE 0.0s
+
+#12 [8/8] RUN uv pip install --system --no-deps /opt/orcasaq2 && chmod +x /opt/orcasaq2/presets/serve.sh
+#12 0.156 Using Python 3.12.3 environment at: /usr
+#12 0.165 Resolved 1 package in 4ms
+#12 0.168    Building orcasaq2-kernel @ file:///opt/orcasaq2
+#12 0.758       Built orcasaq2-kernel @ file:///opt/orcasaq2
+#12 0.759 Prepared 1 package in 593ms
+#12 0.761 Installed 1 package in 1ms
+#12 0.761  + orcasaq2-kernel==0.1.0 (from file:///opt/orcasaq2)
+#12 DONE 0.8s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 1.4s done
+#13 writing image sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c done
+#13 naming to docker.io/local/orcasaq-latest:2026-10-07-v1 done
+#13 DONE 1.4s

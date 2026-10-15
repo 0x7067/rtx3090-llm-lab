@@ -1,0 +1,25 @@
+{
+  "plan_sha256": "8f9ba6dbbf56e5cb9b4b861247b94a86d7e3c394ef437d413b6b6cbdd3985491",
+  "arm": "ampere-mtp2-f32",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 621,
+      "prompt_tokens_max": 717,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {},
+  "failures": []
+}

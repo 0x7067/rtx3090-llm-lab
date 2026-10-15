@@ -1,0 +1,10 @@
+{
+  "template_unchanged": true,
+  "config_unchanged": true,
+  "replicas": 1,
+  "ready_replicas": 1,
+  "flux_suspended": false,
+  "flux_revision": "82845604042c5d5647bb4417138038f99c961f0c",
+  "trial_containers": [],
+  "restored": true
+}

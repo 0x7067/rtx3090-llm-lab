@@ -1,0 +1,9 @@
+{
+  "orca_commit": "7ddffb12c00c24b8bc6b1164723c04ac490a91bc",
+  "archive_sha256": "bf6dc2e67e58f4e16714ee6fe9ab6dc1a84221c19c27f84084a25ea92fb9a27d",
+  "vllm": "0.31.0",
+  "exllamav3": "1.5.4",
+  "exl3_wheel_sha256": "e95ed89809435d6463c3c51f86b3af4266f6bb35bd4ca65c0c0113d4a1f6c0be",
+  "vllm_base_digest": "sha256:c1c9f6fd5c109ba7f0546a59f5b2f15fb87f64c77782e90a27b648b42a8e67c3",
+  "candidate_image_id": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c"
+}

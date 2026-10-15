@@ -1,0 +1,16 @@
+[
+  {
+    "arm": "mtp-file-no-spec",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  },
+  {
+    "arm": "mtp1-q8-ub128",
+    "error": "Resource monitor aborted server"
+  },
+  {
+    "arm": "dflash-cpu-depth1",
+    "error": "Resource monitor aborted server"
+  }
+]

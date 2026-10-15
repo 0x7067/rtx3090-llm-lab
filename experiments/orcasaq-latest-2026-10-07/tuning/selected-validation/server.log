@@ -1,0 +1,563 @@
+preset: /opt/orcasaq2/presets/16gb-mtp.env
++ /usr/bin/python3 -m vllm.entrypoints.openai.api_server --model /models/orca --served-model-name orca-qwen3.8-27b --port 18185 --host 127.0.0.1 --max-model-len 150000 --gpu-memory-utilization 0.95 --max-num-seqs 4 --no-enable-log-requests --enable-prefix-caching --kv-cache-dtype fp8_e4m3 --max-num-batched-tokens 2048 --block-size 32 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_xml --speculative-config {"method":"qwen3_next_mtp","num_speculative_tokens":2}
+/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py:24: DeprecationWarning: `vllm.entrypoints.openai.api_server` is deprecated and will likely beunsupported in a future version. Use the corresponding function from `vllm.entrypoints.launchers` instead.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py:51: DeprecationWarning: The `python -m vllm.entrypoints.openai.api_server` command is deprecated and may be removed in a future release. Please use `vllm server` instead.
+  warnings.warn(
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:347] 
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:347]        █     █     █▄   ▄█
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:347]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.31.0
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:347]   █▄█▀ █     █     █     █  model   /models/orca
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:347]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:347] 
+(APIServer pid=1) INFO 10-07 15:39:04 [api_utils.py:286] non-default args: {'enable_auto_tool_choice': True, 'tool_call_parser': 'qwen3_xml', 'host': '127.0.0.1', 'port': 18185, 'model': '/models/orca', 'max_model_len': 150000, 'served_model_name': ['orca-qwen3.8-27b'], 'reasoning_parser': 'qwen3', 'block_size': 32, 'gpu_memory_utilization': 0.95, 'kv_cache_dtype': 'fp8_e4m3', 'enable_prefix_caching': True, 'max_num_batched_tokens': 2048, 'max_num_seqs': 4, 'speculative_config': {'method': 'qwen3_next_mtp', 'num_speculative_tokens': 2}}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+(APIServer pid=1) INFO 10-07 15:39:04 [model.py:699] Resolved architecture: Qwen3_5ForCausalLM
+(APIServer pid=1) INFO 10-07 15:39:04 [model.py:2109] Using max model len 150000
+(APIServer pid=1) INFO 10-07 15:39:06 [cache.py:363] Using fp8_e4m3 data type to store kv cache. It reduces the GPU memory footprint and boosts the performance. Meanwhile, it may cause accuracy drop without a proper scaling factor
+(APIServer pid=1) WARNING 10-07 15:39:06 [speculative.py:1136] method `qwen3_next_mtp` is deprecated and replaced with mtp.
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+(APIServer pid=1) INFO 10-07 15:39:06 [model.py:699] Resolved architecture: Qwen3_5MTP
+(APIServer pid=1) INFO 10-07 15:39:06 [model.py:2109] Using max model len 262144
+(APIServer pid=1) INFO 10-07 15:39:07 [model.py:974] Disabled mm_prefix attention mode because multimodal inputs are configuration-disabled. Attention backends without mm_prefix support may now be selected.
+(APIServer pid=1) WARNING 10-07 15:39:07 [speculative.py:1375] Enabling num_speculative_tokens > 1 will run multiple times of forward on same MTP layer,which may result in lower acceptance rate
+(APIServer pid=1) INFO 10-07 15:39:07 [speculative.py:1663] Overriding draft model max model len from 262144 to 150000
+(APIServer pid=1) INFO 10-07 15:39:07 [config.py:643] Mamba cache mode is set to 'align' for Qwen3_5ForCausalLM by default when prefix caching is enabled
+(APIServer pid=1) INFO 10-07 15:39:07 [kernel.py:408] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(APIServer pid=1) WARNING 10-07 15:39:07 [vllm.py:2372] max_num_scheduled_tokens is set to 2048 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens.
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+(EngineCore pid=184) INFO 10-07 15:39:17 [__init__.py:153] orcasaq2: embed_tokens / lm_head will receive the EXL3 quant config
+(EngineCore pid=184) INFO 10-07 15:39:17 [__init__.py:94] orcasaq2 armed: quant_method 'exl3' is now loadable
+(EngineCore pid=184) INFO 10-07 15:39:17 [core.py:129] Initializing a V1 LLM engine (v0.31.0) with config: model='/models/orca', speculative_config=SpeculativeConfig(method='mtp', model='/models/orca', num_spec_tokens=2), tokenizer='/models/orca', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=150000, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=exl3, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=fp8_e4m3, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='qwen3', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=orca-qwen3.8-27b, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [2048], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 3, 4, 6, 8, 12, 16, 24], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 24, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_cutedsl_warmup=True, enable_jit_warmup=True, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=184) INFO 10-07 15:39:18 [parallel_state.py:1825] world_size=1 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_8af71635c84a4129bd1751d1cdc9dbbe backend=nccl
+(EngineCore pid=184) INFO 10-07 15:39:18 [parallel_state.py:2269] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=184) INFO 10-07 15:39:18 [gpu_worker.py:479] Using V2 Model Runner
+(EngineCore pid=184) INFO 10-07 15:39:19 [model_runner.py:375] Loading model from scratch...
+(EngineCore pid=184) INFO 10-07 15:39:19 [qwen_gdn_linear_attn.py:177] Using Triton/FLA GDN prefill kernel (requested=auto, head_k_dim=128).
+(EngineCore pid=184) INFO 10-07 15:39:19 [qwen_gdn_linear_attn.py:533] GDN decode kernel: cuda
+(EngineCore pid=184) INFO 10-07 15:39:21 [cuda.py:526] Using FLASHINFER attention backend out of potential backends: ['FLASHINFER', 'TRITON_ATTN'].
+(EngineCore pid=184) INFO 10-07 15:39:22 [weight_utils.py:1063] Filesystem type for checkpoints: EXT4. Checkpoint size: 11.43 GiB. Available RAM: 29.60 GiB.
+(EngineCore pid=184) INFO 10-07 15:39:22 [weight_utils.py:1086] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:00<00:00, 23.03it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:00<00:00, 30.35it/s]
+
+(EngineCore pid=184) INFO 10-07 15:39:22 [default_loader.py:484] Loading weights took 0.13 seconds
+(EngineCore pid=184) INFO 10-07 15:39:23 [weight_utils.py:1063] Filesystem type for checkpoints: EXT4. Checkpoint size: 11.43 GiB. Available RAM: 29.58 GiB.
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:00<00:00, 86.86it/s]
+
+(EngineCore pid=184) INFO 10-07 15:39:23 [default_loader.py:484] Loading weights took 0.05 seconds
+(EngineCore pid=184) INFO 10-07 15:39:24 [model_runner.py:407] Model loading took 11.46 GiB memory and 5.347737 seconds
+(EngineCore pid=184) INFO 10-07 15:39:24 [topk_topp_sampler.py:96] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=184) INFO 10-07 15:39:24 [torch_utils.py:286] Reducing Torch threads from 8 to 1 for serving. Set OMP_NUM_THREADS in the external environment to override.
+(EngineCore pid=184) INFO 10-07 15:39:24 [interface.py:989] Setting attention block size to 1600 tokens to ensure that attention page size is >= mamba page size.
+(EngineCore pid=184) INFO 10-07 15:39:24 [interface.py:1013] Padding mamba page size by 0.88% to ensure that mamba page size and attention page size are exactly equal.
+(EngineCore pid=184) INFO 10-07 15:39:24 [utils.py:343] Using LBNHC KV cache layout.
+(EngineCore pid=184) INFO 10-07 15:39:26 [caching.py:342] reconstructed serializable fn from standalone compile artifacts. num_artifacts=39 num_submods=65
+(EngineCore pid=184) INFO 10-07 15:39:26 [decorators.py:312] Directly load AOT compilation from path /cache/vllm/torch_compile_cache/torch_aot_compile/e8524821d833bce99c467b744e768068ff996265b65bf9fe72415d94c8f62568/rank_0_0/model
+(EngineCore pid=184) INFO 10-07 15:39:26 [monitor.py:53] torch.compile took 1.08 s in total
+(EngineCore pid=184) INFO 10-07 15:39:29 [monitor.py:81] Initial profiling/warmup run took 2.83 s
+(EngineCore pid=184) INFO 10-07 15:39:29 [caching.py:342] reconstructed serializable fn from standalone compile artifacts. num_artifacts=2 num_submods=2
+(EngineCore pid=184) INFO 10-07 15:39:29 [decorators.py:312] Directly load AOT compilation from path /cache/vllm/torch_compile_cache/torch_aot_compile/14a8cb6a469b414e27a168db977a9bcefe04862f867fe9124f8a59bb93d71d4e/rank_0_0/model
+(EngineCore pid=184) INFO 10-07 15:39:29 [monitor.py:53] torch.compile took 0.06 s in total
+(EngineCore pid=184) INFO 10-07 15:39:29 [monitor.py:81] Initial profiling/warmup run took 0.00 s
+(EngineCore pid=184) WARNING 10-07 15:39:30 [kv_cache_utils.py:1574] Add 3 padding layers, may waste at most 6.25% KV cache memory
+(EngineCore pid=184) INFO 10-07 15:39:30 [flashinfer.py:903] FlashInfer resolved query dtypes: prefill=torch.bfloat16, decode=torch.bfloat16, decode_backend=flashinfer-native, kv_cache_dtype=torch.float8_e4m3fn, arch=sm86
+(EngineCore pid=184) WARNING 10-07 15:39:30 [compilation.py:1462] CUDAGraphMode.FULL_AND_PIECEWISE is not supported with spec-decode for attention backend FlashInferBackend (support: AttentionCGSupport.UNIFORM_SINGLE_TOKEN_DECODE); setting cudagraph_mode=PIECEWISE
+(EngineCore pid=184) INFO 10-07 15:39:30 [speculator.py:116] Fused multi-step draft decode is not supported by attention backend(s) FLASHINFER; falling back to rebuilding attention metadata between draft steps.
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/9 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):  11%|█         | 1/9 [00:00<00:02,  2.99it/s]Capturing CUDA graphs (PIECEWISE):  22%|██▏       | 2/9 [00:00<00:01,  3.86it/s]Capturing CUDA graphs (PIECEWISE):  33%|███▎      | 3/9 [00:00<00:01,  4.23it/s]Capturing CUDA graphs (PIECEWISE):  44%|████▍     | 4/9 [00:00<00:01,  4.42it/s]Capturing CUDA graphs (PIECEWISE):  56%|█████▌    | 5/9 [00:01<00:00,  4.67it/s]Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 6/9 [00:01<00:00,  5.57it/s]Capturing CUDA graphs (PIECEWISE):  78%|███████▊  | 7/9 [00:01<00:00,  6.44it/s]Capturing CUDA graphs (PIECEWISE):  89%|████████▉ | 8/9 [00:01<00:00,  7.19it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 9/9 [00:01<00:00,  7.53it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 9/9 [00:01<00:00,  5.64it/s]
+(EngineCore pid=184) INFO 10-07 15:39:32 [speculator.py:144] Capturing model for speculator...
+Capturing prefill CUDA graphs (PIECEWISE):   0%|          | 0/9 [00:00<?, ?it/s]Capturing prefill CUDA graphs (PIECEWISE): 100%|██████████| 9/9 [00:00<00:00, 171.09it/s]
+(EngineCore pid=184) INFO 10-07 15:39:32 [model_runner.py:1087] Graph capturing finished in 2 secs, took 0.20 GiB
+(EngineCore pid=184) INFO 10-07 15:39:32 [gpu_worker.py:692] Available KV cache memory: 10.12 GiB
+(EngineCore pid=184) INFO 10-07 15:39:32 [gpu_worker.py:707] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9500 is equivalent to --gpu-memory-utilization=0.9415 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9585. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=184) WARNING 10-07 15:39:32 [kv_cache_utils.py:1574] Add 3 padding layers, may waste at most 6.25% KV cache memory
+(EngineCore pid=184) INFO 10-07 15:39:32 [kv_cache_utils.py:2464] GPU KV cache size: 275,943 tokens, Maximum concurrency for 150,000 tokens per request: 1.84x
+(EngineCore pid=184) INFO 10-07 15:39:32 [kernel_warmup.py:172] JIT kernel warmup starting.
+(EngineCore pid=184) INFO 10-07 15:39:32 [kernel_warmup.py:185] JIT kernel warmup finished in 0.00s.
+(EngineCore pid=184) INFO 10-07 15:39:32 [qwen_triton_warmup.py:294] Warming up Qwen GDN Triton kernels for model_type=qwen3_5_text.
+(EngineCore pid=184) INFO 10-07 15:39:32 [mamba_triton_warmup.py:42] Warmed Mamba batch_memcpy_kernel.
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/9 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):  11%|█         | 1/9 [00:00<00:01,  4.84it/s]Capturing CUDA graphs (PIECEWISE):  22%|██▏       | 2/9 [00:00<00:01,  5.48it/s]Capturing CUDA graphs (PIECEWISE):  33%|███▎      | 3/9 [00:00<00:01,  5.69it/s]Capturing CUDA graphs (PIECEWISE):  44%|████▍     | 4/9 [00:00<00:00,  5.78it/s]Capturing CUDA graphs (PIECEWISE):  56%|█████▌    | 5/9 [00:00<00:00,  5.54it/s]Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 6/9 [00:01<00:00,  6.50it/s]Capturing CUDA graphs (PIECEWISE):  89%|████████▉ | 8/9 [00:01<00:00,  7.88it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 9/9 [00:01<00:00,  6.94it/s]
+(EngineCore pid=184) INFO 10-07 15:39:35 [speculator.py:144] Capturing model for speculator...
+Capturing prefill CUDA graphs (PIECEWISE):   0%|          | 0/9 [00:00<?, ?it/s]Capturing prefill CUDA graphs (PIECEWISE): 100%|██████████| 9/9 [00:00<00:00, 171.41it/s]
+(EngineCore pid=184) INFO 10-07 15:39:35 [model_runner.py:1087] Graph capturing finished in 2 secs, took 0.04 GiB
+(EngineCore pid=184) INFO 10-07 15:39:35 [gpu_worker.py:892] CUDA graph pool memory: 0.04 GiB (actual), 0.2 GiB (estimated), difference: 0.16 GiB (466.7%).
+(EngineCore pid=184) INFO 10-07 15:39:35 [gpu_worker.py:955] Free memory on device (23.22/23.56 GiB) on startup. Desired GPU memory utilization is (0.95, 22.38 GiB). Actual usage is 11.61 GiB for consumed memory (weights + non-torch), 0.64 GiB for peak activation, and 0.04 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10675577652` (9.94 GiB) to fit into requested memory, or `--kv-cache-memory=11578699776` (10.78 GiB) to fully utilize gpu memory. Current kv cache memory in use is 10.12 GiB.
+(EngineCore pid=184) INFO 10-07 15:39:37 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=184) INFO 10-07 15:39:37 [core.py:373] init engine (profile, create kv cache, warmup model) took 12.97 s (compilation: 1.14 s)
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_interleaved', 'mrope_section'}
+(EngineCore pid=184) INFO 10-07 15:39:37 [kv_cache_utils.py:772] kv cache group sizes [1600, 1600, 1600, 1600]
+(EngineCore pid=184) INFO 10-07 15:39:37 [kv_cache_utils.py:773] kv lcm block sizes 1600
+(EngineCore pid=184) INFO 10-07 15:39:37 [kernel.py:408] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(EngineCore pid=184) WARNING 10-07 15:39:37 [vllm.py:2372] max_num_scheduled_tokens is set to 2048 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens.
+(APIServer pid=1) INFO 10-07 15:39:37 [entry.py:132] Supported tasks: ['generate']
+(APIServer pid=1) INFO 10-07 15:39:38 [factories.py:76] Scale-out endpoints are disabled. Set --enable-scale-out to enable them.
+(APIServer pid=1) INFO 10-07 15:39:38 [parser_manager.py:35] "auto" tool choice has been enabled.
+[transformers] Unrecognized keys in `rope_parameters` for 'rope_type'='default': {'mrope_section', 'mrope_interleaved'}
+(APIServer pid=1) INFO 10-07 15:39:38 [hf.py:646] Detected the chat template content format to be 'openai'. You can set `--chat-template-content-format` to override this.
+(APIServer pid=1) WARNING 10-07 15:39:38 [model.py:1850] Default vLLM sampling parameters have been overridden by the model's `generation_config.json`: `{'temperature': 1.0, 'top_k': 20, 'top_p': 0.95}`. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+(APIServer pid=1) WARNING 10-07 15:39:38 [serving.py:221] The chat template requires system-first ordering, so inline system messages in /v1/messages requests (e.g. Claude Code's per-turn reminders) are merged into the leading system prompt. Each new one changes the prompt prefix, so the rest of the conversation misses the prefix cache. Pass a --chat-template that accepts non-leading system messages to avoid this.
+(APIServer pid=1) WARNING 10-07 15:39:38 [serving.py:221] The chat template requires system-first ordering, so inline system messages in /v1/messages requests (e.g. Claude Code's per-turn reminders) are merged into the leading system prompt. Each new one changes the prompt prefix, so the rest of the conversation misses the prefix cache. Pass a --chat-template that accepts non-leading system messages to avoid this.
+(APIServer pid=1) INFO 10-07 15:39:38 [entry.py:136] Starting vLLM server on http://127.0.0.1:18185
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:60] Available routes are:
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /openapi.json, Methods: GET, HEAD
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /docs, Methods: GET, HEAD
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /docs/oauth2-redirect, Methods: GET, HEAD
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /redoc, Methods: GET, HEAD
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /load, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /version, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /kv_event_sources, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /health, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /metrics, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /tokenize, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /detokenize, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/models, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /ping, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /ping, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /invocations, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/chat/completions, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/chat/completions/batch, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/responses, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/responses/{response_id}, Methods: GET
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/responses/{response_id}/cancel, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/completions, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/messages, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /v1/messages/count_tokens, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /generative_scoring, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /scale_elastic_ep, Methods: POST
+(APIServer pid=1) INFO 10-07 15:39:38 [launcher.py:69] Route: /is_scaling_elastic_ep, Methods: POST
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:40612 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40624 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(EngineCore pid=184) WARNING 10-07 15:39:40 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _compute_local_logits_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=184) WARNING 10-07 15:39:40 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _rejection_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=184) WARNING 10-07 15:39:40 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _resample_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+INFO:     127.0.0.1:40630 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33734 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33736 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:39:45.325211114 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 25294995456).
+[rank0]:[W1007 15:39:45.416874330 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:39:45.450886455 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:39:45.487568593 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:39:48 [loggers.py:320] Engine 000: Avg prompt throughput: 74.0 tokens/s, Avg generation throughput: 21.5 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 7.7%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:39:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 13.78 tokens/s, Drafted throughput: 15.77 tokens/s, Accepted: 152 tokens, Drafted: 174 tokens, Per-position acceptance rate: 0.943, 0.805, Avg Draft acceptance rate: 87.4%
+(APIServer pid=1) INFO 10-07 15:39:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 11.9%, Prefix cache hit rate: 0.0%
+INFO:     127.0.0.1:33524 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:42:58 [loggers.py:320] Engine 000: Avg prompt throughput: 11493.0 tokens/s, Avg generation throughput: 27.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:42:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.80, Accepted throughput: 0.91 tokens/s, Drafted throughput: 1.01 tokens/s, Accepted: 173 tokens, Drafted: 192 tokens, Per-position acceptance rate: 0.948, 0.854, Avg Draft acceptance rate: 90.1%
+(APIServer pid=1) INFO 10-07 15:43:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 61.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:43:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.60, Accepted throughput: 37.70 tokens/s, Drafted throughput: 47.00 tokens/s, Accepted: 377 tokens, Drafted: 470 tokens, Per-position acceptance rate: 0.864, 0.740, Avg Draft acceptance rate: 80.2%
+INFO:     127.0.0.1:33518 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:43:18 [loggers.py:320] Engine 000: Avg prompt throughput: 11.9 tokens/s, Avg generation throughput: 61.4 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:43:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.76, Accepted throughput: 39.20 tokens/s, Drafted throughput: 44.60 tokens/s, Accepted: 392 tokens, Drafted: 446 tokens, Per-position acceptance rate: 0.928, 0.830, Avg Draft acceptance rate: 87.9%
+INFO:     127.0.0.1:33520 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36662 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:43:28 [loggers.py:320] Engine 000: Avg prompt throughput: 62.2 tokens/s, Avg generation throughput: 12.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 10.3%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:43:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.70, Accepted throughput: 7.80 tokens/s, Drafted throughput: 9.20 tokens/s, Accepted: 78 tokens, Drafted: 92 tokens, Per-position acceptance rate: 0.870, 0.826, Avg Draft acceptance rate: 84.8%
+(APIServer pid=1) INFO 10-07 15:43:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 13.4%, Prefix cache hit rate: 0.0%
+INFO:     127.0.0.1:58988 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:46:38 [loggers.py:320] Engine 000: Avg prompt throughput: 11481.1 tokens/s, Avg generation throughput: 12.6 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 10.3%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:46:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.84, Accepted throughput: 0.43 tokens/s, Drafted throughput: 0.46 tokens/s, Accepted: 81 tokens, Drafted: 88 tokens, Per-position acceptance rate: 0.955, 0.886, Avg Draft acceptance rate: 92.0%
+INFO:     127.0.0.1:40620 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:46:48 [loggers.py:320] Engine 000: Avg prompt throughput: 1293.1 tokens/s, Avg generation throughput: 17.6 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:46:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.38, Accepted throughput: 10.10 tokens/s, Drafted throughput: 14.60 tokens/s, Accepted: 101 tokens, Drafted: 146 tokens, Per-position acceptance rate: 0.781, 0.603, Avg Draft acceptance rate: 69.2%
+INFO:     127.0.0.1:40630 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:46:58 [loggers.py:320] Engine 000: Avg prompt throughput: 13.5 tokens/s, Avg generation throughput: 60.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:46:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.64, Accepted throughput: 37.30 tokens/s, Drafted throughput: 45.60 tokens/s, Accepted: 373 tokens, Drafted: 456 tokens, Per-position acceptance rate: 0.873, 0.763, Avg Draft acceptance rate: 81.8%
+(APIServer pid=1) INFO 10-07 15:47:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 63.8 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:47:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.73, Accepted throughput: 40.40 tokens/s, Drafted throughput: 46.80 tokens/s, Accepted: 404 tokens, Drafted: 468 tokens, Per-position acceptance rate: 0.919, 0.808, Avg Draft acceptance rate: 86.3%
+INFO:     127.0.0.1:34062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:47:18 [loggers.py:320] Engine 000: Avg prompt throughput: 11.0 tokens/s, Avg generation throughput: 61.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:47:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 39.10 tokens/s, Drafted throughput: 44.60 tokens/s, Accepted: 391 tokens, Drafted: 446 tokens, Per-position acceptance rate: 0.955, 0.798, Avg Draft acceptance rate: 87.7%
+INFO:     127.0.0.1:53046 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50960 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50976 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50990 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51002 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:47:28 [loggers.py:320] Engine 000: Avg prompt throughput: 161.1 tokens/s, Avg generation throughput: 49.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:47:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.80, Accepted throughput: 31.90 tokens/s, Drafted throughput: 35.40 tokens/s, Accepted: 319 tokens, Drafted: 354 tokens, Per-position acceptance rate: 0.955, 0.847, Avg Draft acceptance rate: 90.1%
+INFO:     127.0.0.1:51006 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:47:38 [loggers.py:320] Engine 000: Avg prompt throughput: 11.1 tokens/s, Avg generation throughput: 59.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:47:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.59, Accepted throughput: 36.60 tokens/s, Drafted throughput: 46.00 tokens/s, Accepted: 366 tokens, Drafted: 460 tokens, Per-position acceptance rate: 0.870, 0.722, Avg Draft acceptance rate: 79.6%
+INFO:     127.0.0.1:60484 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:47:48 [loggers.py:320] Engine 000: Avg prompt throughput: 67.5 tokens/s, Avg generation throughput: 55.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:47:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.62, Accepted throughput: 34.10 tokens/s, Drafted throughput: 42.00 tokens/s, Accepted: 341 tokens, Drafted: 420 tokens, Per-position acceptance rate: 0.886, 0.738, Avg Draft acceptance rate: 81.2%
+INFO:     127.0.0.1:60486 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:47:49.916466801 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 25294995456).
+[rank0]:[W1007 15:47:49.972139479 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.005618647 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:49.032106643 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:49.046527831 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.075816609 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.169217902 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.205030593 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.264818336 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:49.302442846 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.363424383 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.389267178 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:49.409021176 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:49.548654052 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.578228690 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.671381418 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.705619463 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.733090346 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.746213772 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.772050877 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.784903847 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.807727575 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.856877844 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.935319398 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.950160027 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.976266372 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.989421045 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.017041401 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.057613304 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.092451093 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.118760066 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.132718033 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.167122001 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.201097805 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.229851080 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.270737648 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.298969180 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.319235241 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.483804165 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.519226454 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:50.547351994 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:50.560519759 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:51.586878561 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:51.598987073 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:51.630787067 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:51.833998810 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:47:51.868988144 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:47:51.904465073 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+INFO:     127.0.0.1:41994 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:47:58 [loggers.py:320] Engine 000: Avg prompt throughput: 205.0 tokens/s, Avg generation throughput: 47.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:47:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.72, Accepted throughput: 30.20 tokens/s, Drafted throughput: 35.20 tokens/s, Accepted: 302 tokens, Drafted: 352 tokens, Per-position acceptance rate: 0.903, 0.812, Avg Draft acceptance rate: 85.8%
+(APIServer pid=1) INFO 10-07 15:48:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 64.6 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:48:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 41.09 tokens/s, Drafted throughput: 46.99 tokens/s, Accepted: 411 tokens, Drafted: 470 tokens, Per-position acceptance rate: 0.919, 0.830, Avg Draft acceptance rate: 87.4%
+INFO:     127.0.0.1:39536 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59238 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:48:18 [loggers.py:320] Engine 000: Avg prompt throughput: 82.5 tokens/s, Avg generation throughput: 55.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:48:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.71, Accepted throughput: 34.80 tokens/s, Drafted throughput: 40.80 tokens/s, Accepted: 348 tokens, Drafted: 408 tokens, Per-position acceptance rate: 0.897, 0.809, Avg Draft acceptance rate: 85.3%
+INFO:     127.0.0.1:47568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47582 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47586 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:48:27.258524004 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 6619136, total: 25294995456).
+[rank0]:[W1007 15:48:27.442963374 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:27.475975131 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:27.511786331 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:28.657625108 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:28.690379324 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:28.771439788 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:28.885101721 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:28.140106940 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:48:28 [loggers.py:320] Engine 000: Avg prompt throughput: 68.9 tokens/s, Avg generation throughput: 46.4 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:48:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.63, Accepted throughput: 28.80 tokens/s, Drafted throughput: 35.40 tokens/s, Accepted: 288 tokens, Drafted: 354 tokens, Per-position acceptance rate: 0.887, 0.740, Avg Draft acceptance rate: 81.4%
+[rank0]:[W1007 15:48:28.554870673 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:29.132070302 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:30.663606825 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:31.734720118 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:31.277106793 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:32.367673362 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:33.920668152 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:34.030619970 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:35.594221814 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:36.723474033 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:36.297768554 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:37.448978337 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:38.031231107 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:48:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 11.3%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:48:48 [loggers.py:320] Engine 000: Avg prompt throughput: 1224.5 tokens/s, Avg generation throughput: 43.8 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 8.8%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:48:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.31, Accepted throughput: 12.40 tokens/s, Drafted throughput: 18.90 tokens/s, Accepted: 248 tokens, Drafted: 378 tokens, Per-position acceptance rate: 0.772, 0.540, Avg Draft acceptance rate: 65.6%
+INFO:     127.0.0.1:51944 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59872 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59878 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:48:58.851294422 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.959643204 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.022112577 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.083684167 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.108821346 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:58.121949397 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.148758384 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.189429798 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:58.223824289 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.260387523 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.290585811 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.357886465 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.384628670 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.426343608 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.487575308 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:58.523223639 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:48:58 [loggers.py:320] Engine 000: Avg prompt throughput: 73.4 tokens/s, Avg generation throughput: 42.8 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:48:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.59, Accepted throughput: 26.30 tokens/s, Drafted throughput: 33.00 tokens/s, Accepted: 263 tokens, Drafted: 330 tokens, Per-position acceptance rate: 0.855, 0.739, Avg Draft acceptance rate: 79.7%
+[rank0]:[W1007 15:48:59.582927990 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.608654663 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.625777676 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.658952031 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.685465812 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.698488607 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.724600530 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.765917250 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.800205699 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.825949365 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.839811029 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.865700294 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.907172492 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.943271454 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.002071526 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.027917372 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:48:59.043586380 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.105641170 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.136338180 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.280580770 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.310735744 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.378470872 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.439439023 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.468378641 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.535763465 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:48:59.561291524 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:49:00.579859453 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:49:00.693367269 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:49:00.728497576 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:49:00.754996238 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:49:00.767867964 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:49:00.793487414 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:49:00.807396675 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:49:00.840976387 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:49:00.869470693 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:49:00.908668061 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:49:00.936220323 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+INFO:     127.0.0.1:33228 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33242 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:49:03.533285052 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:49:08 [loggers.py:320] Engine 000: Avg prompt throughput: 258.7 tokens/s, Avg generation throughput: 17.4 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 9.8%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:49:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.81, Accepted throughput: 11.20 tokens/s, Drafted throughput: 12.40 tokens/s, Accepted: 112 tokens, Drafted: 124 tokens, Per-position acceptance rate: 0.952, 0.855, Avg Draft acceptance rate: 90.3%
+(APIServer pid=1) INFO 10-07 15:49:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 12.4%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:49:38 [loggers.py:320] Engine 000: Avg prompt throughput: 2879.1 tokens/s, Avg generation throughput: 14.9 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 14.4%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:49:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.85, Accepted throughput: 3.20 tokens/s, Drafted throughput: 3.47 tokens/s, Accepted: 96 tokens, Drafted: 104 tokens, Per-position acceptance rate: 0.942, 0.904, Avg Draft acceptance rate: 92.3%
+INFO:     127.0.0.1:48544 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:49:48 [loggers.py:320] Engine 000: Avg prompt throughput: 15.5 tokens/s, Avg generation throughput: 57.9 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:49:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.58, Accepted throughput: 35.50 tokens/s, Drafted throughput: 45.00 tokens/s, Accepted: 355 tokens, Drafted: 450 tokens, Per-position acceptance rate: 0.880, 0.698, Avg Draft acceptance rate: 78.9%
+(APIServer pid=1) INFO 10-07 15:49:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 60.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:49:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.56, Accepted throughput: 36.60 tokens/s, Drafted throughput: 46.80 tokens/s, Accepted: 366 tokens, Drafted: 468 tokens, Per-position acceptance rate: 0.859, 0.705, Avg Draft acceptance rate: 78.2%
+INFO:     127.0.0.1:42544 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:50:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 48.2 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:50:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.55, Accepted throughput: 29.30 tokens/s, Drafted throughput: 37.80 tokens/s, Accepted: 293 tokens, Drafted: 378 tokens, Per-position acceptance rate: 0.847, 0.704, Avg Draft acceptance rate: 77.5%
+INFO:     127.0.0.1:42560 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60216 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60218 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:50:18 [loggers.py:320] Engine 000: Avg prompt throughput: 145.4 tokens/s, Avg generation throughput: 54.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:50:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.70, Accepted throughput: 33.90 tokens/s, Drafted throughput: 40.00 tokens/s, Accepted: 339 tokens, Drafted: 400 tokens, Per-position acceptance rate: 0.910, 0.785, Avg Draft acceptance rate: 84.8%
+(APIServer pid=1) INFO 10-07 15:50:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 56.2 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:50:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.69, Accepted throughput: 35.40 tokens/s, Drafted throughput: 41.80 tokens/s, Accepted: 354 tokens, Drafted: 418 tokens, Per-position acceptance rate: 0.895, 0.799, Avg Draft acceptance rate: 84.7%
+INFO:     127.0.0.1:59902 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59910 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37140 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37148 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:50:38 [loggers.py:320] Engine 000: Avg prompt throughput: 138.8 tokens/s, Avg generation throughput: 24.5 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 7.7%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:50:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.66, Accepted throughput: 15.40 tokens/s, Drafted throughput: 18.60 tokens/s, Accepted: 154 tokens, Drafted: 186 tokens, Per-position acceptance rate: 0.892, 0.763, Avg Draft acceptance rate: 82.8%
+(APIServer pid=1) INFO 10-07 15:50:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 12.4%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:08 [loggers.py:320] Engine 000: Avg prompt throughput: 2878.9 tokens/s, Avg generation throughput: 8.8 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 14.4%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.81, Accepted throughput: 1.87 tokens/s, Drafted throughput: 2.07 tokens/s, Accepted: 56 tokens, Drafted: 62 tokens, Per-position acceptance rate: 0.968, 0.839, Avg Draft acceptance rate: 90.3%
+INFO:     127.0.0.1:42998 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:51:18 [loggers.py:320] Engine 000: Avg prompt throughput: 13.1 tokens/s, Avg generation throughput: 59.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.60, Accepted throughput: 36.40 tokens/s, Drafted throughput: 45.40 tokens/s, Accepted: 364 tokens, Drafted: 454 tokens, Per-position acceptance rate: 0.890, 0.714, Avg Draft acceptance rate: 80.2%
+(APIServer pid=1) INFO 10-07 15:51:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 66.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.83, Accepted throughput: 42.80 tokens/s, Drafted throughput: 46.80 tokens/s, Accepted: 428 tokens, Drafted: 468 tokens, Per-position acceptance rate: 0.949, 0.880, Avg Draft acceptance rate: 91.5%
+INFO:     127.0.0.1:57536 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:51:38 [loggers.py:320] Engine 000: Avg prompt throughput: 9.1 tokens/s, Avg generation throughput: 53.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.73, Accepted throughput: 33.70 tokens/s, Drafted throughput: 39.00 tokens/s, Accepted: 337 tokens, Drafted: 390 tokens, Per-position acceptance rate: 0.923, 0.805, Avg Draft acceptance rate: 86.4%
+INFO:     127.0.0.1:57542 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:51:48 [loggers.py:320] Engine 000: Avg prompt throughput: 38.6 tokens/s, Avg generation throughput: 51.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.32, Accepted throughput: 29.10 tokens/s, Drafted throughput: 44.00 tokens/s, Accepted: 291 tokens, Drafted: 440 tokens, Per-position acceptance rate: 0.764, 0.559, Avg Draft acceptance rate: 66.1%
+INFO:     127.0.0.1:43758 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:51:58 [loggers.py:320] Engine 000: Avg prompt throughput: 12.4 tokens/s, Avg generation throughput: 56.8 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:51:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.47, Accepted throughput: 33.90 tokens/s, Drafted throughput: 46.00 tokens/s, Accepted: 339 tokens, Drafted: 460 tokens, Per-position acceptance rate: 0.826, 0.648, Avg Draft acceptance rate: 73.7%
+(APIServer pid=1) INFO 10-07 15:52:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 45.7 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:52:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.49, Accepted throughput: 27.50 tokens/s, Drafted throughput: 36.80 tokens/s, Accepted: 275 tokens, Drafted: 368 tokens, Per-position acceptance rate: 0.842, 0.652, Avg Draft acceptance rate: 74.7%
+(APIServer pid=1) INFO 10-07 15:52:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+INFO:     127.0.0.1:55424 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55426 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55434 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:52:28 [loggers.py:320] Engine 000: Avg prompt throughput: 87.5 tokens/s, Avg generation throughput: 18.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:52:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.77, Accepted throughput: 5.85 tokens/s, Drafted throughput: 6.60 tokens/s, Accepted: 117 tokens, Drafted: 132 tokens, Per-position acceptance rate: 0.924, 0.848, Avg Draft acceptance rate: 88.6%
+(APIServer pid=1) INFO 10-07 15:52:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 59.4 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:52:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.71, Accepted throughput: 37.60 tokens/s, Drafted throughput: 44.00 tokens/s, Accepted: 376 tokens, Drafted: 440 tokens, Per-position acceptance rate: 0.905, 0.805, Avg Draft acceptance rate: 85.5%
+(APIServer pid=1) INFO 10-07 15:52:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+INFO:     127.0.0.1:58354 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58364 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:52:58 [loggers.py:320] Engine 000: Avg prompt throughput: 71.6 tokens/s, Avg generation throughput: 5.5 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:52:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 1.75 tokens/s, Drafted throughput: 2.00 tokens/s, Accepted: 35 tokens, Drafted: 40 tokens, Per-position acceptance rate: 0.950, 0.800, Avg Draft acceptance rate: 87.5%
+INFO:     127.0.0.1:49038 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:53:08 [loggers.py:320] Engine 000: Avg prompt throughput: 11.3 tokens/s, Avg generation throughput: 60.8 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:53:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.65, Accepted throughput: 37.80 tokens/s, Drafted throughput: 45.80 tokens/s, Accepted: 378 tokens, Drafted: 458 tokens, Per-position acceptance rate: 0.886, 0.764, Avg Draft acceptance rate: 82.5%
+INFO:     127.0.0.1:52760 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52764 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:53:18 [loggers.py:320] Engine 000: Avg prompt throughput: 50.9 tokens/s, Avg generation throughput: 56.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:53:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.68, Accepted throughput: 35.40 tokens/s, Drafted throughput: 42.20 tokens/s, Accepted: 354 tokens, Drafted: 422 tokens, Per-position acceptance rate: 0.905, 0.773, Avg Draft acceptance rate: 83.9%
+(APIServer pid=1) INFO 10-07 15:53:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 63.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:53:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.70, Accepted throughput: 39.80 tokens/s, Drafted throughput: 46.80 tokens/s, Accepted: 398 tokens, Drafted: 468 tokens, Per-position acceptance rate: 0.902, 0.799, Avg Draft acceptance rate: 85.0%
+INFO:     127.0.0.1:53500 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:53:38 [loggers.py:320] Engine 000: Avg prompt throughput: 12.3 tokens/s, Avg generation throughput: 59.6 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:53:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.68, Accepted throughput: 37.40 tokens/s, Drafted throughput: 44.60 tokens/s, Accepted: 374 tokens, Drafted: 446 tokens, Per-position acceptance rate: 0.874, 0.803, Avg Draft acceptance rate: 83.9%
+INFO:     127.0.0.1:47874 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:53:48 [loggers.py:320] Engine 000: Avg prompt throughput: 14.4 tokens/s, Avg generation throughput: 60.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:53:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.72, Accepted throughput: 38.20 tokens/s, Drafted throughput: 44.40 tokens/s, Accepted: 382 tokens, Drafted: 444 tokens, Per-position acceptance rate: 0.910, 0.811, Avg Draft acceptance rate: 86.0%
+(APIServer pid=1) INFO 10-07 15:53:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 63.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:53:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.71, Accepted throughput: 39.90 tokens/s, Drafted throughput: 46.80 tokens/s, Accepted: 399 tokens, Drafted: 468 tokens, Per-position acceptance rate: 0.893, 0.812, Avg Draft acceptance rate: 85.3%
+INFO:     127.0.0.1:33322 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:54:08 [loggers.py:320] Engine 000: Avg prompt throughput: 13.6 tokens/s, Avg generation throughput: 60.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:54:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.76, Accepted throughput: 38.80 tokens/s, Drafted throughput: 44.00 tokens/s, Accepted: 388 tokens, Drafted: 440 tokens, Per-position acceptance rate: 0.932, 0.832, Avg Draft acceptance rate: 88.2%
+(APIServer pid=1) INFO 10-07 15:54:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 62.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:54:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.67, Accepted throughput: 38.80 tokens/s, Drafted throughput: 46.60 tokens/s, Accepted: 388 tokens, Drafted: 466 tokens, Per-position acceptance rate: 0.901, 0.764, Avg Draft acceptance rate: 83.3%
+INFO:     127.0.0.1:46792 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46798 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:54:28 [loggers.py:320] Engine 000: Avg prompt throughput: 19.5 tokens/s, Avg generation throughput: 60.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:54:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.78, Accepted throughput: 38.70 tokens/s, Drafted throughput: 43.60 tokens/s, Accepted: 387 tokens, Drafted: 436 tokens, Per-position acceptance rate: 0.945, 0.830, Avg Draft acceptance rate: 88.8%
+(APIServer pid=1) INFO 10-07 15:54:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 59.9 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:54:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.57, Accepted throughput: 36.60 tokens/s, Drafted throughput: 46.60 tokens/s, Accepted: 366 tokens, Drafted: 466 tokens, Per-position acceptance rate: 0.858, 0.712, Avg Draft acceptance rate: 78.5%
+(APIServer pid=1) INFO 10-07 15:54:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 61.9 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:54:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.65, Accepted throughput: 38.50 tokens/s, Drafted throughput: 46.80 tokens/s, Accepted: 385 tokens, Drafted: 468 tokens, Per-position acceptance rate: 0.885, 0.761, Avg Draft acceptance rate: 82.3%
+INFO:     127.0.0.1:36628 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:54:58 [loggers.py:320] Engine 000: Avg prompt throughput: 13.6 tokens/s, Avg generation throughput: 44.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:54:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 28.10 tokens/s, Drafted throughput: 32.20 tokens/s, Accepted: 281 tokens, Drafted: 322 tokens, Per-position acceptance rate: 0.913, 0.832, Avg Draft acceptance rate: 87.3%
+INFO:     127.0.0.1:40148 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:55:08 [loggers.py:320] Engine 000: Avg prompt throughput: 7.1 tokens/s, Avg generation throughput: 61.2 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:55:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.74, Accepted throughput: 38.90 tokens/s, Drafted throughput: 44.60 tokens/s, Accepted: 389 tokens, Drafted: 446 tokens, Per-position acceptance rate: 0.915, 0.830, Avg Draft acceptance rate: 87.2%
+INFO:     127.0.0.1:40150 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40156 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:55:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 9.0 tokens/s, Running: 1 reqs, Waiting: 1 reqs, GPU KV cache usage: 10.8%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:55:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.84, Accepted throughput: 5.90 tokens/s, Drafted throughput: 6.40 tokens/s, Accepted: 59 tokens, Drafted: 64 tokens, Per-position acceptance rate: 0.938, 0.906, Avg Draft acceptance rate: 92.2%
+(APIServer pid=1) INFO 10-07 15:55:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 1 reqs, GPU KV cache usage: 13.4%, Prefix cache hit rate: 0.0%
+[rank0]:[W1007 15:57:08.564033183 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 6619136, total: 25294995456).
+[rank0]:[W1007 15:57:08.306944501 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:08.334026211 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:08.372704761 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:08.405514723 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:08.516787135 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:08.526201448 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:08.539617321 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:09.573833685 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:09.933870627 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:09.961927114 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:09.012006558 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:10.720837616 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:10.751718656 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:10.918993504 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:10.933047090 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:10.972965794 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:10.214153011 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:10.329285967 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:10.342685428 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:10.366647179 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 15007744, total: 25294995456).
+[rank0]:[W1007 15:57:10.387643430 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:11.894022389 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.945814980 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.977004494 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.129631403 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.193161919 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.386708931 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.497399995 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:11.531203149 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:12.614083517 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:12.946159450 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:12.315584004 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:13.587017008 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:13.697464336 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:13.737689110 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:57:13.762846197 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:13.800462692 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:57:13.991260809 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:57:18 [loggers.py:320] Engine 000: Avg prompt throughput: 8326.6 tokens/s, Avg generation throughput: 0.9 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 42.3%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:57:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.67, Accepted throughput: 0.04 tokens/s, Drafted throughput: 0.05 tokens/s, Accepted: 5 tokens, Drafted: 6 tokens, Per-position acceptance rate: 1.000, 0.667, Avg Draft acceptance rate: 83.3%
+(APIServer pid=1) INFO 10-07 15:57:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.5 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 44.8%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:57:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 1.00 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 10 tokens, Drafted: 10 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 15:57:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.5 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 47.4%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:57:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 1.00 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 10 tokens, Drafted: 10 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 15:57:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.4 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 50.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:57:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.80, Accepted throughput: 0.90 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 9 tokens, Drafted: 10 tokens, Per-position acceptance rate: 1.000, 0.800, Avg Draft acceptance rate: 90.0%
+(APIServer pid=1) INFO 10-07 15:57:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.5 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 52.6%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:57:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 1.00 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 10 tokens, Drafted: 10 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 15:58:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.1 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 54.6%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:58:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 0.70 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 7 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 0.750, Avg Draft acceptance rate: 87.5%
+(APIServer pid=1) INFO 10-07 15:58:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.8 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 56.7%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:58:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.00, Accepted throughput: 0.40 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 4 tokens, Drafted: 8 tokens, Per-position acceptance rate: 0.500, 0.500, Avg Draft acceptance rate: 50.0%
+(APIServer pid=1) INFO 10-07 15:58:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.2 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 58.8%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:58:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.80 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 8 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 15:58:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.9 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 60.3%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:58:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.60 tokens/s, Drafted throughput: 0.60 tokens/s, Accepted: 6 tokens, Drafted: 6 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 15:58:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 30.4%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:58:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.80 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 8 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 15:58:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 32.0%, Prefix cache hit rate: 0.0%
+[rank0]:[W1007 15:59:11.676137350 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:11.868028637 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+INFO:     127.0.0.1:35140 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:59:16.234633403 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+INFO:     127.0.0.1:35148 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[rank0]:[W1007 15:59:17.325578518 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:17.354762418 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:17.531681514 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.569292961 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.743730345 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.936766766 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.965796999 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.027532212 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:59:18.141515193 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:59:18.154232536 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.176961467 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 12910592, total: 25294995456).
+[rank0]:[W1007 15:59:18.190417273 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:18.241958858 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+(APIServer pid=1) INFO 10-07 15:59:18 [loggers.py:320] Engine 000: Avg prompt throughput: 8326.5 tokens/s, Avg generation throughput: 11.9 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=1) INFO 10-07 15:59:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.88, Accepted throughput: 2.57 tokens/s, Drafted throughput: 2.73 tokens/s, Accepted: 77 tokens, Drafted: 82 tokens, Per-position acceptance rate: 0.976, 0.902, Avg Draft acceptance rate: 93.9%
+[rank0]:[W1007 15:59:19.323234644 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:19.478874162 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:19.516387049 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:20.872116765 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:20.916821774 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+[rank0]:[W1007 15:59:20.272588189 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 10813440, total: 25294995456).
+(EngineCore pid=184) WARNING 10-07 15:59:23 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=184) WARNING 10-07 15:59:23 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=184) WARNING 10-07 15:59:23 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+INFO:     127.0.0.1:51988 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51986 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 15:59:28 [loggers.py:320] Engine 000: Avg prompt throughput: 341.8 tokens/s, Avg generation throughput: 13.5 tokens/s, Running: 1 reqs, Waiting: 1 reqs, GPU KV cache usage: 7.7%, Prefix cache hit rate: 21.9%
+(APIServer pid=1) INFO 10-07 15:59:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.81, Accepted throughput: 8.70 tokens/s, Drafted throughput: 9.60 tokens/s, Accepted: 87 tokens, Drafted: 96 tokens, Per-position acceptance rate: 0.979, 0.833, Avg Draft acceptance rate: 90.6%
+(APIServer pid=1) INFO 10-07 15:59:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 1 reqs, Waiting: 1 reqs, GPU KV cache usage: 12.4%, Prefix cache hit rate: 21.9%
+(APIServer pid=1) INFO 10-07 16:01:28 [loggers.py:320] Engine 000: Avg prompt throughput: 8327.7 tokens/s, Avg generation throughput: 0.1 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 39.2%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:01:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.7 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 43.8%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:01:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.83, Accepted throughput: 0.08 tokens/s, Drafted throughput: 0.09 tokens/s, Accepted: 11 tokens, Drafted: 12 tokens, Per-position acceptance rate: 1.000, 0.833, Avg Draft acceptance rate: 91.7%
+(APIServer pid=1) INFO 10-07 16:01:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.2 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 46.4%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:01:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.40, Accepted throughput: 0.70 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 7 tokens, Drafted: 10 tokens, Per-position acceptance rate: 0.800, 0.600, Avg Draft acceptance rate: 70.0%
+(APIServer pid=1) INFO 10-07 16:01:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.4 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 49.0%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:01:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.80, Accepted throughput: 0.90 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 9 tokens, Drafted: 10 tokens, Per-position acceptance rate: 1.000, 0.800, Avg Draft acceptance rate: 90.0%
+(APIServer pid=1) INFO 10-07 16:02:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.5 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 51.5%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:02:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 1.00 tokens/s, Drafted throughput: 1.00 tokens/s, Accepted: 10 tokens, Drafted: 10 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 16:02:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.1 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 53.6%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:02:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.75, Accepted throughput: 0.70 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 7 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 0.750, Avg Draft acceptance rate: 87.5%
+(APIServer pid=1) INFO 10-07 16:02:28 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.2 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 55.7%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:02:28 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.80 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 8 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 16:02:38 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.0 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 57.7%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:02:38 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.50, Accepted throughput: 0.60 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 6 tokens, Drafted: 8 tokens, Per-position acceptance rate: 0.750, 0.750, Avg Draft acceptance rate: 75.0%
+(APIServer pid=1) INFO 10-07 16:02:48 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.2 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 59.8%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:02:48 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.80 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 8 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 16:02:58 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 1.2 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 61.9%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:02:58 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.80 tokens/s, Drafted throughput: 0.80 tokens/s, Accepted: 8 tokens, Drafted: 8 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 16:03:08 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.9 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 63.4%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:03:08 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.60 tokens/s, Drafted throughput: 0.60 tokens/s, Accepted: 6 tokens, Drafted: 6 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 16:03:18 [loggers.py:320] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.9 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 64.9%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:03:18 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 3.00, Accepted throughput: 0.60 tokens/s, Drafted throughput: 0.60 tokens/s, Accepted: 6 tokens, Drafted: 6 tokens, Per-position acceptance rate: 1.000, 1.000, Avg Draft acceptance rate: 100.0%
+(APIServer pid=1) INFO 10-07 16:03:29 [loggers.py:320] Engine 000: Avg prompt throughput: 8326.7 tokens/s, Avg generation throughput: 2.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 32.0%, Prefix cache hit rate: 19.7%
+(APIServer pid=1) INFO 10-07 16:03:29 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.89, Accepted throughput: 1.70 tokens/s, Drafted throughput: 1.80 tokens/s, Accepted: 17 tokens, Drafted: 18 tokens, Per-position acceptance rate: 1.000, 0.889, Avg Draft acceptance rate: 94.4%
+INFO:     127.0.0.1:35144 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35140 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=1) INFO 10-07 16:03:39 [loggers.py:320] Engine 000: Avg prompt throughput: 344.2 tokens/s, Avg generation throughput: 23.6 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 32.0%, Prefix cache hit rate: 32.7%
+(APIServer pid=1) INFO 10-07 16:03:39 [metrics.py:120] SpecDecoding metrics: Mean acceptance length: 2.76, Accepted throughput: 15.10 tokens/s, Drafted throughput: 17.20 tokens/s, Accepted: 151 tokens, Drafted: 172 tokens, Per-position acceptance rate: 0.919, 0.837, Avg Draft acceptance rate: 87.8%
+INFO:     127.0.0.1:54284 - "GET /metrics HTTP/1.1" 200 OK

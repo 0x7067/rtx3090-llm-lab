@@ -1,0 +1,49 @@
+{
+  "pool": 320000,
+  "kv": "q8_0",
+  "arms": [
+    {
+      "name": "baseline",
+      "spec": "none"
+    },
+    {
+      "name": "mtp1",
+      "spec": "mtp",
+      "depth": 1
+    },
+    {
+      "name": "mtp2",
+      "spec": "mtp",
+      "depth": 2
+    },
+    {
+      "name": "dflash-gpu",
+      "spec": "dflash",
+      "draft_ngl": 999
+    },
+    {
+      "name": "dflash-cpu",
+      "spec": "dflash",
+      "draft_ngl": 0
+    }
+  ],
+  "image": "ghcr.io/ggml-org/llama.cpp@sha256:a863a2d1dc2cbc5326c995ae380eec9c57f37a7e1cac944f0c6f43e4e9afff23",
+  "speed_cases": [
+    [
+      1,
+      0,
+      false
+    ],
+    [
+      2,
+      0,
+      false
+    ],
+    [
+      2,
+      2400,
+      false
+    ]
+  ],
+  "sampling": "target T1/top-p .95/top-k20; probabilistic rejection for speculative arms"
+}

@@ -1,0 +1,50 @@
+{
+  "plan_sha256": "532cb7a2c50dc26fcfddba47d2b41cff1c6ca9cd57f5e5437370824f504d946c",
+  "arm": "thinkingcap_llama",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "coding": {
+      "attempted": 40,
+      "clusters": 20,
+      "statuses": {
+        "ok": 40
+      },
+      "finish_reasons": {
+        "stop": 40
+      },
+      "prompt_tokens_observed": 40,
+      "prompt_tokens_min": 108,
+      "prompt_tokens_max": 157,
+      "full_score": 37,
+      "completed": 40,
+      "mean_score": 0.925
+    }
+  },
+  "performance": {},
+  "failures": [
+    {
+      "id": "code-batch-bytes:0:2718",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 8, in <module>\nAssertionError: oversize accepted\n",
+      "error": null
+    },
+    {
+      "id": "code-histogram:0:2718",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 1, in <module>\nAssertionError\n",
+      "error": null
+    },
+    {
+      "id": "code-batch-bytes:0:314",
+      "score": 0.0,
+      "status": "ok",
+      "finish_reason": "stop",
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"tests.py\", line 8, in <module>\nAssertionError: oversize accepted\n",
+      "error": null
+    }
+  ]
+}

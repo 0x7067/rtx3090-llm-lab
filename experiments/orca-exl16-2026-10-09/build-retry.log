@@ -1,0 +1,41 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 514B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/local/orcasaq-latest:2026-10-07-v1
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 149.13MB 0.5s done
+#4 DONE 0.5s
+
+#5 [1/3] FROM docker.io/local/orcasaq-latest:2026-10-07-v1
+#5 DONE 0.5s
+
+#6 [2/3] COPY exllamav3-1.6.0+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl /tmp/
+#6 DONE 0.7s
+
+#7 [3/3] RUN echo '21e517df8f8e19f07f8fa1075411a55f00689246d7844485c7c36b42b5666034  /tmp/exllamav3-1.6.0+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl' | sha256sum -c -  && python3 -m pip install --no-deps --no-cache-dir /tmp/exllamav3-1.6.0+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl  && rm /tmp/exllamav3-1.6.0+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl
+#7 0.542 /tmp/exllamav3-1.6.0+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl: OK
+#7 0.982 Processing /tmp/exllamav3-1.6.0+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl
+#7 1.262 Installing collected packages: exllamav3
+#7 1.262   Attempting uninstall: exllamav3
+#7 1.264     Found existing installation: exllamav3 1.5.4+cu132.torch2.13.0
+#7 1.285     Uninstalling exllamav3-1.5.4+cu132.torch2.13.0:
+#7 4.140       Successfully uninstalled exllamav3-1.5.4+cu132.torch2.13.0
+#7 5.207 Successfully installed exllamav3-1.6.0+cu132.torch2.13.0
+#7 5.207 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#7 DONE 5.8s
+
+#8 exporting to image
+#8 exporting layers
+#8 exporting layers 0.7s done
+#8 writing image sha256:55c96bdd11d4e09ffea2ee6cc85605b18e1f5eb84fdb8a64b51271d1c1661872 done
+#8 naming to docker.io/local/orcasaq-exl16:2026-10-09-v1 done
+#8 DONE 0.7s

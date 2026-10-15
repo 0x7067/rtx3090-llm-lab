@@ -1,0 +1,7 @@
+PREFIX START default
+PREFIX default turn0 wall=245.211s pass=2/2
+PREFIX default turn1 wall=8.466s pass=2/2
+PREFIX default turn2 wall=8.659s pass=2/2
+PREFIX default turn3 wall=8.936s pass=2/2
+PREFIX default turn4 wall=9.521s pass=2/2
+PREFIX RESTORED True

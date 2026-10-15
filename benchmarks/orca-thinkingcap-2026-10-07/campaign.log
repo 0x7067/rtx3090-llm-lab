@@ -1,0 +1,148 @@
+Starting orca_vllm
+orca_vllm support-transcript-en:0:42: ok score=1.0
+orca_vllm episode-unicode-next:0:42: ok score=1.0
+orca_vllm retrieve-revision-4096:0:42: ok score=1.0
+orca_vllm code-env-lines:0:42: ok score=1.0
+orca_vllm code-reconcile:0:42: ok score=1.0
+orca_vllm episode-cache-first:0:42: ok score=1.0
+orca_vllm retrieve-join-4096:0:42: ok score=1.0
+orca_vllm perf-prefill-medium:0:42: ok score=None
+orca_vllm episode-untrusted-tool-next:0:42: ok score=1.0
+orca_vllm code-diff-keys:0:42: ok score=1.0
+orca_vllm code-rolling-window:0:42: ok score=1.0
+orca_vllm support-reason-boundary:0:42: ok score=1.0
+orca_vllm episode-pt-pods-next:0:42: ok score=1.0
+orca_vllm extract-pt-correction:0:42: ok score=1.0
+orca_vllm episode-pt-pods-first:0:42: ok score=1.0
+orca_vllm support-relevant-config:0:42: ok score=1.0
+orca_vllm code-range-coalesce:0:42: ok score=1.0
+orca_vllm episode-cache-next:0:42: ok score=1.0
+orca_vllm retrieve-revision-64:0:42: ok score=1.0
+orca_vllm code-retry-budget:0:42: ok score=1.0
+orca_vllm episode-pod-logs-next:0:42: ok score=1.0
+orca_vllm code-pagination:0:42: ok score=1.0
+orca_vllm extract-missing:0:42: ok score=1.0
+orca_vllm episode-unicode-first:0:42: ok score=1.0
+orca_vllm perf-decode-medium:0:42: ok score=None
+orca_vllm episode-quoted-path-first:0:42: ok score=1.0
+orca_vllm code-ttl:0:42: ok score=1.0
+orca_vllm retrieve-join-64:0:42: ok score=1.0
+orca_vllm episode-quoted-path-next:0:42: ok score=1.0
+orca_vllm retrieve-revision-1024:0:42: ok score=1.0
+orca_vllm code-sse-frames:0:42: ok score=1.0
+orca_vllm episode-pod-logs-first:0:42: ok score=1.0
+orca_vllm extract-boolean:0:42: ok score=1.0
+orca_vllm episode-not-found-first:0:42: ok score=1.0
+orca_vllm code-stable-dedupe:0:42: ok score=1.0
+orca_vllm episode-failed-test-next:0:42: ok score=1.0
+orca_vllm extract-quoted:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-first:0:42: ok score=1.0
+orca_vllm retrieve-join-1024:0:42: ok score=1.0
+orca_vllm code-histogram:0:42: ok score=1.0
+orca_vllm support-transcript-pt:0:42: ok score=1.0
+orca_vllm perf-decode-short:0:42: ok score=None
+orca_vllm code-merge-config:0:42: ok score=1.0
+orca_vllm episode-not-found-next:0:42: ok score=1.0
+orca_vllm extract-en-correction:0:42: ok score=1.0
+orca_vllm code-lru:0:42: ok score=1.0
+orca_vllm episode-failed-test-first:0:42: ok score=1.0
+orca_vllm support-relevant-db:0:42: ok score=1.0
+orca_vllm code-jsonl:0:42: ok score=1.0
+orca_vllm perf-prefill-short:0:42: ok score=None
+orca_vllm code-flatten:0:42: ok score=1.0
+orca_vllm code-path-normalize:0:42: ok score=1.0
+orca_vllm code-batch-bytes:0:42: ok score=1.0
+orca_vllm code-rate-limit:0:42: ok score=1.0
+orca_vllm support-reason-deps:0:42: ok score=1.0
+orca_vllm code-topological:0:42: ok score=1.0
+orca_vllm code-redact:0:42: ok score=1.0
+orca_vllm extract-units:0:42: ok score=1.0
+Completed orca_vllm full
+orca_vllm code-rolling-window:0:314: ok score=1.0
+orca_vllm code-range-coalesce:0:314: ok score=1.0
+orca_vllm code-pagination:0:314: ok score=1.0
+orca_vllm code-reconcile:0:2718: ok score=1.0
+orca_vllm code-lru:0:2718: ok score=1.0
+orca_vllm code-retry-budget:0:2718: ok score=1.0
+orca_vllm code-pagination:0:2718: ok score=1.0
+orca_vllm code-env-lines:0:314: ok score=1.0
+orca_vllm code-retry-budget:0:314: ok score=1.0
+orca_vllm code-stable-dedupe:0:2718: ok score=1.0
+orca_vllm code-topological:0:2718: ok score=1.0
+orca_vllm code-flatten:0:2718: ok score=1.0
+orca_vllm code-range-coalesce:0:2718: ok score=1.0
+orca_vllm code-sse-frames:0:314: ok score=0.0
+orca_vllm code-stable-dedupe:0:314: ok score=1.0
+orca_vllm code-path-normalize:0:2718: ok score=1.0
+orca_vllm code-batch-bytes:0:2718: ok score=1.0
+orca_vllm code-jsonl:0:2718: ok score=1.0
+orca_vllm code-histogram:0:314: ok score=1.0
+orca_vllm code-merge-config:0:2718: ok score=1.0
+orca_vllm code-ttl:0:2718: ok score=1.0
+orca_vllm code-env-lines:0:2718: ok score=1.0
+orca_vllm code-rate-limit:0:2718: ok score=1.0
+orca_vllm code-rolling-window:0:2718: ok score=1.0
+orca_vllm code-diff-keys:0:314: ok score=1.0
+orca_vllm code-reconcile:0:314: ok score=1.0
+orca_vllm code-diff-keys:0:2718: ok score=1.0
+orca_vllm code-histogram:0:2718: ok score=0.0
+orca_vllm code-merge-config:0:314: ok score=1.0
+orca_vllm code-ttl:0:314: ok score=1.0
+orca_vllm code-sse-frames:0:2718: ok score=1.0
+orca_vllm code-redact:0:2718: ok score=1.0
+orca_vllm code-lru:0:314: ok score=1.0
+orca_vllm code-jsonl:0:314: ok score=1.0
+orca_vllm code-flatten:0:314: ok score=1.0
+orca_vllm code-path-normalize:0:314: ok score=1.0
+orca_vllm code-batch-bytes:0:314: ok score=1.0
+orca_vllm code-rate-limit:0:314: ok score=1.0
+orca_vllm code-topological:0:314: ok score=1.0
+orca_vllm code-redact:0:314: ok score=1.0
+Completed orca_vllm coding-repeat
+orca_vllm perf-decode-medium:0:314: ok score=None
+orca_vllm perf-prefill-short:0:2718: ok score=None
+orca_vllm perf-prefill-medium:0:2718: ok score=None
+orca_vllm perf-decode-medium:0:2718: ok score=None
+orca_vllm perf-prefill-medium:0:314: ok score=None
+orca_vllm perf-decode-short:0:2718: ok score=None
+orca_vllm perf-prefill-short:0:314: ok score=None
+orca_vllm perf-decode-short:0:314: ok score=None
+Completed orca_vllm speed-repeat
+orca_vllm concurrency callers=1 lines=0 wall=8.57s
+orca_vllm concurrency callers=1 lines=0 wall=9.51s
+orca_vllm concurrency callers=2 lines=0 wall=10.40s
+orca_vllm concurrency callers=2 lines=0 wall=9.51s
+orca_vllm concurrency callers=4 lines=0 wall=12.80s
+orca_vllm concurrency callers=4 lines=0 wall=11.39s
+orca_vllm concurrency callers=8 lines=0 wall=19.83s
+orca_vllm concurrency callers=8 lines=0 wall=19.53s
+orca_vllm concurrency callers=1 lines=2400 wall=53.72s
+orca_vllm concurrency callers=1 lines=2400 wall=53.14s
+orca_vllm concurrency callers=2 lines=2400 wall=98.03s
+orca_vllm concurrency callers=2 lines=2400 wall=99.06s
+orca_vllm concurrency callers=2 lines=5200 wall=231.71s
+orca_vllm concurrency callers=2 lines=5200 wall=231.84s
+Restoration: True
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 213, in <module>
+    for args in ([['kubectl', '-n', 'apps', 'scale', 'deployment', 'llama', '--replicas=' + replicas]] + ([] if suspended else [['flux', 'resume', 'kustomization', 'apps']])):
+    ^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 182, in main
+    raise RuntimeError('GPU still occupied after stopping owned service')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 30, in command
+    return subprocess.run(args, capture_output=True, text=True, timeout=timeout, check=check).stdout.strip()
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 2153, in _communicate
+    ready = selector.select(timeout)
+  File "/usr/lib/python3.14/selectors.py", line 398, in select
+    fd_event_list = self._selector.poll(timeout)
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 38, in interrupted
+    raise RuntimeError(f'Interrupted by signal {signum}')
+RuntimeError: Interrupted by signal 15

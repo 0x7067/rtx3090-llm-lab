@@ -1,0 +1,9 @@
+{
+  "source": "https://github.com/JakeATX/llamAmpere",
+  "commit": "72f90b54030b5afbb88ea078de8618949f6c0aee",
+  "upstream_unchanged": true,
+  "target_kv": "q8_0",
+  "pool": 320000,
+  "parallel": 2,
+  "lean_draft_compute": "upstream only supports parallel1; not enabled"
+}

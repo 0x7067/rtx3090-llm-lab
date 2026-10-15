@@ -1,0 +1,73 @@
+PREFIX START default-safe
+PREFIX default-safe turn0 wall=245.225s pass=2/2
+PREFIX default-safe turn1 wall=8.442s pass=2/2
+PREFIX default-safe turn2 wall=8.662s pass=2/2
+PREFIX default-safe turn3 wall=8.752s pass=2/2
+PREFIX default-safe turn4 wall=9.241s pass=2/2
+PREFIX default-safe turn5 wall=9.745s pass=2/2
+PREFIX default-safe turn6 wall=9.955s pass=2/2
+PREFIX default-safe turn7 wall=10.337s pass=2/2
+PREFIX default-safe turn8 wall=10.526s pass=2/2
+PREFIX default-safe turn9 wall=10.880s pass=2/2
+PREFIX default-safe turn10 wall=11.021s pass=2/2
+PREFIX default-safe turn11 wall=11.464s pass=2/2
+PREFIX default-safe turn12 wall=11.520s pass=2/2
+PREFIX default-safe turn13 wall=11.789s pass=2/2
+PREFIX default-safe turn14 wall=11.716s pass=2/2
+PREFIX default-safe turn15 wall=12.458s pass=2/2
+PREFIX default-safe turn16 wall=12.372s pass=2/2
+PREFIX default-safe turn17 wall=12.716s pass=2/2
+PREFIX default-safe turn18 wall=13.051s pass=2/2
+PREFIX default-safe turn19 wall=13.107s pass=2/2
+PREFIX default-safe turn20 wall=13.166s pass=2/2
+PREFIX START fine-safe
+PREFIX fine-safe turn0 wall=245.571s pass=2/2
+PREFIX fine-safe turn1 wall=8.836s pass=2/2
+PREFIX fine-safe turn2 wall=2.731s pass=2/2
+PREFIX fine-safe turn3 wall=2.789s pass=2/2
+PREFIX fine-safe turn4 wall=2.681s pass=2/2
+PREFIX fine-safe turn5 wall=2.639s pass=2/2
+PREFIX fine-safe turn6 wall=2.442s pass=2/2
+PREFIX fine-safe turn7 wall=2.641s pass=2/2
+PREFIX fine-safe turn8 wall=2.517s pass=2/2
+PREFIX fine-safe turn9 wall=2.614s pass=2/2
+PREFIX fine-safe turn10 wall=2.488s pass=2/2
+PREFIX fine-safe turn11 wall=2.745s pass=2/2
+PREFIX fine-safe turn12 wall=2.514s pass=2/2
+PREFIX fine-safe turn13 wall=2.693s pass=2/2
+PREFIX fine-safe turn14 wall=2.423s pass=2/2
+PREFIX fine-safe turn15 wall=2.938s pass=2/2
+PREFIX fine-safe turn16 wall=2.400s pass=2/2
+PREFIX fine-safe turn17 wall=2.680s pass=2/2
+PREFIX fine-safe turn18 wall=2.420s pass=2/2
+PREFIX fine-safe turn19 wall=2.755s pass=2/2
+PREFIX fine-safe turn20 wall=2.541s pass=2/2
+orca_vllm concurrent coding 2/24 score=2.0/2
+orca_vllm concurrent coding 4/24 score=2.0/2
+orca_vllm concurrent coding 6/24 score=2.0/2
+orca_vllm concurrent coding 8/24 score=2.0/2
+orca_vllm concurrent coding 10/24 score=2.0/2
+orca_vllm concurrent coding 12/24 score=2.0/2
+orca_vllm concurrent coding 14/24 score=2.0/2
+orca_vllm concurrent coding 16/24 score=2.0/2
+orca_vllm concurrent coding 18/24 score=2.0/2
+orca_vllm concurrent coding 20/24 score=2.0/2
+orca_vllm concurrent coding 22/24 score=2.0/2
+orca_vllm concurrent coding 24/24 score=2.0/2
+orca_vllm episode-unicode-next:0:42: ok score=1.0
+orca_vllm episode-cache-first:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-first:0:42: ok score=1.0
+orca_vllm episode-cache-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-next:0:42: ok score=1.0
+orca_vllm episode-unicode-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-first:0:42: ok score=1.0
+orca_vllm episode-not-found-first:0:42: ok score=1.0
+orca_vllm episode-failed-test-next:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-first:0:42: ok score=1.0
+orca_vllm episode-not-found-next:0:42: ok score=1.0
+orca_vllm episode-failed-test-first:0:42: ok score=1.0
+PREFIX RESTORED True

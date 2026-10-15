@@ -1,0 +1,55 @@
+{
+  "pool": 320000,
+  "kv": "q8_0",
+  "arms": [
+    {
+      "name": "stock-no-spec",
+      "spec": "mtp-file-none",
+      "ubatch": 128
+    },
+    {
+      "name": "ampere-no-spec",
+      "spec": "mtp-file-none",
+      "fork": true,
+      "ubatch": 128
+    },
+    {
+      "name": "ampere-mtp2-f32",
+      "spec": "mtp",
+      "depth": 2,
+      "fork": true,
+      "ubatch": 128
+    },
+    {
+      "name": "ampere-mtp2-q8-state",
+      "spec": "mtp",
+      "depth": 2,
+      "fork": true,
+      "state": "q8_0",
+      "ubatch": 128
+    }
+  ],
+  "images": {
+    "stock": "ghcr.io/ggml-org/llama.cpp@sha256:a863a2d1dc2cbc5326c995ae380eec9c57f37a7e1cac944f0c6f43e4e9afff23",
+    "candidate": "local/gsq-llamampere:2026-10-09-72f90b5"
+  },
+  "microbatch": 128,
+  "speed_cases": [
+    [
+      1,
+      0,
+      false
+    ],
+    [
+      2,
+      0,
+      false
+    ],
+    [
+      2,
+      2400,
+      false
+    ]
+  ],
+  "sampling": "target T1/top-p .95/top-k20; fork LLAMA_SPEC_PQ=1 exact p/q; no vocabulary shortlist"
+}

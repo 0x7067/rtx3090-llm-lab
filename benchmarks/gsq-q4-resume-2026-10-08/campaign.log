@@ -1,0 +1,35 @@
+READY gsq_q4_0 pool=320000 phase=concurrency
+gsq_q4_0 concurrency callers=1 lines=0 wall=13.31s
+gsq_q4_0 concurrency callers=1 lines=0 wall=13.31s
+gsq_q4_0 concurrency callers=2 lines=0 wall=16.20s
+gsq_q4_0 concurrency callers=2 lines=0 wall=16.37s
+gsq_q4_0 concurrency callers=2 lines=2400 wall=124.94s
+gsq_q4_0 concurrency callers=2 lines=2400 wall=125.59s
+READY gsq_q4_0 pool=320000 phase=long-1x15700
+gsq_q4_0 cold wall=563.37s pass=[True] prompt=[251303]
+gsq_q4_0 followup-1 wall=5.30s pass=[True] prompt=[251399]
+gsq_q4_0 followup-2 wall=4.76s pass=[True] prompt=[251459]
+gsq_q4_0 cached-generation-512 wall=37.66s pass=[None] prompt=[251508]
+READY gsq_q4_0 pool=320000 phase=long-2x9300
+gsq_q4_0 cold wall=749.69s pass=[True, True] prompt=[148904, 148902]
+gsq_q4_0 followup-1 wall=13.53s pass=[True, True] prompt=[149003, 148999]
+gsq_q4_0 followup-2 wall=8.96s pass=[True, True] prompt=[149066, 149059]
+gsq_q4_0 followup-3 wall=11.87s pass=[True, True] prompt=[149130, 149118]
+gsq_q4_0 followup-4 wall=10.09s pass=[True, True] prompt=[149193, 149181]
+gsq_q4_0 followup-5 wall=12.45s pass=[True, True] prompt=[149254, 149244]
+gsq_q4_0 followup-6 wall=10.59s pass=[True, True] prompt=[149315, 149305]
+gsq_q4_0 followup-7 wall=9.79s pass=[True, True] prompt=[149375, 149364]
+gsq_q4_0 followup-8 wall=10.38s pass=[True, True] prompt=[149438, 149427]
+gsq_q4_0 followup-9 wall=10.23s pass=[True, True] prompt=[149503, 149489]
+gsq_q4_0 followup-10 wall=10.86s pass=[True, True] prompt=[149563, 149552]
+gsq_q4_0 followup-11 wall=10.36s pass=[True, True] prompt=[149624, 149616]
+gsq_q4_0 followup-12 wall=10.11s pass=[True, True] prompt=[149685, 149679]
+gsq_q4_0 followup-13 wall=10.76s pass=[True, True] prompt=[149744, 149741]
+gsq_q4_0 followup-14 wall=10.78s pass=[True, True] prompt=[149805, 149801]
+gsq_q4_0 followup-15 wall=10.76s pass=[True, True] prompt=[149865, 149860]
+gsq_q4_0 followup-16 wall=11.52s pass=[True, True] prompt=[149928, 149922]
+gsq_q4_0 followup-17 wall=11.75s pass=[True, True] prompt=[149991, 149985]
+gsq_q4_0 followup-18 wall=11.02s pass=[True, True] prompt=[150053, 150047]
+gsq_q4_0 followup-19 wall=11.02s pass=[True, True] prompt=[150116, 150107]
+gsq_q4_0 followup-20 wall=11.44s pass=[True, True] prompt=[150179, 150167]
+gsq_q4_0 cached-generation-512 wall=56.24s pass=[None, None] prompt=[150230, 150215]

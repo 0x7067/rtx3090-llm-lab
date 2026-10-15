@@ -1,0 +1,141 @@
+{
+  "control": {
+    "coding_score": 24.0,
+    "coding_n": 24,
+    "coding_inference_wall_s": 249.44937242499873,
+    "coding_failures": [],
+    "tool_quality": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 621,
+      "prompt_tokens_max": 717,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    },
+    "long_checks_pass": 42,
+    "long_checks_n": 42,
+    "cold_pair_wall_s": 245.6354353209972,
+    "followup_mean_wall_s": 2.913633167849548,
+    "followup_median_wall_s": 2.56094155649771,
+    "long_generation_wall_s": 14.852770915997098,
+    "long_generation_aggregate_tps": 68.94336456082455,
+    "long_cached_tokens": [
+      84608,
+      84608
+    ],
+    "short_probes": [
+      {
+        "callers": 1,
+        "wall_s": 10.279496605995519,
+        "aggregate_tps": 49.80788647776545
+      },
+      {
+        "callers": 1,
+        "wall_s": 10.3736476280028,
+        "aggregate_tps": 49.35583107892527
+      },
+      {
+        "callers": 2,
+        "wall_s": 10.34697927700472,
+        "aggregate_tps": 98.96608204055774
+      },
+      {
+        "callers": 2,
+        "wall_s": 10.160885586999939,
+        "aggregate_tps": 100.77861729986687
+      }
+    ],
+    "peak_gpu_mib": 23361,
+    "min_available_ram_kib": 40198128,
+    "max_cgroup_swap_bytes": 0
+  },
+  "exl16": {
+    "coding_score": 23.0,
+    "coding_n": 24,
+    "coding_inference_wall_s": 266.29532442999334,
+    "coding_failures": [
+      {
+        "id": "code-jsonl:0:42",
+        "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"answer.py\", line 1\n    ```python\n    ^\nSyntaxError: invalid syntax\n"
+      }
+    ],
+    "tool_quality": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 621,
+      "prompt_tokens_max": 717,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    },
+    "long_checks_pass": 42,
+    "long_checks_n": 42,
+    "cold_pair_wall_s": 245.50527433800016,
+    "followup_mean_wall_s": 2.9452146968505986,
+    "followup_median_wall_s": 2.6792461385011848,
+    "long_generation_wall_s": 15.777475299000798,
+    "long_generation_aggregate_tps": 64.90265271179672,
+    "long_cached_tokens": [
+      84608,
+      84608
+    ],
+    "short_probes": [
+      {
+        "callers": 1,
+        "wall_s": 10.303161545998591,
+        "aggregate_tps": 49.693484637134894
+      },
+      {
+        "callers": 1,
+        "wall_s": 10.39940372199635,
+        "aggregate_tps": 49.23359201038043
+      },
+      {
+        "callers": 2,
+        "wall_s": 12.044536829998833,
+        "aggregate_tps": 85.01779806505844
+      },
+      {
+        "callers": 2,
+        "wall_s": 10.482959600994946,
+        "aggregate_tps": 97.6823377152776
+      }
+    ],
+    "peak_gpu_mib": 22579,
+    "min_available_ram_kib": 38658400,
+    "max_cgroup_swap_bytes": 0
+  },
+  "matched_request_hashes": {
+    "sessions": true,
+    "coding": true,
+    "generation": true,
+    "short": true
+  },
+  "dflash2": {
+    "status": "failed_before_inference",
+    "error": "embed_tokens: neither an int8 table nor a dense one loaded",
+    "draft_kv": "bfloat16",
+    "draft_attention": "FLASH_ATTN",
+    "draft_tokens": 7,
+    "capacity_and_speed": "unmeasured"
+  },
+  "restoration": {
+    "restored": true,
+    "failures": []
+  }
+}

@@ -1,0 +1,139 @@
+BENCHMARK RESTART REQUESTED
+PREFLIGHT IO full_avg10=0.81
+PREFLIGHT IO full_avg10=0.29
+PREFLIGHT IO full_avg10=0.1
+PREFIX START control
+WAITING FOR QUIET HOST control
+HOST IO full_avg10=0.03
+HOST IO full_avg10=0.01
+HOST IO full_avg10=0.0
+orca_vllm concurrency callers=1 lines=0 wall=10.28s
+orca_vllm concurrency callers=1 lines=0 wall=10.37s
+orca_vllm concurrency callers=2 lines=0 wall=10.35s
+orca_vllm concurrency callers=2 lines=0 wall=10.16s
+PREFIX control turn0 wall=245.635s pass=2/2
+PREFIX control turn1 wall=8.854s pass=2/2
+PREFIX control turn2 wall=2.798s pass=2/2
+PREFIX control turn3 wall=2.851s pass=2/2
+PREFIX control turn4 wall=2.733s pass=2/2
+PREFIX control turn5 wall=2.876s pass=2/2
+PREFIX control turn6 wall=2.316s pass=2/2
+PREFIX control turn7 wall=2.564s pass=2/2
+PREFIX control turn8 wall=2.526s pass=2/2
+PREFIX control turn9 wall=2.513s pass=2/2
+PREFIX control turn10 wall=2.469s pass=2/2
+PREFIX control turn11 wall=2.773s pass=2/2
+PREFIX control turn12 wall=2.522s pass=2/2
+PREFIX control turn13 wall=2.708s pass=2/2
+PREFIX control turn14 wall=2.494s pass=2/2
+PREFIX control turn15 wall=2.696s pass=2/2
+PREFIX control turn16 wall=2.410s pass=2/2
+PREFIX control turn17 wall=2.690s pass=2/2
+PREFIX control turn18 wall=2.476s pass=2/2
+PREFIX control turn19 wall=2.557s pass=2/2
+PREFIX control turn20 wall=2.446s pass=2/2
+orca_vllm concurrent coding 2/24 score=2.0/2
+orca_vllm concurrent coding 4/24 score=2.0/2
+orca_vllm concurrent coding 6/24 score=2.0/2
+orca_vllm concurrent coding 8/24 score=2.0/2
+orca_vllm concurrent coding 10/24 score=2.0/2
+orca_vllm concurrent coding 12/24 score=2.0/2
+orca_vllm concurrent coding 14/24 score=2.0/2
+orca_vllm concurrent coding 16/24 score=2.0/2
+orca_vllm concurrent coding 18/24 score=2.0/2
+orca_vllm concurrent coding 20/24 score=2.0/2
+orca_vllm concurrent coding 22/24 score=2.0/2
+orca_vllm concurrent coding 24/24 score=2.0/2
+orca_vllm episode-unicode-next:0:42: ok score=1.0
+orca_vllm episode-cache-first:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-first:0:42: ok score=1.0
+orca_vllm episode-cache-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-next:0:42: ok score=1.0
+orca_vllm episode-unicode-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-first:0:42: ok score=1.0
+orca_vllm episode-not-found-first:0:42: ok score=1.0
+orca_vllm episode-failed-test-next:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-first:0:42: ok score=1.0
+orca_vllm episode-not-found-next:0:42: ok score=1.0
+orca_vllm episode-failed-test-first:0:42: ok score=1.0
+PREFIX START exl16
+WAITING FOR QUIET HOST exl16
+HOST IO full_avg10=0.0
+HOST IO full_avg10=0.0
+HOST IO full_avg10=0.0
+orca_vllm concurrency callers=1 lines=0 wall=10.30s
+orca_vllm concurrency callers=1 lines=0 wall=10.40s
+orca_vllm concurrency callers=2 lines=0 wall=12.04s
+orca_vllm concurrency callers=2 lines=0 wall=10.48s
+PREFIX exl16 turn0 wall=245.505s pass=2/2
+PREFIX exl16 turn1 wall=8.821s pass=2/2
+PREFIX exl16 turn2 wall=2.855s pass=2/2
+PREFIX exl16 turn3 wall=2.859s pass=2/2
+PREFIX exl16 turn4 wall=2.705s pass=2/2
+PREFIX exl16 turn5 wall=2.641s pass=2/2
+PREFIX exl16 turn6 wall=2.498s pass=2/2
+PREFIX exl16 turn7 wall=2.727s pass=2/2
+PREFIX exl16 turn8 wall=2.529s pass=2/2
+PREFIX exl16 turn9 wall=2.643s pass=2/2
+PREFIX exl16 turn10 wall=2.427s pass=2/2
+PREFIX exl16 turn11 wall=2.689s pass=2/2
+PREFIX exl16 turn12 wall=2.486s pass=2/2
+PREFIX exl16 turn13 wall=2.714s pass=2/2
+PREFIX exl16 turn14 wall=2.670s pass=2/2
+PREFIX exl16 turn15 wall=2.689s pass=2/2
+PREFIX exl16 turn16 wall=2.409s pass=2/2
+PREFIX exl16 turn17 wall=2.749s pass=2/2
+PREFIX exl16 turn18 wall=2.486s pass=2/2
+PREFIX exl16 turn19 wall=2.755s pass=2/2
+PREFIX exl16 turn20 wall=2.551s pass=2/2
+orca_vllm concurrent coding 2/24 score=2.0/2
+orca_vllm concurrent coding 4/24 score=2.0/2
+orca_vllm concurrent coding 6/24 score=2.0/2
+orca_vllm concurrent coding 8/24 score=2.0/2
+orca_vllm concurrent coding 10/24 score=2.0/2
+orca_vllm concurrent coding 12/24 score=2.0/2
+orca_vllm concurrent coding 14/24 score=1.0/2
+orca_vllm concurrent coding 16/24 score=2.0/2
+orca_vllm concurrent coding 18/24 score=2.0/2
+orca_vllm concurrent coding 20/24 score=2.0/2
+orca_vllm concurrent coding 22/24 score=2.0/2
+orca_vllm concurrent coding 24/24 score=2.0/2
+orca_vllm episode-unicode-next:0:42: ok score=1.0
+orca_vllm episode-cache-first:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-first:0:42: ok score=1.0
+orca_vllm episode-cache-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-next:0:42: ok score=1.0
+orca_vllm episode-unicode-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-first:0:42: ok score=1.0
+orca_vllm episode-not-found-first:0:42: ok score=1.0
+orca_vllm episode-failed-test-next:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-first:0:42: ok score=1.0
+orca_vllm episode-not-found-next:0:42: ok score=1.0
+orca_vllm episode-failed-test-first:0:42: ok score=1.0
+PREFIX START dflash2
+WAITING FOR QUIET HOST dflash2
+HOST IO full_avg10=0.8
+HOST IO full_avg10=0.37
+HOST IO full_avg10=0.13
+PREFIX RESTORED True
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-run5.py", line 148, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-run5.py", line 142, in main
+    p.main(profiles=[('control',False,64,True,True),('exl16',False,64,True,True),('dflash2',False,64,True,True)],gpu_fraction='0.92',generation_effort='low')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orcasaq-latest-2026-10-07/run-prefix.py", line 147, in main
+    w.wait_ready()
+    ~~~~~~~~~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 89, in wait_ready
+    raise RuntimeError('Server exited before ready')
+RuntimeError: Server exited before ready

@@ -1,0 +1,75 @@
+READY gsq_q8_0 pool=320000 phase=capacity-screen
+READY gsq_q8_0 pool=320000 phase=quality
+gsq_q8_0 full 1/58 support-transcript-en:0:42 score=1.0
+gsq_q8_0 full 2/58 episode-unicode-next:0:42 score=1.0
+gsq_q8_0 full 3/58 retrieve-revision-4096:0:42 score=1.0
+gsq_q8_0 full 4/58 code-env-lines:0:42 score=1.0
+gsq_q8_0 full 5/58 code-reconcile:0:42 score=1.0
+gsq_q8_0 full 6/58 episode-cache-first:0:42 score=1.0
+gsq_q8_0 full 7/58 retrieve-join-4096:0:42 score=1.0
+gsq_q8_0 full 8/58 perf-prefill-medium:0:42 score=None
+gsq_q8_0 full 9/58 episode-untrusted-tool-next:0:42 score=1.0
+gsq_q8_0 full 10/58 code-diff-keys:0:42 score=1.0
+gsq_q8_0 full 11/58 code-rolling-window:0:42 score=1.0
+gsq_q8_0 full 12/58 support-reason-boundary:0:42 score=1.0
+gsq_q8_0 full 13/58 episode-pt-pods-next:0:42 score=1.0
+gsq_q8_0 full 14/58 extract-pt-correction:0:42 score=1.0
+gsq_q8_0 full 15/58 episode-pt-pods-first:0:42 score=1.0
+gsq_q8_0 full 16/58 support-relevant-config:0:42 score=1.0
+gsq_q8_0 full 17/58 code-range-coalesce:0:42 score=1.0
+gsq_q8_0 full 18/58 episode-cache-next:0:42 score=1.0
+gsq_q8_0 full 19/58 retrieve-revision-64:0:42 score=1.0
+gsq_q8_0 full 20/58 code-retry-budget:0:42 score=1.0
+gsq_q8_0 full 21/58 episode-pod-logs-next:0:42 score=1.0
+gsq_q8_0 full 22/58 code-pagination:0:42 score=1.0
+gsq_q8_0 full 23/58 extract-missing:0:42 score=1.0
+gsq_q8_0 full 24/58 episode-unicode-first:0:42 score=1.0
+gsq_q8_0 full 25/58 perf-decode-medium:0:42 score=None
+gsq_q8_0 full 26/58 episode-quoted-path-first:0:42 score=1.0
+gsq_q8_0 full 27/58 code-ttl:0:42 score=1.0
+gsq_q8_0 full 28/58 retrieve-join-64:0:42 score=1.0
+gsq_q8_0 full 29/58 episode-quoted-path-next:0:42 score=1.0
+gsq_q8_0 full 30/58 retrieve-revision-1024:0:42 score=1.0
+gsq_q8_0 full 31/58 code-sse-frames:0:42 score=1.0
+gsq_q8_0 full 32/58 episode-pod-logs-first:0:42 score=1.0
+gsq_q8_0 full 33/58 extract-boolean:0:42 score=1.0
+gsq_q8_0 full 34/58 episode-not-found-first:0:42 score=1.0
+gsq_q8_0 full 35/58 code-stable-dedupe:0:42 score=1.0
+gsq_q8_0 full 36/58 episode-failed-test-next:0:42 score=1.0
+gsq_q8_0 full 37/58 extract-quoted:0:42 score=1.0
+gsq_q8_0 full 38/58 episode-untrusted-tool-first:0:42 score=1.0
+gsq_q8_0 full 39/58 retrieve-join-1024:0:42 score=1.0
+gsq_q8_0 full 40/58 code-histogram:0:42 score=1.0
+gsq_q8_0 full 41/58 support-transcript-pt:0:42 score=1.0
+gsq_q8_0 full 42/58 perf-decode-short:0:42 score=None
+gsq_q8_0 full 43/58 code-merge-config:0:42 score=1.0
+gsq_q8_0 full 44/58 episode-not-found-next:0:42 score=1.0
+gsq_q8_0 full 45/58 extract-en-correction:0:42 score=1.0
+gsq_q8_0 full 46/58 code-lru:0:42 score=1.0
+gsq_q8_0 full 47/58 episode-failed-test-first:0:42 score=1.0
+gsq_q8_0 full 48/58 support-relevant-db:0:42 score=1.0
+gsq_q8_0 full 49/58 code-jsonl:0:42 score=1.0
+gsq_q8_0 full 50/58 perf-prefill-short:0:42 score=None
+gsq_q8_0 full 51/58 code-flatten:0:42 score=1.0
+gsq_q8_0 full 52/58 code-path-normalize:0:42 score=1.0
+gsq_q8_0 full 53/58 code-batch-bytes:0:42 score=1.0
+gsq_q8_0 full 54/58 code-rate-limit:0:42 score=1.0
+gsq_q8_0 full 55/58 support-reason-deps:0:42 score=1.0
+gsq_q8_0 full 56/58 code-topological:0:42 score=1.0
+gsq_q8_0 full 57/58 code-redact:0:42 score=1.0
+gsq_q8_0 full 58/58 extract-units:0:42 score=1.0
+gsq_q8_0 concurrent coding 2/24 score=2.0/2
+gsq_q8_0 concurrent coding 4/24 score=2.0/2
+gsq_q8_0 concurrent coding 6/24 score=2.0/2
+gsq_q8_0 concurrent coding 8/24 score=2.0/2
+gsq_q8_0 concurrent coding 10/24 score=2.0/2
+gsq_q8_0 concurrent coding 12/24 score=2.0/2
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-rco-2026-10-08/run-frozen.py", line 205, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-rco-2026-10-08/run-frozen.py", line 184, in main
+    q.run(w,arm,ROOT/(arm['name']+'-concurrent-quality.jsonl'))
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/concurrent_quality.py", line 49, in run
+    raise RuntimeError('Concurrent coding infrastructure failure')
+RuntimeError: Concurrent coding infrastructure failure

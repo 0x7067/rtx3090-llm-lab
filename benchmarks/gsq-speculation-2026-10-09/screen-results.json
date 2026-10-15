@@ -1,0 +1,24 @@
+[
+  {
+    "arm": "baseline",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  },
+  {
+    "arm": "mtp1",
+    "error": "Server exited before ready"
+  },
+  {
+    "arm": "mtp2",
+    "error": "Resource monitor aborted server"
+  },
+  {
+    "arm": "dflash-gpu",
+    "error": "Server exited before ready"
+  },
+  {
+    "arm": "dflash-cpu",
+    "error": "Server exited before ready"
+  }
+]

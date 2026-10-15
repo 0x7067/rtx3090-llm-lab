@@ -1,0 +1,73 @@
+PREFIX START control
+PREFIX control turn0 wall=245.682s pass=2/2
+PREFIX control turn1 wall=8.807s pass=2/2
+PREFIX control turn2 wall=2.794s pass=2/2
+PREFIX control turn3 wall=2.794s pass=2/2
+PREFIX control turn4 wall=2.680s pass=2/2
+PREFIX control turn5 wall=2.639s pass=2/2
+PREFIX control turn6 wall=2.360s pass=2/2
+PREFIX control turn7 wall=2.714s pass=2/2
+PREFIX control turn8 wall=2.488s pass=2/2
+PREFIX control turn9 wall=2.613s pass=2/2
+PREFIX control turn10 wall=2.414s pass=2/2
+PREFIX control turn11 wall=2.662s pass=2/2
+PREFIX control turn12 wall=2.438s pass=2/2
+PREFIX control turn13 wall=2.657s pass=2/2
+PREFIX control turn14 wall=2.430s pass=2/2
+PREFIX control turn15 wall=2.710s pass=2/2
+PREFIX control turn16 wall=2.404s pass=2/2
+PREFIX control turn17 wall=2.684s pass=2/2
+PREFIX control turn18 wall=2.423s pass=2/2
+PREFIX control turn19 wall=2.758s pass=2/2
+PREFIX control turn20 wall=2.329s pass=2/2
+PREFIX START checkpoint
+PREFIX checkpoint turn0 wall=245.435s pass=2/2
+PREFIX checkpoint turn1 wall=8.844s pass=2/2
+PREFIX checkpoint turn2 wall=2.726s pass=2/2
+PREFIX checkpoint turn3 wall=2.782s pass=2/2
+PREFIX checkpoint turn4 wall=2.675s pass=2/2
+PREFIX checkpoint turn5 wall=2.640s pass=2/2
+PREFIX checkpoint turn6 wall=2.484s pass=2/2
+PREFIX checkpoint turn7 wall=2.627s pass=2/2
+PREFIX checkpoint turn8 wall=2.500s pass=2/2
+PREFIX checkpoint turn9 wall=2.612s pass=2/2
+PREFIX checkpoint turn10 wall=2.505s pass=2/2
+PREFIX checkpoint turn11 wall=2.736s pass=2/2
+PREFIX checkpoint turn12 wall=2.427s pass=2/2
+PREFIX checkpoint turn13 wall=2.652s pass=2/2
+PREFIX checkpoint turn14 wall=2.421s pass=2/2
+PREFIX checkpoint turn15 wall=2.692s pass=2/2
+PREFIX checkpoint turn16 wall=2.563s pass=2/2
+PREFIX checkpoint turn17 wall=2.792s pass=2/2
+PREFIX checkpoint turn18 wall=2.401s pass=2/2
+PREFIX checkpoint turn19 wall=2.564s pass=2/2
+PREFIX checkpoint turn20 wall=2.537s pass=2/2
+orca_vllm concurrent coding 2/24 score=2.0/2
+orca_vllm concurrent coding 4/24 score=2.0/2
+orca_vllm concurrent coding 6/24 score=2.0/2
+orca_vllm concurrent coding 8/24 score=2.0/2
+orca_vllm concurrent coding 10/24 score=2.0/2
+orca_vllm concurrent coding 12/24 score=2.0/2
+orca_vllm concurrent coding 14/24 score=2.0/2
+orca_vllm concurrent coding 16/24 score=1.0/2
+orca_vllm concurrent coding 18/24 score=2.0/2
+orca_vllm concurrent coding 20/24 score=2.0/2
+orca_vllm concurrent coding 22/24 score=2.0/2
+orca_vllm concurrent coding 24/24 score=2.0/2
+orca_vllm episode-unicode-next:0:42: ok score=1.0
+orca_vllm episode-cache-first:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-next:0:42: ok score=1.0
+orca_vllm episode-pt-pods-first:0:42: ok score=1.0
+orca_vllm episode-cache-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-next:0:42: ok score=1.0
+orca_vllm episode-unicode-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-first:0:42: ok score=1.0
+orca_vllm episode-quoted-path-next:0:42: ok score=1.0
+orca_vllm episode-pod-logs-first:0:42: ok score=1.0
+orca_vllm episode-not-found-first:0:42: ok score=1.0
+orca_vllm episode-failed-test-next:0:42: ok score=1.0
+orca_vllm episode-untrusted-tool-first:0:42: ok score=1.0
+orca_vllm episode-not-found-next:0:42: ok score=1.0
+orca_vllm episode-failed-test-first:0:42: ok score=1.0
+PREFIX RESTORED True

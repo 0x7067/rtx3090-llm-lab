@@ -1,0 +1,178 @@
+{
+  "status": "ok",
+  "content": "\n\nOK",
+  "reasoning": "The user simply asked me to reply \"OK\". This is a straightforward request.\n",
+  "tool_calls": [],
+  "finish_reason": "stop",
+  "events": [
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "role": "assistant",
+            "content": ""
+          },
+          "logprobs": null,
+          "finish_reason": null
+        }
+      ],
+      "prompt_token_ids": null,
+      "prompt_text": null
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": "The"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " user simply"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " asked me to reply"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " \"OK\"."
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " This is a straightforward"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "reasoning": " request.\n"
+          },
+          "logprobs": null,
+          "finish_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [
+        {
+          "index": 0,
+          "delta": {
+            "content": "\n\nOK"
+          },
+          "logprobs": null,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ]
+    },
+    {
+      "id": "chatcmpl-8479e20dd63bd35a",
+      "object": "chat.completion.chunk",
+      "created": 1791385384,
+      "model": "orca-qwen3.8-27b",
+      "choices": [],
+      "usage": {
+        "prompt_tokens": 55,
+        "total_tokens": 76,
+        "completion_tokens": 21,
+        "completion_tokens_details": {
+          "reasoning_tokens": 17
+        }
+      },
+      "system_fingerprint": "vllm-0.31.0-c347510f"
+    }
+  ],
+  "ttft_s": 0.6848594539915211,
+  "usage": {
+    "prompt_tokens": 55,
+    "total_tokens": 76,
+    "completion_tokens": 21,
+    "completion_tokens_details": {
+      "reasoning_tokens": 17
+    }
+  },
+  "timings": {},
+  "wall_s": 0.9575245390005875,
+  "e2e_output_tps": 21.93155281630554,
+  "server_decode_tps": null,
+  "server_prefill_tps": null
+}

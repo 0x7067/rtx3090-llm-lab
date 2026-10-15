@@ -1,0 +1,579 @@
+{
+  "thinkingcap_plan_sha256": "1a085e92e72a85942dd00af872979d7cba29b4fea7dd0f81f9a8148107625cea",
+  "orca_plan_sha256": "f22ea1e3fe8326b8d1b9b6404faf08bbcfaddf454c7889bf2f0269f3f1f1d6cc",
+  "matched_request_and_grader_bytes": true,
+  "quality_observations": 54,
+  "thinkingcap_score": 54.0,
+  "orca_score": 54.0,
+  "orca_only_failures": [],
+  "thinkingcap_only_failures": [],
+  "pairs": [
+    {
+      "id": "support-transcript-en:0:42",
+      "tier": "transcript_qa",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.8456227490096353,
+      "orca_wall_s": 1.611229889007518
+    },
+    {
+      "id": "episode-unicode-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 1.8772572549933102,
+      "orca_wall_s": 1.4078498040034901
+    },
+    {
+      "id": "retrieve-revision-4096:0:42",
+      "tier": "retrieval",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 174.93039265900734,
+      "orca_wall_s": 181.2038219080132
+    },
+    {
+      "id": "code-env-lines:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 20.27553967598942,
+      "orca_wall_s": 11.046476704999804
+    },
+    {
+      "id": "code-reconcile:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 9.58323951199418,
+      "orca_wall_s": 5.607271182001568
+    },
+    {
+      "id": "episode-cache-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.2937830750015564,
+      "orca_wall_s": 2.1339730820036493
+    },
+    {
+      "id": "retrieve-join-4096:0:42",
+      "tier": "retrieval",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 171.79717339898343,
+      "orca_wall_s": 179.38774618902244
+    },
+    {
+      "id": "episode-untrusted-tool-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.6279244530014694,
+      "orca_wall_s": 2.047852971998509
+    },
+    {
+      "id": "code-diff-keys:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 28.463478568999562,
+      "orca_wall_s": 27.472145695006475
+    },
+    {
+      "id": "code-rolling-window:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 15.885778669995489,
+      "orca_wall_s": 9.334072753990768
+    },
+    {
+      "id": "support-reason-boundary:0:42",
+      "tier": "reasoning",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.6837787380209193,
+      "orca_wall_s": 1.809622611006489
+    },
+    {
+      "id": "episode-pt-pods-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.702585173974512,
+      "orca_wall_s": 2.4291162719891872
+    },
+    {
+      "id": "extract-pt-correction:0:42",
+      "tier": "extraction",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.819597880006768,
+      "orca_wall_s": 1.9787473730102647
+    },
+    {
+      "id": "episode-pt-pods-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.9181316110189073,
+      "orca_wall_s": 2.13588370999787
+    },
+    {
+      "id": "support-relevant-config:0:42",
+      "tier": "relevance",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.655992921994766,
+      "orca_wall_s": 1.4239756529859733
+    },
+    {
+      "id": "code-range-coalesce:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 19.363163988979068,
+      "orca_wall_s": 13.15233899600571
+    },
+    {
+      "id": "episode-cache-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 3.4048684029839933,
+      "orca_wall_s": 1.9053322709805798
+    },
+    {
+      "id": "retrieve-revision-64:0:42",
+      "tier": "retrieval",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 5.850319775985554,
+      "orca_wall_s": 4.2992391510051675
+    },
+    {
+      "id": "code-retry-budget:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 14.712208121985896,
+      "orca_wall_s": 12.379959012003383
+    },
+    {
+      "id": "episode-pod-logs-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.7752088039997034,
+      "orca_wall_s": 2.0059320609725546
+    },
+    {
+      "id": "code-pagination:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 14.441446145996451,
+      "orca_wall_s": 5.610571115015773
+    },
+    {
+      "id": "extract-missing:0:42",
+      "tier": "extraction",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.9401281560130883,
+      "orca_wall_s": 1.3492036769748665
+    },
+    {
+      "id": "episode-unicode-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.517549254000187,
+      "orca_wall_s": 1.7649384789983742
+    },
+    {
+      "id": "episode-quoted-path-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.980738732003374,
+      "orca_wall_s": 1.900586959993234
+    },
+    {
+      "id": "code-ttl:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 6.999637305008946,
+      "orca_wall_s": 3.17654495901661
+    },
+    {
+      "id": "retrieve-join-64:0:42",
+      "tier": "retrieval",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 4.05955184699269,
+      "orca_wall_s": 3.092942758987192
+    },
+    {
+      "id": "episode-quoted-path-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.4066540189960506,
+      "orca_wall_s": 1.952529318019515
+    },
+    {
+      "id": "retrieve-revision-1024:0:42",
+      "tier": "retrieval",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 34.37627635500394,
+      "orca_wall_s": 33.94509860899416
+    },
+    {
+      "id": "code-sse-frames:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 35.97263466799632,
+      "orca_wall_s": 22.00080955098383
+    },
+    {
+      "id": "episode-pod-logs-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 3.520681580004748,
+      "orca_wall_s": 2.184285835013725
+    },
+    {
+      "id": "extract-boolean:0:42",
+      "tier": "extraction",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 3.207824801997049,
+      "orca_wall_s": 1.3499507769884076
+    },
+    {
+      "id": "episode-not-found-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.494197181018535,
+      "orca_wall_s": 1.3469255290110596
+    },
+    {
+      "id": "code-stable-dedupe:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 20.18129321100423,
+      "orca_wall_s": 13.302940238994779
+    },
+    {
+      "id": "episode-failed-test-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 1.9249481509905308,
+      "orca_wall_s": 1.4470435069815721
+    },
+    {
+      "id": "extract-quoted:0:42",
+      "tier": "extraction",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 3.8719347979931626,
+      "orca_wall_s": 3.114698966004653
+    },
+    {
+      "id": "episode-untrusted-tool-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 1.8487831789825577,
+      "orca_wall_s": 1.8108495270134881
+    },
+    {
+      "id": "retrieve-join-1024:0:42",
+      "tier": "retrieval",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 32.75523190700915,
+      "orca_wall_s": 32.20060297101736
+    },
+    {
+      "id": "code-histogram:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 47.75792596201063,
+      "orca_wall_s": 29.398897511011455
+    },
+    {
+      "id": "support-transcript-pt:0:42",
+      "tier": "transcript_qa",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.384663406992331,
+      "orca_wall_s": 1.7953982629987877
+    },
+    {
+      "id": "code-merge-config:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 17.597335958998883,
+      "orca_wall_s": 16.755715504987165
+    },
+    {
+      "id": "episode-not-found-next:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 1.9690190120018087,
+      "orca_wall_s": 1.5824178520124406
+    },
+    {
+      "id": "extract-en-correction:0:42",
+      "tier": "extraction",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 3.574133485002676,
+      "orca_wall_s": 2.080330968979979
+    },
+    {
+      "id": "code-lru:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 9.488915652007563,
+      "orca_wall_s": 5.972500490024686
+    },
+    {
+      "id": "episode-failed-test-first:0:42",
+      "tier": "tool_replay",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 1.7907003299915232,
+      "orca_wall_s": 2.2237311089993455
+    },
+    {
+      "id": "support-relevant-db:0:42",
+      "tier": "relevance",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 4.527612227015197,
+      "orca_wall_s": 2.9499634130042978
+    },
+    {
+      "id": "code-jsonl:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 14.287560499011306,
+      "orca_wall_s": 11.8931671899918
+    },
+    {
+      "id": "code-flatten:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 22.338698836014373,
+      "orca_wall_s": 14.420846400986193
+    },
+    {
+      "id": "code-path-normalize:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 17.303760097012855,
+      "orca_wall_s": 15.65454876999138
+    },
+    {
+      "id": "code-batch-bytes:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 23.2060267959896,
+      "orca_wall_s": 16.05654572401545
+    },
+    {
+      "id": "code-rate-limit:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 21.631183289020555,
+      "orca_wall_s": 22.622557471011532
+    },
+    {
+      "id": "support-reason-deps:0:42",
+      "tier": "reasoning",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.360240887006512,
+      "orca_wall_s": 1.2980504209990613
+    },
+    {
+      "id": "code-topological:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 25.138178723980673,
+      "orca_wall_s": 24.27281213598326
+    },
+    {
+      "id": "code-redact:0:42",
+      "tier": "coding",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 15.29087420500582,
+      "orca_wall_s": 11.85985815100139
+    },
+    {
+      "id": "extract-units:0:42",
+      "tier": "extraction",
+      "thinkingcap_score": 1.0,
+      "orca_score": 1.0,
+      "thinkingcap_wall_s": 2.982441505009774,
+      "orca_wall_s": 1.6190266409830656
+    }
+  ],
+  "performance": {
+    "prefill-medium": [
+      {
+        "id": "perf-prefill-medium:0:42",
+        "thinkingcap": {
+          "status": "ok",
+          "wall_s": 13.516348470991943,
+          "ttft_s": 13.516195356001845,
+          "e2e_output_tps": 0.0739844790289438,
+          "usage": {
+            "completion_tokens": 1,
+            "prompt_tokens": 12246,
+            "total_tokens": 12247,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "orca": {
+          "status": "ok",
+          "wall_s": 11.95645754900761,
+          "ttft_s": 11.956435978994705,
+          "e2e_output_tps": 0.08363681265133588,
+          "usage": {
+            "prompt_tokens": 12246,
+            "total_tokens": 12247,
+            "completion_tokens": 1,
+            "completion_tokens_details": {
+              "reasoning_tokens": 1
+            }
+          }
+        }
+      }
+    ],
+    "decode-medium": [
+      {
+        "id": "perf-decode-medium:0:42",
+        "thinkingcap": {
+          "status": "ok",
+          "wall_s": 25.115052750974428,
+          "ttft_s": 11.982510265981546,
+          "e2e_output_tps": 20.386180553816878,
+          "usage": {
+            "completion_tokens": 512,
+            "prompt_tokens": 12245,
+            "total_tokens": 12757,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "orca": {
+          "status": "ok",
+          "wall_s": 20.854480478999903,
+          "ttft_s": 12.007302090991288,
+          "e2e_output_tps": 24.551079108183732,
+          "usage": {
+            "prompt_tokens": 12245,
+            "total_tokens": 12757,
+            "completion_tokens": 512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 434
+            }
+          }
+        }
+      }
+    ],
+    "decode-short": [
+      {
+        "id": "perf-decode-short:0:42",
+        "thinkingcap": {
+          "status": "ok",
+          "wall_s": 12.758966449007858,
+          "ttft_s": 0.6554508559929673,
+          "e2e_output_tps": 40.12864224122271,
+          "usage": {
+            "completion_tokens": 512,
+            "prompt_tokens": 386,
+            "total_tokens": 898,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "orca": {
+          "status": "ok",
+          "wall_s": 9.9847573209845,
+          "ttft_s": 0.577121124981204,
+          "e2e_output_tps": 51.278161655862526,
+          "usage": {
+            "prompt_tokens": 386,
+            "total_tokens": 898,
+            "completion_tokens": 512,
+            "completion_tokens_details": {
+              "reasoning_tokens": 218
+            }
+          }
+        }
+      }
+    ],
+    "prefill-short": [
+      {
+        "id": "perf-prefill-short:0:42",
+        "thinkingcap": {
+          "status": "ok",
+          "wall_s": 0.6625656209944282,
+          "ttft_s": 0.6625159129907843,
+          "e2e_output_tps": 1.5092844667960963,
+          "usage": {
+            "completion_tokens": 1,
+            "prompt_tokens": 385,
+            "total_tokens": 386,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          }
+        },
+        "orca": {
+          "status": "ok",
+          "wall_s": 0.5316891489783302,
+          "ttft_s": 0.5316684389836155,
+          "e2e_output_tps": 1.88079821061151,
+          "usage": {
+            "prompt_tokens": 385,
+            "total_tokens": 386,
+            "completion_tokens": 1,
+            "completion_tokens_details": {
+              "reasoning_tokens": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "interpretation": "Descriptive paired observations across separately frozen arm metadata. No statistical equivalence claim."
+}

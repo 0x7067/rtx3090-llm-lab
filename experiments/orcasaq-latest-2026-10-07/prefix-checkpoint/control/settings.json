@@ -1,0 +1,8 @@
+{
+  "name": "publisher-control",
+  "mtp_depth": 2,
+  "batch_tokens": 2048,
+  "shared_prefix_checkpoint": false,
+  "prefix_match_unit": 64,
+  "image": "sha256:bf0c4eebc48d0db6d8c779be8b81018ced33acfbcc1ac98011ad9ac82c4ee45c"
+}

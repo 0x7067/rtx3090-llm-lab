@@ -1,0 +1,44 @@
+{
+  "control_drift_fraction": 0.021645343532750938,
+  "screen_gate_seconds": 83.27023177153605,
+  "panels": [
+    {
+      "name": "mtp3-b4096",
+      "screen_seconds": 85.36531079199631,
+      "fixed_output_complete": true,
+      "panel": {
+        "passed": 22,
+        "count": 24,
+        "inference_seconds": 228.0485789659724,
+        "failures": [
+          "code-rolling-window:0:42",
+          "code-range-coalesce:0:42"
+        ]
+      },
+      "mtp_depth": 3,
+      "batch_tokens": 4096
+    },
+    {
+      "name": "mtp2-b4096",
+      "screen_seconds": 86.60044873092556,
+      "fixed_output_complete": true,
+      "panel": {
+        "passed": 22,
+        "count": 24,
+        "inference_seconds": 263.20617747100187,
+        "failures": [
+          "code-flatten:0:42",
+          "code-histogram:concurrent:2718"
+        ]
+      },
+      "mtp_depth": 2,
+      "batch_tokens": 4096
+    }
+  ],
+  "selected": {
+    "name": "publisher-control",
+    "mtp_depth": 2,
+    "batch_tokens": 2048
+  },
+  "scope": "Provisional screen selection; full suite and long-context validation follow."
+}

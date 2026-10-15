@@ -1,0 +1,2 @@
+{"time": 1791591234.9229138, "container": "gsq-resident-ampere-mtp2-q8-state-screen-4", "event": "pause", "global_psi_avg10": 6.08}
+{"time": 1791591253.228715, "container": "gsq-resident-ampere-mtp2-q8-state-screen-4", "event": "resume", "duration_s": 18.305870960000902}

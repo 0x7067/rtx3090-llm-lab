@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-rco-2026-10-08/verify-production.py", line 85, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-rco-2026-10-08/verify-production.py", line 77, in main
+    for name,evidence in pool.map(client,[('pi','.pi','llama-swap','GSQ_PI_READY'),('prime-agent','.prime','home-qwen','GSQ_PRIME_READY')]):report[name]=evidence
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/denguinho/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-rco-2026-10-08/verify-production.py", line 28, in client
+    assert settings['defaultModel']=='orca-saq2-27b'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

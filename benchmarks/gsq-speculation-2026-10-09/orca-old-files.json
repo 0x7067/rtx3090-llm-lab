@@ -1,0 +1,116 @@
+[
+  {
+    "blobId": "5b5e717e9243a55ba05bd657ccc73aa7627c7be7",
+    "lfs": null,
+    "rfilename": ".gitattributes"
+  },
+  {
+    "blobId": "65c2732d9a5543325132564e455ba6cfcd68891d",
+    "lfs": {
+      "pointerSize": 133,
+      "sha256": "e1836f673ec0893d8f6104f81072e7b1b136ef6a8093caf36627fd96f2ad0b8b",
+      "size": 29179566
+    },
+    "rfilename": "assets/liberty.mp4"
+  },
+  {
+    "blobId": "277a1c17e7667fe5177f3e82120196aef7d19413",
+    "lfs": null,
+    "rfilename": "assets/pelican-bicycle.svg"
+  },
+  {
+    "blobId": "c0c686f9c38d70d179fb7b5f5aa7530bc913dda3",
+    "lfs": null,
+    "rfilename": "chat_template.jinja"
+  },
+  {
+    "blobId": "c607dfecd8a497ceae0226639f5bf2eabae8a169",
+    "lfs": null,
+    "rfilename": "config.json"
+  },
+  {
+    "blobId": "023756cfadf88e5bf69eefeee3e172f38c448d64",
+    "lfs": null,
+    "rfilename": "generation_config.json"
+  },
+  {
+    "blobId": "a494e019ca1502219fd0128658b979e5f05ae8e8",
+    "lfs": null,
+    "rfilename": "merges.txt"
+  },
+  {
+    "blobId": "2f35be15028d0b7bc8956db96d266fe51c43a3ec",
+    "lfs": {
+      "pointerSize": 135,
+      "sha256": "25353d254848dba68557344a6f484a49b21e005669efd41927fe14b2a877d00d",
+      "size": 3992179840
+    },
+    "rfilename": "model-00001-of-00004.safetensors"
+  },
+  {
+    "blobId": "33674d1fc769f6e40de70c0b7b59918985e4f631",
+    "lfs": {
+      "pointerSize": 135,
+      "sha256": "155c4d6ecda09f1864f5aec92afd49d6c343613a54724bb7cfecb7d818d8f61c",
+      "size": 3986581108
+    },
+    "rfilename": "model-00002-of-00004.safetensors"
+  },
+  {
+    "blobId": "5322c890c9fbede7372257d9d5f87986e6192ff5",
+    "lfs": {
+      "pointerSize": 135,
+      "sha256": "1c1fc0805f18fc7284f958df99b92bf72307b27bc358f8979d58179aae88b9aa",
+      "size": 3125485096
+    },
+    "rfilename": "model-00003-of-00004.safetensors"
+  },
+  {
+    "blobId": "c00d9b1e91c0319c03b14d63c075f211959cfc2f",
+    "lfs": {
+      "pointerSize": 135,
+      "sha256": "36ddf6c9dc0ca408f92a415a9d910a93b1805c2d5ae6da1e1316d3bc9764174f",
+      "size": 1166189360
+    },
+    "rfilename": "model-00004-of-00004.safetensors"
+  },
+  {
+    "blobId": "9020f09bd450a3ce49662d0fe4d13f2f28befc38",
+    "lfs": null,
+    "rfilename": "model.safetensors.index.json"
+  },
+  {
+    "blobId": "2ea84a437d448ff71b08df68fdd949d5cc4ebb64",
+    "lfs": null,
+    "rfilename": "preprocessor_config.json"
+  },
+  {
+    "blobId": "48c3a9f672ec2f8e4560abc3e9d94359475d1f84",
+    "lfs": null,
+    "rfilename": "quantization_config.json"
+  },
+  {
+    "blobId": "9328ce9c41e80f6dd7bc2c66d8ae1fc93bf87440",
+    "lfs": {
+      "pointerSize": 133,
+      "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+      "size": 12809320
+    },
+    "rfilename": "tokenizer.json"
+  },
+  {
+    "blobId": "5de744b3fca2129d7186979ae47c06be33903243",
+    "lfs": null,
+    "rfilename": "tokenizer_config.json"
+  },
+  {
+    "blobId": "3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe",
+    "lfs": null,
+    "rfilename": "video_preprocessor_config.json"
+  },
+  {
+    "blobId": "0aa0ce0658d60ac4a5d609f4eadb0e8e43514176",
+    "lfs": null,
+    "rfilename": "vocab.json"
+  }
+]

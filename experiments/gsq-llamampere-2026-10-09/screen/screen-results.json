@@ -1,0 +1,26 @@
+[
+  {
+    "arm": "stock-no-spec",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  },
+  {
+    "arm": "ampere-no-spec",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  },
+  {
+    "arm": "ampere-mtp2-f32",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  },
+  {
+    "arm": "ampere-mtp2-q8-state",
+    "ready": true,
+    "smoke_pass": true,
+    "screen_complete": true
+  }
+]

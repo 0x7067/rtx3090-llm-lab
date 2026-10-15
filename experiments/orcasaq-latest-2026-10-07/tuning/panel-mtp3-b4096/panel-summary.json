@@ -1,0 +1,9 @@
+{
+  "passed": 22,
+  "count": 24,
+  "inference_seconds": 228.0485789659724,
+  "failures": [
+    "code-rolling-window:0:42",
+    "code-range-coalesce:0:42"
+  ]
+}

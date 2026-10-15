@@ -1,0 +1,25 @@
+{
+  "plan_sha256": "104c8c939c0faad5080dc780bbd5ddae35add2799f642c8805db4edde31e7c69",
+  "arm": "gsq_q8_resident",
+  "scope": "Single-arm observations; no quality-equivalence or speedup verdict.",
+  "quality": {
+    "tool_replay": {
+      "attempted": 16,
+      "clusters": 8,
+      "statuses": {
+        "ok": 16
+      },
+      "finish_reasons": {
+        "tool_calls": 16
+      },
+      "prompt_tokens_observed": 16,
+      "prompt_tokens_min": 621,
+      "prompt_tokens_max": 717,
+      "full_score": 16,
+      "completed": 16,
+      "mean_score": 1.0
+    }
+  },
+  "performance": {},
+  "failures": []
+}

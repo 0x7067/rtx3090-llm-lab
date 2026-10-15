@@ -1,0 +1,52 @@
+READY ampere-mtp2-f32 pool=320000 phase=quality
+ampere-mtp2-f32 full 1/16 episode-unicode-next:0:42 score=1.0
+ampere-mtp2-f32 full 2/16 episode-cache-first:0:42 score=1.0
+ampere-mtp2-f32 full 3/16 episode-untrusted-tool-next:0:42 score=1.0
+ampere-mtp2-f32 full 4/16 episode-pt-pods-next:0:42 score=1.0
+ampere-mtp2-f32 full 5/16 episode-pt-pods-first:0:42 score=1.0
+ampere-mtp2-f32 full 6/16 episode-cache-next:0:42 score=1.0
+ampere-mtp2-f32 full 7/16 episode-pod-logs-next:0:42 score=1.0
+ampere-mtp2-f32 full 8/16 episode-unicode-first:0:42 score=1.0
+ampere-mtp2-f32 full 9/16 episode-quoted-path-first:0:42 score=1.0
+ampere-mtp2-f32 full 10/16 episode-quoted-path-next:0:42 score=1.0
+ampere-mtp2-f32 full 11/16 episode-pod-logs-first:0:42 score=1.0
+ampere-mtp2-f32 full 12/16 episode-not-found-first:0:42 score=1.0
+ampere-mtp2-f32 full 13/16 episode-failed-test-next:0:42 score=1.0
+ampere-mtp2-f32 full 14/16 episode-untrusted-tool-first:0:42 score=1.0
+ampere-mtp2-f32 full 15/16 episode-not-found-next:0:42 score=1.0
+ampere-mtp2-f32 full 16/16 episode-failed-test-first:0:42 score=1.0
+ampere-mtp2-f32 concurrent coding 2/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 4/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 6/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 8/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 10/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 12/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 14/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 16/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 18/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 20/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 22/24 score=2.0/2
+ampere-mtp2-f32 concurrent coding 24/24 score=2.0/2
+READY ampere-mtp2-f32 pool=320000 phase=long-2x9300
+ampere-mtp2-f32 cold wall=752.47s pass=[True, True] prompt=[148904, 148902]
+ampere-mtp2-f32 followup-1 wall=4.58s pass=[True, True] prompt=[149003, 148999]
+ampere-mtp2-f32 followup-2 wall=3.76s pass=[True, True] prompt=[149066, 149059]
+ampere-mtp2-f32 followup-3 wall=3.91s pass=[True, True] prompt=[149130, 149118]
+ampere-mtp2-f32 followup-4 wall=3.70s pass=[True, True] prompt=[149193, 149181]
+ampere-mtp2-f32 followup-5 wall=3.56s pass=[True, True] prompt=[149254, 149244]
+ampere-mtp2-f32 followup-6 wall=3.54s pass=[True, True] prompt=[149315, 149305]
+ampere-mtp2-f32 followup-7 wall=3.46s pass=[True, True] prompt=[149375, 149364]
+ampere-mtp2-f32 followup-8 wall=3.70s pass=[True, True] prompt=[149438, 149427]
+ampere-mtp2-f32 followup-9 wall=3.52s pass=[True, True] prompt=[149503, 149489]
+ampere-mtp2-f32 followup-10 wall=3.56s pass=[True, True] prompt=[149563, 149552]
+ampere-mtp2-f32 followup-11 wall=3.75s pass=[True, True] prompt=[149624, 149616]
+ampere-mtp2-f32 followup-12 wall=3.59s pass=[True, True] prompt=[149685, 149679]
+ampere-mtp2-f32 followup-13 wall=3.50s pass=[True, True] prompt=[149744, 149741]
+ampere-mtp2-f32 followup-14 wall=3.26s pass=[True, True] prompt=[149805, 149801]
+ampere-mtp2-f32 followup-15 wall=3.71s pass=[True, True] prompt=[149865, 149860]
+ampere-mtp2-f32 followup-16 wall=3.41s pass=[True, True] prompt=[149928, 149922]
+ampere-mtp2-f32 followup-17 wall=3.92s pass=[True, True] prompt=[149991, 149985]
+ampere-mtp2-f32 followup-18 wall=3.52s pass=[True, True] prompt=[150053, 150047]
+ampere-mtp2-f32 followup-19 wall=3.53s pass=[True, True] prompt=[150116, 150107]
+ampere-mtp2-f32 followup-20 wall=3.55s pass=[True, True] prompt=[150179, 150167]
+ampere-mtp2-f32 cached-generation-512 wall=21.07s pass=[None, None] prompt=[150230, 150215]

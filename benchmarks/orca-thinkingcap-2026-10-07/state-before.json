@@ -1,0 +1,6 @@
+{
+  "replicas": "1",
+  "flux_suspended": false,
+  "template_sha256": "4b1f81a3815dc4e92475ee45fef190a738e327843f6e2e253ebe835647196ff6",
+  "gpu": "23871 MiB, 210 MHz, 405 MHz, 370.00 W"
+}

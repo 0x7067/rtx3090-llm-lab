@@ -1,0 +1,22 @@
+BENCHMARK RESTART REQUESTED
+PREFLIGHT IO full_avg10=3.88
+PREFLIGHT IO full_avg10=1.42
+PREFLIGHT IO full_avg10=1.03
+PREFLIGHT IO full_avg10=0.88
+PREFLIGHT IO full_avg10=0.87
+PREFLIGHT IO full_avg10=0.41
+PREFIX RESTORED True
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart2.py", line 145, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart2.py", line 139, in main
+    p.main(profiles=[('control',False,64,True,True),('exl16',False,64,True,True),('dflash2',False,64,True,True)],gpu_fraction='0.92',generation_effort='low')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orcasaq-latest-2026-10-07/run-prefix.py", line 141, in main
+    if w.command(['nvidia-smi', '--query-compute-apps=pid', '--format=csv,noheader']):
+       ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart2.py", line 60, in command
+    deadline=time.monotonic()+180
+             ^^^^
+UnboundLocalError: cannot access local variable 'time' where it is not associated with a value

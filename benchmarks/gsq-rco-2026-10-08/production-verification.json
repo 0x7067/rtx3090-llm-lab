@@ -1,0 +1,193 @@
+{
+  "catalog": {
+    "unauthenticated_status": 401,
+    "authenticated_status": 200,
+    "models": {
+      "gsq-rco-27b": {
+        "id": "gsq-rco-27b",
+        "object": "model",
+        "created": 1791480080,
+        "owned_by": "llama-swap",
+        "name": "gsq-rco-27b",
+        "meta": {
+          "llamaswap": {
+            "input": [
+              "text"
+            ],
+            "max_model_len": 262144,
+            "max_tokens": 32768,
+            "reasoning": true
+          }
+        }
+      },
+      "humanlike-2.0": {
+        "id": "humanlike-2.0",
+        "object": "model",
+        "created": 1791480080,
+        "owned_by": "llama-swap",
+        "name": "humanlike-2.0",
+        "meta": {
+          "llamaswap": {
+            "input": [
+              "text"
+            ],
+            "max_model_len": 32768,
+            "max_tokens": 8192,
+            "reasoning": true
+          }
+        }
+      },
+      "orca-saq2-27b": {
+        "id": "orca-saq2-27b",
+        "object": "model",
+        "created": 1791480080,
+        "owned_by": "llama-swap",
+        "name": "orca-saq2-27b",
+        "meta": {
+          "llamaswap": {
+            "input": [
+              "text"
+            ],
+            "max_model_len": 150000,
+            "max_tokens": 32768,
+            "reasoning": true
+          }
+        }
+      }
+    },
+    "passed": true
+  },
+  "public_catalog": {
+    "unauthenticated_status": 401,
+    "authenticated_status": 200,
+    "passed": true
+  },
+  "humanlike-2.0": {
+    "result": {
+      "status": "ok",
+      "content": "HUMANLIKE_READY",
+      "reasoning": "",
+      "tool_calls": [],
+      "finish_reason": "stop",
+      "ttft_s": 133.5157611100003,
+      "usage": {
+        "completion_tokens": 5,
+        "prompt_tokens": 19,
+        "total_tokens": 24,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 19,
+        "prompt_ms": 602.653,
+        "prompt_per_token_ms": 31.71857894736842,
+        "prompt_per_second": 31.52726361604439,
+        "predicted_n": 5,
+        "predicted_ms": 113.558,
+        "predicted_per_token_ms": 28.3895,
+        "predicted_per_second": 35.224290670846614
+      },
+      "wall_s": 133.624168601993,
+      "e2e_output_tps": 0.03741838061415953,
+      "server_decode_tps": 35.224290670846614,
+      "server_prefill_tps": 31.52726361604439
+    },
+    "passed": true
+  },
+  "gsq-rco-27b": {
+    "result": {
+      "status": "ok",
+      "content": "GSQ_READY",
+      "reasoning": "The user is asking me to reply exactly \"GSQ_READY\". This is a straightforward request - I just need to output that exact string.\n",
+      "tool_calls": [],
+      "finish_reason": "stop",
+      "ttft_s": 95.93620410503354,
+      "usage": {
+        "completion_tokens": 35,
+        "prompt_tokens": 16,
+        "total_tokens": 51,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 16,
+        "prompt_ms": 693.93,
+        "prompt_per_token_ms": 43.370625,
+        "prompt_per_second": 23.057080685371727,
+        "predicted_n": 35,
+        "predicted_ms": 884.431,
+        "predicted_per_token_ms": 26.012676470588236,
+        "predicted_per_second": 38.4427954244028
+      },
+      "wall_s": 96.81704578601057,
+      "e2e_output_tps": 0.3615065892152771,
+      "server_decode_tps": 38.4427954244028,
+      "server_prefill_tps": 23.057080685371727
+    },
+    "passed": true
+  },
+  "runtime": {
+    "total_slots": 2,
+    "model_alias": "gsq-rco-27b",
+    "build_info": "b11429-d81235049",
+    "n_ctx": 262144,
+    "status": 200,
+    "passed": true
+  },
+  "tool_call": {
+    "status": 200,
+    "message": {
+      "role": "assistant",
+      "content": "",
+      "reasoning_content": "The user wants me to call report_ready with the tag \"GSQ_PRODUCTION_READY\".\n",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "report_ready",
+            "arguments": "{\"tag\":\"GSQ_PRODUCTION_READY\"}"
+          },
+          "id": "AuZ2i2qHa8YQLIxaBwvZwTmlx9uFp080"
+        }
+      ]
+    },
+    "passed": true
+  },
+  "tool_followup": {
+    "status": 200,
+    "content": "GSQ_TOOL_ROUNDTRIP_READY",
+    "passed": true
+  },
+  "pi": {
+    "defaults_unchanged": true,
+    "returncode": 0,
+    "model": "gsq-rco-27b",
+    "provider": "llama-swap",
+    "answer": "GSQ_PI_READY",
+    "default_model": "cline-pass/deepseek-v4.1-flash",
+    "default_provider": "clinepass",
+    "default_thinking": "max",
+    "passed": true
+  },
+  "prime-agent": {
+    "defaults_unchanged": true,
+    "returncode": 0,
+    "model": "gsq-rco-27b",
+    "provider": "home-qwen",
+    "answer": "GSQ_PRIME_READY",
+    "default_model": "orca-saq2-27b",
+    "default_provider": "home-qwen",
+    "default_thinking": "medium",
+    "passed": true
+  },
+  "orca_default": {
+    "status": 200,
+    "content": "\n\nORCA_DEFAULT_READY",
+    "passed": true
+  },
+  "passed": true
+}

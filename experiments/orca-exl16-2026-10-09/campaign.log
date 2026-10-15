@@ -1,0 +1,94 @@
+PREFIX START control
+Exception in thread Thread-1 (guarded_monitor):
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-resident-2026-10-08/run-frozen.py", line 54, in guarded_monitor
+    command(['docker','stop','-t','10',container],30,False)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates.py", line 43, in command
+    return original_command(args,*a,**kw)
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 30, in command
+    return subprocess.run(args, capture_output=True, text=True, timeout=timeout, check=check).stdout.strip()
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 2155, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 1269, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['docker', 'stop', '-t', '10', 'orca-exl16-control']' timed out after 30 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/threading.py", line 1044, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/gsq-resident-2026-10-08/run-frozen.py", line 71, in guarded_monitor
+    command(['docker','stop','-t','10',container],30,False)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates.py", line 43, in command
+    return original_command(args,*a,**kw)
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 30, in command
+    return subprocess.run(args, capture_output=True, text=True, timeout=timeout, check=check).stdout.strip()
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 556, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 1222, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 2155, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 1269, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['docker', 'stop', '-t', '10', 'orca-exl16-control']' timed out after 30 seconds
+PREFIX RESTORED False
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orcasaq-latest-2026-10-07/run-prefix.py", line 147, in main
+    w.wait_ready()
+    ~~~~~~~~~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 87, in wait_ready
+    raise RuntimeError('Resource monitor aborted server')
+RuntimeError: Resource monitor aborted server
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates.py", line 72, in main
+    p.main(profiles=[('control',False,64,True,True),('exl16',False,64,True,True),('dflash2',False,64,True,True)],gpu_fraction='0.92',generation_effort='low')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orcasaq-latest-2026-10-07/run-prefix.py", line 215, in main
+    raise RuntimeError('Restoration requires attention')
+RuntimeError: Restoration requires attention
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates.py", line 78, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates.py", line 74, in main
+    same=command(['kubectl','-n','apps','get','configmap','llama-swap-config','-o','jsonpath={.data}'])==config
+         ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates.py", line 43, in command
+    return original_command(args,*a,**kw)
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 30, in command
+    return subprocess.run(args, capture_output=True, text=True, timeout=timeout, check=check).stdout.strip()
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/denguinho/.local/share/uv/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['kubectl', '-n', 'apps', 'get', 'configmap', 'llama-swap-config', '-o', 'jsonpath={.data}']' returned non-zero exit status 1.

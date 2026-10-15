@@ -1,0 +1,55 @@
+BENCHMARK RESTART REQUESTED
+PREFLIGHT IO full_avg10=1.16
+PREFLIGHT IO full_avg10=0.57
+PREFLIGHT IO full_avg10=1.11
+PREFLIGHT IO full_avg10=3.94
+PREFLIGHT IO full_avg10=2.12
+PREFLIGHT IO full_avg10=1.5
+PREFLIGHT IO full_avg10=0.55
+PREFLIGHT IO full_avg10=2.35
+PREFLIGHT IO full_avg10=1.01
+BENCHMARK RESTART REQUESTED
+PREFLIGHT IO full_avg10=0.98
+PREFLIGHT IO full_avg10=0.66
+PREFLIGHT IO full_avg10=0.42
+PREFIX START control
+WAITING FOR QUIET HOST control
+HOST IO full_avg10=3.35
+HOST IO full_avg10=1.88
+HOST IO full_avg10=0.85
+HOST IO full_avg10=1.5
+HOST IO full_avg10=1.68
+HOST IO full_avg10=1.59
+HOST IO full_avg10=0.73
+HOST IO full_avg10=7.71
+HOST IO full_avg10=3.83
+HOST IO full_avg10=3.64
+HOST IO full_avg10=29.47
+HOST IO full_avg10=34.04
+HOST IO full_avg10=20.29
+HOST IO full_avg10=10.88
+HOST IO full_avg10=11.46
+HOST IO full_avg10=7.1
+HOST IO full_avg10=23.19
+HOST IO full_avg10=10.36
+HOST IO full_avg10=5.81
+HOST IO full_avg10=8.99
+HOST IO full_avg10=6.93
+HOST IO full_avg10=5.15
+HOST IO full_avg10=3.9
+PREFIX RESTORED True
+Traceback (most recent call last):
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart3.py", line 144, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart3.py", line 138, in main
+    p.main(profiles=[('control',False,64,True,True),('exl16',False,64,True,True),('dflash2',False,64,True,True)],gpu_fraction='0.92',generation_effort='low')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orcasaq-latest-2026-10-07/run-prefix.py", line 146, in main
+    thread = launch(name, selected, enabled, unit, gpu_fraction)
+  File "/data/docker-services/rtx3090-llm-lab/experiments/orca-exl16-2026-10-09/run-candidates-restart3.py", line 104, in launch
+    time.sleep(10)
+    ~~~~~~~~~~^^^^
+  File "/data/docker-services/rtx3090-llm-lab/benchmarks/orca-thinkingcap-2026-10-07/run.py", line 38, in interrupted
+    raise RuntimeError(f'Interrupted by signal {signum}')
+RuntimeError: Interrupted by signal 2

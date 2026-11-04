@@ -1,7 +1,7 @@
 # Qwen3.8 engine bake-off (2026-10-14): setup
 
-Status: **set up, not run.** No GPU process was started during setup (a start-up fit check was
-blocked by the session's permission policy), so nothing below has touched the GPU yet. Research context:
+Status: **run 2026-10-14; results in [REPORT.md](REPORT.md).** The setup notes below were written
+before the run. Research context:
 `docs/research/qwen38-27b-engines-quants-2026-10-14.md`,
 `docs/research/qwen38-family-flash-next-2026-10-14.md`,
 `docs/research/qwen38-3090-community-reports-2026-10-14.md`.

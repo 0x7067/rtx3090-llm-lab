@@ -36,7 +36,7 @@ Trial image `llama:trial-2026-09-02` = llama.cpp master `0f3a71be1` + the six
 patches in [`llamacpp/patches-rebased/`](llamacpp/patches-rebased/) (0001 and
 0006 dropped — superseded by upstream backend draft sampling; see
 [`llamacpp/patches-rebased/NOTES.md`](llamacpp/patches-rebased/NOTES.md) and
-the fuller [`../../patches-v14/REBASE-2026-09-02.md`](../../patches-v14/REBASE-2026-09-02.md),
+the fuller [`../../patches-v14/REBASE-2026-09-02.md`](../../archive/patches-v14/REBASE-2026-09-02.md),
 the same rebase notes as the production patch set). It passed
 `test-backend-ops` for `FLASH_ATTN_EXT` and `MUL_MAT` before serving traffic.
 Not imported into k3s during the trial; no production change happened until
@@ -128,7 +128,7 @@ verbatim for a self-contained record):
 > 2026-09-02  llama               tested       **Engine trial in a 94-minute production window (15:03–16:37 UTC-3): llama.cpp master + rebased patches, four drafters, and SGLang, against the v10 vLLM baseline.** Production scaled to 0 (Flux suspended), restored 16:37; verified 1/1, same 201,630-token KV pool, serving. Same harness for every arm (`engine-trial-2026-09-02/bench/bench.py`, reasoning=medium, temp 0): decode 1k, sustained 6k-token generation, cold prefill ~14.8k, agentic file-edit sessions (8 turns shallow, 6 turns after 50k preamble, 20 turns after 20k), 4-way concurrency, 4-task quality. **Result: for the agentic edit workload llama.cpp with `draft-mtp,ngram-mod` is ~2x vLLM at every depth** (230/194/219 tok/s vs 127/108/114), reproduced by a same-block control within 1%. vLLM keeps single-request decode (129 vs 105–108), prefill (1,215 vs 1,175) and concurrency (262 vs 160 at `--parallel 1`). **DFlash2-Q8 n7 + ngram-mod is the best llama.cpp config** (122 decode, 113 sustained, 240/210/210 sessions); DFlash2 alone at n4 is the slowest drafter (99); DSpark-Q8 n5 loses to MTP (102 decode, 79 sustained). No MTP or DFlash2 decay over 20 turns or 6k tokens on either engine. Quality 4/4 everywhere. **SGLang** (RedHatAI INT4, nightly 2026-08-28 image, hybrid MTP+ngram PR #36783 overlaid) serves without speculation at 50 tok/s; native MTP died in memory-pool sizing (`Loaded weights leave no GPU memory for the KV cache under --mem-fraction-static=0.92`), so the hybrid arm never ran. Trial llama.cpp image `llama:trial-2026-09-02` = master `0f3a71be1` + 6 rebased patches (0001/0006 dropped as superseded by upstream backend draft sampling; upstream already has the hybrid checkpoint-restore fix); passed `test-backend-ops` FLASH_ATTN_EXT + MUL_MAT. Not imported into k3s; no production change. Caveat: the ngram arms' repeated-identical-prompt decode medians (300–400) are the documented self-memorization artifact and were discarded; the clean number is the fresh-server run. Artifacts: `/data/buttercup_6tb/k3s/vllm-trial/engine-trial-2026-09-02/` (REPORT.md, results.jsonl, window.log, rebased patches, SGLang scripts and logs).
 
 The production patch set actually shipped
-([`../../patches-v14/`](../../patches-v14/)) is the same rebase as this
+([`../../patches-v14/`](../../archive/patches-v14/)) is the same rebase as this
 trial's `llamacpp/patches-rebased/`, byte-identical modulo the directory it
 lives in.
 

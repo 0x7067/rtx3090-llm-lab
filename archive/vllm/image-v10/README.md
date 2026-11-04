@@ -17,7 +17,7 @@ captured here as diffs instead of this repo carrying a second submodule.
 - **Deployed as**: this was the vLLM source rebased onto syv-ai `main 453104e`
   on 2026-09-01, running in production from then until the 2026-09-02
   llama.cpp v14 promotion (see
-  [`../../benchmarks/engine-trial-2026-09-02/`](../../benchmarks/engine-trial-2026-09-02/)).
+  [`../../benchmarks/engine-trial-2026-09-02/`](../../../benchmarks/engine-trial-2026-09-02/)).
 
 ## Files changed (23 files, +345/−1645)
 

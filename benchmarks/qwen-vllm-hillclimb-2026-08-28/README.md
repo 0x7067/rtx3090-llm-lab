@@ -10,7 +10,7 @@ about 29% CPU each for 39 hours. Removing them restored the short suite from
 
 [`decision.tsv`](decision.tsv) is the index for all 16 attempts. The JSON files
 are the raw outputs named by each decision. The implementation prototypes live
-under [`../../experiments/`](../../experiments/).
+under [`../../experiments/`](../../archive/experiments/).
 
 These files record a completed experiment. They do not change the production
 configuration.

@@ -9,7 +9,7 @@ not at a shape chosen to benchmark well.
 This directory preserves the former `tiel-bench-rtx3090` public repository and
 its original Git history. The consolidated copy also includes later benchmark
 scripts and results from the private qualification checkout. General Qwen vLLM
-runtime research lives in [`../../research/vllm/`](../../research/vllm/).
+runtime research lives in [`../../research/vllm/`](../../archive/research/vllm/).
 
 **The interesting result is not the winner. It is that the first version of this
 benchmark was wrong in two independent ways, and the harnesses could not prove

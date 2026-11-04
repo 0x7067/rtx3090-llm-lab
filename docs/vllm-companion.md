@@ -1,5 +1,9 @@
 # vLLM companion: the current single-3090 deployment
 
+> **Historical (2026-08-22 to 2026-09-02).** "Current" below means that date range.
+> vLLM v9 was replaced by llama.cpp on 2026-09-02. See the [README](../README.md) for today.
+
+
 Date: 2026-08-22, revised 2026-09-01 (GPU_UTIL 0.94, image v9, CPU KV tier)
 
 This repository remains the llama.cpp optimization project. The current home
@@ -15,7 +19,7 @@ this document are not a direct llama.cpp-versus-vLLM comparison.
 |---|---|
 | GPU | one RTX 3090, 24 GiB, SM86 |
 | Runtime | vLLM 0.27.1 plus the syv-ai patch stack and the local overlay in `../vllm/` |
-| Image | `qwen38-27b-3090:v9` (see [`../vllm/image-v9/`](../vllm/image-v9/)) |
+| Image | `qwen38-27b-3090:v9` (see [`../vllm/image-v9/`](../archive/vllm/image-v9/)) |
 | Weights | prepared W4A16 compressed-tensors fast variant, 14.83 GiB loaded |
 | Vision | enabled |
 | Maximum model length | 140,000 |
@@ -78,7 +82,7 @@ for evidence, rejects, and the exact A/B gate.
 
 The deployed image was built from syv-ai commit
 `b356e31526886b4bd614a79cd8600e7cc9383cf9` plus
-[`vllm/syv-ai-b356e315-v4.patch`](../vllm/syv-ai-b356e315-v4.patch).
+[`vllm/syv-ai-b356e315-v4.patch`](../archive/vllm/syv-ai-b356e315-v4.patch).
 
 ```bash
 git clone https://github.com/syv-ai/qwen38-27b-rtx3090
@@ -90,7 +94,7 @@ docker build -t qwen38-27b-3090:v4 .
 
 That reproduces **v4**, not the deployed image. The running image is
 `qwen38-27b-3090:v9` = v4 lineage, rebuilt from the locked base as v7/v8, plus
-two more vLLM patches. See [`../vllm/image-v9/`](../vllm/image-v9/) for the
+two more vLLM patches. See [`../vllm/image-v9/`](../archive/vllm/image-v9/) for the
 overlay Dockerfile, both patches, and the full lineage.
 
 The overlay does three narrow things:
@@ -169,7 +173,7 @@ Two couplings:
 
 ## Club 3090 local entry
 
-The installable local-layer bundle lives in [`vllm/club-3090/`](../vllm/club-3090/).
+The installable local-layer bundle lives in [`vllm/club-3090/`](../archive/vllm/club-3090/).
 It deliberately does not modify Club 3090's curated catalog and does not need
 a fork or pull request. The exact Docker Compose wrapper was maintenance-window
 qualified on the target 3090 on 2026-08-22 and is now marked `caveats` rather

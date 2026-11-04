@@ -7,7 +7,7 @@ Prerequisites:
 
 - the prepared model directory `Qwen3.8-27B-W4A16-AutoRound-fast`;
 - the local image `qwen38-27b-3090:v4`, built as described in
-  [`../../docs/vllm-companion.md`](../../docs/vllm-companion.md);
+  [`../../docs/vllm-companion.md`](../../../docs/vllm-companion.md);
 - a Club 3090 checkout current enough to support `scripts/lib/profiles-local`.
 
 Install from the Club 3090 checkout root:

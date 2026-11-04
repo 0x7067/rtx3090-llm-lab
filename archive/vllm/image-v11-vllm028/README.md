@@ -17,7 +17,7 @@ branches are captured here as diffs rather than a second submodule.
   ("vLLM 0.28.0 candidate: prune the patch set to what applies, SPEC=mtp
   only"). **Never deployed.** llama.cpp v14 was promoted straight from v10 on
   2026-09-02 (see
-  [`../../benchmarks/engine-trial-2026-09-02/`](../../benchmarks/engine-trial-2026-09-02/)),
+  [`../../benchmarks/engine-trial-2026-09-02/`](../../../benchmarks/engine-trial-2026-09-02/)),
   so this branch has no corresponding k8s manifest — unlike v10, there is no
   `deployment-k8s-last.yaml` to pair with it here.
 

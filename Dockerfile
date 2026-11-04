@@ -3,7 +3,7 @@ FROM nvidia/cuda:12.8.1-devel-ubuntu24.04 AS build
 # v14 (2026-09-02): master 0f3a71be1 "mtmd: Fix Qwen3-tts-0.6b (#28231)". Brings
 # upstream DFlash2 (#27342), DSpark (#25173), EAGLE-3 for qwen3.5/3.6 (#24593),
 # the hybrid checkpoint-restore fixes (#24411 et al.) and backend draft sampling.
-# Patch rebase notes: patches-v14/REBASE-2026-09-02.md. Previous: 4df29be4 (2026-08-16).
+# Patch rebase notes: archive/patches-v14/REBASE-2026-09-02.md. Previous: 4df29be4 (2026-08-16).
 ARG LLAMA_CPP_REF=0f3a71be1
 # v15 (2026-09-03): same base, adds patches-v15/0009 (K2 Horizon arch from the
 # MBZUAI-IFM fork) and ships llama-quantize + llama-imatrix for local quants.
@@ -27,7 +27,7 @@ WORKDIR /src/llama.cpp
 RUN git clone https://github.com/ggml-org/llama.cpp.git . \
     && git checkout "${LLAMA_CPP_REF}"
 
-# Vendored performance patches over the pinned ref (see patches-v14/*.patch):
+# Vendored performance patches over the pinned ref (see patches-v15/*.patch):
 # 0001/0006 dropped in v14: superseded by upstream backend draft sampling (#26958)
 # 0002: Ampere MMQ small-batch (J=16) tile config — 128x64 tiles for Q4_K/Q5_K
 # 0003: GQA-batched small-batch FA vector kernel

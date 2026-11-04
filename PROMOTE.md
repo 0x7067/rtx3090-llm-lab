@@ -1,96 +1,85 @@
 # Build, promote, roll back
 
-Everything needed to build a serving image for the RTX 3090 lives in this repo.
-The GitOps repo (`docker-services`, where this repo is the `rtx3090-llm-lab`
-submodule) holds only the Kubernetes manifests, and promotion is a tag bump
-there. Images go through the host-local registry (`127.0.0.1:5000`, the
-`local-k3s-registry` container): `docker push` there, and containerd pulls the
-image itself when a manifest references `127.0.0.1:5000/<name>:<tag>`. No
-sudo, no `ctr images import`. Bump the tag on every rebuild:
-`imagePullPolicy: IfNotPresent` never re-pulls a same-tag image containerd
-already holds.
+The production image is built and promoted from the GitOps repo
+(`docker-services`). This repo supplies evidence, the paired harness and the
+legacy engine sources. The runbook for the retired llama.cpp v14/v15 and vLLM
+v9-v12 images is [archive/PROMOTE-llama-cpp-vllm-2026-09.md](archive/PROMOTE-llama-cpp-vllm-2026-09.md).
 
-## llama.cpp (production since 2026-09-02)
+Paths below are relative to the GitOps repo root unless they start with
+`rtx3090-llm-lab/`.
 
-Recipe: [`Dockerfile`](Dockerfile) at the repo root, patches from
-[`patches-v14/`](patches-v14/). Bump `LLAMA_CPP_REF` and re-run the rebase
-procedure in [`patches-v14/REBASE-2026-09-02.md`](patches-v14/REBASE-2026-09-02.md)
-when moving the base.
+## The production image
 
-```bash
-# from the docker-services checkout
-IMAGE_NAME=llama:cuda-swap-v15 scripts/build-llama-image.sh   # builds from rtx3090-llm-lab/, pushes to 127.0.0.1:5000
-# manifest: image: 127.0.0.1:5000/llama:cuda-swap-v15
-```
+`127.0.0.1:5000/home-llm-strata:0.2.8-v1` is a chain of layers. Each layer is
+pinned by digest to the one below it:
 
-Validate before serving (both must print `Backend CUDA0: OK`):
+| Layer | Adds | Recipe |
+| --- | --- | --- |
+| `home-llm-qwen-image` | Qwen-Image runtime, llama-swap | `k8s/workloads/apps/llama/qwen-image/Dockerfile` |
+| `home-llm-hyperqwen` | HyperQwen `2cf50a0` at `/app` (vLLM 0.31.0, asserted at build) | `k8s/workloads/apps/llama/hyperqwen/Dockerfile` |
+| `home-llm-qwen-optimized` | Strata `011c9e6` / engine 0.1.47 | `k8s/workloads/apps/llama/optimization/build.sh` |
+| `home-llm-ocr` | OCR services | `k8s/workloads/apps/llama/ocr/` (see its README, "Build and deploy") |
+| `home-llm-raon` | Raon llama.cpp build | `k8s/workloads/apps/llama/image/raon/Dockerfile` |
+| `home-llm-strata` | Strata 0.2.8 / engine 0.1.54 at `/opt/strata-0.2.8` | `k8s/workloads/apps/llama/image/strata/build.sh` |
 
-```bash
-docker run --rm --gpus all -e GGML_CUDA_FATTN_MMA_Q=1 --entrypoint /usr/local/bin/test-backend-ops llama:cuda-swap-v15 -b CUDA0 -o FLASH_ATTN_EXT
-docker run --rm --gpus all --entrypoint /usr/local/bin/test-backend-ops llama:cuda-swap-v15 -b CUDA0 -o MUL_MAT
-```
+The init container `orcasaq2-vllm` (`gpu-profile`) is built from
+`rtx3090-llm-lab/vllm/image-orcasaq/` by `scripts/build-orcasaq-image.sh`.
 
-Serving profile: the `qwen3.8-27b` stanza in the GitOps ConfigMap
-(`k8s/workloads/apps/llama/configmap.yaml`), mirrored here as
-[`config/llama-swap-qwen38.yaml`](config/llama-swap-qwen38.yaml). Coupled
-settings (env caps + draft length) are documented inline there.
+To change a layer, rebuild it with a new tag, then rebuild every layer above it
+on the new digest. If you only change the HyperQwen profile (env, context,
+spec mode), no image rebuild is needed: that lives in `swap-configmap.yaml`.
 
-## vLLM (production 2026-08-20 to 2026-09-02, kept as rollback)
+Notes:
 
-Source: [`vllm/syv-ai/`](vllm/syv-ai/), a squashed subtree of
-`syv-ai/qwen38-27b-rtx3090` at our `k8s-deploy-v10` overlay (syv-ai `453104e`).
-Pull upstream with
-`git subtree pull --prefix=vllm/syv-ai https://github.com/syv-ai/qwen38-27b-rtx3090 main --squash`.
-Build contexts: [`vllm/image-build/base/`](vllm/image-build/base/) (locked
-197-package environment, `Dockerfile.locked`) and
-[`vllm/image-build/overlay/`](vllm/image-build/overlay/) (vLLM patches applied on
-a built base).
+- `optimization/build.sh` defaults its engine archive to
+  `/data/qwen-candidates-20261021/runtime/strata-engine.tar.gz`, which does not
+  exist on the host. Pass the archive as the third argument; the script checks
+  its pinned SHA-256.
+- The base has more than 127 layers, so plain `docker build` fails ("max depth
+  exceeded"). `image/strata/build.sh` uses BuildKit with `COPY --link` and pushes
+  straight to the registry.
 
-```bash
-scripts/build-qwen38-vllm-base.sh qwen38-27b-3090:v12-base --check   # dry run of the context
-scripts/build-qwen38-vllm-base.sh qwen38-27b-3090:v12-base --publish
-scripts/build-qwen38-vllm-image.sh qwen38-27b-3090:v12 --publish      # overlay patches on the base, push to 127.0.0.1:5000
-```
+## Publish
 
-The last deployed vLLM manifest is
-[`vllm/image-v10/deployment-k8s-last.yaml`](vllm/image-v10/deployment-k8s-last.yaml).
+For an image built with `docker build -t <name>:vN <ctx>`, run
+`scripts/publish-image-to-k3s.sh <name>:vN` and paste the printed
+`127.0.0.1:5000/<name>:vN@sha256:…` into the manifest. `image/strata/build.sh`
+publishes on its own and prints the reference. Bump the tag on every rebuild,
+because containerd caches by tag.
 
-## Benchmark before promoting
+## Qualify
 
-[`benchmarks/engine-trial-2026-09-02/bench/`](benchmarks/engine-trial-2026-09-02/bench/)
-is engine-agnostic (OpenAI-compatible) and covers decode, sustained generation,
-cold prefill, agentic edit sessions at 0/20k/50k preamble, 4-way concurrency,
-and a 4-task quality battery:
-
-```bash
-python3 bench.py selftest
-./run-arm.sh <tag> http://127.0.0.1:<port>/v1      # appends to results.jsonl
-python3 bench.py report results.jsonl
-```
-
-Pin `--reasoning medium` across arms (the harness does), interleave a repeat of
-the control arm, and read the fresh-server warm-up run as the honest
-single-request decode number for any `ngram-mod` arm: repeated identical
-prompts replay from the n-gram table and inflate to 300-400 tok/s.
-`run-window.sh` in that directory is the production-window runbook (suspend
-Flux, scale to zero, arms, restore).
+Run the paired harness against the candidate before promoting:
+`rtx3090-llm-lab/benchmarks/paired-harness/harness.py` (see its README). Live
+checks and earlier qualification records are in
+`k8s/workloads/apps/llama/optimization/` and `hyperqwen/qualification.json`. To
+trial a profile, add it as a separate llama-swap entry (for example
+`qwen3.8-27b-hyperqwen-pthfa` on 2026-11-03), then promote it by editing the
+resident entry and removing the trial entry.
 
 ## Promote
 
-1. Build and import the image (above), bump the tag in
-   `k8s/workloads/apps/llama/deployment.yaml` (and `configmap.yaml` if the
-   profile changes), one line in `k8s/MIGRATION_LOG.md`.
-2. `git push` then `flux reconcile kustomization apps --with-source`.
-3. Verify: `kubectl -n apps rollout status deploy/llama`, one request through
-   `http://<home-server-overlay-ip>/v1` with the bearer token, then a short `bench.py decode`
-   and `bench.py session` against the service.
-4. Clients (Pi / Prime on home-server, mac-studio, the Ravn
-   MacBook) read `~/.pi/agent/models.json` and `~/.prime/agent/models.json`;
-   keep `contextWindow` equal to the served context.
+1. Edit `k8s/workloads/apps/llama/deployment.yaml` (image digest) and/or
+   `swap-configmap.yaml` (profile). Record the decision and evidence in
+   `k8s/workloads/apps/llama/README.md` ("Current production"), and add a
+   dated row to this repo's README timeline.
+2. Push to `main`, then `flux reconcile kustomization apps --with-source`.
+3. Verify:
+   - `kubectl -n apps rollout status deploy/llama`
+   - `/v1/models` lists `qwen3.8-27b-hyperqwen`
+   - one authenticated chat request
+   - a short paired-harness run
+
+The first text request after a restart waits for the HyperQwen preload (about
+100 s from the NVMe weights).
 
 ## Roll back
 
-`git revert <promotion commit>` in the GitOps repo and reconcile. Previous
-images stay in the local registry and in containerd (list tags: `curl -s http://127.0.0.1:5000/v2/llama/tags/list`),
-so a rollback needs no rebuild. If the previous engine was vLLM, set
-`llama-cache-canary` back to `replicas: 1`.
+`git revert` the GitOps commit and reconcile. Images are pinned by digest, so a
+revert restores the previous image if its tag still exists in
+`127.0.0.1:5000`. Registry clean-ups keep only digests referenced by GitOps
+manifests and Dockerfiles, digests running in the cluster, and the newest
+image per repo. Check with `curl -s 127.0.0.1:5000/v2/<repo>/tags/list` before
+relying on an older image. To restore Strata/Swift, change config only: the
+runtime is in the image, and the weights remain in
+`/data/models/qwen3.8/local/swift-1.5-flash-heretic-gyro-m`.

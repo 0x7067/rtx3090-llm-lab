@@ -1,7 +1,10 @@
 # v9 overlay: the currently deployed image
 
+> **Historical (2026-09-01).** "Currently deployed" refers to that date. The image tag is gone.
+
+
 `qwen38-27b-3090:v9` is what `deploy/llama` runs today. It is **not** the v4
-image described in [`../../docs/vllm-companion.md`](../../docs/vllm-companion.md)
+image described in [`../../docs/vllm-companion.md`](../../../docs/vllm-companion.md)
 build snippet; that snippet reproduces the original syv-ai overlay only. The
 deployed lineage is:
 

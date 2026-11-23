@@ -21,20 +21,20 @@ over 100 MB) and every `*.enc.yaml`, then regenerates `LOCK.json` and
 `STATUS.md`. With `--host-scan` it hashes each read-only `hostPath` volume of
 the pod (cached by inode, size and mtime, so later runs only hash what changed).
 
-- **Every hour**, the `rtx3090-lab-sync` user timer on `denguinho-server`
-  (`~/dotfiles/home-linux/.config/systemd/user/`) runs
-  [`tools/production/publish.sh`](../tools/production/publish.sh) from a
-  private clone under `~/.cache/rtx3090-lab-sync/`. It syncs from GitOps
-  `main`, runs `sync.py verify` and gitleaks (`.gitleaks.toml`), then commits
-  and pushes `production/` to this repo's `main` if anything changed.
+- **After each promotion**, run
+  [`tools/production/publish.sh`](../tools/production/publish.sh) on
+  `denguinho-server` from this checkout, at `origin/main` with a clean tree. It
+  syncs from GitOps `main` (bare clone under `~/.cache/rtx3090-lab-sync/`) with
+  `--host-scan`, runs `sync.py verify` and gitleaks (`.gitleaks.toml`), then
+  commits `production/` and pushes it to this repo's `main` if anything changed.
+  Nothing runs it on a schedule, so `production/` is as current as the last run;
+  the GitOps commit is in `STATUS.md`.
 - **On every push and pull request**, CI (`.github/workflows/production.yml`)
   runs `sync.py verify`: each file matches its hash in `LOCK.json`, the image
   list matches the files, and `STATUS.md` matches its rendering.
-- **By hand**: `tools/production/sync.py sync --gitops /data/docker-services --ref origin/main [--host-scan]`,
-  or add `--check` to report drift without writing.
-
-Check the timer with `systemctl --user status rtx3090-lab-sync.timer` and its
-last run with `journalctl --user -u rtx3090-lab-sync`.
+- **To check for drift** without writing:
+  `tools/production/sync.py sync --gitops /data/docker-services --ref origin/main --host-scan --check`
+  exits 1 if GitOps or a host input has changed since the last publish.
 
 ## Rebuild from scratch
 
@@ -100,8 +100,8 @@ mirrored here.
 ## Promote and roll back
 
 Promote in GitOps: change `deployment.yaml` or `swap-configmap.yaml`, record
-the evidence next to the model's doc, push, reconcile. The sync brings it here
-within the hour; add a dated row to the [README timeline](../README.md#production-timeline).
+the evidence next to the model's doc, push, reconcile. Then run
+`tools/production/publish.sh` here and add a dated row to the [README timeline](../README.md#production-timeline).
 
 Roll back with `git revert` in GitOps and reconcile. Images are pinned by
 digest, and registry clean-ups keep digests referenced by GitOps manifests and

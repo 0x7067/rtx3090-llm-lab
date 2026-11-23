@@ -1,0 +1,14 @@
+**
+!package.json
+!package-lock.json
+!shared/
+!shared/**
+!services/
+!services/ocr/
+!services/ocr/**
+services/ocr/deploy/local/
+**/__pycache__/
+**/*.pyc
+**/*.test.ts
+**/test_*.py
+

@@ -1,0 +1,183 @@
+{
+  "qualified": false,
+  "requests": 172,
+  "failures": [],
+  "strict_format_failures": {
+    "baseline-a": 7,
+    "candidate-a": 12,
+    "candidate-b": 8,
+    "baseline-b": 6
+  },
+  "cases": {
+    "copy-1024/C1": {
+      "baseline_seconds": 6.168378691500038,
+      "candidate_seconds": 6.304481662999024,
+      "latency_reduction_percent": -2.206462642874607,
+      "baseline_drift_percent": 2.0675595776193156,
+      "arm_medians": {
+        "baseline-a": 6.280203357000573,
+        "candidate-a": 6.331477222000103,
+        "candidate-b": 6.277486103997944,
+        "baseline-b": 6.150356410998938
+      }
+    },
+    "copy-1024/C4": {
+      "baseline_seconds": 15.657401762000518,
+      "candidate_seconds": 15.453448881999066,
+      "latency_reduction_percent": 1.3025972195235602,
+      "baseline_drift_percent": 0.8667614929711354,
+      "arm_medians": {
+        "baseline-a": 15.741333989501072,
+        "candidate-a": 15.451586352501181,
+        "candidate-b": 15.453448881999066,
+        "baseline-b": 15.6048941680001
+      }
+    },
+    "copy-256/C1": {
+      "baseline_seconds": 5.761968444498052,
+      "candidate_seconds": 5.872125296502418,
+      "latency_reduction_percent": -1.9117920041639813,
+      "baseline_drift_percent": 1.5834302191604976,
+      "arm_medians": {
+        "baseline-a": 5.811361681000562,
+        "candidate-a": 5.87792339200314,
+        "candidate-b": 5.866327201001695,
+        "baseline-b": 5.719342823998886
+      }
+    },
+    "copy-256/C4": {
+      "baseline_seconds": 11.266096522498628,
+      "candidate_seconds": 13.174213955498999,
+      "latency_reduction_percent": -16.9368106263764,
+      "baseline_drift_percent": 14.516679678529542,
+      "arm_medians": {
+        "baseline-a": 10.484044999999242,
+        "candidate-a": 13.175019821499518,
+        "candidate-b": 13.173004721498728,
+        "baseline-b": 12.005980230002024
+      }
+    },
+    "edit-module/C1": {
+      "baseline_seconds": 1.329934809500628,
+      "candidate_seconds": 1.4274126714990416,
+      "latency_reduction_percent": -7.329521815811035,
+      "baseline_drift_percent": 0.08326556859310497,
+      "arm_medians": {
+        "baseline-a": 1.3304887290032639,
+        "candidate-a": 1.36845919100233,
+        "candidate-b": 1.4675776439980837,
+        "baseline-b": 1.3293808899979922
+      }
+    },
+    "prose/C1": {
+      "baseline_seconds": 1.424192235999726,
+      "candidate_seconds": 1.363223749998724,
+      "latency_reduction_percent": 4.280916891686648,
+      "baseline_drift_percent": 0.5490964286091082,
+      "arm_medians": {
+        "baseline-a": 1.428113095000299,
+        "candidate-a": 1.3576086859975476,
+        "candidate-b": 1.3806985379997059,
+        "baseline-b": 1.4202713769991533
+      }
+    }
+  },
+  "quality": {
+    "baseline-a": {
+      "passed": true,
+      "checks": [
+        "arithmetic",
+        "json_schema",
+        "tool_round_trip",
+        "long_prefix_0",
+        "long_prefix_1",
+        "completion_after_cancel"
+      ]
+    },
+    "candidate-a": {
+      "passed": true,
+      "checks": [
+        "arithmetic",
+        "json_schema",
+        "tool_round_trip",
+        "long_prefix_0",
+        "long_prefix_1",
+        "completion_after_cancel"
+      ]
+    },
+    "candidate-b": {
+      "passed": true,
+      "checks": [
+        "arithmetic",
+        "json_schema",
+        "tool_round_trip",
+        "long_prefix_0",
+        "long_prefix_1",
+        "completion_after_cancel"
+      ]
+    },
+    "baseline-b": {
+      "passed": true,
+      "checks": [
+        "arithmetic",
+        "json_schema",
+        "tool_round_trip",
+        "long_prefix_0",
+        "long_prefix_1",
+        "completion_after_cancel"
+      ]
+    }
+  },
+  "engagement": {
+    "candidate-a": true,
+    "candidate-b": true
+  },
+  "provenance": {
+    "date": "2026-11-12",
+    "gpu": "RTX 3090",
+    "gpu_power_limit_watts": 290,
+    "image": "127.0.0.1:5000/home-llm-strata:compact-state-v6@sha256:e869ba7d515aa0fbc6852d71bdc586b62ef61fe5c46db3e72311b8eb5c6928ba",
+    "image_source_commit": "fc57cd05f1c9494cb4406f90c9d2247ab14e7db3",
+    "artifact_directory": "/data/development/reports/qwen-compact-serving-2026-11-12",
+    "order": [
+      "baseline-a",
+      "candidate-a",
+      "candidate-b",
+      "baseline-b"
+    ],
+    "baseline_feature_flag": 0,
+    "candidate_feature_flag": 1
+  },
+  "kernel_tests": {
+    "passed": true,
+    "cases": [
+      {
+        "lengths": [
+          8
+        ],
+        "blocks": 96,
+        "bitwise": true
+      },
+      {
+        "lengths": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "blocks": 96,
+        "bitwise": true
+      },
+      {
+        "lengths": [
+          2,
+          8,
+          4,
+          6
+        ],
+        "blocks": 96,
+        "bitwise": true
+      }
+    ]
+  }
+}

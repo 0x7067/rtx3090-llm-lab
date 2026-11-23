@@ -1,0 +1,7 @@
+{
+  "matching_content": true,
+  "matching_tool_name_and_arguments": true,
+  "difference": "Server-generated tool-call IDs in the otherwise identical follow-up request",
+  "baseline_id": "chatcmpl-tool-962e188cfcb0b35b",
+  "candidate_id": "chatcmpl-tool-a3d6c21982d97de7"
+}

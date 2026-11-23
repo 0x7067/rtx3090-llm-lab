@@ -1,0 +1,9 @@
+2026-11-11T10:02:59-03:00	speed	start (limit 4m)
+2026-11-11T10:04:35-03:00	speed	exit 0
+2026-11-11T10:04:35-03:00	smoke	start (limit 90s)
+2026-11-11T10:04:38-03:00	smoke	exit 0
+2026-11-11T10:04:38-03:00	quality	start (limit 3m)
+2026-11-11T10:05:03-03:00	quality	exit 0
+2026-11-11T10:05:03-03:00	long-context	start (limit 14m)
+2026-11-11T10:08:30-03:00	long-context	exit 0
+2026-11-11T10:08:30-03:00	benchmark	exit 0

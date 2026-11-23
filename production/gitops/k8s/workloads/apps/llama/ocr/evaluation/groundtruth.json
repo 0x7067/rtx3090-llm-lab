@@ -1,0 +1,986 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Hand-authored synthetic inputs and expectations; not recognized text or model output.",
+  "scope": "Small deployment smoke suite, not a recognition accuracy benchmark.",
+  "cases": [
+    {
+      "id": "clean-receipt-png",
+      "file": "fixtures/clean-receipt.png",
+      "description": "Clear upright Portuguese receipt; issuance date differs from due date.",
+      "mime": "image/png",
+      "sizeBytes": 92560,
+      "originalSha256": "f3feefe7006bbf702388ab9ffa019f73342684bd14aad077d48a3d743055fa61",
+      "expected": {
+        "state": "completed",
+        "fields": {
+          "merchant": {
+            "status": "read",
+            "values": [
+              "Restaurante Ipê Azul"
+            ]
+          },
+          "date": {
+            "status": "read",
+            "values": [
+              "2026-10-21"
+            ]
+          },
+          "total": {
+            "status": "read",
+            "values": [
+              8650
+            ]
+          },
+          "currency": {
+            "status": "read",
+            "values": [
+              "BRL"
+            ]
+          }
+        },
+        "pageDimensions": [
+          [
+            1400,
+            1800
+          ]
+        ],
+        "requiredWarnings": []
+      },
+      "authoredPrintedContent": [
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              100,
+              110,
+              635,
+              149
+            ]
+          },
+          {
+            "text": "Emitente: Restaurante Ipê Azul",
+            "boxPixels": [
+              100,
+              258,
+              762,
+              304
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              100,
+              369,
+              727,
+              404
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              100,
+              454,
+              618,
+              489
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              100,
+              629,
+              511,
+              674
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              100,
+              713,
+              402,
+              753
+            ]
+          },
+          {
+            "text": "Subtotal: R$ 86,50",
+            "boxPixels": [
+              100,
+              887,
+              498,
+              931
+            ]
+          },
+          {
+            "text": "Total a pagar: R$ 86,50",
+            "boxPixels": [
+              100,
+              1018,
+              663,
+              1068
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              100,
+              1199,
+              719,
+              1244
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              100,
+              1480,
+              825,
+              1509
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              100,
+              1546,
+              719,
+              1575
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "clean-receipt-pdf",
+      "file": "fixtures/clean-receipt.pdf",
+      "description": "Image-only PDF of the same receipt; PDF scale 2 gives the original raster dimensions.",
+      "mime": "application/pdf",
+      "sizeBytes": 128641,
+      "originalSha256": "6363a2299f148fbcec47458c2f38baaa8d4b4ea62fc154d6d6f4fb9e83064484",
+      "expected": {
+        "state": "completed",
+        "fields": {
+          "merchant": {
+            "status": "read",
+            "values": [
+              "Restaurante Ipê Azul"
+            ]
+          },
+          "date": {
+            "status": "read",
+            "values": [
+              "2026-10-21"
+            ]
+          },
+          "total": {
+            "status": "read",
+            "values": [
+              8650
+            ]
+          },
+          "currency": {
+            "status": "read",
+            "values": [
+              "BRL"
+            ]
+          }
+        },
+        "pageDimensions": [
+          [
+            1400,
+            1800
+          ]
+        ],
+        "requiredWarnings": []
+      },
+      "authoredPrintedContent": [
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              100,
+              110,
+              635,
+              149
+            ]
+          },
+          {
+            "text": "Emitente: Restaurante Ipê Azul",
+            "boxPixels": [
+              100,
+              258,
+              762,
+              304
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              100,
+              369,
+              727,
+              404
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              100,
+              454,
+              618,
+              489
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              100,
+              629,
+              511,
+              674
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              100,
+              713,
+              402,
+              753
+            ]
+          },
+          {
+            "text": "Subtotal: R$ 86,50",
+            "boxPixels": [
+              100,
+              887,
+              498,
+              931
+            ]
+          },
+          {
+            "text": "Total a pagar: R$ 86,50",
+            "boxPixels": [
+              100,
+              1018,
+              663,
+              1068
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              100,
+              1199,
+              719,
+              1244
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              100,
+              1480,
+              825,
+              1509
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              100,
+              1546,
+              719,
+              1575
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "exif-rotated-receipt-jpg",
+      "file": "fixtures/exif-rotated-receipt.jpg",
+      "description": "Stored pixels rotated counterclockwise with EXIF orientation 6; displayed frame is upright.",
+      "mime": "image/jpeg",
+      "sizeBytes": 239919,
+      "originalSha256": "201898345a1c258d77f763d6d326af87ee5744f7b6ca24183173fd10feffaf01",
+      "expected": {
+        "state": "completed",
+        "fields": {
+          "merchant": {
+            "status": "read",
+            "values": [
+              "Restaurante Ipê Azul"
+            ]
+          },
+          "date": {
+            "status": "read",
+            "values": [
+              "2026-10-21"
+            ]
+          },
+          "total": {
+            "status": "read",
+            "values": [
+              8650
+            ]
+          },
+          "currency": {
+            "status": "read",
+            "values": [
+              "BRL"
+            ]
+          }
+        },
+        "pageDimensions": [
+          [
+            1400,
+            1800
+          ]
+        ],
+        "requiredWarnings": []
+      },
+      "authoredPrintedContent": [
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              100,
+              110,
+              635,
+              149
+            ]
+          },
+          {
+            "text": "Emitente: Restaurante Ipê Azul",
+            "boxPixels": [
+              100,
+              258,
+              762,
+              304
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              100,
+              369,
+              727,
+              404
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              100,
+              454,
+              618,
+              489
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              100,
+              629,
+              511,
+              674
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              100,
+              713,
+              402,
+              753
+            ]
+          },
+          {
+            "text": "Subtotal: R$ 86,50",
+            "boxPixels": [
+              100,
+              887,
+              498,
+              931
+            ]
+          },
+          {
+            "text": "Total a pagar: R$ 86,50",
+            "boxPixels": [
+              100,
+              1018,
+              663,
+              1068
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              100,
+              1199,
+              719,
+              1244
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              100,
+              1480,
+              825,
+              1509
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              100,
+              1546,
+              719,
+              1575
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "sideways-receipt-png",
+      "file": "fixtures/sideways-receipt.png",
+      "description": "Pixels rotated clockwise without EXIF; challenge case for actual model orientation handling.",
+      "mime": "image/png",
+      "sizeBytes": 144254,
+      "originalSha256": "41f86948d27256e1787805ccee28c90dda912d9507761306a0891f41ac3e67ec",
+      "expected": {
+        "state": "completed",
+        "fields": {
+          "merchant": {
+            "status": "read",
+            "values": [
+              "Restaurante Ipê Azul"
+            ]
+          },
+          "date": {
+            "status": "read",
+            "values": [
+              "2026-10-21"
+            ]
+          },
+          "total": {
+            "status": "read",
+            "values": [
+              8650
+            ]
+          },
+          "currency": {
+            "status": "read",
+            "values": [
+              "BRL"
+            ]
+          }
+        },
+        "pageDimensions": [
+          [
+            1800,
+            1400
+          ]
+        ],
+        "requiredWarnings": []
+      },
+      "authoredPrintedContent": [
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              1651,
+              100,
+              1690,
+              635
+            ]
+          },
+          {
+            "text": "Emitente: Restaurante Ipê Azul",
+            "boxPixels": [
+              1496,
+              100,
+              1542,
+              762
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              1396,
+              100,
+              1431,
+              727
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              1311,
+              100,
+              1346,
+              618
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              1126,
+              100,
+              1171,
+              511
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              1047,
+              100,
+              1087,
+              402
+            ]
+          },
+          {
+            "text": "Subtotal: R$ 86,50",
+            "boxPixels": [
+              869,
+              100,
+              913,
+              498
+            ]
+          },
+          {
+            "text": "Total a pagar: R$ 86,50",
+            "boxPixels": [
+              732,
+              100,
+              782,
+              663
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              556,
+              100,
+              601,
+              719
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              291,
+              100,
+              320,
+              825
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              225,
+              100,
+              254,
+              719
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "missing-currency-png",
+      "file": "fixtures/missing-currency.png",
+      "description": "No currency symbol/code anywhere; must not infer BRL or accept an amount in implicit minor units.",
+      "mime": "image/png",
+      "sizeBytes": 89828,
+      "originalSha256": "fc3e395d304933b158d196080f5b48892b1113e1e0b8f7a17cbea34b9fc8fb5f",
+      "expected": {
+        "state": "partial",
+        "fields": {
+          "merchant": {
+            "status": "read",
+            "values": [
+              "Restaurante Ipê Azul"
+            ]
+          },
+          "date": {
+            "status": "read",
+            "values": [
+              "2026-10-21"
+            ]
+          },
+          "total": {
+            "status": "unsupported",
+            "values": []
+          },
+          "currency": {
+            "status": "missing",
+            "values": []
+          }
+        },
+        "pageDimensions": [
+          [
+            1400,
+            1800
+          ]
+        ],
+        "requiredWarnings": [
+          "unsupported_currency"
+        ]
+      },
+      "authoredPrintedContent": [
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              100,
+              110,
+              635,
+              149
+            ]
+          },
+          {
+            "text": "Emitente: Restaurante Ipê Azul",
+            "boxPixels": [
+              100,
+              258,
+              762,
+              304
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              100,
+              369,
+              727,
+              404
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              100,
+              454,
+              618,
+              489
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              100,
+              629,
+              511,
+              674
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              100,
+              713,
+              402,
+              753
+            ]
+          },
+          {
+            "text": "Subtotal: 86,50",
+            "boxPixels": [
+              100,
+              888,
+              423,
+              931
+            ]
+          },
+          {
+            "text": "Total a pagar: 86,50",
+            "boxPixels": [
+              100,
+              1021,
+              582,
+              1068
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              100,
+              1199,
+              719,
+              1244
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              100,
+              1480,
+              825,
+              1509
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              100,
+              1546,
+              719,
+              1575
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "conflicting-issuers-pdf",
+      "file": "fixtures/conflicting-issuers.pdf",
+      "description": "Two pages have distinct explicit issuers; preserve both pages but abstain from all combined expense fields.",
+      "mime": "application/pdf",
+      "sizeBytes": 257161,
+      "originalSha256": "94b5062986d3ce03d573e8608d49224b9cc47bc3f03d7aee09a60ab1d96e3069",
+      "expected": {
+        "state": "partial",
+        "fields": {
+          "merchant": {
+            "status": "unsupported",
+            "values": []
+          },
+          "date": {
+            "status": "unsupported",
+            "values": []
+          },
+          "total": {
+            "status": "unsupported",
+            "values": []
+          },
+          "currency": {
+            "status": "unsupported",
+            "values": []
+          }
+        },
+        "pageDimensions": [
+          [
+            1400,
+            1800
+          ],
+          [
+            1400,
+            1800
+          ]
+        ],
+        "requiredWarnings": [
+          "multiple_documents"
+        ]
+      },
+      "authoredPrintedContent": [
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              100,
+              110,
+              635,
+              149
+            ]
+          },
+          {
+            "text": "Emitente: Restaurante Ipê Azul",
+            "boxPixels": [
+              100,
+              258,
+              762,
+              304
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              100,
+              369,
+              727,
+              404
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              100,
+              454,
+              618,
+              489
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              100,
+              629,
+              511,
+              674
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              100,
+              713,
+              402,
+              753
+            ]
+          },
+          {
+            "text": "Subtotal: R$ 86,50",
+            "boxPixels": [
+              100,
+              887,
+              498,
+              931
+            ]
+          },
+          {
+            "text": "Total a pagar: R$ 86,50",
+            "boxPixels": [
+              100,
+              1018,
+              663,
+              1068
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              100,
+              1199,
+              719,
+              1244
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              100,
+              1480,
+              825,
+              1509
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              100,
+              1546,
+              719,
+              1575
+            ]
+          }
+        ],
+        [
+          {
+            "text": "RECIBO DE COMPRA",
+            "boxPixels": [
+              100,
+              110,
+              635,
+              149
+            ]
+          },
+          {
+            "text": "Emitente: Papelaria Cedro Verde",
+            "boxPixels": [
+              100,
+              258,
+              802,
+              304
+            ]
+          },
+          {
+            "text": "Data de emissão: 21/10/2026",
+            "boxPixels": [
+              100,
+              369,
+              727,
+              404
+            ]
+          },
+          {
+            "text": "Vencimento: 30/10/2026",
+            "boxPixels": [
+              100,
+              454,
+              618,
+              489
+            ]
+          },
+          {
+            "text": "Descrição: refeição",
+            "boxPixels": [
+              100,
+              629,
+              511,
+              674
+            ]
+          },
+          {
+            "text": "Quantidade: 1",
+            "boxPixels": [
+              100,
+              713,
+              402,
+              753
+            ]
+          },
+          {
+            "text": "Subtotal: R$ 42,00",
+            "boxPixels": [
+              100,
+              887,
+              498,
+              931
+            ]
+          },
+          {
+            "text": "Total a pagar: R$ 42,00",
+            "boxPixels": [
+              100,
+              1018,
+              663,
+              1068
+            ]
+          },
+          {
+            "text": "Forma de pagamento: cartão",
+            "boxPixels": [
+              100,
+              1199,
+              719,
+              1244
+            ]
+          },
+          {
+            "text": "DOCUMENTO SINTÉTICO PARA TESTE DE OCR",
+            "boxPixels": [
+              100,
+              1480,
+              825,
+              1509
+            ]
+          },
+          {
+            "text": "Sem validade fiscal. Nenhuma compra real.",
+            "boxPixels": [
+              100,
+              1546,
+              719,
+              1575
+            ]
+          }
+        ]
+      ]
+    }
+  ]
+}

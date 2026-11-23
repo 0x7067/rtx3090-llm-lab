@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ocr-glm-manifest
+  namespace: apps
+data:
+  manifest.json: |
+    {
+      "artifacts": {
+        "adapterTreeSha256": "406ab9bc91fe589ceea8740b86909a5439a0b5ce88cd1b25a20265d6b14f46e8",
+        "image": "127.0.0.1:5000/home-llm-raon:photo-v20-f4bcf045d331@sha256:aba9ee3dab0027e5b90fa372694694ae3c5edec7d274bf80bf1317600ad45454",
+        "runtimeTreeSha256": "b1116991fea7f33ec1c0b26d00f2e95f6117ac9cab8d9d7fb07782f7b9fcb677",
+        "sdkLockSha256": "5f351b9fe93865132b7f99777f2a151d5e6f9cc26b353826178d17e98c9fdf90"
+      },
+      "auxiliaryReader": {
+        "identity": {
+          "fingerprint": "9978f4ed83d8b01152d76a2209061a641a3d8846b33dd64682af52e3b59e0b94",
+          "geometry": "input-rgb-pixels",
+          "id": "ppocr-v5-latin-v1",
+          "models": {
+            "PP-OCRv5_server_det": {
+              "files": {
+                "config.json": "436bf19010fe3879477e8599a870a0ec8ccd14ca39056805ec4ed20ab318ec04",
+                "inference.json": "af5876933d8806a1b50d895867e0781e135cd92ff37381992828fc8d1b842d28",
+                "inference.pdiparams": "183146fe9d9910352f68482f623bcbbb9fa7b9e8fa1463b9ad288cef00524d2d",
+                "inference.yml": "28fb721efc3634fc8aa677e474b9602cb815a91cf569ef357a7a553d7b3ce685"
+              },
+              "revision": "ca867c897ecbca8873081573a802ad70d499cb94"
+            },
+            "latin_PP-OCRv5_mobile_rec": {
+              "files": {
+                "config.json": "e0f5ccc44fe86254956f27746058bc4cf88d86145668cecf22ba5dd962483c80",
+                "inference.json": "820b2ee8e5072de5156c3d55124c2b03c82ef278d59f453f857c0789bacb4da1",
+                "inference.pdiparams": "53cdc8b481a7394bb108f96d0fb3432b0a8f392e22c7d18f06dbb2d42b8b25f9",
+                "inference.yml": "0bbe984570f597af3638e50bdf2e8276f3ab26a61966096538b3b0d1849f5c84"
+              },
+              "revision": "ab2cd5cc5fa6309be2e5acdfe66eca2c2c127d57"
+            }
+          },
+          "parameters": {
+            "cpu_threads": 1,
+            "device": "cpu",
+            "enable_mkldnn": true,
+            "return_word_box": false,
+            "text_det_limit_side_len": 1600,
+            "text_det_limit_type": "max",
+            "text_detection_model_name": "PP-OCRv5_server_det",
+            "text_rec_score_thresh": 0.0,
+            "text_recognition_batch_size": 1,
+            "text_recognition_model_name": "latin_PP-OCRv5_mobile_rec",
+            "use_doc_orientation_classify": false,
+            "use_doc_unwarping": false,
+            "use_textline_orientation": false
+          },
+          "pythonVersion": "3.12.15",
+          "scores": "uncalibrated",
+          "versions": {
+            "Pillow": "11.3.0",
+            "numpy": "2.2.6",
+            "paddleocr": "3.7.0",
+            "paddlepaddle": "3.2.1",
+            "paddlex": "3.7.2",
+            "pypdfium2": "4.30.0"
+          }
+        },
+        "modelDir": "/models/ocr-aux/ppocr-v5-latin-v1"
+      },
+      "inference": {
+        "binarySha256": "99183726b541dd7504a9fea2539d644b37bf0635d01a533f7366d003bd07b213",
+        "contextShift": false,
+        "contextTokens": 24576,
+        "engineVersion": "11277-eae11d221",
+        "generationTokens": 4096,
+        "imageMaxTokens": 4096,
+        "metrics": true,
+        "parallel": 1,
+        "seed": 0,
+        "temperature": 0,
+        "threads": 2,
+        "topP": 1
+      },
+      "manifestVersion": 1,
+      "models": {
+        "layout": {
+          "files": {
+            "config.json": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+            "model.safetensors": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+            "preprocessor_config.json": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42"
+          },
+          "id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+          "path": "/opt/ocr-glm/runtime/models/PP-DocLayoutV3_safetensors",
+          "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+        },
+        "ocr": {
+          "files": {
+            "GLM-OCR-f16.gguf": "b06675e983db9593db78603b06f097e48c0cf078b37731c0a09612f4a249cf6f",
+            "mmproj-GLM-OCR-Q8_0.gguf": "9c4b58e33e316ed142eb5dcb41abec3844d3e6e5dc361ffb782c3fa9d175141f",
+            "model-manifest.json": "dba833a17034e6b62f83a68d6b72cec6235c79e6bd31dfa51f7fa6cd49852681"
+          },
+          "id": "ggml-org/GLM-OCR-GGUF",
+          "path": "/models/glm-ocr-baseline",
+          "revision": "65a42de1148dbed2297e922b5dbc7d9b70c36578"
+        }
+      },
+      "normalizationRevision": "receipt-core-ptbr-v28",
+      "platform": "linux/amd64",
+      "provider": "glm",
+      "pythonVersion": "3.12.15",
+      "workerConfig": {
+        "configVersion": 1,
+        "layoutDevice": "cpu",
+        "layoutModelDir": "/opt/ocr-glm/runtime/models/PP-DocLayoutV3_safetensors",
+        "nativeBaseUrl": "http://127.0.0.1:8001/v1",
+        "pdfScale": 2,
+        "servedModelName": "glm-ocr"
+      }
+    }

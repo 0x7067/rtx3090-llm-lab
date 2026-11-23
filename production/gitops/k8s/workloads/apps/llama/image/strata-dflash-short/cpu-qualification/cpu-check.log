@@ -1,0 +1,20 @@
+{
+  "cpu_checks": "passed",
+  "source_sha256": "e8f4d78344b94410c9ea0a9a16636c6a1e38cd26e82c7ce47840d186b541dcb5",
+  "patched_sha256": "2f76802a7624cfc1ccadba0ef61f5c362627c34fa341c700c0eab27b521727cd",
+  "gpu_execution": false,
+  "qualification": false
+}
+NORMAL120_CPU_RECEIPT
+{
+  "cpu_checks": "passed",
+  "gpu_execution": false,
+  "model_requests": false,
+  "installed_launcher_sha256": "2f76802a7624cfc1ccadba0ef61f5c362627c34fa341c700c0eab27b521727cd",
+  "original_wrapper_sha256": "1b88624476906a176cf267ca19a36a51733f3f7415f4d3ffff5a9d160bf3d654",
+  "custom_gdn_plugin_absent": true,
+  "gdn_gate_default_off": true,
+  "torch_vllm_not_imported": true,
+  "argv_defaults_k7_and_opt_in_k3_k5": true,
+  "qualification": false
+}

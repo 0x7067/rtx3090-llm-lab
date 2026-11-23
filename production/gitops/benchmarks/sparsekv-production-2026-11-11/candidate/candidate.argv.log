@@ -1,0 +1,9 @@
+resolve_config: WARNING: EXTRA_ARGS carries --served-model-name which overrides the launcher's own flag (EXTRA_ARGS expands last)
+[effective-config] MODE=single
+[effective-config] CTX=long SPEC=mtp FA2_FP8KV=0 (default)
+[effective-config] PTH_FA=1 (explicit; int8_per_token_head KV on the CUSTOM backend, pthfa/: target and MTP drafter)
+[effective-config] MODEL=/app/models/Qwen3.8-27B-W4A16-AutoRound PORT=18091
+[effective-config] MAX_LEN=200000 MAX_SEQS=4
+[effective-config] VLLM_API_KEY=set(20 chars) api_key.txt=absent
+prefix caching: on (PREFIX_CACHE=1)
+[start_qwen] PTH_FA=1: int8_per_token_head KV on the CUSTOM backend (pth-flash-attn), target and MTP drafter

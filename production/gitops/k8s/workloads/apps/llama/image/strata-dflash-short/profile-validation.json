@@ -1,0 +1,30 @@
+{
+  "checked_utc": "2026-11-06T06:33:40.594386+00:00",
+  "config_sha256": "c450424d10ba7751809c7ecad75ece68f3d818b5d993a7f3cfc3470c5b7225d5",
+  "baseline_git_head": "89c473ca95980b2e1446b959d25a00084b3ff6eb",
+  "original_models": 18,
+  "prepared_models": 23,
+  "original_entries_and_top_level_settings_unchanged": true,
+  "preload": [
+    "qwen3.8-27b-hyperqwen"
+  ],
+  "added": [
+    "qwen3.8-27b-hyperqwen-trial-dflash150k-k3",
+    "qwen3.8-27b-hyperqwen-trial-dflash150k-k5",
+    "qwen3.8-27b-uncensored-trial-dflash150k",
+    "qwen3.8-27b-uncensored-trial-dflash150k-k3",
+    "qwen3.8-27b-uncensored-trial-dflash150k-k5"
+  ],
+  "installed_swap_validation": "config is valid: 23 model(s), 0 peer(s)",
+  "source_cpu_dry_run": "passed; SHM cleanup disabled; GPU commands stubbed; no runtime imports",
+  "serving_pod_ports_checked_unused": [
+    5901,
+    5902,
+    5903,
+    5904,
+    5905
+  ],
+  "applied": false,
+  "gpu_requests_sent": false,
+  "uncensored_short_invocation_gate": "HQ short-block integration must pass first"
+}

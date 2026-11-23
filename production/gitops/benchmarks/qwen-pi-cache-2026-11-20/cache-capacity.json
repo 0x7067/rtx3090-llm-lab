@@ -1,0 +1,34 @@
+[
+  {
+    "profile": "fine-mtp3",
+    "line": "(EngineCore pid=194) INFO 11-20 20:02:20 [kv_cache_utils.py:2659] GPU KV cache size: 183,233 tokens, Maximum concurrency for 131,072 tokens per request: 1.40x"
+  },
+  {
+    "profile": "fine-mtp3",
+    "line": "(EngineCore pid=194) INFO 11-20 20:02:20 [kv_cache_utils.py:2725] KV cache seat budget: 136 usable blocks of 1584 tokens; a request holds 15 blocks that do not grow with context, 98 in all at 131,072 tokens. Resident requests by context length: 8-9 at 1,024, 3 at 32,768, 1 at 131,072 tokens (max_num_seqs=4)"
+  },
+  {
+    "profile": "fine-mtp4",
+    "line": "(EngineCore pid=188) INFO 11-20 20:04:18 [kv_cache_utils.py:2659] GPU KV cache size: 172,599 tokens, Maximum concurrency for 131,072 tokens per request: 1.32x"
+  },
+  {
+    "profile": "fine-mtp4",
+    "line": "(EngineCore pid=188) INFO 11-20 20:04:18 [kv_cache_utils.py:2725] KV cache seat budget: 132 usable blocks of 1584 tokens; a request holds 18 blocks that do not grow with context, 101 in all at 131,072 tokens. Resident requests by context length: 6-7 at 1,024, 3 at 32,768, 1 at 131,072 tokens (max_num_seqs=4)"
+  },
+  {
+    "profile": "fine-mtp2",
+    "line": "(EngineCore pid=194) INFO 11-20 20:08:01 [kv_cache_utils.py:2659] GPU KV cache size: 185,685 tokens, Maximum concurrency for 131,072 tokens per request: 1.42x"
+  },
+  {
+    "profile": "fine-mtp2",
+    "line": "(EngineCore pid=194) INFO 11-20 20:08:01 [kv_cache_utils.py:2725] KV cache seat budget: 135 usable blocks of 1568 tokens; a request holds 12 blocks that do not grow with context, 96 in all at 131,072 tokens. Resident requests by context length: 10-11 at 1,024, 4 at 32,768, 1 at 131,072 tokens (max_num_seqs=4)"
+  },
+  {
+    "profile": "fine-mtp5",
+    "line": "(EngineCore pid=194) INFO 11-20 20:11:52 [kv_cache_utils.py:2659] GPU KV cache size: 169,248 tokens, Maximum concurrency for 131,072 tokens per request: 1.29x"
+  },
+  {
+    "profile": "fine-mtp5",
+    "line": "(EngineCore pid=194) INFO 11-20 20:11:52 [kv_cache_utils.py:2725] KV cache seat budget: 132 usable blocks of 1600 tokens; a request holds 21 blocks that do not grow with context, 103 in all at 131,072 tokens. Resident requests by context length: 6 at 1,024, 3 at 32,768, 1 at 131,072 tokens (max_num_seqs=4)"
+  }
+]

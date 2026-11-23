@@ -1,0 +1,60 @@
+{
+  "checked_at": "2026-11-20T16:40:52.135006+00:00",
+  "deployment_ready": true,
+  "pod": "llama-79567c98bf-7w2qb",
+  "images": {
+    "llama-swap": "127.0.0.1:5000/home-llm-strata@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679",
+    "vllm-metrics": "127.0.0.1:5000/home-llm-strata@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42"
+  },
+  "flux": [
+    {
+      "name": "apps",
+      "suspended": false,
+      "revision": "main@sha1:f62238d8b2a24eb6c71820e685c4cd707334ee2a",
+      "ready": true
+    },
+    {
+      "name": "infra",
+      "suspended": false,
+      "revision": "main@sha1:f62238d8b2a24eb6c71820e685c4cd707334ee2a",
+      "ready": true
+    }
+  ],
+  "metrics": [
+    "vllm:spec_decode_num_draft_tokens_total{engine=\"0\",model_name=\"qwen3.8-27b\"} 3.0",
+    "vllm:spec_decode_num_accepted_tokens_total{engine=\"0\",model_name=\"qwen3.8-27b\"} 3.0",
+    "vllm:num_requests_running{engine=\"0\",model_name=\"qwen3.8-27b\"} 0.0",
+    "vllm:num_requests_waiting{engine=\"0\",model_name=\"qwen3.8-27b\"} 0.0",
+    "vllm:num_requests_waiting_by_reason{engine=\"0\",model_name=\"qwen3.8-27b\",reason=\"capacity\"} 0.0",
+    "vllm:num_requests_waiting_by_reason{engine=\"0\",model_name=\"qwen3.8-27b\",reason=\"deferred\"} 0.0",
+    "vllm:generation_tokens_total{engine=\"0\",model_name=\"qwen3.8-27b\"} 2.0",
+    "vllm_metrics_proxy_upstream_up 1"
+  ],
+  "prometheus": {
+    "status": "success",
+    "data": {
+      "resultType": "vector",
+      "result": [
+        {
+          "metric": {
+            "__name__": "vllm_metrics_proxy_upstream_up",
+            "container": "vllm-metrics",
+            "endpoint": "vllm-metrics",
+            "instance": "10.42.0.8:9106",
+            "job": "apps/llama-vllm",
+            "namespace": "apps",
+            "pod": "llama-79567c98bf-7w2qb"
+          },
+          "value": [
+            1795192853.58,
+            "1"
+          ]
+        }
+      ]
+    }
+  },
+  "gpu": "22692 MiB, 122.36 W, 56",
+  "disk": "Filesystem                            Size  Used Avail Use% Mounted on\n/dev/mapper/nvme--vg-ubuntu--lv       456G  322G  112G  75% /\n/dev/mapper/nvme--vg-development--lv  456G  344G   90G  80% /data/development\n",
+  "client_commit": "ba924e9",
+  "passed": true
+}

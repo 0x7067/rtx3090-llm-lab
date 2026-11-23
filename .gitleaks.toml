@@ -1,0 +1,13 @@
+# Narrow allowlist for production/ (see tools/production/publish.sh).
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "SHA-256 digests keyed by file names such as tokenizer.json"
+regexTarget = "secret"
+regexes = ['''^[0-9a-f]{64}$''']
+
+[[allowlists]]
+description = "Dummy bearer for loopback benchmark servers"
+regexTarget = "secret"
+regexes = ['''^sparsekv-bench-local$''']

@@ -1,0 +1,27 @@
+{
+  "cpu_checks": "passed",
+  "gpu_execution": false,
+  "model_requests": false,
+  "installed_launcher_sha256": "2f76802a7624cfc1ccadba0ef61f5c362627c34fa341c700c0eab27b521727cd",
+  "original_wrapper_sha256": "1b88624476906a176cf267ca19a36a51733f3f7415f4d3ffff5a9d160bf3d654",
+  "custom_gdn_plugin_absent": true,
+  "gdn_gate_default_off": true,
+  "torch_vllm_not_imported": true,
+  "argv_defaults_k7_and_opt_in_k3_k5": true,
+  "qualification": false,
+  "image_id": "127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+  "runtime_image_id": "127.0.0.1:5000/home-llm-strata@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+  "exit_code": 0,
+  "check_sources_sha256": {
+    "apply_patch.py": "5a49d8e83c260241dcd34342d6ad066b0f90a78ca573c2a48c6e99b652f96b79",
+    "check_cpu.py": "5dd20a41c4bf29ca8a008b7bf4c81c8592a4a4740d0c681e36b4536feb3e01df",
+    "check_image.py": "4cb6ee51403bee73346a772443ca93571011fbbd8b3f2f1b80840ac4825c5565",
+    "provenance.json": "df7ed1bd26cb7bf65bf059efb88875aa607c97b7c357513fd183e03232b6fcf9",
+    "upstream/single-user/start_qwen.sh": "e8f4d78344b94410c9ea0a9a16636c6a1e38cd26e82c7ce47840d186b541dcb5",
+    "upstream/single-user/select_model.sh": "ba98eada2d51f3761fbb526bd5f2daac6914ff2feac769d5a78910ba5eaf0908",
+    "upstream/resolve_config.sh": "1aa4a1332075e905d3020dda3ee14d7921e4decd16ee776100cdc6a10c5249bf",
+    "upstream/launcher_common.sh": "9ae96732ef32da2c038763cbe6bf634df3e1a2606d9808ebdfc82bbae55e8a5d",
+    "upstream/resolve_api_key.sh": "65626aee27d586f8d5350fcd30b87d3ef8b5a1de6c7d97ec6b4afda2d7960b10",
+    "upstream/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  }
+}

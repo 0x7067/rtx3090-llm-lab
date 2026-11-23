@@ -1,0 +1,14 @@
+{
+  "inspected_date": "2026-11-06",
+  "source": "read-only /app files in deployed llama-swap container",
+  "base_image": "127.0.0.1:5000/home-llm-strata:0.2.8-v1@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42",
+  "vllm": "0.31.0 gdb9527a46",
+  "sha256": {
+    "single-user/start_qwen.sh": "e8f4d78344b94410c9ea0a9a16636c6a1e38cd26e82c7ce47840d186b541dcb5",
+    "single-user/select_model.sh": "ba98eada2d51f3761fbb526bd5f2daac6914ff2feac769d5a78910ba5eaf0908",
+    "resolve_config.sh": "1aa4a1332075e905d3020dda3ee14d7921e4decd16ee776100cdc6a10c5249bf",
+    "launcher_common.sh": "9ae96732ef32da2c038763cbe6bf634df3e1a2606d9808ebdfc82bbae55e8a5d",
+    "resolve_api_key.sh": "65626aee27d586f8d5350fcd30b87d3ef8b5a1de6c7d97ec6b4afda2d7960b10",
+    "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  }
+}

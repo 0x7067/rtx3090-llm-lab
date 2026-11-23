@@ -1,0 +1,7 @@
+*
+!.payload/
+!.payload/**
+!sources.json
+!install_overlay.py
+!serve-long.sh
+!serve-short.sh

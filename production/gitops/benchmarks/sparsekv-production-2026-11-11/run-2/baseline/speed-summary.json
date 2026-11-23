@@ -1,0 +1,21 @@
+{
+  "phase": "speed",
+  "passed": 7,
+  "total": 7,
+  "sizes": {
+    "4k": {
+      "wall_s": 7.785754267999437,
+      "ttft_s": 1.8509559060330503,
+      "server_decode_tps": 86.08035310240861,
+      "server_prefill_tps": 2209.7106178694826,
+      "e2e_output_tps": 65.76113018418694
+    },
+    "32k": {
+      "wall_s": 21.996317047043703,
+      "ttft_s": 16.7825972950086,
+      "server_decode_tps": 100.22015429905944,
+      "server_prefill_tps": 1918.61708510663,
+      "e2e_output_tps": 23.276623941407163
+    }
+  }
+}

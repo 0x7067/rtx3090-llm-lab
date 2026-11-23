@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "min_host_available_GiB": 8.905109405517578,
+    "peak_gpu_MiB": 23912.0,
+    "peak_gpu_temp_C": 74.0
+  },
+  "candidate": {
+    "min_host_available_GiB": 9.18435287475586,
+    "peak_gpu_MiB": 23552.0,
+    "peak_gpu_temp_C": 75.0
+  }
+}

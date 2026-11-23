@@ -1,0 +1,69 @@
+{
+  "phase": "Succeeded",
+  "startTime": "2026-11-06T06:28:24Z",
+  "containerStatuses": [
+    {
+      "allocatedResources": {
+        "cpu": "1",
+        "memory": "1Gi"
+      },
+      "containerID": "containerd://ac46c4c74f4594d31dc8718aad390f40f05a2bc474191ff57af8a1af5a4e062c",
+      "image": "sha256:eafdaabee52958fc49bf3413a9020310633225563646ca1ad497ed38f91a63ad",
+      "imageID": "127.0.0.1:5000/home-llm-strata@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+      "lastState": {},
+      "name": "check",
+      "ready": false,
+      "resources": {
+        "limits": {
+          "cpu": "2",
+          "memory": "8Gi"
+        },
+        "requests": {
+          "cpu": "1",
+          "memory": "1Gi"
+        }
+      },
+      "restartCount": 0,
+      "started": false,
+      "state": {
+        "terminated": {
+          "containerID": "containerd://ac46c4c74f4594d31dc8718aad390f40f05a2bc474191ff57af8a1af5a4e062c",
+          "exitCode": 0,
+          "finishedAt": "2026-11-06T06:28:28Z",
+          "reason": "Completed",
+          "startedAt": "2026-11-06T06:28:27Z"
+        }
+      },
+      "user": {
+        "linux": {
+          "gid": 1000,
+          "supplementalGroups": [
+            4,
+            20,
+            24,
+            25,
+            27,
+            29,
+            30,
+            44,
+            46,
+            1000
+          ],
+          "uid": 1000
+        }
+      },
+      "volumeMounts": [
+        {
+          "mountPath": "/tmp",
+          "name": "tmp"
+        },
+        {
+          "mountPath": "/checks",
+          "name": "checks",
+          "readOnly": true,
+          "recursiveReadOnly": "Disabled"
+        }
+      ]
+    }
+  ]
+}

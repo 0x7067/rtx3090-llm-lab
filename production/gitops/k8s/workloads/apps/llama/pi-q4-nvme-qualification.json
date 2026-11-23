@@ -1,0 +1,221 @@
+{
+  "maintenance_approved": "2026-11-20 user approved current window",
+  "profiles": [
+    {
+      "quant": "Q4_K_XL",
+      "context": 131072,
+      "requests": [
+        {
+          "prompt": "Reply with exactly: PI_READY",
+          "seconds": 0.5599919480009703,
+          "response": {
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "PI_READY"
+                }
+              }
+            ],
+            "created": 1795187293,
+            "model": "qwen3.8-pi",
+            "system_fingerprint": "b11277-eae11d221",
+            "object": "chat.completion",
+            "usage": {
+              "completion_tokens": 3,
+              "prompt_tokens": 18,
+              "total_tokens": 21,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "id": "chatcmpl-9a462G5wPXstURTyliji2YYqyi9zg2JV",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 18,
+              "prompt_ms": 402.677,
+              "prompt_per_token_ms": 22.370944444444447,
+              "prompt_per_second": 44.700839630771064,
+              "predicted_n": 3,
+              "predicted_ms": 143.887,
+              "predicted_per_token_ms": 71.9435,
+              "predicted_per_second": 13.899796367983209
+            }
+          }
+        },
+        {
+          "prompt": "Write a Python function that returns the first n Fibonacci numbers. Include assertions for n=0, n=1, and n=8.",
+          "seconds": 10.362197702997946,
+          "response": {
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "```python\ndef fibonacci(n: int) -> list:\n    \"\"\"Return the first n Fibonacci numbers.\n    \n    Args:\n        n: A non-negative integer indicating how many Fibonacci numbers to return.\n        \n    Returns:\n        A list of the first n Fibonacci numbers.\n        \n    Raises:\n        ValueError: If n is negative.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be a non-negative integer\")\n    \n    if n == 0:\n        return []\n    if n == 1:\n        return [0]\n    \n    fib = [0, 1]\n    for i in range(2, n):\n        fib.append(fib[i - 1] + fib[i - 2])\n    \n    return fib\n\n\n# Assertions\nassert fibonacci(0) == [], \"fibonacci(0) should return an empty list\"\nassert fibonacci(1) == [0], \"fibonacci(1) should return [0]\"\nassert fibonacci(8) == [0, 1, 1, 2, 3, 5, 8, 13], \"fibonacci(8) should return [0, 1, 1, 2, 3, 5, 8, 13]\"\n```"
+                }
+              }
+            ],
+            "created": 1795187303,
+            "model": "qwen3.8-pi",
+            "system_fingerprint": "b11277-eae11d221",
+            "object": "chat.completion",
+            "usage": {
+              "completion_tokens": 281,
+              "prompt_tokens": 40,
+              "total_tokens": 321,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "id": "chatcmpl-hxjkYQb0pEPd0a51LrjSyq1diM6LM9oD",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 40,
+              "prompt_ms": 379.702,
+              "prompt_per_token_ms": 9.49255,
+              "prompt_per_second": 105.34577115738131,
+              "predicted_n": 281,
+              "predicted_ms": 9772.068,
+              "predicted_per_token_ms": 34.90024285714286,
+              "predicted_per_second": 28.653095741863446
+            }
+          }
+        },
+        {
+          "prompt": "Return only JSON with key answer containing the integer 391*27.",
+          "seconds": 0.6964299159953953,
+          "response": {
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "{\"answer\": 10557}"
+                }
+              }
+            ],
+            "created": 1795187304,
+            "model": "qwen3.8-pi",
+            "system_fingerprint": "b11277-eae11d221",
+            "object": "chat.completion",
+            "usage": {
+              "completion_tokens": 11,
+              "prompt_tokens": 29,
+              "total_tokens": 40,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "id": "chatcmpl-wwP5TwLCqSAcJL6x9ooTRgZP9u7VrQRY",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 29,
+              "prompt_ms": 188.35,
+              "prompt_per_token_ms": 6.494827586206896,
+              "prompt_per_second": 153.96867533846563,
+              "predicted_n": 11,
+              "predicted_ms": 342.793,
+              "predicted_per_token_ms": 34.2793,
+              "predicted_per_second": 29.1721242849183
+            }
+          }
+        }
+      ],
+      "gpu": "21692 MiB, 152.31 W, 55",
+      "tool_call": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "I'll read the file for you.\n\n",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_file",
+                    "arguments": "{\"path\":\"/tmp/pi-fixture.txt\"}"
+                  },
+                  "id": "Odbcxr3X3KyeJaNJyV2HYQSNssutIgJL"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1795187306,
+        "model": "qwen3.8-pi",
+        "system_fingerprint": "b11277-eae11d221",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 38,
+          "prompt_tokens": 285,
+          "total_tokens": 323,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-N2eYB4asK7rMd9vgY6yj2kUm8yhtssnP",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 285,
+          "prompt_ms": 478.101,
+          "prompt_per_token_ms": 1.6775473684210527,
+          "prompt_per_second": 596.1083536742237,
+          "predicted_n": 38,
+          "predicted_ms": 1190.263,
+          "predicted_per_token_ms": 32.16927027027027,
+          "predicted_per_second": 31.085566803303138
+        }
+      },
+      "tool_result": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "The file `/tmp/pi-fixture.txt` contains:\n\n```\nORCHID_7392\n```"
+            }
+          }
+        ],
+        "created": 1795187307,
+        "model": "qwen3.8-pi",
+        "system_fingerprint": "b11277-eae11d221",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 25,
+          "prompt_tokens": 348,
+          "total_tokens": 373,
+          "prompt_tokens_details": {
+            "cached_tokens": 322
+          }
+        },
+        "id": "chatcmpl-M9iFj2Mq8oevaAe3GEb8itj1zckfGy07",
+        "timings": {
+          "cache_n": 322,
+          "prompt_n": 26,
+          "prompt_ms": 251.303,
+          "prompt_per_token_ms": 9.6655,
+          "prompt_per_second": 103.46076250581967,
+          "predicted_n": 25,
+          "predicted_ms": 770.44,
+          "predicted_per_token_ms": 32.10166666666667,
+          "predicted_per_second": 31.15103057992835
+        }
+      },
+      "passed": true,
+      "independent_checks": {
+        "ready_exact": true,
+        "arithmetic_json": true,
+        "fibonacci_cases": 5,
+        "tool_round_trip": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+== quant_lm_head.py (int8 lm_head)
+config.json: compressed-tensors, extending config_groups.group_0 (1 existing group(s), 215 ignored modules)
+lm_head.weight lives in model-00007-of-00007.safetensors
+round-trip relative error: 0.0069
+done
+== quant_embed.py (int8 embeddings)
+config.json: compressed-tensors, extending config_groups.group_0 (2 existing group(s), 214 ignored modules)
+model.language_model.embed_tokens.weight lives in model-00006-of-00007.safetensors
+round-trip relative error: 0.0065
+done
+== quant_mtp.py (int8 MTP module)
+config.json: compressed-tensors, extending config_groups.group_0 (3 existing group(s), 214 ignored modules)
+mtp linears live in model_extra_tensors.safetensors, quantizing to int8 g128
+  mtp.fc: (5120, 10240) round-trip rel error 0.0154
+  mtp.layers.0.mlp.down_proj: (5120, 17408) round-trip rel error 0.0074
+  mtp.layers.0.mlp.gate_proj: (17408, 5120) round-trip rel error 0.0066
+  mtp.layers.0.mlp.up_proj: (17408, 5120) round-trip rel error 0.0066
+  mtp.layers.0.self_attn.q_proj: (12288, 5120) round-trip rel error 0.0068
+  mtp.layers.0.self_attn.k_proj: (1024, 5120) round-trip rel error 0.0077
+  mtp.layers.0.self_attn.v_proj: (1024, 5120) round-trip rel error 0.0069
+  mtp.layers.0.self_attn.o_proj: (5120, 6144) round-trip rel error 0.0076
+done
+== build_draft_vocab.py (40k draft head)
+using 40960 ids from prepare/draft_vocab_ids.json
+corpus tokens: 0
+draft head: packed (40960, 1280) torch.int32, scales (40960, 40) torch.float16, 213 MB
+done
+== fetch_fast_variant.py (int4-GPTQ lm_head/MTP + own-output draft vocab, ~1 GB)
+Fetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 5 files:  20%|██        | 1/5 [00:00<00:02,  1.38it/s]Fetching 5 files:  60%|██████    | 3/5 [00:06<00:04,  2.26s/it]Fetching 5 files:  80%|████████  | 4/5 [00:53<00:17, 17.83s/it]Fetching 5 files: 100%|██████████| 5/5 [00:54<00:00, 12.11s/it]Fetching 5 files: 100%|██████████| 5/5 [00:54<00:00, 10.82s/it]
+fast variant ready: /app/models/Qwen3.8-27B-W4A16-AutoRound-fast
+serve with: CTX=fast bash single-user/start_qwen.sh   (picked up automatically when the dir exists)
+== fetch_dflash2.py (W4A16 DFlash2 drafter for SPEC=dflash2, ~1 GB; optional)
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:  33%|███▎      | 1/3 [00:00<00:00,  2.72it/s]Fetching 3 files: 100%|██████████| 3/3 [00:27<00:00, 10.12s/it]Fetching 3 files: 100%|██████████| 3/3 [00:27<00:00,  9.14s/it]
+drafter ready: /app/models/Qwen3.8-27B-DFlash2-W4A16
+serve with: SPEC=dflash2 bash single-user/start_qwen.sh
+hardened: models/Qwen3.8-27B-W4A16-AutoRound/chat_template.jinja
+hardened: models/Qwen3.8-27B-W4A16-AutoRound-fast/chat_template.jinja
+translate_chat_template: /app/models/Qwen3.8-27B-W4A16-AutoRound/chat_template.jinja: translated
+translate_chat_template: /app/models/Qwen3.8-27B-W4A16-AutoRound-fast/chat_template.jinja: translated
+prepare: model ready at /app/models/Qwen3.8-27B-W4A16-AutoRound (+ /app/models/Qwen3.8-27B-W4A16-AutoRound-fast)

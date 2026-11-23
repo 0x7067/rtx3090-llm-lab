@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-10-25",
+  "runtime": {
+    "repository": "https://github.com/krafton-ai/llama.cpp",
+    "branch": "raon-1-mini-preview",
+    "revision": "fb895662d25868756a19253ca5e0688f99b18994",
+    "committed_at": "2026-10-20T13:33:00Z",
+    "archive": "llama.cpp-fb895662.tar.gz",
+    "url": "https://github.com/krafton-ai/llama.cpp/archive/fb895662d25868756a19253ca5e0688f99b18994.tar.gz",
+    "sha256": "ec9cdf3c4cceac7791c44bf3ccd027c78575dd3ff2e7273ed999ddf729f60f35",
+    "age_exception": "User requested the latest versions on 2026-10-25 after being told the initial plan used an older source revision.",
+    "ui_assets": "User explicitly requested upstream defaults and permitted the normal automatic asset downloads."
+  },
+  "models": [
+    {
+      "id": "qwen3.5-4b-3d-coder",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "revision": "925fa52307649d9d45896bc4c16f4af5a3c41cf5",
+      "file": "Qwen3.5-4B-3D-Coder-Q8_0.gguf",
+      "sha256": "666ebe87dcbe4138888f07c4eb1bcb9be82e7a057a5c154c0104f4173690038c",
+      "bytes": 4482402816,
+      "library_directory": "/data/models/qwen3.5/ccore/Qwen3.5-4B-3D-Coder"
+    },
+    {
+      "id": "raon-1-mini-preview",
+      "repository": "KRAFTON/Raon-1-mini-preview-gguf",
+      "revision": "3afcfcdb462ec3995e48099257143c3e352a4471",
+      "file": "raon-1-mini-preview-Q4_K_M.gguf",
+      "sha256": "bedbd8a35de6242c686bbbcdc6e8caac1920423e1dd320616ba14b1a04fe1705",
+      "bytes": 19686434304,
+      "library_directory": "/data/models/raon/KRAFTON/Raon-1-mini-preview-gguf"
+    }
+  ]
+}

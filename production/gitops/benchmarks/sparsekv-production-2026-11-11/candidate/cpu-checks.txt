@@ -1,0 +1,17 @@
+Host: denguinho-server
+Container runtime: cached production image (manifest.json), k3s containerd namespace k8s.io
+
+PASS  All 51 shared vLLM patches match the production image byte-for-byte.
+PASS  All three sparse patches apply with zero fuzz and zero offsets.
+PASS  Rebuilt PTH library 8093224 bytes, 18 cubins for sm_80/sm_86/sm_89, no PTX.
+PASS  Upstream PTH gate, SparseKV install/import/check, and basis SHA-256.
+PASS  Baseline and candidate launcher --check with UID:GID 1000:1000, no GPU.
+PASS  NVIDIA runc runtime accepts the image with NVIDIA_VISIBLE_DEVICES=void.
+PASS  The private /dev/shm reports 16 GiB.
+PASS  Container host cgroup reports cpu.max=1200000 100000 and memory.max=38654705664.
+PASS  Unmodified production image emits the same vllm._C message during CPU imports, with success.
+PASS  No temporary benchmark tasks or containers after the CPU checks.
+
+Both launchers use the same checkpoint, chat template, vision settings, 200000-token
+context limit, 4 request slots, 12 CPU quota and 36 GiB memory limit.
+GPU startup and throughput are pending the production benchmark window.

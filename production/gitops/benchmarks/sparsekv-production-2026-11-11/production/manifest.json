@@ -1,0 +1,19 @@
+{
+  "captured_utc": "2026-11-11T11:43:13.110945+00:00",
+  "repository_commit": "cc6b223a80e636bbf5f13c2478f116b89cbe0a8e",
+  "deployment_uid": "b7aebf4f-bd02-4d2d-952b-467c5dde478d",
+  "generation": 444,
+  "replicas": 1,
+  "images": {
+    "llama-swap": "127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+    "vllm-metrics": "127.0.0.1:5000/home-llm-strata:0.2.8-v1@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42"
+  },
+  "initial_state": "Production unavailable before benchmark; prior qwen-deletion job restoration hit disk pressure; no GPU benchmark started.",
+  "files": {
+    "chat_template.jinja": "59fde9378699010435675b905bd73365bea57b52b0985794fce727d2fd4f5700",
+    "deployment.json": "78d2a2f339eeef46a013ea00ba8f16cdabf8a079016294d68496e8184e0dd52f",
+    "gpu.csv": "b74266997568658b93483dd43adc0d0393bbd0c39c8f918d44f394161fb58f6b",
+    "start_qwen_cache.py": "4c2023f0b47cafd868cb442e49ce6618b735046f1d593a6c12349c0fdfa020ab",
+    "swap-configmap.json": "cae1fe4997b069288641b85e7b11b8feca18402f3a9f6d3421f8ae9ae6abff50"
+  }
+}

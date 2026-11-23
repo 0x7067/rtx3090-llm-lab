@@ -1,0 +1,48 @@
+{
+  "verified_at": "2026-11-11T10:11:44.289748-03:00",
+  "production_available_replicas": 1,
+  "original_deployment_uid": true,
+  "container_specs_match": true,
+  "model_config_matches": true,
+  "benchmark_ownership_removed": true,
+  "benchmark_tasks_and_containers_absent": true,
+  "image_pins_restored": true,
+  "inference": {
+    "model": "qwen3.8-27b",
+    "content": "42",
+    "usage": {
+      "prompt_tokens": 28,
+      "total_tokens": 31,
+      "completion_tokens": 3,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "created_cache_tokens": 0,
+        "multimodal_tokens": null
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    }
+  },
+  "flux": {
+    "apps": {
+      "suspended": false,
+      "ready": "True"
+    },
+    "flux-system": {
+      "suspended": false,
+      "ready": "True"
+    },
+    "infra": {
+      "suspended": false,
+      "ready": "True"
+    }
+  },
+  "cri_image_pinned_state": {
+    "sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2": false,
+    "sha256:37ae52afe6b11ffa4b613f1fa5ecd8354584a32daa500b7ce02dbdb1c283e012": false,
+    "sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42": false
+  },
+  "temporary_build_and_runtime_cache_removed": true,
+  "overlay_hash_verified_before_removal": true
+}

@@ -1,0 +1,50 @@
+{
+  "manifestVersion": 1,
+  "platform": "linux/amd64",
+  "pythonVersion": "3.12.15",
+  "models": {
+    "ocr": {
+      "id": "PaddlePaddle/PaddleOCR-VL-1.6",
+      "revision": "c5630abae1d940eafe0697512a0325494b02ab42",
+      "path": "/models/ocr",
+      "files": {}
+    },
+    "layout": {
+      "id": "PaddlePaddle/PP-DocLayoutV3",
+      "revision": "241f8bdfc77a7c7bee915a5057aaee58c235a8d3",
+      "path": "/models/layout",
+      "files": {}
+    }
+  },
+  "artifacts": {
+    "layoutImage": null,
+    "vllmImage": null,
+    "layoutLockSha256": "a9b7f38916bcc83db72b47bfbc3677139958029ab10e09408ea0c17a5ff4b7c7",
+    "vllmLockSha256": "08d520a7213bef1e265c7f3e2edcd949d29c3279f3b89a6a91e869e8f3a7b2e2",
+    "adapterTreeSha256": null
+  },
+  "inference": {
+    "endpoint": "http://ocr-vllm:8000/v1",
+    "servedModel": "PaddleOCR-VL-1.6-0.9B",
+    "minFreeGpuMiB": 10240,
+    "gpuMemoryUtilization": 0.35,
+    "maxModelLen": 8192,
+    "maxNumBatchedTokens": 8192,
+    "maxNumSeqs": 1,
+    "apiServerCount": 1,
+    "dtype": "bfloat16",
+    "enforceEager": true,
+    "trustInventoriedModelCode": true
+  },
+  "workerConfig": {
+    "configVersion": 1,
+    "pipelineVersion": "v1.6",
+    "layoutModelDir": "/models/layout",
+    "vlModelDir": "/models/ocr",
+    "vllmBaseUrl": "http://ocr-vllm:8000/v1",
+    "servedModelName": "PaddleOCR-VL-1.6-0.9B",
+    "pdfScale": 2,
+    "layoutDevice": "cpu"
+  },
+  "normalizationRevision": "receipt-core-ptbr-v28"
+}

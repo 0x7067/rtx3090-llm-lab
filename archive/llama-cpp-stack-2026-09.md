@@ -29,17 +29,17 @@ alternative.
 - [`benchmarks/orcasaq-vs-w4-2026-09-25/`](../benchmarks/orcasaq-vs-w4-2026-09-25/)
   records the current OrcaSAQ2 EXL3 profile, the fixed chat template, the
   W4A16 rollback profile, and the qualified reasoning-effort policy.
-- [`Dockerfile`](../Dockerfile) + [`patches-v14/`](patches-v14/) build the
+- [`Dockerfile`](llama-cpp-v15/Dockerfile) + [`patches-v14/`](patches-v14/) build the
   last production llama.cpp image (`llama:cuda-swap-v14`, base
   `0f3a71be1`). [`patches-v9-v12-base-4df29be4/`](patches-v9-v12-base-4df29be4/)
   is the superseded eight-patch set behind images v9–v12 (base `4df29be4f`).
   [`PROMOTE.md`](PROMOTE-llama-cpp-vllm-2026-09.md) is the build / promote / rollback runbook for both
   engines.
-- [`vllm/`](../vllm/) contains the full vLLM build source:
-  [`vllm/syv-ai/`](../vllm/syv-ai/) is a squashed subtree of
+- [`vllm/`](vllm-qwen38/) contains the full vLLM build source:
+  [`vllm/syv-ai/`](vllm-qwen38/syv-ai/) is a squashed subtree of
   `syv-ai/qwen38-27b-rtx3090` at our k8s-deploy-v10 overlay (so the stack is
   buildable from this repo alone, no separate checkout),
-  [`vllm/image-build/`](../vllm/image-build/) holds the locked base environment
+  [`vllm/image-build/`](vllm-qwen38/image-build/) holds the locked base environment
   and the patch overlay the k8s images were built from, plus the v9 image
   overlay once deployed ([`vllm/image-v9/`](vllm/image-v9/)), the exported pre-v10, v10 and
   v11 branch diffs ([`vllm/image-v9-k8s-deploy/`](vllm/image-v9-k8s-deploy/),
@@ -76,7 +76,7 @@ their unique content having been exported here first:
   [`vllm/image-v9-k8s-deploy/`](vllm/image-v9-k8s-deploy/),
   [`vllm/image-v10/`](vllm/image-v10/) and
   [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/), alongside the syv-ai
-  overlay and the Club 3090 bundle in [`vllm/`](../vllm/). **Deleted 2026-09-02.**
+  overlay and the Club 3090 bundle in [`vllm/`](vllm/). **Deleted 2026-09-02.**
   Upstreaming to syv-ai now needs a fresh fork.
 - `0x7067/tiel-bench-rtx3090` held the public Tiel-versus-Qwen comparison. Its
   content is merged into
@@ -164,7 +164,7 @@ the last-deployed manifest; [`vllm/image-v11-vllm028/`](vllm/image-v11-vllm028/)
 is a vLLM-0.28 candidate branch that was exported but never deployed.
 
 The exact overlay and installable Club 3090 local bundle are under
-[`vllm/`](../vllm/). The wrapper passed a target-3090 boot and generation canary
+[`vllm/`](vllm/). The wrapper passed a target-3090 boot and generation canary
 on 2026-08-22. See [`docs/vllm-companion.md`](../docs/vllm-companion.md) for the
 model assembly, matched arms, quality position, environment, and qualification
 evidence.

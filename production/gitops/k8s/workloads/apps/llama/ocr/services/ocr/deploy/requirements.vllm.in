@@ -1,0 +1,9 @@
+# PaddleX's vLLM registration plugin supplies the 1.6 implementation for vLLM 0.10.2.
+paddlex[genai-vllm-server]==3.7.2
+vllm==0.10.2
+torch==2.8.0
+transformers==4.55.4
+numpy==2.2.6
+Pillow==11.3.0
+opencv-python-headless==4.11.0.86
+openai==1.109.1

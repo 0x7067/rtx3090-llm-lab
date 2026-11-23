@@ -1,0 +1,134 @@
+{
+  "checked_at": "2026-11-20T16:29:59.386322+00:00",
+  "deployed_commit": "f62238d8b2a24eb6c71820e685c4cd707334ee2a",
+  "machines": [
+    {
+      "machine": "denguinho-studio",
+      "exit": 0,
+      "wall_seconds": 17.821920147995115,
+      "stderr": "",
+      "result": {
+        "host": "Denguinho-Studio",
+        "configuration": {
+          "baseUrl": "http://100.64.0.2/v1",
+          "api": "openai-completions",
+          "contextWindow": 131072,
+          "samplingParams": {
+            "temperature": 0.8,
+            "top_p": 1.0,
+            "top_k": -1,
+            "min_p": 0
+          },
+          "reasoning": false
+        },
+        "listed": true,
+        "api_seconds": 1.645,
+        "api_content": "PI_READY",
+        "pi_seconds": 15.82,
+        "pi_exit": 0,
+        "pi_output_tail": "Fixed `parser.mjs`. The new `parseEnvLine` trims the whole line first, then:\n\n- Returns `null` for blank lines, comments (including leading whitespace), and lines without `=`\n- Splits on the **first** `=` only, so `value` keeps any subsequent `=` characters\n- Trims key and value; rejects empty keys\n\nVerified with bun \u2014 all cases pass, including `VALUE with = signs` being preserved.\n",
+        "pi_stderr_tail": "",
+        "verification": "5 independent cases passed",
+        "verification_error": "",
+        "passed": true
+      },
+      "passed": true
+    },
+    {
+      "machine": "pedro-ravn",
+      "exit": 0,
+      "wall_seconds": 21.406139452999923,
+      "stderr": "",
+      "result": {
+        "host": "Pedro-Guimaraes-Ravn-GFV73Y4047",
+        "configuration": {
+          "baseUrl": "http://100.64.0.2/v1",
+          "api": "openai-completions",
+          "contextWindow": 131072,
+          "samplingParams": {
+            "temperature": 0.8,
+            "top_p": 1.0,
+            "top_k": -1,
+            "min_p": 0
+          },
+          "reasoning": false
+        },
+        "listed": true,
+        "api_seconds": 0.566,
+        "api_content": "PI_READY",
+        "pi_seconds": 19.84,
+        "pi_exit": 0,
+        "pi_output_tail": "Fixed `parser.mjs` \u2014 `parseEnvLine` now:\n- Trims the line, returns `null` for blank lines, `#` comments (including indented), and lines without `=`\n- Splits on the first `=` only, so all equals signs inside the value are preserved (`URL=http://a=b/c=d` \u2192 value `http://a=b/c=d`)\n- Trims whitespace around key and value before returning `{key, value}`\n\nVerified with bun: all 8 test cases pass.\n",
+        "pi_stderr_tail": "",
+        "verification": "5 independent cases passed",
+        "verification_error": "",
+        "passed": true
+      },
+      "passed": true
+    },
+    {
+      "machine": "denguinho-server",
+      "exit": 0,
+      "wall_seconds": 27.10036747200502,
+      "stderr": "",
+      "result": {
+        "host": "denguinho-server",
+        "configuration": {
+          "baseUrl": "http://100.64.0.2/v1",
+          "api": "openai-completions",
+          "contextWindow": 131072,
+          "samplingParams": {
+            "temperature": 0.8,
+            "top_p": 1.0,
+            "top_k": -1,
+            "min_p": 0
+          },
+          "reasoning": false
+        },
+        "listed": true,
+        "api_seconds": 0.128,
+        "api_content": "PI_READY",
+        "pi_seconds": 26.879,
+        "pi_exit": 0,
+        "pi_output_tail": "Fixed `/tmp/qwen-pi-client-gpu6oyy2/parser.mjs`. All 9 test cases pass:\n\n- Blank/whitespace-only lines \u2192 `null`\n- Comments (including leading-whitespace comments) \u2192 `null`\n- Lines without `=` \u2192 `null`\n- Key/value whitespace trimmed (`  FOO=bar  ` \u2192 `{key:\"FOO\",value:\"bar\"}`, `FOO = bar` \u2192 trimmed)\n- Multiple `=` in value preserved (`FOO=bar=baz` \u2192 `value:\"bar=baz\"`) \u2014 using `indexOf` + `slice` instead of `split(\"=\")`\n\nThe fix uses `indexOf(\"=\")` to split on the first equals only, so all subsequent equals stay in the value.\n",
+        "pi_stderr_tail": "",
+        "verification": "5 independent cases passed",
+        "verification_error": "",
+        "passed": true
+      },
+      "passed": true
+    },
+    {
+      "machine": "denguinho-pro",
+      "exit": 0,
+      "wall_seconds": 34.412621640003636,
+      "stderr": "",
+      "result": {
+        "host": "Denguinho-Pro",
+        "configuration": {
+          "baseUrl": "http://100.64.0.2/v1",
+          "api": "openai-completions",
+          "contextWindow": 131072,
+          "samplingParams": {
+            "temperature": 0.8,
+            "top_p": 1.0,
+            "top_k": -1,
+            "min_p": 0
+          },
+          "reasoning": false
+        },
+        "listed": true,
+        "api_seconds": 1.358,
+        "api_content": "PI_READY",
+        "pi_seconds": 32.636,
+        "pi_exit": 0,
+        "pi_output_tail": "All 12 tests pass. Fixed `parser.mjs`:\n\n```js\nexport function parseEnvLine(line) {\n  const trimmed = line.trim();\n  // Blank lines, comments (including leading whitespace), and lines without '=' return null\n  if (trimmed === \"\" || trimmed.startsWith(\"#\") || !trimmed.includes(\"=\")) {\n    return null;\n  }\n  const idx = trimmed.indexOf(\"=\");\n  const key = trimmed.slice(0, idx).trim();\n  const value = trimmed.slice(idx + 1).trim();\n  return { key, value };\n}\n```\n\nKey changes from the original:\n- **Trim** the whole line first, then trim key and value individually.\n- **First-equals split** via `indexOf(\"=\")` instead of `split(\"=\")`, so values like `A=b=c=d` preserve all embedded equals signs.\n- **Guards** return `null` for blank lines, `#` comments (with or without leading whitespace), and lines that contain no `=`.\n\nVerified with `bun` \u2014 blank/comment/no-equals cases return `null`, and valid assignments return `{key, value}` with whitespace trimmed and internal equals preserved.\n",
+        "pi_stderr_tail": "",
+        "verification": "5 independent cases passed",
+        "verification_error": "",
+        "passed": true
+      },
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "status": "Native K3 with priority eviction passed component trials; combined 160k GPU qualification and production rollout pending",
+  "base_image": "127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679",
+  "gguf_reader_commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+  "overlay_name": "cachefix-draft-page-priority-01",
+  "overlay": {
+    "sparsekv/tier_connector.py": {
+      "original_sha256": "12f975122900142e77d98108a91e697b079a8cc81d4268440f82acf66ad9b380",
+      "patched_sha256": "d17fc2bdb60771c504734c7dd3957b51ffb2fb80a2de9a7c0398ef0501182338"
+    },
+    "vllm/v1/core/kv_cache_coordinator.py": {
+      "original_sha256": "6251dd830104b267b4937f333648fb06925fcfa5d008d158ed6835b2c6818a3e",
+      "patched_sha256": "88df61ad5a386a114051a50fcb04f39e38032da66f0b1534b61d9ae92a310ad9"
+    },
+    "vllm/model_executor/models/qwen3_dflash.py": {
+      "original_sha256": "72492690067b0905356175c7b07305fb8f0792bae0a6ba779826fdad53be5ef4",
+      "patched_sha256": "24ff01146d39c33e364ffc5de0db55845fb6f7e0f1060c8764cd526460fcc30a"
+    },
+    "vllm/v1/worker/gpu/spec_decode/dflash/utils.py": {
+      "original_sha256": "f0584417149c0a6fa67e700b2a725e40a41f4546a806b26e6cc64b64c59cfd66",
+      "patched_sha256": "243e729f7896d70de52d33c8e9bff8e6ae2fc0b786892753cdcaad9076aeaec6"
+    },
+    "vllm/v1/core/kv_cache_utils.py": {
+      "original_sha256": "bd593d0245ae1d18ed41dfa7809846ed08a0ca760f8430b7b7faf78e6a65aa81",
+      "patched_sha256": "75af811458d12b4748a622eb85d8a86e0f911cc9febbe03c621dbe9b90a36900"
+    },
+    "vllm/v1/core/sched/scheduler.py": {
+      "original_sha256": "60d0c9e9edfc43500bd8d8abac667f2ce6e218c35dc02b71ed1641fa35538746",
+      "patched_sha256": "59c0f88a38c1ef99a23a49c7d54b2531da26ab318cc7e404b83d6aff723a2de8"
+    },
+    "vllm/v1/core/block_pool.py": {
+      "original_sha256": "05c73052934a9d4664ccd5df562ce71011278d9a511932da102ef2efff00e934",
+      "patched_sha256": "38245298bef792cdc8f916687b0c632a78667d1a197bc9c40ece42c3ac9d261d"
+    }
+  },
+  "adapter_manifest_sha256": "32ea9873313774e421060e9f090cbb398c06ab7ab02877bd7f17009ca8ce48c3",
+  "native_host_libraries": {
+    "native-iq4-device-03/libnative-iq4-device.so": "0fe193ff4d317dffacca47f75ff5e294da75392770883b075aae2f0e929b82c1",
+    "run/runtime/llama-b12110/libggml-base.so.0": "e548003bf6fbf54a9dd580bd1bf72fc606d000e1a732de49ee33dc691af62293",
+    "run/runtime/llama-b12110/libggml-cuda.so": "e3e0ae308af472b40ac6962ecea9d160a0687df3948d404ce6468029d5b8f9b2",
+    "run/runtime/cudart-llama-b12110-bin-ubuntu-cuda-12.8-x64/libcublas.so.12": "18a5df540d156e9aff0363776fefab7884b614f122847b51c3eb1da772048e5c",
+    "run/runtime/cudart-llama-b12110-bin-ubuntu-cuda-12.8-x64/libcublasLt.so.12": "974927b9af78cadc0412ea3ab296da791af02c2dd0de5a35b5f0fbb8dc5d0a4d",
+    "run/runtime/cudart-llama-b12110-bin-ubuntu-cuda-12.8-x64/libcudart.so.12": "c3a75b33af334a3486d197dbd1584a2985183ba4688d237a2be5f2f679329920"
+  },
+  "model_metadata": {
+    "chat_template.jinja": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+    "config.json": "4c95af1d45132ead5b63e540f08f32a351e20512e62438a3a78faf9881d1e7dc",
+    "generation_config.json": "b8eb74d15e0a56623d00ccd14950a4bb87fabbf84b5cc030dcc904b899fb1eb5",
+    "processor_config.json": "d89ef49ce9cd37fbf510158e13c1ef063d9286411c1ec9049932dbe0487143b1",
+    "tokenizer.json": "06b9509352d2af50381ab2247e083b80d32d5c0aba91c272ca9ff729b6a0e523",
+    "tokenizer_config.json": "792fa3f0cb88b111e54ef3134c873531008c4df471d108da17903426e308aa7b"
+  },
+  "chat_template_sha256": "c6ae7b30c2f3dcc0c1266ac2500c88c08c7a33e353153bc72936d63db99340fa",
+  "short_profile": {
+    "release": "https://github.com/ggml-org/llama.cpp/releases/tag/b12546",
+    "runtime_files": {
+      "LICENSE": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d",
+      "ggml-rpc-server": "7f8f4a788f8c2fee8d2ead139d1a0d97e2336051dff0115f2847229da1dbb156",
+      "libggml-base.so": "3f75ba89900b0a835f15d4db316fe6c49ff990f4c703cae16bdec28191c620f2",
+      "libggml-base.so.1": "3f75ba89900b0a835f15d4db316fe6c49ff990f4c703cae16bdec28191c620f2",
+      "libggml-base.so.1.0.0": "3f75ba89900b0a835f15d4db316fe6c49ff990f4c703cae16bdec28191c620f2",
+      "libggml-cpu-alderlake.so": "f70508ef7eabd2831b42402ab5e980fede2b2165a5bc1b21181629c854db9aa6",
+      "libggml-cpu-cannonlake.so": "7ac66c6c694407e2813a92046857b439d96f42c4a8b7e8b95fd7424d9e6247c0",
+      "libggml-cpu-cascadelake.so": "ed038cdb8ee7a8373fbc13efe8a6e66eeb7db03978e0011fdb3b7a8768a10ff4",
+      "libggml-cpu-cooperlake.so": "b85a940fdc229b136dd63ffa4cab2d37d01cd05f0acf2ebe3c8c60a8102c713d",
+      "libggml-cpu-haswell.so": "00796a07ce18e0b094b6f6ad1512503cd8d78960f4024afb0c6d8e10b10e4aae",
+      "libggml-cpu-icelake.so": "2ec38afdee451f0979973615d8652adb030cd92625d63f1fa93b26b97d7f334c",
+      "libggml-cpu-ivybridge.so": "ba20a8d511f30856206acf2742e4094fc55dcec0fa70d0201c32091809f1cae9",
+      "libggml-cpu-piledriver.so": "52a0e384a96e22f6df735dc0fe964c397a5ddb5507208662086cd0f07fbfb5b5",
+      "libggml-cpu-sandybridge.so": "66594b06eadfccbaa8daa3c671494eb052f6b04a3f7a629cfe24734228907e10",
+      "libggml-cpu-sapphirerapids.so": "6918c87f54ad0c4503a2abc7ee4a7861e155853201fd2bcd4b7978b5cdc2ba17",
+      "libggml-cpu-skylakex.so": "2bfa916a2b4dd04a7bb50ece30035929dcd5a25f493b1315b6a961a0490a7cdf",
+      "libggml-cpu-sse42.so": "4ac3b148ce03ac3f1ce70249041890e1270620e3f7c7472ad35d924dd8ae61c8",
+      "libggml-cpu-x64.so": "61fa17b323b388593f7dd5b5fa19eeab1e4adf325ee2983b12d6dda64c549559",
+      "libggml-cpu-zen4.so": "41f7b1d991f62c7f065261f733911ee881f47e8b5ffa55053debbcac1be5d80f",
+      "libggml-cuda.so": "07a976c7b9b654b557d3696d5303a27910c2b0f49d43de7531e3940ce814a930",
+      "libggml-rpc.so": "8614d89848753f595d4f71c0c35c74607f2bfdae822e44b3e6b18f70b39e043b",
+      "libggml.so": "543a065a12a6bfa7a99e0d98ea35fe68c7944c404e1f3d1849292e7b29812db7",
+      "libggml.so.1": "543a065a12a6bfa7a99e0d98ea35fe68c7944c404e1f3d1849292e7b29812db7",
+      "libggml.so.1.0.0": "543a065a12a6bfa7a99e0d98ea35fe68c7944c404e1f3d1849292e7b29812db7",
+      "libllama-batched-bench-impl.so": "1467686502325a63d803ced2326b061660c0f4d40babaa9f540fac0e45310567",
+      "libllama-bench-impl.so": "938f326a019b8bb7c1b41bddcc8557a47e86a65aa226d7f5c1f3250f0ade4bd8",
+      "libllama-cli-impl.so": "5442c70e9c2721a83f416a11cc294d0ad12b3c9b5b82264282001793dab24f55",
+      "libllama-common.so": "9d68204fa0cb014632fbb1aeb5d7aba12f421f67d09317e6ea8786595c868615",
+      "libllama-common.so.1": "9d68204fa0cb014632fbb1aeb5d7aba12f421f67d09317e6ea8786595c868615",
+      "libllama-common.so.1.0.0": "9d68204fa0cb014632fbb1aeb5d7aba12f421f67d09317e6ea8786595c868615",
+      "libllama-completion-impl.so": "d08d113cc531f58af5c3cc02a90c6d873cda8deebcd28e52b6ea6f7b3d6a5794",
+      "libllama-fit-params-impl.so": "a1f72a9a48d59cbb4a30231a9410f03fa347bce175a7d376c5a5d7436c16af99",
+      "libllama-perplexity-impl.so": "a6aee68e6f337b4add73bfbfefa8880a0103e737eef966a3c9b7b98a0af3019e",
+      "libllama-quantize-impl.so": "e165409b432cacd4c61c4e2c1031a220b5f0207a2710731c5a15a6061901cc38",
+      "libllama-server-impl.so": "bf2946f9c20440940ab1925a4f5059a8403275eebfce45956553554876d159d3",
+      "libllama.so": "3f39ef0e4d8233026a583b2ec124ca45d7d6d3c125b7e92fc8a22f4f8051c951",
+      "libllama.so.1": "3f39ef0e4d8233026a583b2ec124ca45d7d6d3c125b7e92fc8a22f4f8051c951",
+      "libllama.so.1.0.0": "3f39ef0e4d8233026a583b2ec124ca45d7d6d3c125b7e92fc8a22f4f8051c951",
+      "libmtmd.so": "a7b6981e4b9b9f7adcc74d03a4f2736b9b8739f5165086582cfed36668f85294",
+      "libmtmd.so.1": "a7b6981e4b9b9f7adcc74d03a4f2736b9b8739f5165086582cfed36668f85294",
+      "libmtmd.so.1.0.0": "a7b6981e4b9b9f7adcc74d03a4f2736b9b8739f5165086582cfed36668f85294",
+      "llama": "31397e89b5e4aa3ccb487db417ca84896f673cea78690312aa93e9160d4ca4a3",
+      "llama-batched-bench": "7859f175883f9c37443f6e5f1e07425f4b5885031d90ebacb4c1e97e60d8788c",
+      "llama-bench": "5fab3499b4bca1835edd71875466d200d1d046a301d7044a8a20393caaed9c3c",
+      "llama-cli": "a530e7d98d8102c891387ef054778c482afdb187f16ce057170b0fefb9e2ccde",
+      "llama-completion": "15472995c69d23fd6350f84b1fb73156698bab77b20438b617bcd8e1e9a9a11f",
+      "llama-connect": "0f57652dee1df5a5d69dfb11a8775f864345cfb881b2bd34c6ca6c409ce73d25",
+      "llama-fit-params": "140a1326c0556d44fb96fad5fed3d1910e28525911c57676f5ff0fd11923265e",
+      "llama-gemma3-cli": "b97e6722bf5d263b68e0f25dd6480d44f2e12ec752fc80204600a82e2d773372",
+      "llama-gguf-split": "33331b1bf9e5cc366d4152c8d3f83ee8b03462fc0f17d36cb4590fe8d892f49e",
+      "llama-imatrix": "a918062a7d83377be2ddd2b8a5514a6938ebe1b337bf2c3f764821faa8255fdf",
+      "llama-llava-cli": "b97e6722bf5d263b68e0f25dd6480d44f2e12ec752fc80204600a82e2d773372",
+      "llama-minicpmv-cli": "b97e6722bf5d263b68e0f25dd6480d44f2e12ec752fc80204600a82e2d773372",
+      "llama-mtmd-cli": "0b4d72dca015b229a73509c4ce5e7f50b942207877fc5278613c79c5b0a90bf5",
+      "llama-mtmd-debug": "8238f34ed193ca915e31a0dbcad8ee7aa692b88bc681de5375c66b365616e911",
+      "llama-perplexity": "92594986686a4bbe23a2834695792ce32f8b18b9d57bf3c50e0ac87aba715fdd",
+      "llama-quantize": "d722e2c39486fabfa3b2c73eaf5cec9a6680cf972e2ea10c31ce98f7902e7b0d",
+      "llama-qwen2vl-cli": "b97e6722bf5d263b68e0f25dd6480d44f2e12ec752fc80204600a82e2d773372",
+      "llama-results": "57af3b13e2f54e44bb6a0f093386ec058dcb593b1559c1321cf13d9f14318fe2",
+      "llama-server": "9d587eb8ecd194141a58c6192998ea9ec9e3809674df2faf3f167d246cebc260",
+      "llama-tokenize": "ab4d8dd963471958a2e5e2d29fb1cd2d111dd0a88fbf3a38fd34a30ef18feaa6",
+      "llama-tts": "4e6b19325ae2a34645f123be1931ee8655a3d7a6f5f75f514bb1ced4b41e4f84"
+    },
+    "draft_sha256": "c18e800daedc59ca68fd13b6a856d795746af6d399a9279ac6a277d1d422f87e"
+  }
+}

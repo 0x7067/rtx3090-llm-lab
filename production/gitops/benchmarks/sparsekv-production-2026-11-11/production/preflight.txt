@@ -1,0 +1,4 @@
+2026-11-11 local preflight before GPU approval:
+Preflight passed: production Ready, only production owns the GPU, no disk pressure or active deletion trial.
+Read-only checks: production image, model config, chat template and wrapper match captured baseline; current nonterminal pod Ready; each GPU compute PID belongs to that pod; benchmark ports and task IDs unused; pre-handoff host memory threshold passed.
+No GPU trial or production mutation has been executed by this benchmark.

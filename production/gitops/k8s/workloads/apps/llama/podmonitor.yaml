@@ -1,0 +1,16 @@
+---
+# The active worker's vLLM metrics via the vllm-metrics sidecar (vllm-metrics-proxy.py).
+# Picked up because the stack sets podMonitorSelectorNilUsesHelmValues: false.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: llama-vllm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: llama
+  podMetricsEndpoints:
+    - port: vllm-metrics
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s

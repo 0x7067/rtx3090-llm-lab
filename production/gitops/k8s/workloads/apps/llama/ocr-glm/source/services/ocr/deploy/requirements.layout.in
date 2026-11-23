@@ -1,0 +1,10 @@
+# CPU layout/decoder; visual-language recognition runs in the separate GPU service.
+paddleocr[doc-parser]==3.7.0
+paddlex[ocr,genai-client]==3.7.2
+paddlepaddle==3.2.1
+Pillow==11.3.0
+pypdfium2==4.30.0
+numpy==2.2.6
+# Stay on the v1 client API used by this PaddleX generation.
+openai==1.109.1
+

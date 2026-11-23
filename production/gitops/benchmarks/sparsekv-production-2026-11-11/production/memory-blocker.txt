@@ -1,0 +1,8 @@
+2026-11-11 09:19:28–09:21:30 local read-only monitoring:
+MemAvailable GiB at 30-second intervals: 8.31, 7.27, 4.46, 8.08, 5.17.
+rex.service resident GiB: 6.72, 7.73, 10.56, 6.41, 9.52.
+Production model remained the sole GPU process, ~23,274 MiB VRAM.
+Production Deployment remained 1 desired / 1 ready / 1 available.
+Final direct sample: 4.01 GiB available RAM, 1.51 GiB free swap.
+No sample met the retained 12 GiB pre-handoff requirement. No shared service was changed by this benchmark; no benchmark task remains. Monitor files/unit were cleaned up.
+Resume: once other workload load falls enough to satisfy preflight, rerun harness/start.sh with a fresh run output directory. User approval for the 70-minute llama interruption remains recorded; no repeat approval is needed within that scope.

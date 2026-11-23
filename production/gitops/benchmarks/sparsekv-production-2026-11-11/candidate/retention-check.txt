@@ -1,0 +1,1 @@
+Mock pin/CRI verification/restore passed for three deployment images; no real image labels changed by this check.

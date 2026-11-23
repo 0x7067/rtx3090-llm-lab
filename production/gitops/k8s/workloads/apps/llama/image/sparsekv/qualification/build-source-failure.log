@@ -1,0 +1,48 @@
+== nvcc: Build cuda_13.0.r13.0/compiler.36424714_0  (CUDA_HOME=/usr/local/cuda)
+== building pth_flash_attn b0d4f7ee2284 for 8.0;8.6;8.9 with MAX_JOBS=2
+== built and installed in 41 s
+== /opt/sparsekv/venv/lib/python3.12/site-packages/pth_flash_attn/_C.abi3.so: 7252968 bytes, 18 cubins for [sm_80 sm_86 sm_89 ], no PTX
+pth_flash_attn: AttentionBackendEnum.CUSTOM is already registered as some.other.plugin.Backend; leaving it unchanged
+W1111 13:57:41.273000 472 /app/venv/lib/python3.12/site-packages/torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+== pthfa gate test
+  PASS  pth_flash_attn is the installed copy (/opt/sparsekv/venv/lib/python3.12/site-packages/pth_flash_attn)
+  PASS  op library loads without a GPU (_C.abi3.so)
+  PASS  op pth_flash_attn::pth_flash_attn_fwd registered
+  PASS  one vllm.general_plugins entry point -> ['pth_flash_attn.plugin:register']
+  PASS  a CUSTOM another plugin registered first is left alone
+  PASS  the entry point registers CUSTOM -> pth_flash_attn.vllm_backend.PthFlashAttnBackend (twice: idempotent)
+  PASS  the backend class imports and is named CUSTOM
+  INFO  no GPU driver (libcuda.so.1: cannot open shared object file: No such file or directory); vllm.platforms.cuda imported with a placeholder for its CUDA extension
+  PASS  CUSTOM is in no automatic-selection list (210 combinations): []
+  PASS  KV dtype: int8_per_token_head only
+  PASS  activations: float16 and bfloat16
+  PASS  head sizes 64, 128, 256 only
+  PASS  compute capability 8.0/8.6/8.9 only -> ['8.0', '8.6', '8.9']
+  PASS  sliding window and non-causal attention supported (at head size 128, below)
+  PASS  no sinks, ALiBi, bidirectional mm prefix or R-SWA
+  PASS  block sizes: multiples of 16 (the hybrid group's 816 included)
+  PASS  explicit selection with sliding window at head size 256 refused at load: pth_flash_attn does not support: sliding window at head size 256 (the windowed kernels exi
+  PASS  explicit selection with sliding window at head size 64 refused at load: pth_flash_attn does not support: sliding window at head size 64 (the windowed kernels exis
+  PASS  explicit selection with ALiBi refused at load: pth_flash_attn does not support: ALiBi
+  PASS  explicit selection with attention sinks refused at load: pth_flash_attn does not support: attention sinks
+  PASS  explicit selection with logits soft cap refused at load: pth_flash_attn does not support: logits soft cap
+  PASS  explicit selection with kv_cache_dtype fp8 refused at load: pth_flash_attn does not support: kv_cache_dtype fp8
+  PASS  explicit selection with kv_cache_dtype auto refused at load: pth_flash_attn does not support: kv_cache_dtype auto
+  PASS  explicit selection with head size 96 refused at load: pth_flash_attn does not support: head size 96
+  PASS  accepted at load: D=128, 16/4 heads, sliding window 2048 -> constructed, window 2048
+  PASS  accepted at load: D=128, 32/8 heads, sliding window 2048 -> constructed, window 2048
+  PASS  selection: the drafter's layers (D=128, window, non-causal, block 864) -> []
+  PASS  selection: a window and non-causal at head size 256 refused -> ['sliding window at head size 256 (the win', 'non-causal attention at head size 256 (t']
+  PASS  selection: a window and non-causal at head size 64 refused -> ['sliding window at head size 64 (the wind', 'non-causal attention at head size 64 (th']
+  PASS  selection: the drafter's shape with sinks refused -> ['attention sinks not supported']
+  PASS  selection: the drafter's shape with mm prefix refused -> ['partial multimodal token full attention not supported']
+  PASS  selection: the drafter's shape with R-SWA refused -> ['R-SWA not supported']
+  PASS  speculative config parses "attention_backend":"CUSTOM"
+  PASS  the drafter's config takes the speculative config's attention_backend
+  PASS  the speculative config's kv_cache_dtype defaults to None (the drafter keeps the target's cache dtype unless it is set) -> None
+pthfa gate test: OK
+pth_flash_attn installed (PTH_FA=1 selects it; unset, nothing selects it)
+[install] venv /opt/sparsekv/venv
+[install] 1/5 vLLM sparse patches -> /opt/sparsekv/venv/lib/python3.12/site-packages/vllm
+usage: bash patches/apply.sh --list [--kvarn] | [--kvarn] DIR  (DIR = the installed vllm package directory)

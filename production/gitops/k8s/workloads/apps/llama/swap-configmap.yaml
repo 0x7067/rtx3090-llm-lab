@@ -1,0 +1,183 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llama-swap-config
+  annotations:
+    reloader.stakater.com/match: "true"
+data:
+  config.yaml: |
+    healthCheckTimeout: 900
+    logToStdout: both
+    apiKeys:
+    - ${env.LLAMA_API_TOKEN}
+    # Keep the Pi model and its prefix cache warm for interactive coding.
+    hooks:
+      on_startup:
+        preload:
+        - qwen3.8-pi
+    models:
+      qwen3.8-pi:
+        name: Qwen3.8 27B Pi adapter
+        # Original rank-32 adapter over the existing AutoRound base; see PI-ADAPTER.md.
+        # Restrict LoRA to trained projections: the packed embedding has no .weight.
+        cmd: /usr/bin/env PORT=5894 /bin/bash /app/single-user/start_qwen.sh
+        proxy: http://127.0.0.1:5894
+        useModelName: qwen3.8-pi
+        ttl: 0
+        env:
+        - MODEL=/app/models/Qwen3.8-27B-W4A16-AutoRound
+        - SPEC=mtp
+        - DRAFT_TOKENS=4
+        - CTX=long
+        - PTH_FA=1
+        - MAX_LEN=172032
+        - MAX_SEQS=4
+        - GPU_UTIL=0.95
+        - VISION=0
+        - EMBED_UVA=1
+        - INT8_ACT=int8
+        - INT8_LAYERS=mlp
+        - PREFIX_CACHE=1
+        - TOOL_PARSER=qwen3_xml
+        - HOST=127.0.0.1
+        - BIND=127.0.0.1
+        - API_KEY_FILE=/dev/null
+        - EXTRA_ARGS=--mamba-ssm-cache-dtype float32 --prefix-match-unit 16 --enable-mamba-shared-prefix-checkpoint --enable-lora --max-lora-rank 32 --lora-target-modules q_proj k_proj v_proj o_proj gate_proj up_proj down_proj --lora-modules qwen3.8-pi=/app/pi-adapter --default-chat-template-kwargs {"enable_thinking":false} --override-generation-config {"temperature":0.8,"top_p":1.0,"top_k":-1,"min_p":0.0}
+        - XDG_CACHE_HOME=/cache
+        - TRITON_CACHE_DIR=/cache/triton
+        - HF_HOME=/cache/huggingface
+        - HF_HUB_OFFLINE=1
+        - PYTHONPATH=
+        - PATH=/app/venv/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - VLLM_NO_USAGE_STATS=1
+        - DO_NOT_TRACK=1
+        capabilities:
+          in: [text]
+          out: [text]
+          disableAuto: true
+        metadata:
+          max_model_len: 172032
+          max_tokens: 16384
+          reasoning: false
+          input: [text]
+      qwen-image-2.1-turbo:
+        name: qwen-image-2.1-turbo
+        # Qwen-Image-2.1-Turbo (8-step schedule) behind an OpenAI images API, with
+        # the PE-T2I / PE-I2I prompt enhancers. See qwen-image/README.md.
+        cmd: /opt/qwen-image/venv/bin/python /opt/qwen-image/server.py --port ${PORT}
+          --served-name qwen-image-2.1-turbo --model /models/qwen-image/Qwen-Image-2.1-Turbo
+          --pe-t2i /models/qwen-image/Qwen-Image-2.1-PE-T2I --pe-i2i /models/qwen-image/Qwen-Image-2.1-PE-I2I
+        env: &qwen-image-env
+        - HF_HUB_OFFLINE=1
+        - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+        # Free the card for the text models after ten idle minutes.
+        ttl: 600
+        unlisted: true
+        aliases:
+        - qwen-image
+        capabilities: &qwen-image-capabilities
+          in:
+          - text
+          - image
+          out:
+          - image
+          disableAuto: true
+      qwen-image-2.1:
+        name: qwen-image-2.1
+        # Base Qwen-Image-2.1 at 40 steps: slower than Turbo, for quality.
+        cmd: /opt/qwen-image/venv/bin/python /opt/qwen-image/server.py --port ${PORT}
+          --served-name qwen-image-2.1 --model /models/qwen-image/Qwen-Image-2.1 --default-steps 40
+          --pe-t2i /models/qwen-image/Qwen-Image-2.1-PE-T2I --pe-i2i /models/qwen-image/Qwen-Image-2.1-PE-I2I
+        env: *qwen-image-env
+        ttl: 600
+        unlisted: true
+        capabilities: *qwen-image-capabilities
+      inkling-2-mini-unbound:
+        name: Inkling 2 Mini Unbound v1 (256K, vLLM Ampere)
+        cmd: /bin/bash /chat-template/start_inkling_vllm.sh 5804 inkling-2-mini-unbound
+        proxy: http://127.0.0.1:5804
+        ttl: 0
+        env:
+        - INKLING_UNBOUND_EDIT=/models/inkling-unbound-edit/edit.pt
+        capabilities:
+          in: [text, image]
+          out: [text]
+          disableAuto: true
+        metadata:
+          max_model_len: 262144
+          max_tokens: 16384
+          reasoning: true
+          input: [text, image]
+      glm-ocr-baseline: &glm-ocr-baseline
+        name: GLM-OCR private comparison
+        # Fixed local artifacts; no downloader, hosted API or financial actions.
+        # ggml-org/GLM-OCR-GGUF revision 65a42de1148dbed2297e922b5dbc7d9b70c36578; F16 model/Q8_0 projector.
+        cmd: /opt/llama/llama-server --model /models/glm-ocr-baseline/GLM-OCR-f16.gguf --mmproj /models/glm-ocr-baseline/mmproj-GLM-OCR-Q8_0.gguf --alias glm-ocr-baseline --ctx-size 24576 --parallel 1 --n-gpu-layers 999 --threads 2 --threads-batch 2 --jinja --host 127.0.0.1 --port ${PORT} --temp 0 --top-p 1 --n-predict 4096 --no-context-shift
+        env:
+        - LD_LIBRARY_PATH=/opt/llama:/opt/llama/cuda:/usr/local/nvidia/lib64:/usr/local/nvidia/lib
+        ttl: 300
+        unlisted: true
+        capabilities:
+          in:
+          - image
+          out:
+          - text
+          disableAuto: true
+      glm-ocr-hires:
+        <<: *glm-ocr-baseline
+        name: GLM-OCR high resolution private comparison
+        # Same artifacts as glm-ocr-baseline with a larger image token budget.
+        cmd: /opt/llama/llama-server --model /models/glm-ocr-baseline/GLM-OCR-f16.gguf --mmproj /models/glm-ocr-baseline/mmproj-GLM-OCR-Q8_0.gguf --alias glm-ocr-hires --image-max-tokens 12288 --ctx-size 24576 --parallel 1 --n-gpu-layers 999 --threads 2 --threads-batch 2 --jinja --host 127.0.0.1 --port ${PORT} --temp 0 --top-p 1 --n-predict 4096 --no-context-shift
+      paddleocr-vl-official:
+        name: PaddleOCR official pipeline private comparison
+        # Same pinned Paddle weights/runtime as the durable finance provider.
+        # GPU ownership stays with this manager; CPU layout runs in a separate bounded job.
+        # This is synchronous inference only, not the finance durable OCR API.
+        cmd: /usr/bin/env -i -C /opt/finance-ocr PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin HOME=/tmp TMPDIR=/tmp LD_LIBRARY_PATH=/opt/py312/lib:/usr/local/nvidia/lib64:/usr/local/nvidia/lib NVIDIA_VISIBLE_DEVICES=all NVIDIA_DRIVER_CAPABILITIES=compute,utility PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True PADDLE_PDX_MODEL_SOURCE=HuggingFace VLLM_NO_USAGE_STATS=1 DO_NOT_TRACK=1 OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 OCR_ENABLED=real OCR_RUNTIME_MANIFEST=/etc/ocr/manifest.json /opt/ocr/venv-vllm/bin/python services/ocr/deploy/run_vllm.py
+        proxy: http://127.0.0.1:8000
+        useModelName: PaddleOCR-VL-1.6-0.9B
+        ttl: 900
+        unlisted: true
+        capabilities:
+          in:
+          - image
+          out:
+          - text
+          disableAuto: true
+      finance-ocr-glm:
+        name: Finance OCR GLM private candidate
+        # Separate durable queue/API. Existing Paddle source, manifest and history stay intact.
+        cmd: /usr/bin/python3 /opt/finance-ocr-glm/services/ocr/deploy/launch_glm.py --port ${PORT}
+        env:
+        - OCR_TOKEN_FILE=/run/secrets/ocr/token
+        - OCR_NAMESPACE=finance-ocr-synthetic-trial
+        - OCR_DATA_DIR=/ocr-data/glm
+        ttl: 900
+        unlisted: true
+        capabilities:
+          in:
+          - image
+          out:
+          - text
+          disableAuto: true
+      paddleocr-vl:
+        name: paddleocr-vl
+        # Finance OCR: PaddleOCR-VL-1.6 on a private vLLM, PP-DocLayoutV3 layout and a
+        # durable async job API (POST /v1/ocr/jobs, then poll). It is not an OpenAI
+        # model: call it through /upstream/paddleocr-vl/v1/ocr/..., with the OCR
+        # service token as well as the llama bearer token. See ocr/README.md.
+        cmd: /usr/bin/python3 /opt/ocr/launch.py --port ${PORT}
+        env:
+        - OCR_RUNTIME_MANIFEST=/etc/ocr/manifest.json
+        - OCR_TOKEN_FILE=/run/secrets/ocr/token
+        - OCR_NAMESPACE=finance-ocr-synthetic-trial
+        - OCR_DATA_DIR=/ocr-data
+        # Polls and uploads reset the idle clock; this only has to outlast one job (300s).
+        ttl: 900
+        unlisted: true
+        capabilities:
+          in:
+          - image
+          out:
+          - text
+          disableAuto: true

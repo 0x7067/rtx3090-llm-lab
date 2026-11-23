@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-11-20T15:19:59.628477+00:00",
+  "pod": "llama-df66fc9bc-kdfw4",
+  "configmap_matches_source": true,
+  "config_sha256": "9fb8a00dceaaba44e2983f4f4c0c29c98f6a4972a1c7ccc98032972ad139aa87",
+  "adapter_sha256": "869b2a089882c0dac4683993f11081bd70edc30b32c64a988c688d6ac26b792a",
+  "containers": [
+    {
+      "name": "llama-swap",
+      "ready": true,
+      "imageID": "127.0.0.1:5000/home-llm-strata@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679"
+    },
+    {
+      "name": "vllm-metrics",
+      "ready": true,
+      "imageID": "127.0.0.1:5000/home-llm-strata@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42"
+    }
+  ],
+  "adapter_mount": [
+    {
+      "hostPath": {
+        "path": "/srv/llama-nvme/production-models/qwen3.8/harness-hub/Qwen3.8-27B-pi-adapted/3cad999e2b9ec72fea8d802cc286e4502adfa082",
+        "type": "Directory"
+      },
+      "name": "pi-adapter"
+    }
+  ]
+}

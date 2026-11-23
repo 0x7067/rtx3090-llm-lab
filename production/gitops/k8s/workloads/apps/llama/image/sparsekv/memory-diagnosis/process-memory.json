@@ -1,0 +1,212 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+      {
+        "metric": {
+          "__name__": "namedprocess_namegroup_memory_bytes",
+          "container": "process-exporter",
+          "endpoint": "metrics",
+          "groupname": "VLLM::EngineCor",
+          "instance": "10.42.0.184:9256",
+          "job": "process-exporter",
+          "memtype": "resident",
+          "namespace": "monitoring",
+          "pod": "process-exporter-5lh97",
+          "service": "process-exporter"
+        },
+        "values": [
+          [
+            1794406560,
+            "0"
+          ],
+          [
+            1794406590,
+            "5843390464"
+          ],
+          [
+            1794406620,
+            "6035963904"
+          ],
+          [
+            1794406650,
+            "21053411328"
+          ],
+          [
+            1794406680,
+            "21540990976"
+          ],
+          [
+            1794406710,
+            "21552234496"
+          ],
+          [
+            1794406740,
+            "21551128576"
+          ],
+          [
+            1794406770,
+            "21560176640"
+          ],
+          [
+            1794406800,
+            "21521256448"
+          ],
+          [
+            1794406830,
+            "21375344640"
+          ],
+          [
+            1794406920,
+            "21289664512"
+          ],
+          [
+            1794407010,
+            "21280419840"
+          ],
+          [
+            1794407040,
+            "21280272384"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "namedprocess_namegroup_memory_bytes",
+          "container": "process-exporter",
+          "endpoint": "metrics",
+          "groupname": "vllm",
+          "instance": "10.42.0.184:9256",
+          "job": "process-exporter",
+          "memtype": "resident",
+          "namespace": "monitoring",
+          "pod": "process-exporter-5lh97",
+          "service": "process-exporter"
+        },
+        "values": [
+          [
+            1794406560,
+            "2123177984"
+          ],
+          [
+            1794406590,
+            "2188234752"
+          ],
+          [
+            1794406620,
+            "2187907072"
+          ],
+          [
+            1794406650,
+            "2187743232"
+          ],
+          [
+            1794406680,
+            "2221023232"
+          ],
+          [
+            1794406710,
+            "2221023232"
+          ],
+          [
+            1794406740,
+            "2220859392"
+          ],
+          [
+            1794406770,
+            "2321711104"
+          ],
+          [
+            1794406800,
+            "2319908864"
+          ],
+          [
+            1794406830,
+            "2285281280"
+          ],
+          [
+            1794406920,
+            "2269229056"
+          ],
+          [
+            1794407010,
+            "2267459584"
+          ],
+          [
+            1794407040,
+            "2265038848"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "namedprocess_namegroup_memory_bytes",
+          "container": "process-exporter",
+          "endpoint": "metrics",
+          "groupname": "workerd",
+          "instance": "10.42.0.184:9256",
+          "job": "process-exporter",
+          "memtype": "resident",
+          "namespace": "monitoring",
+          "pod": "process-exporter-5lh97",
+          "service": "process-exporter"
+        },
+        "values": [
+          [
+            1794406560,
+            "2860949504"
+          ],
+          [
+            1794406590,
+            "737931264"
+          ],
+          [
+            1794406620,
+            "0"
+          ],
+          [
+            1794406650,
+            "0"
+          ],
+          [
+            1794406680,
+            "0"
+          ],
+          [
+            1794406710,
+            "0"
+          ],
+          [
+            1794406740,
+            "0"
+          ],
+          [
+            1794406770,
+            "0"
+          ],
+          [
+            1794406800,
+            "8373534720"
+          ],
+          [
+            1794406830,
+            "9626554368"
+          ],
+          [
+            1794406920,
+            "10971058176"
+          ],
+          [
+            1794407010,
+            "10808614912"
+          ],
+          [
+            1794407040,
+            "11177619456"
+          ]
+        ]
+      }
+    ]
+  }
+}

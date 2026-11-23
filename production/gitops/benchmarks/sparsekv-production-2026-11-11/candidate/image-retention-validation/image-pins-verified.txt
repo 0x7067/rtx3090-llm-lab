@@ -1,0 +1,1 @@
+CRI reports all three deployment image digests pinned.

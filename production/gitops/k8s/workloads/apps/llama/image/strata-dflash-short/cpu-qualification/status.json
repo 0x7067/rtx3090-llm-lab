@@ -1,0 +1,9 @@
+{
+  "stage": "complete",
+  "pid": 3680623,
+  "unix": 1793946521.5188725,
+  "image": "127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+  "deployed": false,
+  "gpu_execution": false,
+  "cleanup_complete": true
+}

@@ -1,8 +1,8 @@
 {
  "gitops": {
   "repository": "Denguinho/docker-services",
-  "commit": "82f7dde9670852f033fd178f4da88398e63120ab",
-  "committed": "2026-11-23T16:11:37-03:00"
+  "commit": "046bf2e115f38cb0c7555abb5fb32375e57ca59c",
+  "committed": "2026-11-23T16:42:58-03:00"
  },
  "images": {
   "127.0.0.1:5000/home-llm-gyro@sha256:61d509794b6e39de19d1b33bb49e4ecd544bf0f4417b64caeb5158c2b5cd9110": [

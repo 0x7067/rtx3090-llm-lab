@@ -14,19 +14,20 @@ applies.
   under [`benchmarks/`](benchmarks/), with design notes in [`docs/`](docs/).
 - *How is an image built and promoted?* [`PROMOTE.md`](PROMOTE.md).
 
-## Status (2026-11-04)
+## Status (2026-11-23)
 
 | | |
 | --- | --- |
-| Text model | `qwen3.8-27b-hyperqwen`: HyperQwen Qwen3.8-27B W4A16-AutoRound, preloaded and resident (`ttl: 0`) |
-| Runtime | HyperQwen `2cf50a0` (pinned vLLM 0.31) behind llama-swap, started by `/app/single-user/start_qwen.sh` |
-| Profile | `SPEC=mtp`, `CTX=long` (150K), `PTH_FA=1`, `INT8_ACT=int8` on MLP, `MAX_SEQS=4`, `VISION=1` with offload, prefix caching |
-| Image | `127.0.0.1:5000/home-llm-strata:0.2.8-v1` (layer chain in [PROMOTE.md](PROMOTE.md)); init container `orcasaq2-vllm` sets the GPU profile |
-| Weights | `/srv/llama-nvme/hyperqwen-bakeoff/models` (root NVMe copy); the original is in `/data/models/hyperqwen-bakeoff/models` on the HDD |
-| Other backends | `qwen-image-2.1{,-turbo}`, `glm-ocr-{baseline,hires}`, `paddleocr-vl{,-official}`, `finance-ocr-glm`. Loading one evicts HyperQwen (cold reload ~100 s from NVMe) |
+| Text model | `qwen3.8-pi`: the harness-hub rank-32 Pi LoRA (revision `3cad999`) over the HyperQwen Qwen3.8-27B W4A16-AutoRound base, preloaded and resident (`ttl: 0`). See GitOps `PI-ADAPTER.md` |
+| Runtime | HyperQwen vLLM behind llama-swap, started by `/app/single-user/start_qwen.sh` (`/app/venv`) |
+| Profile | `SPEC=mtp` with 4 drafts, `MAX_LEN=172032` (168K incl. output), `PTH_FA=1`, `INT8_ACT=int8` on MLP, `MAX_SEQS=4`, `GPU_UTIL=0.95`, text only, prefix caching on 16-token match units with shared-prefix checkpoints, FP32 Mamba state, thinking off |
+| On-demand model | `inkling-2-mini-unbound`: Inkling 2 Mini plus the 803 KB Unbound `edit.pt`, on the pinned [Hiutaky vLLM Ampere port](https://github.com/Hiutaky/vllm/tree/6e9d1cce3eadb9844d491de9b65dba24b9fec566), 256K context, FP8 KV, DSpark speculation, SM86 kernel overlay `inkling-sm86-opt/`, up to 8 concurrent requests. Selecting it unloads Pi |
+| Image | `127.0.0.1:5000/home-llm-strata:sparsekv-v1` (layer chain in [PROMOTE.md](PROMOTE.md)); init container `orcasaq2-vllm` sets the GPU profile (300 W, stock clocks since 2026-11-12) |
+| Weights | Text, Pi adapter, Qwen-Image and OCR from `/srv/llama-nvme/production-models` (root NVMe, staged by `prepare-ssd-models.sh`); Inkling from the second NVMe. Originals stay in the model library (GitOps `docs/model-storage.md`) |
+| Other backends | `qwen-image-2.1{,-turbo}`, `glm-ocr-hires`, `paddleocr-vl{,-official}`, `finance-ocr-glm`, for their applications. Loading one evicts the resident worker |
 
-Clients request `qwen3.8-27b-hyperqwen`. llama-swap forwards it to vLLM as
-`qwen3.8-27b` (`useModelName`).
+Clients request `qwen3.8-pi` or `inkling-2-mini-unbound`. Long requests use the
+authenticated Tailnet route; the public Cloudflare route times out at 125 s.
 
 ## Production timeline
 
@@ -48,6 +49,15 @@ each change.
 | 2026-11-01 | Strata/Swift decommissioned; HyperQwen is the sole text model | GitOps `README.md` (memdoor arc196_c 40/40 vs 35/40; Strata host-RAM OOM) |
 | 2026-11-03 | `PTH_FA=1` promoted (E1: decode +22%, quality 42/42) | GitOps `optimization/research/coding-inference-2026-11-03/` |
 | 2026-11-04 | HyperQwen weights served from root NVMe (E3: cold boot 99 s vs 208 s) | same |
+| 2026-11-10 | HyperQwen served from the INT8 `lm_head` build | GitOps `2360255c` |
+| 2026-11-11 | SparseKV/MTP7 rollout failed qualification and stalled; November 10 production restored | GitOps `benchmarks/sparsekv-production-2026-11-11/`, `image/sparsekv/`, PR #227 |
+| 2026-11-12 | SparseKV retried with bounded observations; GPU profile moved to 300 W at stock clocks | GitOps PRs #233, #234 |
+| 2026-11-14 | Cyber fine-tune (QLoRA on abliterated Qwen3.8-27B) served on demand as IQ4_XS GGUF, 128K, bounded reasoning | GitOps llama `README.md` ("Cyber fine-tune") |
+| 2026-11-19 | Production model files served from root NVMe; Orca Q8 GGUF runtime with adaptive DFlash at 160K | GitOps `benchmarks/model-storage-2026-11-19-nvme/`, `image/orca-gguf/`, PRs #281, #282 |
+| 2026-11-20 | `qwen3.8-pi` (Pi LoRA, MTP4, four admission slots) becomes the preloaded text model | GitOps `PI-ADAPTER.md`, `benchmarks/qwen-pi-cache-2026-11-20/`, PRs #292-#294, #297 |
+| 2026-11-20 | Inkling 2 Mini added on demand (NInfer) | GitOps PRs #302, #303, #305, #308 |
+| 2026-11-21 | Inkling 2 Mini moved to the pinned vLLM Ampere port; NInfer bundle kept for rollback | GitOps PR #322 |
+| 2026-11-22 | Inkling SM86 profile (256K, 8-way concurrency, v3 kernels); `inkling-2-mini-unbound` is the sole Inkling route; Pi window qualified at 168K | GitOps `inkling-sm86-opt/`, PRs #332, #334 |
 
 The Swift 1.5 Flash Heretic weights remain in
 `/data/models/qwen3.8/local/swift-1.5-flash-heretic-gyro-m`, and the Strata
@@ -101,6 +111,14 @@ things that have since been removed:
 - `k8s/workloads/apps/llama/configmap.yaml` (removed 2026-11-04; the live file
   is `swap-configmap.yaml`) and `k8s/MIGRATION_LOG.md` (removed 2026-10-21, GitOps `a8603ab6`).
 - The lab-root `patches/` directory (removed 2026-09-02).
+- GitOps build scripts and recipes removed on 2026-11-08 (GitOps `f13dde9d`):
+  `scripts/build-llama-image.sh`, `scripts/build-qwen38-vllm-{base,image}.sh`,
+  `scripts/build-orcasaq-image.sh`, `k8s/workloads/apps/llama/hyperqwen/Dockerfile`
+  and `optimization/build.sh`. The repository map above still names them as the
+  callers of this repo's build inputs; recover them with `git show f13dde9d^:<path>`.
+- Models served for a while and since retired from `swap-configmap.yaml`:
+  `qwen3.8-27b-hyperqwen` (replaced by `qwen3.8-pi` on 2026-11-20), the Orca Q8
+  GGUF route, `qwen3.8-27b-cyber`, and the NInfer Inkling route.
 - Model directories deleted on 2026-11-04: `trials/`, `k2-horizon`,
   `flash-next-coder`, `agnes`, `millie`, `gemma4`, `spark-x2.5`,
   `kvarn-port`, `muse-glimmer`, `qwen3.6/{llmfan46,local}`, `oui-1/local`, and

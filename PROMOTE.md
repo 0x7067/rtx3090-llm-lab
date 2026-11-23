@@ -10,24 +10,32 @@ Paths below are relative to the GitOps repo root unless they start with
 
 ## The production image
 
-`127.0.0.1:5000/home-llm-strata:0.2.8-v1` is a chain of layers. Each layer is
+`127.0.0.1:5000/home-llm-strata:sparsekv-v1` is a chain of layers. Each layer is
 pinned by digest to the one below it:
 
 | Layer | Adds | Recipe |
 | --- | --- | --- |
 | `home-llm-qwen-image` | Qwen-Image runtime, llama-swap | `k8s/workloads/apps/llama/qwen-image/Dockerfile` |
-| `home-llm-hyperqwen` | HyperQwen `2cf50a0` at `/app` (vLLM 0.31.0, asserted at build) | `k8s/workloads/apps/llama/hyperqwen/Dockerfile` |
-| `home-llm-qwen-optimized` | Strata `011c9e6` / engine 0.1.47 | `k8s/workloads/apps/llama/optimization/build.sh` |
+| `home-llm-hyperqwen` | HyperQwen `2cf50a0` at `/app` (vLLM 0.31.0, asserted at build) | `k8s/workloads/apps/llama/hyperqwen/Dockerfile` (removed in GitOps `f13dde9d`) |
+| `home-llm-qwen-optimized` | Strata `011c9e6` / engine 0.1.47 | `k8s/workloads/apps/llama/optimization/build.sh` (removed in GitOps `f13dde9d`) |
 | `home-llm-ocr` | OCR services | `k8s/workloads/apps/llama/ocr/` (see its README, "Build and deploy") |
 | `home-llm-raon` | Raon llama.cpp build | `k8s/workloads/apps/llama/image/raon/Dockerfile` |
 | `home-llm-strata` | Strata 0.2.8 / engine 0.1.54 at `/opt/strata-0.2.8` | `k8s/workloads/apps/llama/image/strata/build.sh` |
+| `home-llm-strata:normal120-dflash-short-v1` | Short-context DFlash patches over 0.2.8 | `k8s/workloads/apps/llama/image/strata-dflash-short/` |
+| `home-llm-strata:sparsekv-v1` | Private SparseKV runtime at `/opt/sparsekv`; `/app/venv` (used by `qwen3.8-pi`) is unchanged | `k8s/workloads/apps/llama/image/sparsekv/` (see its README) |
 
 The init container `orcasaq2-vllm` (`gpu-profile`) is built from
-`rtx3090-llm-lab/vllm/image-orcasaq/` by `scripts/build-orcasaq-image.sh`.
+`rtx3090-llm-lab/vllm/image-orcasaq/`; its build script `scripts/build-orcasaq-image.sh`
+was removed in GitOps `f13dde9d` (2026-11-08). Recover a removed recipe with
+`git show f13dde9d^:<path>` before rebuilding that layer.
 
 To change a layer, rebuild it with a new tag, then rebuild every layer above it
-on the new digest. If you only change the HyperQwen profile (env, context,
+on the new digest. If you only change a model profile (env, context,
 spec mode), no image rebuild is needed: that lives in `swap-configmap.yaml`.
+Inkling does not use the image's runtime: its vLLM bundle is staged on the host
+by `k8s/workloads/apps/llama/prepare-inkling-vllm.sh` and mounted read-only.
+
+The `vllm-metrics` sidecar still runs `home-llm-strata:0.2.8-v1`.
 
 Notes:
 
@@ -61,17 +69,17 @@ resident entry and removing the trial entry.
 
 1. Edit `k8s/workloads/apps/llama/deployment.yaml` (image digest) and/or
    `swap-configmap.yaml` (profile). Record the decision and evidence in
-   `k8s/workloads/apps/llama/README.md` ("Current production"), and add a
-   dated row to this repo's README timeline.
+   the GitOps llama `README.md` ("Models") or the model's own doc (for example
+   `PI-ADAPTER.md`), and add a dated row to this repo's README timeline.
 2. Push to `main`, then `flux reconcile kustomization apps --with-source`.
 3. Verify:
    - `kubectl -n apps rollout status deploy/llama`
-   - `/v1/models` lists `qwen3.8-27b-hyperqwen`
+   - `/v1/models` lists `qwen3.8-pi` and `inkling-2-mini-unbound`
    - one authenticated chat request
    - a short paired-harness run
 
-The first text request after a restart waits for the HyperQwen preload (about
-100 s from the NVMe weights).
+The first text request after a restart waits for the `qwen3.8-pi` preload from
+the NVMe weights.
 
 ## Roll back
 

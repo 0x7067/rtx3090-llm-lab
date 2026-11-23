@@ -1,0 +1,149 @@
+checking file .gitignore
+checking file launcher_common.sh
+checking file patches/apply.sh
+checking file patches/series
+checking file pthfa/csrc/pth_attn/attn_args.h
+checking file pthfa/csrc/pth_attn/attn_kernel.cuh
+checking file pthfa/csrc/pth_attn/attn_launch.cu
+checking file pthfa/csrc/pth_attn/cache_geometry.cuh
+checking file pthfa/csrc/pth_attn/launch.cu
+checking file pthfa/install.sh
+checking file pthfa/python/pth_flash_attn/vllm_backend.py
+checking file single-user/start_qwen.sh
+patching file .gitignore
+patching file launcher_common.sh
+patching file patches/apply.sh
+patching file patches/series
+patching file pthfa/csrc/pth_attn/attn_args.h
+patching file pthfa/csrc/pth_attn/attn_kernel.cuh
+patching file pthfa/csrc/pth_attn/attn_launch.cu
+patching file pthfa/csrc/pth_attn/cache_geometry.cuh
+patching file pthfa/csrc/pth_attn/launch.cu
+patching file pthfa/install.sh
+patching file pthfa/python/pth_flash_attn/vllm_backend.py
+patching file single-user/start_qwen.sh
+sparsekv/basis/basis27.pt: OK
+== nvcc: Build cuda_13.0.r13.0/compiler.36424714_0  (CUDA_HOME=/usr/local/cuda)
+== building pth_flash_attn b0d4f7ee2284 for 8.0;8.6;8.9 with MAX_JOBS=2
+== built and installed in 47 s
+== /opt/sparsekv/venv/lib/python3.12/site-packages/pth_flash_attn/_C.abi3.so: 8093280 bytes, 18 cubins for [sm_80 sm_86 sm_89 ], no PTX
+pth_flash_attn: AttentionBackendEnum.CUSTOM is already registered as some.other.plugin.Backend; leaving it unchanged
+W1111 13:59:34.773000 479 /app/venv/lib/python3.12/site-packages/torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+== pthfa gate test
+  PASS  pth_flash_attn is the installed copy (/opt/sparsekv/venv/lib/python3.12/site-packages/pth_flash_attn)
+  PASS  op library loads without a GPU (_C.abi3.so)
+  PASS  op pth_flash_attn::pth_flash_attn_fwd registered
+  PASS  one vllm.general_plugins entry point -> ['pth_flash_attn.plugin:register']
+  PASS  a CUSTOM another plugin registered first is left alone
+  PASS  the entry point registers CUSTOM -> pth_flash_attn.vllm_backend.PthFlashAttnBackend (twice: idempotent)
+  PASS  the backend class imports and is named CUSTOM
+  INFO  no GPU driver (libcuda.so.1: cannot open shared object file: No such file or directory); vllm.platforms.cuda imported with a placeholder for its CUDA extension
+  PASS  CUSTOM is in no automatic-selection list (210 combinations): []
+  PASS  KV dtype: int8_per_token_head only
+  PASS  activations: float16 and bfloat16
+  PASS  head sizes 64, 128, 256 only
+  PASS  compute capability 8.0/8.6/8.9 only -> ['8.0', '8.6', '8.9']
+  PASS  sliding window and non-causal attention supported (at head size 128, below)
+  PASS  no sinks, ALiBi, bidirectional mm prefix or R-SWA
+  PASS  block sizes: multiples of 16 (the hybrid group's 816 included)
+  PASS  explicit selection with sliding window at head size 256 refused at load: pth_flash_attn does not support: sliding window at head size 256 (the windowed kernels exi
+  PASS  explicit selection with sliding window at head size 64 refused at load: pth_flash_attn does not support: sliding window at head size 64 (the windowed kernels exis
+  PASS  explicit selection with ALiBi refused at load: pth_flash_attn does not support: ALiBi
+  PASS  explicit selection with attention sinks refused at load: pth_flash_attn does not support: attention sinks
+  PASS  explicit selection with logits soft cap refused at load: pth_flash_attn does not support: logits soft cap
+  PASS  explicit selection with kv_cache_dtype fp8 refused at load: pth_flash_attn does not support: kv_cache_dtype fp8
+  PASS  explicit selection with kv_cache_dtype auto refused at load: pth_flash_attn does not support: kv_cache_dtype auto
+  PASS  explicit selection with head size 96 refused at load: pth_flash_attn does not support: head size 96
+  PASS  accepted at load: D=128, 16/4 heads, sliding window 2048 -> constructed, window 2048
+  PASS  accepted at load: D=128, 32/8 heads, sliding window 2048 -> constructed, window 2048
+  PASS  selection: the drafter's layers (D=128, window, non-causal, block 864) -> []
+  PASS  selection: a window and non-causal at head size 256 refused -> ['sliding window at head size 256 (the win', 'non-causal attention at head size 256 (t']
+  PASS  selection: a window and non-causal at head size 64 refused -> ['sliding window at head size 64 (the wind', 'non-causal attention at head size 64 (th']
+  PASS  selection: the drafter's shape with sinks refused -> ['attention sinks not supported']
+  PASS  selection: the drafter's shape with mm prefix refused -> ['partial multimodal token full attention not supported']
+  PASS  selection: the drafter's shape with R-SWA refused -> ['R-SWA not supported']
+  PASS  speculative config parses "attention_backend":"CUSTOM"
+  PASS  the drafter's config takes the speculative config's attention_backend
+  PASS  the speculative config's kv_cache_dtype defaults to None (the drafter keeps the target's cache dtype unless it is set) -> None
+pthfa gate test: OK
+pth_flash_attn installed (PTH_FA=1 selects it; unset, nothing selects it)
+[install] venv /opt/sparsekv/venv
+[install] 1/5 vLLM sparse patches -> /opt/sparsekv/venv/lib/python3.12/site-packages/vllm
+== sparse-tier-spill-kvcheck.patch
+== sparse-switch-dual-graphs.patch
+== sparse-prefill-yield-bypass.patch
+[install] 2/5 pthfa patch -> /opt/sparsekv/venv/lib/python3.12/site-packages/pth_flash_attn
+== pthfa-sparse-kv.patch (already applied)
+[install] 3/5 sparsekv module -> /opt/sparsekv/venv/lib/python3.12/site-packages/sparsekv
+[install] 4/5 basis /opt/sparsekv/sparsekv/basis/basis27.pt -> /opt/sparsekv/venv/share/sparsekv/basis27.pt
+== basis ok: 16 layers, shape (16, 4, 64, 256), r=64
+[install] 5/5 stamp + import check
+W1111 13:59:43.664000 725 /app/venv/lib/python3.12/site-packages/torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+Failed to import from vllm._C: ModuleNotFoundError("No module named 'vllm._C'")
+== imports ok: /opt/sparsekv/venv/lib/python3.12/site-packages/sparsekv/__init__.py
+[install] done
+W1111 13:59:51.590000 848 /app/venv/lib/python3.12/site-packages/torch/utils/cpp_extension.py:178] No CUDA runtime is found, using CUDA_HOME='/usr/local/cuda'
+vllm   sparse-tier-spill-kvcheck.patch: applied
+vllm   sparse-switch-dual-graphs.patch: applied
+vllm   sparse-prefill-yield-bypass.patch: applied
+pthfa  pthfa-sparse-kv.patch: applied
+module sparsekv/__init__.py: matches repo
+module sparsekv/ref.py: matches repo
+module sparsekv/triton_ops.py: matches repo
+module sparsekv/tier.py: matches repo
+module sparsekv/tier_connector.py: matches repo
+basis  /opt/sparsekv/venv/share/sparsekv/basis27.pt: ok (dee8b28281d5837a...)
+stamp  commit unknown (+uncommitted changes)
+stamp  basis_sha256 dee8b28281d5837ad512a560e4d5c31af245cbe42dc1dea66dc1510775b4b99b
+stamp  installed 2026-11-11T13:59:38Z from /opt/sparsekv
+SPARSEKV_CPU_CHECK: private runtime verified; base runtime unchanged
+#0 building with "sparsekv-adoption" instance using remote driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 368B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for 127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2
+#2 DONE 0.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 66B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 ...
+
+#5 [1/2] FROM 127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2
+#5 resolve 127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2 0.3s done
+#5 CACHED
+
+#4 [internal] load build context
+#4 transferring context: 203.24MB 1.0s done
+#4 DONE 2.6s
+
+#6 [2/2] COPY --link .runtime/ /opt/sparsekv/
+#6 DONE 2.3s
+
+#7 exporting to image
+#7 exporting layers
+#7 exporting layers 7.5s done
+#7 exporting manifest sha256:50637ededf9d10c56aaa173d31af1948e1ea24fd42d5984d2d01f1f77c7eba25
+#7 exporting manifest sha256:50637ededf9d10c56aaa173d31af1948e1ea24fd42d5984d2d01f1f77c7eba25 0.3s done
+#7 exporting config sha256:d9212a0223f16d588106f6ce01b21c3596a7887af59b83bf44ec0d244c6113ba
+#7 exporting config sha256:d9212a0223f16d588106f6ce01b21c3596a7887af59b83bf44ec0d244c6113ba 0.2s done
+#7 exporting attestation manifest sha256:22c00cc4733a656d56325974db70cb3d71971e6e7483d7cec068e2bec31f2329
+#7 exporting attestation manifest sha256:22c00cc4733a656d56325974db70cb3d71971e6e7483d7cec068e2bec31f2329 0.4s done
+#7 exporting manifest list sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+#7 exporting manifest list sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679 0.2s done
+#7 DONE 8.8s
+
+#7 exporting to image
+#7 pushing layers
+#7 pushing layers 5.2s done
+#7 pushing manifest for 127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+#7 pushing manifest for 127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679 0.5s done
+#7 DONE 14.5s
+
+#8 resolving provenance for metadata file
+#8 DONE 0.0s

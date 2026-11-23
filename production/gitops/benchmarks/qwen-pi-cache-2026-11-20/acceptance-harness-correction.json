@@ -1,0 +1,15 @@
+{
+  "phase": "streamed_tool_result",
+  "observed_reply": {
+    "role": "assistant",
+    "content": "The probe value for `streaming-cache-check` is: **STREAM_TOOL_472_OK**",
+    "refusal": null,
+    "annotations": null,
+    "audio": null,
+    "function_call": null,
+    "reasoning": null
+  },
+  "reason": "The tool instruction required the call but did not specify a final output format. The assertion incorrectly required a bare value.",
+  "correction": "The tool prompt now explicitly requires the exact value without formatting or commentary.",
+  "concurrent_cache_checks_before_mismatch": "Four branches passed with 45984 cached tokens each; the strengthened rerun uses two different parent reference values."
+}

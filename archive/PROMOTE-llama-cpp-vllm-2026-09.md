@@ -3,7 +3,7 @@
 > **Archived 2026-11-04.** This is the runbook for the llama.cpp v14/v15 and vLLM v9-v12
 > images. Those tags are gone from the local registry, `configmap.yaml` and
 > `k8s/MIGRATION_LOG.md` no longer exist, and the build now uses `patches-v15/`.
-> For the live engine, see [PROMOTE.md](../PROMOTE.md).
+> For the live engine, see [PROMOTE.md](../production/README.md).
 
 
 Everything needed to build a serving image for the RTX 3090 lives in this repo.
@@ -18,7 +18,7 @@ already holds.
 
 ## llama.cpp (production since 2026-09-02)
 
-Recipe: [`Dockerfile`](../Dockerfile) at the repo root, patches from
+Recipe: [`Dockerfile`](llama-cpp-v15/Dockerfile) at the repo root, patches from
 [`patches-v14/`](patches-v14/). Bump `LLAMA_CPP_REF` and re-run the rebase
 procedure in [`patches-v14/REBASE-2026-09-02.md`](patches-v14/REBASE-2026-09-02.md)
 when moving the base.
@@ -43,13 +43,13 @@ settings (env caps + draft length) are documented inline there.
 
 ## vLLM (production 2026-08-20 to 2026-09-02, kept as rollback)
 
-Source: [`vllm/syv-ai/`](../vllm/syv-ai/), a squashed subtree of
+Source: [`vllm/syv-ai/`](vllm-qwen38/syv-ai/), a squashed subtree of
 `syv-ai/qwen38-27b-rtx3090` at our `k8s-deploy-v10` overlay (syv-ai `453104e`).
 Pull upstream with
 `git subtree pull --prefix=vllm/syv-ai https://github.com/syv-ai/qwen38-27b-rtx3090 main --squash`.
-Build contexts: [`vllm/image-build/base/`](../vllm/image-build/base/) (locked
+Build contexts: [`vllm/image-build/base/`](vllm-qwen38/image-build/base/) (locked
 197-package environment, `Dockerfile.locked`) and
-[`vllm/image-build/overlay/`](../vllm/image-build/overlay/) (vLLM patches applied on
+[`vllm/image-build/overlay/`](vllm-qwen38/image-build/overlay/) (vLLM patches applied on
 a built base).
 
 ```bash

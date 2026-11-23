@@ -1,0 +1,82 @@
+{
+  "endpoint": "https://llama.denguinho.org/v1",
+  "model": "qwen3.8-pi",
+  "registration": {
+    "id": "qwen3.8-pi",
+    "object": "model",
+    "created": 1795187834,
+    "owned_by": "llama-swap",
+    "name": "Qwen3.8 27B Pi adapter",
+    "architecture": {
+      "input_modalities": [
+        "text"
+      ],
+      "modality": "text->text",
+      "output_modalities": [
+        "text"
+      ]
+    },
+    "meta": {
+      "llamaswap": {
+        "input": [
+          "text"
+        ],
+        "max_model_len": 98304,
+        "max_tokens": 16384,
+        "reasoning": false,
+        "type": "model"
+      }
+    },
+    "status": {
+      "value": "unloaded"
+    }
+  },
+  "http_status": 200,
+  "response": {
+    "id": "chatcmpl-98a0585138d14851",
+    "object": "chat.completion",
+    "created": 1795188292,
+    "model": "qwen3.8-pi",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "PI_READY",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.31.0-59947b0f",
+    "usage": {
+      "prompt_tokens": 16,
+      "total_tokens": 19,
+      "completion_tokens": 3,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "created_cache_tokens": 0,
+        "multimodal_tokens": null
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "ec_transfer_params": null,
+    "metrics": null
+  },
+  "cold_request_seconds": 458.1149435260013
+}

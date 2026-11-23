@@ -1,0 +1,140 @@
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "check",
+    "namespace": "normal120-dflash-short-cpu"
+  },
+  "spec": {
+    "restartPolicy": "Never",
+    "activeDeadlineSeconds": 240,
+    "automountServiceAccountToken": false,
+    "enableServiceLinks": false,
+    "securityContext": {
+      "runAsNonRoot": true,
+      "runAsUser": 1000,
+      "runAsGroup": 1000,
+      "fsGroup": 1000
+    },
+    "containers": [
+      {
+        "name": "check",
+        "image": "127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+        "imagePullPolicy": "IfNotPresent",
+        "command": [
+          "/app/venv/bin/python",
+          "/checks/check_image.py"
+        ],
+        "env": [
+          {
+            "name": "CUDA_VISIBLE_DEVICES",
+            "value": ""
+          },
+          {
+            "name": "NVIDIA_VISIBLE_DEVICES",
+            "value": "void"
+          },
+          {
+            "name": "HOME",
+            "value": "/tmp"
+          },
+          {
+            "name": "PYTHONDONTWRITEBYTECODE",
+            "value": "1"
+          },
+          {
+            "name": "VLLM_OFFLOAD_KEEP_SHM",
+            "value": "1"
+          }
+        ],
+        "securityContext": {
+          "readOnlyRootFilesystem": true,
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        },
+        "resources": {
+          "requests": {
+            "cpu": "1",
+            "memory": "1Gi"
+          },
+          "limits": {
+            "cpu": "2",
+            "memory": "8Gi"
+          }
+        },
+        "volumeMounts": [
+          {
+            "name": "tmp",
+            "mountPath": "/tmp"
+          },
+          {
+            "name": "checks",
+            "mountPath": "/checks",
+            "readOnly": true
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "tmp",
+        "emptyDir": {
+          "medium": "Memory",
+          "sizeLimit": "256Mi"
+        }
+      },
+      {
+        "name": "checks",
+        "configMap": {
+          "name": "checks",
+          "items": [
+            {
+              "key": "apply_patch.py",
+              "path": "apply_patch.py"
+            },
+            {
+              "key": "check_cpu.py",
+              "path": "check_cpu.py"
+            },
+            {
+              "key": "check_image.py",
+              "path": "check_image.py"
+            },
+            {
+              "key": "provenance.json",
+              "path": "provenance.json"
+            },
+            {
+              "key": "upstream__single-user__start_qwen.sh",
+              "path": "upstream/single-user/start_qwen.sh"
+            },
+            {
+              "key": "upstream__single-user__select_model.sh",
+              "path": "upstream/single-user/select_model.sh"
+            },
+            {
+              "key": "upstream__resolve_config.sh",
+              "path": "upstream/resolve_config.sh"
+            },
+            {
+              "key": "upstream__launcher_common.sh",
+              "path": "upstream/launcher_common.sh"
+            },
+            {
+              "key": "upstream__resolve_api_key.sh",
+              "path": "upstream/resolve_api_key.sh"
+            },
+            {
+              "key": "upstream__LICENSE",
+              "path": "upstream/LICENSE"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

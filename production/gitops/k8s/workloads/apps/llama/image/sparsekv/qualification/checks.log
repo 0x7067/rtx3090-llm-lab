@@ -1,0 +1,49 @@
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 0.023s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.018s
+
+OK
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 1.374s
+
+OK
+...........  CROSS-DEVICE COPY (not hardlink): src.mkv — mergerfs placed source and dest on different drives
+.  CROSS-DEVICE COPY (not hardlink): src.mkv — mergerfs placed source and dest on different drives
+..............  Best Lidarr artist match 'Totally Different' has low similarity (0.00) to 'Right Artist'
+.........  Blu-ray remux failed for Disc.iso: bluray error
+..  Blu-ray main feature too short or unreadable (duration=300.0): Disc.iso
+.  Relabel failed for abc: can't connect to transmission daemon: HTTPConnectionPool(host='transmission', port=9091): Max retries exceeded with url: /transmission/rpc (Caused by NameResolutionError("HTTPConnection(host='transmission', port=9091): Failed to resolve 'transmission' ([Errno -2] Name or service not known)"))
+.......  No Sonarr candidate for 'Smash' has seasons [2]
+.......  CROSS-DEVICE COPY (not hardlink): src.mkv — mergerfs placed source and dest on different drives
+..
+----------------------------------------------------------------------
+Ran 54 tests in 1.627s
+
+OK
+Installed 23 packages in 9ms
+...............                                                          [100%]
+=============================== warnings summary ===============================
+../../../../../../../../../../../../home/denguinho/.cache/uv/archive-v0/YGkcOuWzCKUfOH0z/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/denguinho/.cache/uv/archive-v0/YGkcOuWzCKUfOH0z/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+15 passed, 1 warning in 0.72s
+SKIP scripts/test_dsh_ssh_ingress.py: no caddy on PATH
+Supply-chain policy passed (5 exact legacy image exceptions).
+time="2026-11-11T10:38:08-03:00" level=warning msg="Unable to read /etc/rancher/k3s/k3s.yaml, please start server with --write-kubeconfig-mode or --write-kubeconfig-group to modify kube config permissions"
+time="2026-11-11T10:38:08-03:00" level=warning msg="Unable to read /etc/rancher/k3s/k3s.yaml, please start server with --write-kubeconfig-mode or --write-kubeconfig-group to modify kube config permissions"
+Supply-chain policy passed (5 exact legacy image exceptions).
+Python sources parse successfully
+All other model entries and routing settings are unchanged

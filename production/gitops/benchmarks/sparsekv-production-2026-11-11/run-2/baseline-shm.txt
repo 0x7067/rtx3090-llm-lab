@@ -1,0 +1,1 @@
+14207 14201 0:921 / /dev/shm rw,relatime - tmpfs tmpfs rw,size=25165824k,inode64

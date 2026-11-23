@@ -1,0 +1,39 @@
+[project]
+name = "qwen-image-api"
+version = "1.0.0"
+description = "OpenAI images API for Qwen-Image 2.1 (+ PE enhancers), run by llama-swap"
+requires-python = ">=3.12"
+# Versions match the host venv that rendered on the 3090 (2026-10-09). One env
+# serves both stages: transformers 5.17 loads the PE checkpoints (qwen3_5) natively.
+dependencies = [
+    "torch==2.11.0",
+    "torchvision==0.26.0",
+    "transformers==5.17.0",
+    "accelerate==1.15.0",
+    "safetensors==0.8.0",
+    "pillow==12.3.0",
+    "diffusers",
+    "json-repair>=0.5",
+    "fastapi>=0.118",
+    "uvicorn>=0.37",
+    "python-multipart>=0.0.20",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "httpx>=0.28"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+# QwenImage21Pipeline is on diffusers main only; Turbo's fixed sigma schedule
+# needs PR #14950 (merged 2026-10-05). Pinned to main at 2026-10-16.
+diffusers = { git = "https://github.com/huggingface/diffusers", rev = "b800f828f3951c4d206e154411bcbfa693cd322e" }
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+# The 3090 is Ampere; cu128 wheels cover it on driver 595.91.07.
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

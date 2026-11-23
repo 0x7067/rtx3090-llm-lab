@@ -1,0 +1,321 @@
+{
+  "retain": false,
+  "turns": [
+    {
+      "turn": 1,
+      "seconds": 5.026056116010295,
+      "calls": 2,
+      "usage": [
+        {
+          "input": 1420,
+          "output": 50,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 1470,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        },
+        {
+          "input": 2703,
+          "output": 166,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 2869,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "seconds": 15.436985902008018,
+      "calls": 4,
+      "usage": [
+        {
+          "input": 2915,
+          "output": 148,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 3063,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        },
+        {
+          "input": 3099,
+          "output": 281,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 3380,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        },
+        {
+          "input": 1851,
+          "output": 288,
+          "cacheRead": 1584,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 3723,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        },
+        {
+          "input": 2249,
+          "output": 192,
+          "cacheRead": 1584,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 4025,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "seconds": 3.3975197190011386,
+      "calls": 2,
+      "usage": [
+        {
+          "input": 2486,
+          "output": 25,
+          "cacheRead": 1584,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 4095,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        },
+        {
+          "input": 2639,
+          "output": 45,
+          "cacheRead": 1584,
+          "cacheWrite": 0,
+          "reasoning": 0,
+          "totalTokens": 4268,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "total": 0,
+            "totalFromProvider": false
+          }
+        }
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "request": "request-001.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 2,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40"
+      ]
+    },
+    {
+      "request": "request-002.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 5,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5"
+      ],
+      "shared_messages": 2,
+      "previous_messages": 2,
+      "same_tools": true
+    },
+    {
+      "request": "request-003.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 7,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5",
+        "3a91df8aa84f8249056f799cb4a9c2fc8a9452ded83adec81164b23feb2c7c02",
+        "921600a23ad7eb351ff8c0bdfcecf910dfcab3217d476801638adeab81c3661f"
+      ],
+      "shared_messages": 5,
+      "previous_messages": 5,
+      "same_tools": true
+    },
+    {
+      "request": "request-004.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 9,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5",
+        "3a91df8aa84f8249056f799cb4a9c2fc8a9452ded83adec81164b23feb2c7c02",
+        "921600a23ad7eb351ff8c0bdfcecf910dfcab3217d476801638adeab81c3661f",
+        "d64c0aa5d88a90f615da88e17ac7e09b39e52aaababea9202d1c8e4771cfcaab",
+        "102d54df04c061886446d54ef59684ec98f4f6bf9fb52b904ae961a5a4f4d950"
+      ],
+      "shared_messages": 7,
+      "previous_messages": 7,
+      "same_tools": true
+    },
+    {
+      "request": "request-005.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 11,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5",
+        "3a91df8aa84f8249056f799cb4a9c2fc8a9452ded83adec81164b23feb2c7c02",
+        "921600a23ad7eb351ff8c0bdfcecf910dfcab3217d476801638adeab81c3661f",
+        "d64c0aa5d88a90f615da88e17ac7e09b39e52aaababea9202d1c8e4771cfcaab",
+        "102d54df04c061886446d54ef59684ec98f4f6bf9fb52b904ae961a5a4f4d950",
+        "d1b6b274f58f01b303ef11f8e1a84adc84b99095dca429a1dd7fa2fd3a4c617a",
+        "b1c04d097b31c293fce19ff807add764b9b2edd1fd6089be2f154b52f2897133"
+      ],
+      "shared_messages": 9,
+      "previous_messages": 9,
+      "same_tools": true
+    },
+    {
+      "request": "request-006.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 13,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5",
+        "3a91df8aa84f8249056f799cb4a9c2fc8a9452ded83adec81164b23feb2c7c02",
+        "921600a23ad7eb351ff8c0bdfcecf910dfcab3217d476801638adeab81c3661f",
+        "d64c0aa5d88a90f615da88e17ac7e09b39e52aaababea9202d1c8e4771cfcaab",
+        "102d54df04c061886446d54ef59684ec98f4f6bf9fb52b904ae961a5a4f4d950",
+        "d1b6b274f58f01b303ef11f8e1a84adc84b99095dca429a1dd7fa2fd3a4c617a",
+        "b1c04d097b31c293fce19ff807add764b9b2edd1fd6089be2f154b52f2897133",
+        "99cd91ee4e82562b7ef00734f77a91267832a92d569a97718a4b3a77e3e58f46",
+        "d6d7afbfbe6854fca7b1a7f01bc076324c2992bd5a58228c7b2a01ae676fb2cd"
+      ],
+      "shared_messages": 11,
+      "previous_messages": 11,
+      "same_tools": true
+    },
+    {
+      "request": "request-007.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 15,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5",
+        "3a91df8aa84f8249056f799cb4a9c2fc8a9452ded83adec81164b23feb2c7c02",
+        "921600a23ad7eb351ff8c0bdfcecf910dfcab3217d476801638adeab81c3661f",
+        "d64c0aa5d88a90f615da88e17ac7e09b39e52aaababea9202d1c8e4771cfcaab",
+        "102d54df04c061886446d54ef59684ec98f4f6bf9fb52b904ae961a5a4f4d950",
+        "d1b6b274f58f01b303ef11f8e1a84adc84b99095dca429a1dd7fa2fd3a4c617a",
+        "b1c04d097b31c293fce19ff807add764b9b2edd1fd6089be2f154b52f2897133",
+        "99cd91ee4e82562b7ef00734f77a91267832a92d569a97718a4b3a77e3e58f46",
+        "d6d7afbfbe6854fca7b1a7f01bc076324c2992bd5a58228c7b2a01ae676fb2cd",
+        "23da9b4121608cdfdb3ce6760e8587af187ec3b93cb49852c8a5b97abad30c8e",
+        "33ad98d009a26f330d153f6a821119235c2412ddc00b1a6da9792e4ade71adab"
+      ],
+      "shared_messages": 13,
+      "previous_messages": 13,
+      "same_tools": true
+    },
+    {
+      "request": "request-008.json",
+      "tools": 4,
+      "tool_hash": "c96f354565801dfe8e928de863c64b468e0ababe36c33573974566fd1e9b8cc3",
+      "message_count": 17,
+      "message_hashes": [
+        "1600a9f48131350fa88cd659ec49c6f1f82e6c9b5d8c45ffa2f6f43396d2df58",
+        "e3248c63a479f80276ab03605286b8bd9cf5e244a1fb240344739614f85cfb40",
+        "626129edcd0b2658944b976fbdfd1d80b66d35f83c737a17712ab7a1bc5a628e",
+        "549ef4a220d97487f074008cb7691e5002f4ea2192707a67416cd97085f17b4b",
+        "4e939964e1dfa3fc8744784bb6440ce1bdf82a9f76e1ee1be0d1c1138b3ba2c5",
+        "3a91df8aa84f8249056f799cb4a9c2fc8a9452ded83adec81164b23feb2c7c02",
+        "921600a23ad7eb351ff8c0bdfcecf910dfcab3217d476801638adeab81c3661f",
+        "d64c0aa5d88a90f615da88e17ac7e09b39e52aaababea9202d1c8e4771cfcaab",
+        "102d54df04c061886446d54ef59684ec98f4f6bf9fb52b904ae961a5a4f4d950",
+        "d1b6b274f58f01b303ef11f8e1a84adc84b99095dca429a1dd7fa2fd3a4c617a",
+        "b1c04d097b31c293fce19ff807add764b9b2edd1fd6089be2f154b52f2897133",
+        "99cd91ee4e82562b7ef00734f77a91267832a92d569a97718a4b3a77e3e58f46",
+        "d6d7afbfbe6854fca7b1a7f01bc076324c2992bd5a58228c7b2a01ae676fb2cd",
+        "23da9b4121608cdfdb3ce6760e8587af187ec3b93cb49852c8a5b97abad30c8e",
+        "33ad98d009a26f330d153f6a821119235c2412ddc00b1a6da9792e4ade71adab",
+        "975185b4cd0f4dd4b0b8ac4c04088432b0b8ff848beda246e4b8bfc0c28a234f",
+        "cabb325a851a3a6baf7c9bd90124230aef885ef57848ac13950383cc5dfd820d"
+      ],
+      "shared_messages": 15,
+      "previous_messages": 15,
+      "same_tools": true
+    }
+  ],
+  "passed": true
+}

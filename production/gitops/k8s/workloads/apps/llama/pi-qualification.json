@@ -1,0 +1,228 @@
+{
+  "maintenance_approved": "2026-11-20 user approved current window",
+  "profiles": [
+    {
+      "quant": "Q4_K_XL",
+      "context": 131072,
+      "requests": [],
+      "error": "TimeoutError('model startup')"
+    },
+    {
+      "quant": "IQ4_XS",
+      "context": 131072,
+      "requests": [
+        {
+          "prompt": "Reply with exactly: PI_READY",
+          "seconds": 0.31294036799954483,
+          "response": {
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "PI_READY"
+                }
+              }
+            ],
+            "created": 1795185413,
+            "model": "qwen3.8-pi",
+            "system_fingerprint": "b11277-eae11d221",
+            "object": "chat.completion",
+            "usage": {
+              "completion_tokens": 3,
+              "prompt_tokens": 18,
+              "total_tokens": 21,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "id": "chatcmpl-WsBwXRCAONYF76F5cfbqbzpnXNZaYPHw",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 18,
+              "prompt_ms": 221.132,
+              "prompt_per_token_ms": 12.285111111111112,
+              "prompt_per_second": 81.39934518748981,
+              "predicted_n": 3,
+              "predicted_ms": 87.808,
+              "predicted_per_token_ms": 43.904,
+              "predicted_per_second": 22.77696793002915
+            }
+          }
+        },
+        {
+          "prompt": "Write a Python function that returns the first n Fibonacci numbers. Include assertions for n=0, n=1, and n=8.",
+          "seconds": 8.929836864001118,
+          "response": {
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "```python\ndef fibonacci(n: int) -> list:\n    \"\"\"\n    Return the first n Fibonacci numbers.\n    \n    Args:\n        n: The number of Fibonacci numbers to return.\n        \n    Returns:\n        A list containing the first n Fibonacci numbers.\n        \n    Examples:\n        >>> fibonacci(0)\n        []\n        >>> fibonacci(1)\n        [0]\n        >>> fibonacci(8)\n        [0, 1, 1, 2, 3, 5, 8, 13]\n    \"\"\"\n    if n <= 0:\n        return []\n    if n == 1:\n        return [0]\n    \n    fib = [0, 1]\n    for i in range(2, n):\n        fib.append(fib[i - 1] + fib[i - 2])\n    return fib[:n]\n\n\n# Assertions\nassert fibonacci(0) == [], \"fibonacci(0) should return an empty list\"\nassert fibonacci(1) == [0], \"fibonacci(1) should return [0]\"\nassert fibonacci(8) == [0, 1, 1, 2, 3, 5, 8, 13], \"fibonacci(8) should return [0, 1, 1, 2, 3, 5, 8, 13]\"\n```"
+                }
+              }
+            ],
+            "created": 1795185422,
+            "model": "qwen3.8-pi",
+            "system_fingerprint": "b11277-eae11d221",
+            "object": "chat.completion",
+            "usage": {
+              "completion_tokens": 306,
+              "prompt_tokens": 40,
+              "total_tokens": 346,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "id": "chatcmpl-Hdfzc0OQs4nwEjGdsRQw6je1WOw9UVSG",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 40,
+              "prompt_ms": 168.37,
+              "prompt_per_token_ms": 4.20925,
+              "prompt_per_second": 237.57201401674882,
+              "predicted_n": 306,
+              "predicted_ms": 8637.275,
+              "predicted_per_token_ms": 28.318934426229507,
+              "predicted_per_second": 35.31206312176005
+            }
+          }
+        },
+        {
+          "prompt": "Return only JSON with key answer containing the integer 391*27.",
+          "seconds": 0.5716824000046472,
+          "response": {
+            "choices": [
+              {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                  "role": "assistant",
+                  "content": "{\"answer\": 10557}"
+                }
+              }
+            ],
+            "created": 1795185422,
+            "model": "qwen3.8-pi",
+            "system_fingerprint": "b11277-eae11d221",
+            "object": "chat.completion",
+            "usage": {
+              "completion_tokens": 11,
+              "prompt_tokens": 29,
+              "total_tokens": 40,
+              "prompt_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "id": "chatcmpl-Y9cZUfocL1y6aQuBHVtEYHgSXkZnZYDa",
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 29,
+              "prompt_ms": 156.334,
+              "prompt_per_token_ms": 5.390827586206897,
+              "prompt_per_second": 185.50027505213197,
+              "predicted_n": 11,
+              "predicted_ms": 297.655,
+              "predicted_per_token_ms": 29.765499999999996,
+              "predicted_per_second": 33.59594161025348
+            }
+          }
+        }
+      ],
+      "gpu": "18698 MiB, 133.60 W, 53",
+      "tool_call": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_file",
+                    "arguments": "{\"path\":\"/tmp/pi-fixture.txt\"}"
+                  },
+                  "id": "sHAhzmkSETPbHYFVa2Pf8eLtDYfPJH5A"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1795185424,
+        "model": "qwen3.8-pi",
+        "system_fingerprint": "b11277-eae11d221",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 29,
+          "prompt_tokens": 285,
+          "total_tokens": 314,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-S7XPL3bmXJTkGcoIxJLHeUyEjJaBMMHL",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 285,
+          "prompt_ms": 410.761,
+          "prompt_per_token_ms": 1.4412666666666667,
+          "prompt_per_second": 693.8341273879457,
+          "predicted_n": 29,
+          "predicted_ms": 808.114,
+          "predicted_per_token_ms": 28.861214285714286,
+          "predicted_per_second": 34.64857680970754
+        }
+      },
+      "tool_result": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "The file `/tmp/pi-fixture.txt` contains:\n\n```\nORCHID_7392\n```"
+            }
+          }
+        ],
+        "created": 1795185425,
+        "model": "qwen3.8-pi",
+        "system_fingerprint": "b11277-eae11d221",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 25,
+          "prompt_tokens": 339,
+          "total_tokens": 364,
+          "prompt_tokens_details": {
+            "cached_tokens": 313
+          }
+        },
+        "id": "chatcmpl-HsK4eJerUiZtUCx4a5Hb1GvrjkBDCZnO",
+        "timings": {
+          "cache_n": 313,
+          "prompt_n": 26,
+          "prompt_ms": 206.423,
+          "prompt_per_token_ms": 7.939346153846154,
+          "prompt_per_second": 125.95495656976209,
+          "predicted_n": 25,
+          "predicted_ms": 687.225,
+          "predicted_per_token_ms": 28.634375000000002,
+          "predicted_per_second": 34.92306013314416
+        }
+      },
+      "passed": true,
+      "independent_checks": {
+        "ready_exact": true,
+        "arithmetic_json": true,
+        "fibonacci_cases": 5,
+        "tool_round_trip": true
+      }
+    }
+  ],
+  "base_checksums_verified": true
+}

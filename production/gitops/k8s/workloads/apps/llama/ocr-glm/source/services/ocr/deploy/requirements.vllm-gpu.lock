@@ -1,0 +1,5 @@
+# PaddleX 3.7.2's GPU-only plugin check requires flash-attn outside its pip extras.
+# Official release asset 282637153; see flash_wheel.py for exact artifact URL.
+# Install only from the locally hash-verified wheel, without dependency resolution.
+flash-attn==2.8.3 \
+    --hash=sha256:f25da18657a87fc83dc1bfb8b7751b82246e9db355510226b674fd437c34b5fb

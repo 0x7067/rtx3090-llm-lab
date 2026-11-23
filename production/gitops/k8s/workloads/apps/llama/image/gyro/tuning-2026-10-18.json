@@ -1,0 +1,68 @@
+{
+  "date_utc": "2026-10-18",
+  "model": "qwen3.8-flash-next-gyro-m",
+  "image_digest": "sha256:61d509794b6e39de19d1b33bb49e4ecd544bf0f4417b64caeb5158c2b5cd9110",
+  "selected": {
+    "resident_budget_gib": 20,
+    "observed_resident_gib": 16.03,
+    "adapt_every": 1,
+    "adapt_swaps": 160,
+    "adapt_decay": 0.97,
+    "adapt_async": false
+  },
+  "calibration": {
+    "default_decode_tps": 36.3,
+    "selected_decode_tps": 60.1,
+    "pcie_frac": 0.35,
+    "spec_min_p": 0.5,
+    "pool_workers": 9,
+    "retained_flags": [
+      "--adapt-every=1",
+      "--adapt-swaps=160",
+      "--adapt-decay=0.97"
+    ]
+  },
+  "matched_benchmark": {
+    "prior": {
+      "resident_budget_gib": 16,
+      "decode_median_tps": {
+        "4k": 64.6,
+        "32k": 28.3
+      }
+    },
+    "selected": {
+      "resident_budget_gib": 20,
+      "decode_median_tps": {
+        "4k": 69.4,
+        "32k": 63.8
+      }
+    }
+  },
+  "quality": {
+    "streaming_arithmetic": true,
+    "reasoning": true,
+    "code": true,
+    "tool_call": true,
+    "tool_followup": true,
+    "long_context": {
+      "passed": true,
+      "prompt_tokens": 189998,
+      "seconds": 121.74
+    },
+    "cached_followup": {
+      "passed": true,
+      "cached_tokens": 189993,
+      "seconds": 2.083
+    }
+  },
+  "safety": {
+    "minimum_available_memory_gib": 21.62,
+    "maximum_memory_psi_avg10": 3.53,
+    "async_arm": {
+      "passed": false,
+      "first_request_decode_tps": 64.7,
+      "abort_reason": "memory PSI avg10 exceeded 10 percent"
+    }
+  },
+  "passed": true
+}

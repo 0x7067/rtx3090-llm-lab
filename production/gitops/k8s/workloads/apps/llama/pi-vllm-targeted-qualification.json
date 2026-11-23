@@ -1,0 +1,334 @@
+{
+  "engine": "vllm",
+  "quant": "W4A16 AutoRound",
+  "context": 65536,
+  "lora_targets": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "requests": [
+    {
+      "prompt": "Reply with exactly: PI_READY",
+      "seconds": 0.12383417200180702,
+      "output_tokens_per_second": 24.2259462917572,
+      "response": {
+        "id": "chatcmpl-a41ef3b1ad7801e8",
+        "object": "chat.completion",
+        "created": 1795185975,
+        "model": "qwen3.8-pi",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "PI_READY",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.31.0-91b9fdfb",
+        "usage": {
+          "prompt_tokens": 18,
+          "total_tokens": 21,
+          "completion_tokens": 3,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "created_cache_tokens": 0,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null,
+        "ec_transfer_params": null,
+        "metrics": null
+      }
+    },
+    {
+      "prompt": "Write a Python function that returns the first n Fibonacci numbers. Include assertions for n=0, n=1, and n=8.",
+      "seconds": 8.85112968699832,
+      "output_tokens_per_second": 34.684838077896565,
+      "response": {
+        "id": "chatcmpl-83897cf4d059453e",
+        "object": "chat.completion",
+        "created": 1795185975,
+        "model": "qwen3.8-pi",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef fibonacci(n: int) -> list:\n    \"\"\"\n    Return the first n Fibonacci numbers.\n    \n    The Fibonacci sequence starts with 0, 1, 1, 2, 3, 5, 8, 13, ...\n    \n    Args:\n        n: The number of Fibonacci numbers to return.\n        \n    Returns:\n        A list containing the first n Fibonacci numbers.\n        \n    Raises:\n        ValueError: If n is negative.\n    \"\"\"\n    if n < 0:\n        raise ValueError(\"n must be non-negative\")\n    \n    if n == 0:\n        return []\n    if n == 1:\n        return [0]\n    \n    fib = [0, 1]\n    for _ in range(2, n):\n        fib.append(fib[-1] + fib[-2])\n    \n    return fib\n\n\n# Assertions\nassert fibonacci(0) == [], \"fibonacci(0) should return an empty list\"\nassert fibonacci(1) == [0], \"fibonacci(1) should return [0]\"\nassert fibonacci(8) == [0, 1, 1, 2, 3, 5, 8, 13], \"fibonacci(8) should return [0, 1, 1, 2, 3, 5, 8, 13]\"\n```",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.31.0-91b9fdfb",
+        "usage": {
+          "prompt_tokens": 40,
+          "total_tokens": 347,
+          "completion_tokens": 307,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "created_cache_tokens": 0,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null,
+        "ec_transfer_params": null,
+        "metrics": null
+      }
+    },
+    {
+      "prompt": "Return only JSON with key answer containing the integer 391*27.",
+      "seconds": 0.3635493600013433,
+      "output_tokens_per_second": 30.257239346974384,
+      "response": {
+        "id": "chatcmpl-bb18775e676c133e",
+        "object": "chat.completion",
+        "created": 1795185984,
+        "model": "qwen3.8-pi",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"answer\": 10557}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.31.0-91b9fdfb",
+        "usage": {
+          "prompt_tokens": 29,
+          "total_tokens": 40,
+          "completion_tokens": 11,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "created_cache_tokens": 0,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null,
+        "ec_transfer_params": null,
+        "metrics": null
+      }
+    }
+  ],
+  "models": {
+    "object": "list",
+    "data": [
+      {
+        "id": "qwen3.8-27b",
+        "object": "model",
+        "created": 1795185975,
+        "owned_by": "vllm",
+        "root": "/app/models/Qwen3.8-27B-W4A16-AutoRound",
+        "parent": null,
+        "max_model_len": 65536,
+        "permission": [
+          {
+            "id": "modelperm-a219c55e6c34cc2e",
+            "object": "model_permission",
+            "created": 1795185975,
+            "allow_create_engine": false,
+            "allow_sampling": true,
+            "allow_logprobs": true,
+            "allow_search_indices": false,
+            "allow_view": true,
+            "allow_fine_tuning": false,
+            "organization": "*",
+            "group": null,
+            "is_blocking": false
+          }
+        ]
+      },
+      {
+        "id": "qwen3.8-pi",
+        "object": "model",
+        "created": 1795185975,
+        "owned_by": "vllm",
+        "root": "/adapter",
+        "parent": "qwen3.8-27b",
+        "max_model_len": null,
+        "permission": [
+          {
+            "id": "modelperm-be0131263bd23917",
+            "object": "model_permission",
+            "created": 1795185975,
+            "allow_create_engine": false,
+            "allow_sampling": true,
+            "allow_logprobs": true,
+            "allow_search_indices": false,
+            "allow_view": true,
+            "allow_fine_tuning": false,
+            "organization": "*",
+            "group": null,
+            "is_blocking": false
+          }
+        ]
+      }
+    ]
+  },
+  "tool_call": {
+    "id": "chatcmpl-889445f32da33cab",
+    "object": "chat.completion",
+    "created": 1795185984,
+    "model": "qwen3.8-pi",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "tool_calls": [
+            {
+              "id": "chatcmpl-tool-a7aca265bc2663e9",
+              "type": "function",
+              "function": {
+                "name": "read_file",
+                "arguments": "{\"path\": \"/tmp/pi-fixture.txt\"}"
+              }
+            }
+          ],
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "tool_calls",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.31.0-91b9fdfb",
+    "usage": {
+      "prompt_tokens": 285,
+      "total_tokens": 314,
+      "completion_tokens": 29,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "created_cache_tokens": 0,
+        "multimodal_tokens": null
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "ec_transfer_params": null,
+    "metrics": null
+  },
+  "tool_result": {
+    "id": "chatcmpl-a4b35416620e6edd",
+    "object": "chat.completion",
+    "created": 1795185986,
+    "model": "qwen3.8-pi",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The file `/tmp/pi-fixture.txt` contains the following content:\n\n```\nORCHID_7392\n```",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.31.0-91b9fdfb",
+    "usage": {
+      "prompt_tokens": 339,
+      "total_tokens": 367,
+      "completion_tokens": 28,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "created_cache_tokens": 0,
+        "multimodal_tokens": null
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "ec_transfer_params": null,
+    "metrics": null
+  },
+  "gpu": "22708 MiB, 296.84 W, 63",
+  "passed": true,
+  "independent_checks": {
+    "ready_exact": true,
+    "arithmetic_json": true,
+    "fibonacci_cases": 5,
+    "tool_round_trip": true
+  }
+}

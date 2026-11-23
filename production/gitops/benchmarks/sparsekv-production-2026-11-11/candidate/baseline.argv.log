@@ -1,0 +1,11 @@
+[effective-config] MODE=single
+[effective-config] CTX=long SPEC=dflash2 FA2_FP8KV=0 (explicit)
+[effective-config] PTH_FA=1 (explicit; int8_per_token_head KV on the CUSTOM backend, pthfa/: target and DFlash2 drafter)
+[effective-config] MODEL=/app/models/Qwen3.8-27B-W4A16-AutoRound PORT=5890
+[effective-config] MAX_LEN=<profile default> MAX_SEQS=4
+[effective-config] VLLM_API_KEY=set(20 chars) api_key.txt=absent
+prefix caching: on (PREFIX_CACHE=1)
+[start_qwen_cache] pinned PTH CPU tier with PIECEWISE capture
+[start_qwen] PTH_FA=1: int8_per_token_head KV on the CUSTOM backend (pth-flash-attn), target and DFlash2
+  drafter on CUSTOM: the drafter's sliding-window, non-causal layers run the kernel's windowed path (head size 128)
+[start_qwen] WARNING: KV_MEM=7784628224 is above the profile default 5583457484. The extra pool is taken from the headroom prefill and the first concurrent batch allocate from, and the floor is close: +150 MiB ran, +200 MiB killed the engine at CTX=huge MAX_SEQS=8 (gotcha 39 has the ladder). On Linux the miss is a loud OutOfMemoryError; on WSL2 it is SILENT: no error, prefill 5-10x slower. Ladder 4k/16k TTFT against known-good rates before trusting it.

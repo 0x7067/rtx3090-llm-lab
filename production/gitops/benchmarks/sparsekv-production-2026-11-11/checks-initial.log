@@ -1,0 +1,70 @@
+Using CPython 3.12.14
+Removed virtual environment at: tools/supply-chain/.venv
+Creating virtual environment at: tools/supply-chain/.venv
+Installed 1 package in 2ms
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 0.019s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.019s
+
+OK
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.005s
+
+OK
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 1.352s
+
+OK
+..  CROSS-DEVICE COPY (not hardlink): src.mkv — mergerfs placed source and dest on different drives
+.  CROSS-DEVICE COPY (not hardlink): src.mkv — mergerfs placed source and dest on different drives
+................  Blu-ray remux failed for Disc.iso: bluray error
+..  Blu-ray main feature too short or unreadable (duration=300.0): Disc.iso
+.......  No Sonarr candidate for 'Smash' has seasons [2]
+.......  CROSS-DEVICE COPY (not hardlink): src.mkv — mergerfs placed source and dest on different drives
+..
+----------------------------------------------------------------------
+Ran 37 tests in 0.163s
+
+OK
+...............                                                          [100%]
+=============================== warnings summary ===============================
+../../../../../../../../../../.cache/uv/archive-v0/vz76PXPrUNOn4h4I/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /data/development/.cache/uv/archive-v0/vz76PXPrUNOn4h4I/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+15 passed, 1 warning in 0.36s
+SKIP scripts/test_dsh_ssh_ingress.py: no caddy on PATH
+Supply-chain policy passed (5 exact legacy image exceptions).
+Supply-chain policy passed (5 exact legacy image exceptions).
+
+In /data/development/worktrees/.treehouse/docker-services-3c01ca/5/docker-services/benchmarks/sparsekv-production-2026-11-11/build-candidate.sh line 22:
+  ' > "$scratch/overlay.tar.incomplete"
+    ^-- SC2024 (warning): sudo doesn't affect redirects. Use ..| sudo tee file
+
+
+In /data/development/worktrees/.treehouse/docker-services-3c01ca/5/docker-services/benchmarks/sparsekv-production-2026-11-11/launch-arm.sh line 24:
+common=(
+       ^-- SC2054 (warning): Use spaces, not commas, to separate array elements.
+
+
+In /data/development/worktrees/.treehouse/docker-services-3c01ca/5/docker-services/benchmarks/sparsekv-production-2026-11-11/launch-arm.sh line 67:
+  command=(/bin/bash -euc '
+                          ^-- SC2016 (info): Expressions don't expand in single quotes, use double quotes for that.
+
+
+In /data/development/worktrees/.treehouse/docker-services-3c01ca/5/docker-services/benchmarks/sparsekv-production-2026-11-11/verify.sh line 6:
+trap 'rc=$?; rm -rf -- "$benchmark_check_tmp"; printf "%s\n" "$rc" > "$here/checks.exit"' EXIT
+     ^-- SC2154 (warning): rc is referenced but not assigned.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2024 -- sudo doesn't affect redirects. Us...
+  https://www.shellcheck.net/wiki/SC2054 -- Use spaces, not commas, to separa...
+  https://www.shellcheck.net/wiki/SC2154 -- rc is referenced but not assigned.

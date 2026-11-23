@@ -1,0 +1,430 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama
+  labels:
+    app.kubernetes.io/name: llama
+  annotations:
+    reloader.stakater.com/auto: 'true'
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: llama
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: llama
+    spec:
+      runtimeClassName: nvidia
+      # The finance OCR worker is configured (and manifest-pinned) to reach its
+      # dedicated vLLM at http://ocr-vllm:8000. Inside this pod that is loopback.
+      hostAliases:
+      - ip: 127.0.0.1
+        hostnames: [ocr-vllm]
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      initContainers:
+      # Stock core/memory offsets and GPU Boost clocks, with a 300 W power limit.
+      # See docs/resources-and-alerts.md for the qualification and profile history.
+      - name: gpu-profile
+        image: 127.0.0.1:5000/orcasaq2-vllm@sha256:37ae52afe6b11ffa4b613f1fa5ecd8354584a32daa500b7ce02dbdb1c283e012
+        imagePullPolicy: IfNotPresent
+        command:
+        - bash
+        - -ec
+        - 'nvidia-smi -i 0 --power-limit=300
+
+          nvidia-smi -i 0 --reset-gpu-clocks
+
+          python3 - <<''PY''
+
+          import pynvml as n
+
+          n.nvmlInit()
+
+          device = n.nvmlDeviceGetHandleByIndex(0)
+
+          n.nvmlDeviceSetGpcClkVfOffset(device, 0)
+
+          n.nvmlDeviceSetMemClkVfOffset(device, 0)
+
+          assert n.nvmlDeviceGetGpcClkVfOffset(device) == 0
+
+          assert n.nvmlDeviceGetMemClkVfOffset(device) == 0
+
+          assert n.nvmlDeviceGetPowerManagementLimit(device) == 300000
+
+          print("GPU profile verified: stock offsets, 300 W power limit")
+
+          n.nvmlShutdown()
+
+          PY
+
+          nvidia-smi --query-gpu=clocks.gr,clocks.mem,power.limit --format=csv,noheader
+
+          '
+        env:
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: compute,utility
+        securityContext:
+          privileged: true
+          runAsUser: 0
+          runAsGroup: 0
+      # A copy to SSD changes the artifact file identities. Rebuild the
+      # private cache from the same pins before Finance OCR can start.
+      - name: verify-glm-artifacts
+        image: &llama-runtime-image 127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+        imagePullPolicy: IfNotPresent
+        workingDir: /opt/finance-ocr-glm
+        command:
+        - /bin/bash
+        - -ec
+        - |
+          mkdir -p -m 0700 /ocr-data/glm
+          cache=/ocr-data/glm/glm-verified-artifacts-v1.json
+          preflight=(
+            /opt/ocr-glm/runtime/venv/bin/python services/ocr/deploy/glm_preflight.py
+            --manifest /etc/ocr-glm/manifest.json
+          )
+          if ! "${preflight[@]}" --verified-cache "$cache"; then
+            "${preflight[@]}" --prime-cache "$cache"
+          fi
+        env:
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: void
+        - name: LD_LIBRARY_PATH
+          value: /opt/py312/lib:/opt/llama:/opt/llama/cuda
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+        - name: PYTHONNOUSERSITE
+          value: '1'
+        - name: HF_HUB_OFFLINE
+          value: '1'
+        - name: TRANSFORMERS_OFFLINE
+          value: '1'
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        volumeMounts:
+        - name: ssd-staged
+          mountPath: /run/serving-assets-staged
+          readOnly: true
+        - &glm-source
+          name: ocr-glm-source
+          mountPath: /opt/finance-ocr-glm
+          readOnly: true
+        - &glm-source-tree
+          name: ocr-glm-source
+          mountPath: /opt/ocr-glm/source-tree.json
+          subPath: source-tree.json
+          readOnly: true
+        - &glm-sdk
+          name: ocr-glm-sdk
+          mountPath: /opt/ocr-glm/runtime
+          readOnly: true
+        - &glm-manifest
+          name: ocr-glm-manifest
+          mountPath: /etc/ocr-glm/manifest.json
+          subPath: manifest.json
+          readOnly: true
+        - &glm-baseline
+          name: glm-ocr-baseline
+          mountPath: /models/glm-ocr-baseline
+          readOnly: true
+        - &glm-layout
+          name: ocr-models
+          mountPath: /models/layout
+          subPath: layout
+          readOnly: true
+        - &glm-auxiliary
+          name: ocr-models
+          mountPath: /models/ocr-aux/ppocr-v5-latin-v1
+          subPath: auxiliary/ppocr-v5-latin-v1
+          readOnly: true
+        - &ocr-data
+          name: ocr-data
+          mountPath: /ocr-data
+      containers:
+      - name: llama-swap
+        image: *llama-runtime-image
+        imagePullPolicy: IfNotPresent
+        command:
+        - /usr/local/bin/llama-swap
+        args:
+        - -config
+        - /config/config.yaml
+        - -listen
+        - :8080
+        env:
+        - name: TZ
+          value: America/Sao_Paulo
+        # GPU via runtimeClass + env, not an nvidia.com/gpu request: after a k3s restart
+        # kubelet admits this pod ~12 s before the device plugin re-registers, and the
+        # request fails admission (UnexpectedAdmissionError). Single-GPU, single-consumer
+        # node, so scheduler GPU accounting adds nothing.
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: all
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: compute,utility
+        - name: HOME
+          value: /cache
+        - name: XDG_CACHE_HOME
+          value: /cache
+        - name: TORCH_EXTENSIONS_DIR
+          value: /cache/torch_extensions
+        - name: LLAMA_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: llama-api
+              key: LLAMA_API_TOKEN
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 10
+          failureThreshold: 90
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 6
+        resources:
+          requests:
+            cpu: '4'
+            # Native working set plus the pinned 16GiB CPU prefix-cache tier.
+            memory: 26Gi
+          limits:
+            cpu: '12'
+            # 36Gi: headroom over the request. Qwen-Image no longer sets it: it holds
+            # ~2 GiB of its own plus reclaimable page cache (weights load onto the GPU).
+            memory: 36Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - {name: host-trust-store, mountPath: /etc/ssl/certs/ca-certificates.crt, readOnly: true}
+        - {name: ocr-node-runtime, mountPath: /opt/ocr/node/bin/node, readOnly: true}
+        - {name: host-trust-store, mountPath: /opt/ocr/venv-vllm/lib/python3.12/site-packages/certifi/cacert.pem, readOnly: true}
+        - {name: host-trust-store, mountPath: /opt/ocr/venv-layout/lib/python3.12/site-packages/certifi/cacert.pem, readOnly: true}
+        - name: pi-adapter
+          mountPath: /app/pi-adapter
+          readOnly: true
+        - name: hyperqwen
+          mountPath: /app/models
+          readOnly: true
+        - name: inkling-2-mini
+          mountPath: /models/inkling-2-mini
+          readOnly: true
+        - name: inkling-vllm-runtime
+          mountPath: /opt/inkling-vllm
+          readOnly: true
+        - name: inkling-sm86-opt
+          mountPath: /opt/inkling-sm86-opt
+          readOnly: true
+        - name: inkling-vllm-weights
+          mountPath: /models/inkling-vllm
+          readOnly: true
+        - name: inkling-unbound-edit
+          mountPath: /models/inkling-unbound-edit
+          readOnly: true
+        - name: qwen-image
+          mountPath: /models/qwen-image
+          readOnly: true
+        # qwen-image/server.py and pe_core.py from this repo, over the image's copy.
+        - name: qwen-image-api
+          mountPath: /opt/qwen-image/server.py
+          subPath: server.py
+          readOnly: true
+        - name: qwen-image-api
+          mountPath: /opt/qwen-image/pe_core.py
+          subPath: pe_core.py
+          readOnly: true
+        - *glm-source
+        - *glm-source-tree
+        - *glm-sdk
+        - *glm-manifest
+        - *glm-baseline
+        - name: ocr-models
+          mountPath: /models/ocr
+          subPath: ocr
+          readOnly: true
+        - *glm-layout
+        - *glm-auxiliary
+        - *ocr-data
+        - name: ocr-manifest
+          mountPath: /etc/ocr/manifest.json
+          subPath: manifest.json
+          readOnly: true
+        # subPath: the OCR API refuses a symlinked credential file, which is what
+        # a whole-Secret volume would give it.
+        - name: ocr-token
+          mountPath: /run/secrets/ocr/token
+          subPath: token
+          readOnly: true
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: chat-template
+          mountPath: /chat-template
+          readOnly: true
+        - name: cache
+          mountPath: /cache
+        - name: tmp
+          mountPath: /tmp
+        - name: dshm
+          mountPath: /dev/shm
+      # Read-only proxy for the active vLLM worker's /metrics (vllm-metrics-proxy.py);
+      # retains the original Strata image for its Python runtime.
+      - name: vllm-metrics
+        image: 127.0.0.1:5000/home-llm-strata:0.2.8-v1@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42
+        imagePullPolicy: IfNotPresent
+        command: [/opt/sglang/bin/python3, /proxy/vllm-metrics-proxy.py]
+        env:
+        - name: TZ
+          value: America/Sao_Paulo
+        ports:
+        - name: vllm-metrics
+          containerPort: 9106
+          protocol: TCP
+        readinessProbe:
+          httpGet: {path: /healthz, port: vllm-metrics}
+          periodSeconds: 30
+        livenessProbe:
+          httpGet: {path: /healthz, port: vllm-metrics}
+          periodSeconds: 60
+          failureThreshold: 3
+        resources:
+          requests: {cpu: 10m, memory: 32Mi}
+          limits: {cpu: 200m, memory: 128Mi}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: vllm-metrics-proxy
+          mountPath: /proxy
+          readOnly: true
+        - name: config
+          mountPath: /config
+          readOnly: true
+        - name: cache
+          mountPath: /cache
+          readOnly: true
+      volumes:
+      - name: vllm-metrics-proxy
+        configMap:
+          name: llama-vllm-metrics-proxy
+      # Public CA bundle maintained by Ubuntu; restart after trust updates.
+      - name: host-trust-store
+        hostPath: {path: /etc/ssl/certs/ca-certificates.crt, type: File}
+      - name: ocr-node-runtime
+        hostPath: {path: /opt/security-runtimes/node-24.22.1/bin/node, type: File}
+      # Require the completion marker before the pod can use the staged files.
+      - name: ssd-staged
+        hostPath:
+          path: /srv/llama-nvme/production-models/.staged-at
+          type: File
+      # Read-only production assets staged by prepare-ssd-models.sh.
+      - name: pi-adapter
+        hostPath:
+          path: /srv/llama-nvme/production-models/qwen3.8/harness-hub/Qwen3.8-27B-pi-adapted/3cad999e2b9ec72fea8d802cc286e4502adfa082
+          type: Directory
+      - name: hyperqwen
+        hostPath:
+          path: /srv/llama-nvme/production-models/text
+          type: Directory
+      - name: inkling-2-mini
+        hostPath:
+          path: /data/development/llama-serving/inkling-2-mini/780140010a6c-ninfer-2026-11-21.2
+          type: Directory
+      - name: inkling-vllm-runtime
+        hostPath:
+          path: /data/models/inkling-2/vllm-ampere/6e9d1cce3ead-f8b29fab4
+          type: Directory
+      - name: inkling-sm86-opt
+        configMap:
+          name: inkling-sm86-opt
+      - name: inkling-vllm-weights
+        hostPath:
+          path: /data/development/llama-serving/inkling-2-mini/vllm-ed40e7da625f594fc9c4990f5f66be24873c22d7
+          type: Directory
+      - name: inkling-unbound-edit
+        hostPath:
+          path: /data/development/llama-serving/inkling-2-mini/unbound-edit
+          type: Directory
+      - name: qwen-image
+        hostPath:
+          path: /srv/llama-nvme/production-models/qwen-image
+          type: Directory
+      - name: ocr-glm-source
+        hostPath:
+          path: /srv/llama-nvme/production-models/glm-ocr-api/406ab9bc91fe/source
+          type: Directory
+      - name: ocr-glm-sdk
+        hostPath:
+          path: /srv/llama-nvme/production-models/glm-ocr-sdk-runtime/b1116991fea7/runtime
+          type: Directory
+      - name: ocr-glm-manifest
+        configMap:
+          name: ocr-glm-manifest
+      - name: glm-ocr-baseline
+        hostPath:
+          path: /srv/llama-nvme/production-models/glm-ocr-baseline/65a42de1148d
+          type: Directory
+      - name: ocr-models
+        hostPath:
+          path: /srv/llama-nvme/production-models/ocr
+          type: Directory
+      # Durable OCR job queue (SQLite, synchronous=FULL): Buttercup, not the root
+      # SSD that shares a device with etcd.
+      - name: ocr-data
+        hostPath:
+          path: /data/buttercup_6tb/k3s/llama-models/ocr-data
+          type: Directory
+      - name: ocr-manifest
+        configMap:
+          name: ocr-manifest
+      - name: ocr-token
+        secret:
+          secretName: ocr-service
+      - name: config
+        configMap:
+          name: llama-swap-config
+      - name: chat-template
+        configMap:
+          name: llama-chat-template
+      - name: qwen-image-api
+        configMap:
+          name: llama-qwen-image
+      - name: cache
+        persistentVolumeClaim:
+          claimName: llama-runtime-cache
+      - name: tmp
+        emptyDir: {}
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 24Gi

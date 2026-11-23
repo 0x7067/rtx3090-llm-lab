@@ -1,0 +1,13 @@
+{
+  "maintenance_approved": "2026-11-20 user approved current window",
+  "profiles": [
+    {
+      "quant": "vllm-lora-bf16kv-64k",
+      "context": 65536,
+      "requests": [],
+      "error": "RuntimeError('runtime exited 0')"
+    }
+  ],
+  "root_error": "AttributeError: 'VocabParallelEmbedding' object has no attribute 'weight'",
+  "resolution": "Restrict LoRA to the seven projection types in adapter_config.json"
+}

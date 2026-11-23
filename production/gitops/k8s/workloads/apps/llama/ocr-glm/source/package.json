@@ -1,0 +1,53 @@
+{
+  "name": "despesas-local",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "scripts": {
+    "test:diagnostics:socket": "node --import tsx --test server/request-diagnostics-socket.test.ts",
+    "test:ocr": "node --import tsx --test server/ocr-*.test.ts",
+    "dev": "tsx watch server/index.ts",
+    "dev:ui": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "start": "node --import tsx server/index.ts",
+    "test": "node --import tsx --test server/app.test.ts server/ocr-app.test.ts server/ocr-app-ui.test.ts server/audit.test.ts server/audit-ui.test.ts server/spending-answers.test.ts server/spending-answers-ui.test.ts server/purchasing.test.ts server/purchase-amendments.test.ts server/purchase-amendment-compatibility.test.ts server/purchase-amendment-approvals.test.ts server/purchase-authority.test.ts server/purchase-candidate-quotes.test.ts server/purchase-tolerance-assessment.test.ts server/purchase-tolerances.test.ts server/purchase-tolerances-ui.test.ts server/purchase-amendment-route-ui.test.ts server/purchase-amendments-ui.test.ts server/fractional-purchasing.test.ts server/fractional-purchasing-ui.test.ts server/purchase-orders.test.ts server/purchase-order-matching.test.ts server/purchase-orders-ui.test.ts server/purchase-quotes-ui.test.ts server/purchase-comparison.test.ts server/purchase-comparison-ui.test.ts server/purchase-receiving.test.ts server/purchase-returns.test.ts server/purchase-returns-ui.test.ts server/purchase-delivery-originals.test.ts server/purchase-receiving-ui.test.ts server/purchase-recovery.test.ts server/approvals.test.ts server/company.test.ts server/payables.test.ts server/payable-payments.test.ts server/payable-payments-ui.test.ts server/payable-refunds.test.ts server/payable-credit-notes.test.ts server/payable-credit-ui.test.ts server/payable-credit-balances.test.ts server/payable-credit-budgets.test.ts server/payable-refunds-ui.test.ts server/payable-matching.test.ts server/payable-matching-ui.test.ts server/payable-ui.test.ts server/payable-investigations-ui.test.ts server/cards.test.ts server/card-captures.test.ts server/card-authorization-recovery.test.ts server/card-authorization-recovery-ui.test.ts server/reimbursements.test.ts server/reimbursement-installments.test.ts server/reimbursement-installments-ui.test.ts server/reimbursements-ui.test.ts server/card-receipts.test.ts server/card-receipts-ui.test.ts server/card-ui.test.ts server/reconciliation.test.ts server/reconciliation-evidence.test.ts server/accounting-statement-close.test.ts server/accounting-statement-close-ui.test.ts server/reconciliation-ui.test.ts server/accounting.test.ts server/accounting-sources.test.ts server/accounting-settlements-ui.test.ts server/accounting-payable-settlements.test.ts server/accounting-payable-settlements-ui.test.ts server/accounting-payable-refunds.test.ts server/accounting-payable-credits.test.ts server/accounting-advances.test.ts server/accounting-card-refunds.test.ts server/accounting-card-refunds-ui.test.ts server/accounting-card-refund-close.test.ts server/accounting-payment-batches.test.ts server/accounting-payment-batch-journals.test.ts server/accounting-payment-batch-close.test.ts server/accounting-payment-batch-close-ui.test.ts server/accounting-payment-batches-ui.test.ts server/accounting-card-refund-close-ui.test.ts server/accounting-advances-ui.test.ts server/accounting-payable-credits-ui.test.ts server/accounting-credit-close.test.ts server/accounting-payable-refunds-ui.test.ts server/accounting-exports.test.ts server/accounting-export-worker.test.ts server/accounting-ui.test.ts server/accounting-close.test.ts server/accounting-source-close.test.ts server/accounting-source-close-ui.test.ts server/accounting-settlement-close.test.ts server/accounting-settlement-close-ui.test.ts server/accounting-independence.test.ts server/subscriptions.test.ts server/subscription-ui.test.ts server/subscription-interaction.test.ts server/subscription-card-evidence.test.ts server/subscription-outcomes.test.ts server/subscription-outcomes-ui.test.ts server/advances.test.ts server/advances-ui.test.ts server/travel.test.ts server/travel-policy.test.ts server/travel-policy-rules.test.ts server/travel-policy-ui.test.ts server/cash.test.ts server/cash-ui.test.ts server/backup.test.ts server/migrations.test.ts server/expense-allocations.test.ts server/expense-allocation-consumers.test.ts server/expense-allocation-integrations.test.ts server/expense-allocations-ui.test.ts server/mileage.test.ts server/mileage-consumers.test.ts server/mileage-integrations.test.ts server/mileage-ui.test.ts server/request-boundary.test.ts server/request-diagnostics.test.ts server/api-admission.test.ts server/api-admission-client.test.ts server/runtime-mode.test.ts server/dev-file-boundary.test.ts server/actor-approvals.test.ts server/actor-domain.test.ts server/financial-actor.test.ts server/identity-http.test.ts server/auth.test.ts server/auth-ui.test.ts server/approval-rules-ui.test.ts server/budgets.test.ts server/budgets-ui.test.ts server/budget-payables.test.ts server/budget-payables-ui.test.ts server/expense-reservations.test.ts server/expense-reservations-ui.test.ts server/budget-forecast.test.ts server/budget-forecast-ui.test.ts server/service-periods.test.ts server/service-periods-ui.test.ts server/expense-service-periods.test.ts server/budget-dimensions.test.ts server/budget-dimensions-ui.test.ts server/recurring-payables.test.ts server/recurring-payables-ui.test.ts server/audit-escalation.test.ts server/audit-escalation-ui.test.ts server/accounting-opening.test.ts server/accounting-opening-ui.test.ts server/expense-capture.test.ts server/expense-capture-ui.test.ts server/allocation-suggestions.test.ts server/allocation-suggestions-ui.test.ts server/vendor-aliases.test.ts server/vendor-aliases-ui.test.ts server/approval-conditions.test.ts server/approval-substitutions.test.ts server/approval-substitutions-ui.test.ts server/approval-deadlines.test.ts server/approval-deadlines-ui.test.ts server/policy-limits.test.ts server/policy-limits-ui.test.ts server/document-reading.test.ts server/document-reading-ui.test.ts server/offline-capture-store.test.ts server/offline-capture-sync.test.ts server/offline-shell.test.ts server/offline-capture-ui.test.ts server/private-dataset.test.ts server/accounting-consulted-close.test.ts server/accounting-consulted-close-ui.test.ts server/accounting-responsibilities.test.ts server/accounting-responsibilities-ui.test.ts server/expense-correction-permissions.test.ts server/expense-corrections.test.ts server/expense-corrections-ui.test.ts server/v1-operational.test.ts server/accounting-composition.test.ts",
+    "check": "tsc --noEmit",
+    "data:backup": "node --import tsx scripts/data-backup.ts backup",
+    "data:verify": "node --import tsx scripts/data-backup.ts verify",
+    "data:restore": "node --import tsx scripts/data-backup.ts restore",
+    "data:migrations": "node --import tsx scripts/data-migrations.ts",
+    "accounting:worker": "node --import tsx scripts/accounting-export-worker.ts",
+    "access:setup": "node --import tsx scripts/access-setup.ts",
+    "data:permissions": "node --import tsx scripts/data-permissions.ts"
+  },
+  "dependencies": {
+    "@fastify/multipart": "^9.0.3",
+    "@fastify/static": "^10.1.7",
+    "@fontsource/anaheim": "^5.3.0",
+    "@fontsource/inter": "^5.2.6",
+    "@fontsource/ysabeau-sc": "^5.3.0",
+    "fast-xml-parser": "^5.11.2",
+    "fastify": "^5.6.2",
+    "lucide-react": "^0.468.0",
+    "pdfjs-dist": "6.4.299",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "fake-indexeddb": "^6.2.4",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.1.0"
+  }
+}

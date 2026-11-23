@@ -1,0 +1,65 @@
+# Finance OCR (PaddleOCR-VL-1.6 + PP-DocLayoutV3) as a llama-swap model.
+#
+# The upstream Dockerfile.layout / Dockerfile.vllm pair builds two images; here both
+# environments live in the production llama image so llama-swap can start the whole
+# service on demand and hand the 3090 back after the idle ttl.
+#
+# Build (context = this directory):
+#   OCR_ADAPTER_TREE_SHA256=$(python3 services/ocr/deploy/source_inventory.py)
+#   docker build -f Dockerfile.llama-swap --build-arg OCR_ADAPTER_TREE_SHA256=$OCR_ADAPTER_TREE_SHA256 \
+#     --build-arg BASE=127.0.0.1:5000/home-llm-qwen-optimized@sha256:... -t 127.0.0.1:5000/home-llm-ocr:vN .
+ARG BASE=127.0.0.1:5000/home-llm-qwen-optimized@sha256:59a86527e749531021a1c36d79714a5a37454c1316e6b409ab1926752145415b
+FROM --platform=linux/amd64 python:3.12.15-slim-bookworm@sha256:57d96f71de145a98e7ceca18ee4ade77bba4103a33a72dfaea026b23625c6bf0 AS py
+FROM --platform=linux/amd64 node:24.22.1-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205 AS node
+
+FROM ${BASE}
+USER root
+# The preflight pins Python 3.12.15 exactly; the base image has 3.12.3. Carry the
+# pinned interpreter in its own prefix and only expose it to OCR processes
+# (the launcher sets LD_LIBRARY_PATH), so the other models' Python is untouched.
+COPY --from=py /usr/local /opt/py312
+COPY --from=node /usr/local/bin/node /opt/ocr/node/bin/node
+COPY --from=node /usr/local/lib/node_modules/npm /opt/ocr/node/lib/node_modules/npm
+RUN ln -s /opt/ocr/node/lib/node_modules/npm/bin/npm-cli.js /opt/ocr/node/bin/npm
+
+# libgl1/libglib2.0-0/libgomp1: Paddle layout. gcc/libc6-dev: Triton compiles its
+# CUDA launcher at runtime even with enforce-eager.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libgl1 libglib2.0-0 libgomp1 gcc libc6-dev ca-certificates \
+    && rm -rf /var/lib/apt/lists/* && mkdir -p /opt/ocr-build
+
+WORKDIR /opt/finance-ocr
+# LD_LIBRARY_PATH is exported inside the RUN steps below only. Setting it with ENV
+# would put the pinned Python's libs in front of every other model's processes.
+COPY services/ocr/deploy/requirements.layout.lock /opt/ocr-build/requirements.layout.lock
+COPY services/ocr/deploy/requirements.vllm.lock /opt/ocr-build/requirements.vllm.lock
+COPY services/ocr/deploy/requirements.vllm-gpu.lock /opt/ocr-build/requirements.gpu.lock
+COPY services/ocr/deploy/flash_wheel.py /opt/ocr-build/flash_wheel.py
+
+RUN export LD_LIBRARY_PATH=/opt/py312/lib && /opt/py312/bin/python3 -m venv /opt/ocr/venv-layout && \
+    /opt/ocr/venv-layout/bin/python -m pip install --no-cache-dir --only-binary=:all: --require-hashes -r /opt/ocr-build/requirements.layout.lock && \
+    /opt/ocr/venv-layout/bin/python -m pip check && \
+    /opt/ocr/venv-layout/bin/python -c 'import paddle, paddleocr, pypdfium2, PIL; assert not paddle.is_compiled_with_cuda()'
+
+RUN export LD_LIBRARY_PATH=/opt/py312/lib && /opt/py312/bin/python3 -m venv /opt/ocr/venv-vllm && \
+    /opt/ocr/venv-vllm/bin/python -m pip install --no-cache-dir --only-binary=:all: --require-hashes -r /opt/ocr-build/requirements.vllm.lock && \
+    /opt/ocr/venv-vllm/bin/python /opt/ocr-build/flash_wheel.py --destination /tmp/ocr-gpu-wheels && \
+    /opt/ocr/venv-vllm/bin/python -m pip install --no-cache-dir --no-index --no-deps --only-binary=:all: --require-hashes \
+      --find-links=/tmp/ocr-gpu-wheels -r /opt/ocr-build/requirements.gpu.lock && \
+    /opt/ocr/venv-vllm/bin/python -m pip check && rm -rf /tmp/ocr-gpu-wheels
+
+COPY package.json package-lock.json ./
+RUN PATH=/opt/ocr/node/bin:$PATH npm ci --no-audit --no-fund
+COPY shared/ ./shared/
+COPY services/ocr/ ./services/ocr/
+ARG OCR_ADAPTER_TREE_SHA256
+RUN export LD_LIBRARY_PATH=/opt/py312/lib && test -n "$OCR_ADAPTER_TREE_SHA256" && \
+    /opt/ocr/venv-layout/bin/python services/ocr/deploy/source_inventory.py --expect "$OCR_ADAPTER_TREE_SHA256" --write /opt/ocr-build/adapter-tree.json && \
+    /opt/ocr/venv-layout/bin/python services/ocr/deploy/preflight.py --check-packages layout && \
+    /opt/ocr/venv-vllm/bin/python services/ocr/deploy/preflight.py --check-packages vllm
+LABEL org.finance-ocr.adapter-tree-sha256=$OCR_ADAPTER_TREE_SHA256
+
+RUN chmod -R a+rX /opt/ocr /opt/finance-ocr /opt/py312 /opt/ocr-build
+# Last, so a launcher change rebuilds only this layer.
+COPY --chmod=0755 llama-swap/launch.py /opt/ocr/launch.py
+LABEL org.opencontainers.image.description="home-llm-qwen-optimized + finance OCR (PaddleOCR-VL-1.6 on vLLM 0.10.2, layout, durable API) for llama-swap"

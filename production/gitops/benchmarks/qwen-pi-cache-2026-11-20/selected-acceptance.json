@@ -1,0 +1,194 @@
+{
+  "checks": [
+    {
+      "name": "shared_parent_prime_0",
+      "seconds": 17.939088509010617,
+      "usage": {
+        "prompt_tokens": 31393,
+        "total_tokens": 31395,
+        "completion_tokens": 2,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 0,
+      "passed": true
+    },
+    {
+      "name": "shared_parent_prime_1",
+      "seconds": 17.957492521993117,
+      "usage": {
+        "prompt_tokens": 31387,
+        "total_tokens": 31389,
+        "completion_tokens": 2,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 0,
+      "passed": true
+    },
+    {
+      "name": "concurrent_branch_0",
+      "seconds": 0.8232363340066513,
+      "usage": {
+        "prompt_tokens": 31449,
+        "total_tokens": 31466,
+        "completion_tokens": 17,
+        "prompt_tokens_details": {
+          "cached_tokens": 31376,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 31376,
+      "passed": true
+    },
+    {
+      "name": "concurrent_branch_1",
+      "seconds": 0.8730960709945066,
+      "usage": {
+        "prompt_tokens": 31443,
+        "total_tokens": 31460,
+        "completion_tokens": 17,
+        "prompt_tokens_details": {
+          "cached_tokens": 31360,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 31360,
+      "passed": true
+    },
+    {
+      "name": "concurrent_branch_2",
+      "seconds": 0.8729447759978939,
+      "usage": {
+        "prompt_tokens": 31449,
+        "total_tokens": 31466,
+        "completion_tokens": 17,
+        "prompt_tokens_details": {
+          "cached_tokens": 31376,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 31376,
+      "passed": true
+    },
+    {
+      "name": "concurrent_branch_3",
+      "seconds": 0.8726807519997237,
+      "usage": {
+        "prompt_tokens": 31443,
+        "total_tokens": 31460,
+        "completion_tokens": 17,
+        "prompt_tokens_details": {
+          "cached_tokens": 31360,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 31360,
+      "passed": true
+    },
+    {
+      "name": "streamed_tool_result",
+      "seconds": 0.3212145549914567,
+      "usage": {
+        "prompt_tokens": 350,
+        "total_tokens": 358,
+        "completion_tokens": 8,
+        "prompt_tokens_details": {
+          "cached_tokens": 272,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 272,
+      "passed": true
+    },
+    {
+      "name": "full_context_cold",
+      "seconds": 101.5806724330032,
+      "usage": {
+        "prompt_tokens": 120171,
+        "total_tokens": 120179,
+        "completion_tokens": 8,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 0,
+      "passed": true
+    },
+    {
+      "name": "full_context_repeat",
+      "seconds": 0.3915701829973841,
+      "usage": {
+        "prompt_tokens": 120171,
+        "total_tokens": 120179,
+        "completion_tokens": 8,
+        "prompt_tokens_details": {
+          "cached_tokens": 120144,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "cached_tokens": 120144,
+      "passed": true
+    }
+  ],
+  "streamed_tool_call_passed": true,
+  "passed": true,
+  "profile": "fine-mtp4",
+  "checked_at": "2026-11-20T20:22:45.743715+00:00",
+  "image": "127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679",
+  "image_id": "127.0.0.1:5000/home-llm-strata@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679",
+  "environment": {
+    "SPEC": "mtp",
+    "DRAFT_TOKENS": "4",
+    "CTX": "long",
+    "MAX_LEN": "131072",
+    "MAX_SEQS": "4",
+    "GPU_UTIL": "0.93",
+    "INT8_ACT": "int8",
+    "INT8_LAYERS": "mlp",
+    "PREFIX_CACHE": "1",
+    "EXTRA_ARGS": "--mamba-ssm-cache-dtype float32 --enable-lora --max-lora-rank 32 --lora-target-modules q_proj k_proj v_proj o_proj gate_proj up_proj down_proj --lora-modules qwen3.8-pi=/app/pi-adapter --default-chat-template-kwargs {\"enable_thinking\":false} --override-generation-config {\"temperature\":0.8,\"top_p\":1.0,\"top_k\":-1,\"min_p\":0.0} --prefix-match-unit 16 --enable-mamba-shared-prefix-checkpoint"
+  },
+  "adapter_sha256": "869b2a089882c0dac4683993f11081bd70edc30b32c64a988c688d6ac26b792a"
+}

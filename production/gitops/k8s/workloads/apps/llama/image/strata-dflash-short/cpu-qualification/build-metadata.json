@@ -1,0 +1,66 @@
+{
+  "buildx.build.provenance": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/127.0.0.1%3A5000/home-llm-strata@0.2.8-v1?digest=sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "args": {
+          "cpuquota": "200000",
+          "force-network-mode": "none",
+          "memory": "8589934592"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "root": {
+          "configSource": {
+            "path": "Dockerfile"
+          },
+          "request": {
+            "args": {
+              "cpuquota": "200000",
+              "force-network-mode": "none",
+              "memory": "8589934592",
+              "vcs:localdir:context": "k8s/workloads/apps/llama/optimization/normal-120/dflash-short",
+              "vcs:localdir:dockerfile": "k8s/workloads/apps/llama/optimization/normal-120/dflash-short",
+              "vcs:revision": "cedceb8a20f8e5f620c2e0a92f10e0ebd10ea2f5",
+              "vcs:source": "git@github.com:Denguinho/docker-services.git"
+            }
+          }
+        },
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.27.0",
+        "platform": "linux/amd64"
+      }
+    }
+  },
+  "buildx.build.ref": "strata-local-registry/strata-local-registry0/m9udh418wkaro19s9rdn5ut37",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+    "size": 857
+  },
+  "containerimage.digest": "sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+  "image.name": "127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1"
+}

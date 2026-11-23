@@ -1,0 +1,1 @@
+{"model": "qwen3.8-27b", "content": "42", "usage": {"prompt_tokens": 28, "total_tokens": 31, "completion_tokens": 3, "prompt_tokens_details": {"cached_tokens": 0, "created_cache_tokens": 0, "multimodal_tokens": null}, "completion_tokens_details": {"reasoning_tokens": 0}}}

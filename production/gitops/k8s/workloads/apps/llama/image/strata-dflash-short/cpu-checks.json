@@ -1,0 +1,20 @@
+{
+  "cpu_checks": "passed",
+  "source_sha256": "e8f4d78344b94410c9ea0a9a16636c6a1e38cd26e82c7ce47840d186b541dcb5",
+  "patched_sha256": "2f76802a7624cfc1ccadba0ef61f5c362627c34fa341c700c0eab27b521727cd",
+  "gpu_execution": false,
+  "qualification": false,
+  "supply_chain": {
+    "policy": "passed",
+    "legacy_exceptions": 18,
+    "rendered_kustomizations": [
+      "workloads",
+      "infra"
+    ],
+    "rendered_workloads_policy": "passed",
+    "unit_tests_passed": 13
+  },
+  "peer_review": "uncensored_fast: passed; no blocking findings",
+  "build_performed": false,
+  "deployment_changed": false
+}

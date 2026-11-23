@@ -1,0 +1,63 @@
+{
+  "checked_at": "2026-11-20T20:32:08.268989+00:00",
+  "deployed_commit": "9b22f1823cac16b34461dee68685a9279e5fda9a",
+  "pod": "llama-79dfb48978-28dck",
+  "deployment_ready": true,
+  "images": {
+    "llama-swap": "127.0.0.1:5000/home-llm-strata@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679",
+    "vllm-metrics": "127.0.0.1:5000/home-llm-strata@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42"
+  },
+  "settings": {
+    "DRAFT_TOKENS": "4",
+    "MAX_LEN": "131072",
+    "MAX_SEQS": "4",
+    "GPU_UTIL": "0.93",
+    "PREFIX_CACHE": "1",
+    "EXTRA_ARGS": "--mamba-ssm-cache-dtype float32 --prefix-match-unit 16 --enable-mamba-shared-prefix-checkpoint --enable-lora --max-lora-rank 32 --lora-target-modules q_proj k_proj v_proj o_proj gate_proj up_proj down_proj --lora-modules qwen3.8-pi=/app/pi-adapter --default-chat-template-kwargs {\"enable_thinking\":false} --override-generation-config {\"temperature\":0.8,\"top_p\":1.0,\"top_k\":-1,\"min_p\":0.0}"
+  },
+  "flux": [
+    {
+      "name": "apps",
+      "suspended": false,
+      "revision": "main@sha1:9b22f1823cac16b34461dee68685a9279e5fda9a",
+      "ready": true
+    },
+    {
+      "name": "infra",
+      "suspended": false,
+      "revision": "main@sha1:9b22f1823cac16b34461dee68685a9279e5fda9a",
+      "ready": true
+    }
+  ],
+  "runtime": [
+    "(EngineCore pid=200) INFO 11-20 17:27:31 [qwen_gdn_linear_attn.py:533] GDN decode kernel: cuda",
+    "(EngineCore pid=200) INFO 11-20 17:28:03 [kv_cache_utils.py:2659] GPU KV cache size: 172,599 tokens, Maximum concurrency for 131,072 tokens per request: 1.32x",
+    "(EngineCore pid=200) INFO 11-20 17:28:03 [kv_cache_utils.py:2725] KV cache seat budget: 132 usable blocks of 1584 tokens; a request holds 18 blocks that do not grow with context, 101 in all at 131,072 tokens. Resident requests by context length: 6-7 at 1,024, 3 at 32,768, 1 at 131,072 tokens (max_num_seqs=4)"
+  ],
+  "prometheus": {
+    "status": "success",
+    "data": {
+      "resultType": "vector",
+      "result": [
+        {
+          "metric": {
+            "__name__": "vllm_metrics_proxy_upstream_up",
+            "container": "vllm-metrics",
+            "endpoint": "vllm-metrics",
+            "instance": "10.42.0.20:9106",
+            "job": "apps/llama-vllm",
+            "namespace": "apps",
+            "pod": "llama-79dfb48978-28dck"
+          },
+          "value": [
+            1795206728.481,
+            "1"
+          ]
+        }
+      ]
+    }
+  },
+  "gpu_now": "22996 MiB, 23.72 W, 44",
+  "disk": "Filesystem                            Size  Used Avail Use% Mounted on\n/dev/mapper/nvme--vg-ubuntu--lv       456G  323G  111G  75% /\n/dev/mapper/nvme--vg-development--lv  456G  347G   87G  81% /data/development\n",
+  "passed": true
+}

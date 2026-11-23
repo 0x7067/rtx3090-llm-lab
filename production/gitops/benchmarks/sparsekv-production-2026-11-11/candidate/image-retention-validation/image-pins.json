@@ -1,0 +1,26 @@
+[
+  {
+    "name": "127.0.0.1:5000/home-llm-strata@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+    "previous": ""
+  },
+  {
+    "name": "127.0.0.1:5000/home-llm-strata@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42",
+    "previous": ""
+  },
+  {
+    "name": "127.0.0.1:5000/orcasaq2-vllm@sha256:37ae52afe6b11ffa4b613f1fa5ecd8354584a32daa500b7ce02dbdb1c283e012",
+    "previous": ""
+  },
+  {
+    "name": "sha256:1d60e0a2fc9eb37042f94b8d5fb23457df6a27ca365305854b1bbcea8b4d9308",
+    "previous": ""
+  },
+  {
+    "name": "sha256:4a3b0a9d11b17e73c1ca29f5e27f89110892b82d40b3340c68c3bc0172fcf99a",
+    "previous": ""
+  },
+  {
+    "name": "sha256:eafdaabee52958fc49bf3413a9020310633225563646ca1ad497ed38f91a63ad",
+    "previous": ""
+  }
+]

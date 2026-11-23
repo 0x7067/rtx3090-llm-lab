@@ -1,0 +1,569 @@
+{
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": {
+        "annotations": {
+            "deployment.kubernetes.io/revision": "127",
+            "reloader.stakater.com/auto": "true"
+        },
+        "creationTimestamp": "2026-10-01T07:26:02Z",
+        "generation": 444,
+        "labels": {
+            "app.kubernetes.io/name": "llama",
+            "kustomize.toolkit.fluxcd.io/name": "apps",
+            "kustomize.toolkit.fluxcd.io/namespace": "flux-system"
+        },
+        "name": "llama",
+        "namespace": "apps",
+        "resourceVersion": "32548529",
+        "uid": "b7aebf4f-bd02-4d2d-952b-467c5dde478d"
+    },
+    "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+            "matchLabels": {
+                "app.kubernetes.io/name": "llama"
+            }
+        },
+        "strategy": {
+            "type": "Recreate"
+        },
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app.kubernetes.io/name": "llama"
+                }
+            },
+            "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                    {
+                        "args": [
+                            "-config",
+                            "/config/config.yaml",
+                            "-listen",
+                            ":8080"
+                        ],
+                        "command": [
+                            "/usr/local/bin/llama-swap"
+                        ],
+                        "env": [
+                            {
+                                "name": "STAKATER_OCR_GLM_MANIFEST_CONFIGMAP",
+                                "value": "eecb2182b7c9f3e9eee6b87d0b3bc324dbaccc8f"
+                            },
+                            {
+                                "name": "STAKATER_OCR_MANIFEST_CONFIGMAP",
+                                "value": "78d70660623bbc44f303c3d80e7fa919f4a1676f"
+                            },
+                            {
+                                "name": "STAKATER_LLAMA_SWAP_CONFIG_CONFIGMAP",
+                                "value": "4358cff76ea750754bc5f0b0888685d132d1be45"
+                            },
+                            {
+                                "name": "TZ",
+                                "value": "America/Sao_Paulo"
+                            },
+                            {
+                                "name": "NVIDIA_VISIBLE_DEVICES",
+                                "value": "all"
+                            },
+                            {
+                                "name": "NVIDIA_DRIVER_CAPABILITIES",
+                                "value": "compute,utility"
+                            },
+                            {
+                                "name": "HOME",
+                                "value": "/cache"
+                            },
+                            {
+                                "name": "XDG_CACHE_HOME",
+                                "value": "/cache"
+                            },
+                            {
+                                "name": "TORCH_EXTENSIONS_DIR",
+                                "value": "/cache/torch_extensions"
+                            },
+                            {
+                                "name": "LLAMA_API_TOKEN",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "LLAMA_API_TOKEN",
+                                        "name": "llama-api"
+                                    }
+                                }
+                            }
+                        ],
+                        "image": "127.0.0.1:5000/home-llm-strata:normal120-dflash-short-v1@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+                        "imagePullPolicy": "IfNotPresent",
+                        "livenessProbe": {
+                            "failureThreshold": 6,
+                            "httpGet": {
+                                "path": "/health",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 30,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 10
+                        },
+                        "name": "llama-swap",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "/health",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 10
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "12",
+                                "memory": "36Gi"
+                            },
+                            "requests": {
+                                "cpu": "4",
+                                "memory": "26Gi"
+                            }
+                        },
+                        "securityContext": {
+                            "allowPrivilegeEscalation": false,
+                            "capabilities": {
+                                "drop": [
+                                    "ALL"
+                                ]
+                            }
+                        },
+                        "startupProbe": {
+                            "failureThreshold": 90,
+                            "httpGet": {
+                                "path": "/health",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/etc/ssl/certs/ca-certificates.crt",
+                                "name": "host-trust-store",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/opt/ocr/node/bin/node",
+                                "name": "ocr-node-runtime",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/opt/ocr/venv-vllm/lib/python3.12/site-packages/certifi/cacert.pem",
+                                "name": "host-trust-store",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/opt/ocr/venv-layout/lib/python3.12/site-packages/certifi/cacert.pem",
+                                "name": "host-trust-store",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/app/models",
+                                "name": "hyperqwen",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/models/qwen-image",
+                                "name": "qwen-image",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/opt/qwen-image/server.py",
+                                "name": "qwen-image-api",
+                                "readOnly": true,
+                                "subPath": "server.py"
+                            },
+                            {
+                                "mountPath": "/opt/qwen-image/pe_core.py",
+                                "name": "qwen-image-api",
+                                "readOnly": true,
+                                "subPath": "pe_core.py"
+                            },
+                            {
+                                "mountPath": "/opt/finance-ocr-glm",
+                                "name": "ocr-glm-source",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/opt/ocr-glm/source-tree.json",
+                                "name": "ocr-glm-source",
+                                "readOnly": true,
+                                "subPath": "source-tree.json"
+                            },
+                            {
+                                "mountPath": "/opt/ocr-glm/runtime",
+                                "name": "ocr-glm-sdk",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/etc/ocr-glm/manifest.json",
+                                "name": "ocr-glm-manifest",
+                                "readOnly": true,
+                                "subPath": "manifest.json"
+                            },
+                            {
+                                "mountPath": "/models/glm-ocr-baseline",
+                                "name": "glm-ocr-baseline",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/models/ocr",
+                                "name": "ocr-models",
+                                "readOnly": true,
+                                "subPath": "ocr"
+                            },
+                            {
+                                "mountPath": "/models/layout",
+                                "name": "ocr-models",
+                                "readOnly": true,
+                                "subPath": "layout"
+                            },
+                            {
+                                "mountPath": "/models/ocr-aux/ppocr-v5-latin-v1",
+                                "name": "ocr-models",
+                                "readOnly": true,
+                                "subPath": "auxiliary/ppocr-v5-latin-v1"
+                            },
+                            {
+                                "mountPath": "/ocr-data",
+                                "name": "ocr-data"
+                            },
+                            {
+                                "mountPath": "/etc/ocr/manifest.json",
+                                "name": "ocr-manifest",
+                                "readOnly": true,
+                                "subPath": "manifest.json"
+                            },
+                            {
+                                "mountPath": "/run/secrets/ocr/token",
+                                "name": "ocr-token",
+                                "readOnly": true,
+                                "subPath": "token"
+                            },
+                            {
+                                "mountPath": "/config",
+                                "name": "config",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/chat-template",
+                                "name": "chat-template",
+                                "readOnly": true
+                            },
+                            {
+                                "mountPath": "/cache",
+                                "name": "cache"
+                            },
+                            {
+                                "mountPath": "/tmp",
+                                "name": "tmp"
+                            },
+                            {
+                                "mountPath": "/dev/shm",
+                                "name": "dshm"
+                            }
+                        ]
+                    },
+                    {
+                        "command": [
+                            "/opt/sglang/bin/python3",
+                            "/proxy/vllm-metrics-proxy.py"
+                        ],
+                        "env": [
+                            {
+                                "name": "TZ",
+                                "value": "America/Sao_Paulo"
+                            }
+                        ],
+                        "image": "127.0.0.1:5000/home-llm-strata:0.2.8-v1@sha256:b2b21d86b3926f564499b7415d4f0afae9b2dddd7348ec7c5082c5077cbd8c42",
+                        "imagePullPolicy": "IfNotPresent",
+                        "livenessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": "vllm-metrics",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 60,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "name": "vllm-metrics",
+                        "ports": [
+                            {
+                                "containerPort": 9106,
+                                "name": "vllm-metrics",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": "vllm-metrics",
+                                "scheme": "HTTP"
+                            },
+                            "periodSeconds": 30,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "200m",
+                                "memory": "128Mi"
+                            },
+                            "requests": {
+                                "cpu": "10m",
+                                "memory": "32Mi"
+                            }
+                        },
+                        "securityContext": {
+                            "allowPrivilegeEscalation": false,
+                            "capabilities": {
+                                "drop": [
+                                    "ALL"
+                                ]
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/proxy",
+                                "name": "vllm-metrics-proxy",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "hostAliases": [
+                    {
+                        "hostnames": [
+                            "ocr-vllm"
+                        ],
+                        "ip": "127.0.0.1"
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "command": [
+                            "bash",
+                            "-ec",
+                            "nvidia-smi -i 0 --power-limit=290\nnvidia-smi -i 0 --lock-gpu-clocks=210,1905\npython3 - \u003c\u003c'PY'\nimport pynvml as n\nn.nvmlInit()\ndevice = n.nvmlDeviceGetHandleByIndex(0)\nn.nvmlDeviceSetGpcClkVfOffset(device, 200)\nn.nvmlDeviceSetMemClkVfOffset(device, 0)\nassert n.nvmlDeviceGetGpcClkVfOffset(device) == 200\nassert n.nvmlDeviceGetMemClkVfOffset(device) == 0\nPY\nnvidia-smi --query-gpu=clocks.gr,clocks.mem,power.limit --format=csv,noheader\n"
+                        ],
+                        "env": [
+                            {
+                                "name": "NVIDIA_VISIBLE_DEVICES",
+                                "value": "all"
+                            },
+                            {
+                                "name": "NVIDIA_DRIVER_CAPABILITIES",
+                                "value": "compute,utility"
+                            }
+                        ],
+                        "image": "127.0.0.1:5000/orcasaq2-vllm@sha256:37ae52afe6b11ffa4b613f1fa5ecd8354584a32daa500b7ce02dbdb1c283e012",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "gpu-profile",
+                        "resources": {},
+                        "securityContext": {
+                            "privileged": true,
+                            "runAsGroup": 0,
+                            "runAsUser": 0
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "runtimeClassName": "nvidia",
+                "schedulerName": "default-scheduler",
+                "securityContext": {
+                    "fsGroup": 1000,
+                    "runAsGroup": 1000,
+                    "runAsUser": 1000
+                },
+                "terminationGracePeriodSeconds": 30,
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "llama-vllm-metrics-proxy-8m285m4698"
+                        },
+                        "name": "vllm-metrics-proxy"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/etc/ssl/certs/ca-certificates.crt",
+                            "type": "File"
+                        },
+                        "name": "host-trust-store"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/opt/security-runtimes/node-24.22.1/bin/node",
+                            "type": "File"
+                        },
+                        "name": "ocr-node-runtime"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/srv/llama-nvme/hyperqwen-bakeoff/models",
+                            "type": "Directory"
+                        },
+                        "name": "hyperqwen"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/data/development/llama-models/qwen-image",
+                            "type": "Directory"
+                        },
+                        "name": "qwen-image"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/data/buttercup_6tb/k3s/llama-models/glm-ocr-api/406ab9bc91fe/source",
+                            "type": "Directory"
+                        },
+                        "name": "ocr-glm-source"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/data/buttercup_6tb/k3s/llama-models/glm-ocr-sdk-runtime/b1116991fea7/runtime",
+                            "type": "Directory"
+                        },
+                        "name": "ocr-glm-sdk"
+                    },
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "ocr-glm-manifest"
+                        },
+                        "name": "ocr-glm-manifest"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/data/buttercup_6tb/k3s/llama-models/glm-ocr-baseline/65a42de1148d",
+                            "type": "Directory"
+                        },
+                        "name": "glm-ocr-baseline"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/data/buttercup_6tb/k3s/llama-models/ocr",
+                            "type": "Directory"
+                        },
+                        "name": "ocr-models"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/data/buttercup_6tb/k3s/llama-models/ocr-data",
+                            "type": "Directory"
+                        },
+                        "name": "ocr-data"
+                    },
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "ocr-manifest"
+                        },
+                        "name": "ocr-manifest"
+                    },
+                    {
+                        "name": "ocr-token",
+                        "secret": {
+                            "defaultMode": 420,
+                            "secretName": "ocr-service"
+                        }
+                    },
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "llama-swap-config"
+                        },
+                        "name": "config"
+                    },
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "llama-chat-template-8kbkkffbdh"
+                        },
+                        "name": "chat-template"
+                    },
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "llama-qwen-image-624mdg452t"
+                        },
+                        "name": "qwen-image-api"
+                    },
+                    {
+                        "name": "cache",
+                        "persistentVolumeClaim": {
+                            "claimName": "llama-runtime-cache"
+                        }
+                    },
+                    {
+                        "emptyDir": {},
+                        "name": "tmp"
+                    },
+                    {
+                        "emptyDir": {
+                            "medium": "Memory",
+                            "sizeLimit": "24Gi"
+                        },
+                        "name": "dshm"
+                    }
+                ]
+            }
+        }
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastTransitionTime": "2026-10-01T07:26:02Z",
+                "lastUpdateTime": "2026-11-10T16:33:53Z",
+                "message": "ReplicaSet \"llama-5577ff5dd\" has successfully progressed.",
+                "reason": "NewReplicaSetAvailable",
+                "status": "True",
+                "type": "Progressing"
+            },
+            {
+                "lastTransitionTime": "2026-11-11T11:30:48Z",
+                "lastUpdateTime": "2026-11-11T11:30:48Z",
+                "message": "Deployment does not have minimum availability.",
+                "reason": "MinimumReplicasUnavailable",
+                "status": "False",
+                "type": "Available"
+            }
+        ],
+        "observedGeneration": 444,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+    }
+}

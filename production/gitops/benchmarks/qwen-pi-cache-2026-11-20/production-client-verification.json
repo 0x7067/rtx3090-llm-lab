@@ -1,0 +1,60 @@
+{
+  "checked_at": "2026-11-20T20:28:45.150462+00:00",
+  "deployed_commit": "9b22f1823cac16b34461dee68685a9279e5fda9a",
+  "base_url": "http://100.64.0.2/v1",
+  "warm_request_seconds": 0.2198884779936634,
+  "machines": [
+    {
+      "machine": "Denguinho-Studio",
+      "checked_at": "2026-11-20T20:28:45.596627+00:00",
+      "provider": "home-llama",
+      "model": "qwen3.8-pi",
+      "seconds": 13.618,
+      "calls": 5,
+      "cached_tokens": 6784,
+      "uncached_input_tokens": 2503,
+      "output_tokens": 701,
+      "verification": "5 independent cases passed",
+      "passed": true
+    },
+    {
+      "machine": "denguinho-server",
+      "checked_at": "2026-11-20T20:28:45.183322+00:00",
+      "provider": "home-llama",
+      "model": "qwen3.8-pi",
+      "seconds": 17.695,
+      "calls": 4,
+      "cached_tokens": 4656,
+      "uncached_input_tokens": 2434,
+      "output_tokens": 775,
+      "verification": "5 independent cases passed",
+      "passed": true
+    },
+    {
+      "machine": "Pedro-Guimaraes-Ravn-GFV73Y4047",
+      "checked_at": "2026-11-20T20:28:46.513105+00:00",
+      "provider": "home-llama",
+      "model": "qwen3.8-pi",
+      "seconds": 29.504,
+      "calls": 5,
+      "cached_tokens": 6832,
+      "uncached_input_tokens": 2691,
+      "output_tokens": 1060,
+      "verification": "5 independent cases passed",
+      "passed": true
+    },
+    {
+      "machine": "Denguinho-Pro",
+      "checked_at": "2026-11-20T20:28:45.484427+00:00",
+      "provider": "home-llama",
+      "model": "qwen3.8-pi",
+      "seconds": 54.696,
+      "calls": 4,
+      "cached_tokens": 4688,
+      "uncached_input_tokens": 2033,
+      "output_tokens": 343,
+      "verification": "5 independent cases passed",
+      "passed": true
+    }
+  ]
+}

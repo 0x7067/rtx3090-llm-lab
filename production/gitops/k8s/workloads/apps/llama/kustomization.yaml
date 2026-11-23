@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- pvc.yaml
+- deployment.yaml
+- service.yaml
+- swap-configmap.yaml
+- api-secret.enc.yaml
+- networkpolicy.yaml
+- ocr-manifest.yaml
+- ocr-secret.enc.yaml
+- ocr-glm-manifest.yaml
+- podmonitor.yaml
+
+configMapGenerator:
+- name: llama-chat-template
+  files:
+  - chat_template.jinja
+  - chat_template_uncensored.jinja
+  - start_qwen_cache.py
+  - start_inkling_vllm.sh
+  - serve_observer.py
+  - warm_saved_prefixes.py
+# The deployed image carries an older copy of these two; the pod mounts this one.
+- name: llama-qwen-image
+  files:
+  - qwen-image/server.py
+  - qwen-image/pe_core.py
+- name: llama-vllm-metrics-proxy
+  files:
+  - vllm-metrics-proxy.py
+- name: inkling-sm86-opt
+  files:
+  - inkling-sm86-opt/sitecustomize.py
+  - inkling-sm86-opt/inkling_sm86_opt.py

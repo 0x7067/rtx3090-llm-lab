@@ -7,12 +7,13 @@ applies.
 
 **Which repo answers what:**
 
-- *What is running, and with which flags?* GitOps
-  `k8s/workloads/apps/llama/`: `README.md`, `deployment.yaml` and
-  `swap-configmap.yaml`. That is the source of truth for live state.
+- *What is running, and with which flags?* [`production/STATUS.md`](production/STATUS.md),
+  generated hourly from GitOps `k8s/workloads/apps/llama/`. GitOps stays the
+  source of truth; [`production/gitops/`](production/gitops/) is a read-only
+  copy pinned in [`production/LOCK.json`](production/LOCK.json).
 - *Why was it chosen, and how was it measured?* This repo: dated campaigns
   under [`benchmarks/`](benchmarks/), with design notes in [`docs/`](docs/).
-- *How is an image built and promoted?* [`PROMOTE.md`](PROMOTE.md).
+- *How do I rebuild, promote or roll it back?* [`production/README.md`](production/README.md).
 
 ## Status (2026-11-23)
 
@@ -22,7 +23,7 @@ applies.
 | Runtime | HyperQwen vLLM behind llama-swap, started by `/app/single-user/start_qwen.sh` (`/app/venv`) |
 | Profile | `SPEC=mtp` with 4 drafts, `MAX_LEN=172032` (168K incl. output), `PTH_FA=1`, `INT8_ACT=int8` on MLP, `MAX_SEQS=4`, `GPU_UTIL=0.95`, text only, prefix caching on 16-token match units with shared-prefix checkpoints, FP32 Mamba state, thinking off |
 | On-demand model | `inkling-2-mini-unbound`: Inkling 2 Mini plus the 803 KB Unbound `edit.pt`, on the pinned [Hiutaky vLLM Ampere port](https://github.com/Hiutaky/vllm/tree/6e9d1cce3eadb9844d491de9b65dba24b9fec566), 256K context, FP8 KV, DSpark speculation, SM86 kernel overlay `inkling-sm86-opt/`, up to 8 concurrent requests. Selecting it unloads Pi |
-| Image | `127.0.0.1:5000/home-llm-strata:sparsekv-v1` (layer chain in [PROMOTE.md](PROMOTE.md)); init container `orcasaq2-vllm` sets the GPU profile (300 W, stock clocks since 2026-11-12) |
+| Image | `127.0.0.1:5000/home-llm-strata:sparsekv-v1` (layer chain in [production/README.md](production/README.md#2-images)); init container `orcasaq2-vllm` sets the GPU profile (300 W, stock clocks since 2026-11-12) |
 | Weights | Text, Pi adapter, Qwen-Image and OCR from `/srv/llama-nvme/production-models` (root NVMe, staged by `prepare-ssd-models.sh`); Inkling from the second NVMe. Originals stay in the model library (GitOps `docs/model-storage.md`) |
 | Other backends | `qwen-image-2.1{,-turbo}`, `glm-ocr-hires`, `paddleocr-vl{,-official}`, `finance-ocr-glm`, for their applications. Loading one evicts the resident worker |
 
@@ -65,19 +66,15 @@ runtime is still in the image, so restoring Strata is a config change.
 
 ## Repository map
 
-**Build inputs the GitOps repo reads. Do not move these.**
+**Production.** [`production/`](production/) reproduces the running service:
+the GitOps mirror, `LOCK.json` (file, image and weight digests), `STATUS.md`,
+and [`recipes/`](production/recipes/) for layers built only from here
+(`gpu-profile`, `hyperqwen`, `qwen-optimized`). `tools/production/` syncs and
+verifies it; CI runs `sync.py verify` on every push.
 
-- [`Dockerfile`](Dockerfile) + [`patches-v15/`](patches-v15/): llama.cpp
-  `0f3a71be1` with patches 0002-0011 (`scripts/build-llama-image.sh`). Not
-  served today.
-- [`vllm/syv-ai/`](vllm/syv-ai/) (squashed syv-ai stack) and
-  [`vllm/image-build/`](vllm/image-build/) (`base`, `overlay`): the vLLM
-  `qwen38-27b-3090` images (`scripts/build-qwen38-vllm-{base,image}.sh`).
-- [`vllm/image-orcasaq/`](vllm/image-orcasaq/): the `orcasaq2-vllm` image,
-  whose `gpu-profile` init container runs in production
-  (`scripts/build-orcasaq-image.sh`).
-- [`benchmarks/paired-harness/`](benchmarks/paired-harness/): the paired
-  quality and performance harness, which GitOps qualification scripts call.
+**Harness.** [`benchmarks/paired-harness/`](benchmarks/paired-harness/) is the
+paired quality and performance harness that GitOps qualification scripts call.
+Do not move it.
 
 **Evidence.** [`benchmarks/`](benchmarks/) holds one dated directory per
 campaign: runner, frozen inputs, raw results and decision.
@@ -95,11 +92,9 @@ design, the SGLang claim check, and thermals/overclock
 GGUF I/O, payload and session benchmarks, and `tools/bench`. [`data/`](data/)
 holds the 32k/40k/48k draft-vocab keep-sets, token frequencies and coverage.
 
-**Engines.** [`engines/spark/`](engines/spark/) holds the Spark X2.5 4B
-qualification (no longer served).
-
 **Archive.** [`archive/`](archive/) holds superseded material, kept for
-provenance; see [`archive/README.md`](archive/README.md).
+provenance: the llama.cpp v15 and syv-ai vLLM build trees, the Spark
+qualification, and older patch sets. See [`archive/README.md`](archive/README.md).
 
 ## Reading old documents
 
@@ -114,8 +109,13 @@ things that have since been removed:
 - GitOps build scripts and recipes removed on 2026-11-08 (GitOps `f13dde9d`):
   `scripts/build-llama-image.sh`, `scripts/build-qwen38-vllm-{base,image}.sh`,
   `scripts/build-orcasaq-image.sh`, `k8s/workloads/apps/llama/hyperqwen/Dockerfile`
-  and `optimization/build.sh`. The repository map above still names them as the
-  callers of this repo's build inputs; recover them with `git show f13dde9d^:<path>`.
+  and `optimization/build.sh`. Copies of the ones still needed are in
+  `production/recipes/`, and the rest in `archive/*/scripts/`.
+- Lab paths moved on 2026-11-23: `Dockerfile` and `patches-v15/` to
+  `archive/llama-cpp-v15/`, `vllm/syv-ai/` and `vllm/image-build/` to
+  `archive/vllm-qwen38/`, `vllm/image-orcasaq/` to
+  `production/recipes/gpu-profile/`, `engines/spark/` to `archive/engines/spark/`,
+  and `PROMOTE.md` to `production/README.md`.
 - Models served for a while and since retired from `swap-configmap.yaml`:
   `qwen3.8-27b-hyperqwen` (replaced by `qwen3.8-pi` on 2026-11-20), the Orca Q8
   GGUF route, `qwen3.8-27b-cyber`, and the NInfer Inkling route.
@@ -132,7 +132,7 @@ depth and GPU profile all match.
 ## Credits
 
 The llama.cpp patches follow llama.cpp's MIT license. Vendored trees
-(`vllm/syv-ai/`) keep their upstream licenses. Prior art this work builds on:
+(`archive/vllm-qwen38/syv-ai/`) keep their upstream licenses. Prior art this work builds on:
 [syv-ai/qwen38-27b-rtx3090](https://github.com/syv-ai/qwen38-27b-rtx3090)
 (the truncated draft vocabulary and the vLLM stack),
 [HyperQwen](https://github.com/syv-ai/HyperQwen),

@@ -1,0 +1,136 @@
+{
+  "date_utc": "2026-10-16",
+  "model": "qwen3.8-flash-next-gyro-m",
+  "image_digest": "sha256:61d509794b6e39de19d1b33bb49e4ecd544bf0f4417b64caeb5158c2b5cd9110",
+  "staging": {
+    "catalog": {
+      "passed": true
+    },
+    "streaming_arithmetic": {
+      "passed": true,
+      "seconds": 1.977,
+      "request_sha256": "0f432dacb00c442ede20e95332bd281f3673471c3ef6bc400221378c779393bb"
+    },
+    "reasoning": {
+      "passed": true,
+      "seconds": 2.351,
+      "request_sha256": "0a41e79534da050353204ad31c52d1f78d19caeae4da599b85b0e169e5497ad5"
+    },
+    "code": {
+      "passed": true,
+      "seconds": 3.577,
+      "request_sha256": "4ebdef4d02f6cff8199c3b301c0474b857fddb94e178df542be6fcb8111d94ea"
+    },
+    "tool_call": {
+      "passed": true,
+      "seconds": 3.179,
+      "request_sha256": "b5a10663aec2f7e918bd82a1fee73798b2671ace83bef4f83e7b67387329a040"
+    },
+    "tool_followup": {
+      "passed": true,
+      "seconds": 1.301,
+      "request_sha256": "96a94f4382f30be828abbbc2cb5cc04ae9f5e6c0452868f49f832c2a9fd7327b"
+    },
+    "long_context": {
+      "passed": true,
+      "seconds": 121.415,
+      "request_sha256": "d6feb2bb7b44e69bfb112ea9fbc29964a0a6350d27d1f15ce082e9f7684fccbe",
+      "prompt_tokens": 189998
+    },
+    "cached_followup": {
+      "passed": true,
+      "seconds": 2.338,
+      "cached_tokens": 189993,
+      "request_sha256": "cc69862f8c96fd0a0fe692c88fa983e5679fea43e0db42e06937cb14691863e0"
+    },
+    "peak_gpu_mib": 23839,
+    "min_host_available_gib": 24.54
+  },
+  "production": {
+    "catalog": {
+      "passed": true
+    },
+    "streaming_arithmetic": {
+      "passed": true,
+      "seconds": 109.179,
+      "request_sha256": "0f432dacb00c442ede20e95332bd281f3673471c3ef6bc400221378c779393bb"
+    },
+    "reasoning": {
+      "passed": true,
+      "seconds": 2.28,
+      "request_sha256": "0a41e79534da050353204ad31c52d1f78d19caeae4da599b85b0e169e5497ad5"
+    },
+    "code": {
+      "passed": true,
+      "seconds": 3.067,
+      "request_sha256": "4ebdef4d02f6cff8199c3b301c0474b857fddb94e178df542be6fcb8111d94ea"
+    },
+    "tool_call": {
+      "passed": true,
+      "seconds": 2.907,
+      "request_sha256": "b5a10663aec2f7e918bd82a1fee73798b2671ace83bef4f83e7b67387329a040"
+    },
+    "tool_followup": {
+      "passed": true,
+      "seconds": 1.313,
+      "request_sha256": "84592b592cdaecc29cfc760362c31daf8381fa62af860628b80f0803662beb66"
+    }
+  },
+  "authentication": {
+    "overlay": {
+      "unauthenticated_status": 401,
+      "authenticated_status": 200,
+      "context": 200000,
+      "catalog_ids": [
+        "gsq-rco-27b",
+        "qwen3.8-27b-exl3",
+        "qwen3.8-flash-next-gyro-m",
+        "thinkingcap-qwen3.8-27b"
+      ],
+      "passed": true
+    },
+    "public": {
+      "unauthenticated_status": 401,
+      "authenticated_status": 200,
+      "context": 200000,
+      "catalog_ids": [
+        "gsq-rco-27b",
+        "qwen3.8-27b-exl3",
+        "qwen3.8-flash-next-gyro-m",
+        "thinkingcap-qwen3.8-27b"
+      ],
+      "passed": true
+    }
+  },
+  "switching": [
+    {
+      "check": "public",
+      "passed": true,
+      "seconds": 86.816,
+      "model": "qwen3.8-flash-next-gyro-m"
+    },
+    {
+      "check": "default_model",
+      "passed": true,
+      "seconds": 157.096,
+      "model": "qwen3.8-27b-exl3"
+    },
+    {
+      "check": "return_to_gyro",
+      "passed": true,
+      "seconds": 95.331,
+      "model": "qwen3.8-flash-next-gyro-m"
+    }
+  ],
+  "public_hostname_fix": {
+    "initial_status": 403,
+    "allowed_host": "llama.denguinho.org",
+    "resolved": true
+  },
+  "client_discovery": {
+    "passed": true,
+    "context": 200000,
+    "max_tokens": 32768
+  },
+  "passed": true
+}

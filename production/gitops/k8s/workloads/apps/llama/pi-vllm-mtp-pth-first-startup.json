@@ -1,0 +1,20 @@
+{
+  "engine": "vllm",
+  "quant": "W4A16 AutoRound",
+  "context": 131072,
+  "recurrent_state_dtype": "float32",
+  "lora_targets": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "requests": [],
+  "error": "TimeoutError('vLLM HTTP startup')",
+  "startup_probe_budget_seconds": 600,
+  "runtime_http_startup_observed": "2026-11-20T15:46:30Z",
+  "note": "First-time compilation completed; the trial startup probe expired immediately before HTTP startup. Production uses a 900-second load budget."
+}

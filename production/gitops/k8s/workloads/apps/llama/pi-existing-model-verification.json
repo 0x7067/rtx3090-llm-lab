@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-11-20T16:31:30.799525+00:00",
+  "checks": [
+    {
+      "model": "orcasaq2-cyber-fast",
+      "seconds": 137.3964243599985,
+      "content": "4",
+      "usage": {
+        "completion_tokens": 21,
+        "prompt_tokens": 65,
+        "total_tokens": 86,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "passed": true
+    },
+    {
+      "model": "orcasaq2-cyber",
+      "seconds": 278.7900234059998,
+      "content": "\n\n4",
+      "usage": {
+        "prompt_tokens": 65,
+        "total_tokens": 86,
+        "completion_tokens": 21,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 17
+        }
+      },
+      "passed": true
+    },
+    {
+      "model": "qwen3.8-pi",
+      "seconds": 135.58094873500522,
+      "content": "4",
+      "usage": {
+        "prompt_tokens": 25,
+        "total_tokens": 27,
+        "completion_tokens": 2,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "passed": true
+    }
+  ]
+}

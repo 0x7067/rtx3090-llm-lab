@@ -1,0 +1,167 @@
+{
+  "speed": {
+    "baseline": {
+      "4k": {
+        "ttft_s": 1.8509559060330503,
+        "server_decode_tps": 86.08035310240861
+      },
+      "32k": {
+        "ttft_s": 16.7825972950086,
+        "server_decode_tps": 100.22015429905944
+      }
+    },
+    "candidate": {
+      "4k": {
+        "ttft_s": 1.9217513659968972,
+        "server_decode_tps": 83.22552479091073
+      },
+      "32k": {
+        "ttft_s": 17.183665497985203,
+        "server_decode_tps": 85.22940676051184
+      }
+    }
+  },
+  "long": {
+    "baseline": {
+      "cold_median_ttft_s": 95.69855645499774,
+      "cases": {
+        "a-cold": {
+          "ttft_s": 96.18863598600728,
+          "wall_s": 96.25972087099217,
+          "prompt_tokens": 124003,
+          "cached_tokens": 0,
+          "decode_tps": null
+        },
+        "a-follow-up": {
+          "ttft_s": 1.803596155019477,
+          "wall_s": 1.8501559320138767,
+          "prompt_tokens": 124036,
+          "cached_tokens": 122688,
+          "decode_tps": null
+        },
+        "a-warm-solo-decode": {
+          "ttft_s": 1.7761402619653381,
+          "wall_s": 4.529575566994026,
+          "prompt_tokens": 124091,
+          "cached_tokens": 122688,
+          "decode_tps": 91.56787163588115
+        },
+        "b-cold": {
+          "ttft_s": 95.2084769239882,
+          "wall_s": 95.3148530269973,
+          "prompt_tokens": 124004,
+          "cached_tokens": 0,
+          "decode_tps": null
+        },
+        "a-return-after-b": {
+          "ttft_s": 5.829829950002022,
+          "wall_s": 5.841899916995317,
+          "prompt_tokens": 124069,
+          "cached_tokens": 119232,
+          "decode_tps": null
+        },
+        "b-concurrent-decode": {
+          "ttft_s": 6.0119326949934475,
+          "wall_s": 8.704469925025478,
+          "prompt_tokens": 124059,
+          "cached_tokens": 119232,
+          "decode_tps": null
+        },
+        "a-concurrent-decode": {
+          "ttft_s": 14.429798258992378,
+          "wall_s": 17.138110636966303,
+          "prompt_tokens": 124124,
+          "cached_tokens": 119232,
+          "decode_tps": null
+        }
+      },
+      "two_clients": 29.872170393486723
+    },
+    "candidate": {
+      "cold_median_ttft_s": 97.33364561901544,
+      "cases": {
+        "a-cold": {
+          "ttft_s": 98.8546109989984,
+          "wall_s": 98.8720510060084,
+          "prompt_tokens": 124003,
+          "cached_tokens": 0,
+          "decode_tps": null
+        },
+        "a-follow-up": {
+          "ttft_s": 1.210912404989358,
+          "wall_s": 1.2912213620147668,
+          "prompt_tokens": 124036,
+          "cached_tokens": 123552,
+          "decode_tps": null
+        },
+        "a-warm-solo-decode": {
+          "ttft_s": 1.2064529249910265,
+          "wall_s": 3.7403105499688536,
+          "prompt_tokens": 124091,
+          "cached_tokens": 123552,
+          "decode_tps": 99.4201201803484
+        },
+        "b-cold": {
+          "ttft_s": 95.81268023903249,
+          "wall_s": 95.84678864298621,
+          "prompt_tokens": 124004,
+          "cached_tokens": 0,
+          "decode_tps": null
+        },
+        "a-return-after-b": {
+          "ttft_s": 1.2521578030427918,
+          "wall_s": 1.270471666008234,
+          "prompt_tokens": 124069,
+          "cached_tokens": 123552,
+          "decode_tps": null
+        },
+        "a-concurrent-decode": {
+          "ttft_s": 1.9666737350053154,
+          "wall_s": 5.67037564603379,
+          "prompt_tokens": 124124,
+          "cached_tokens": 123552,
+          "decode_tps": null
+        },
+        "b-concurrent-decode": {
+          "ttft_s": 2.1963373119942844,
+          "wall_s": 5.714642938983161,
+          "prompt_tokens": 124059,
+          "cached_tokens": 123552,
+          "decode_tps": null
+        }
+      },
+      "two_clients": 89.54459643662241
+    }
+  },
+  "correctness": {
+    "baseline": {
+      "smoke": [
+        3,
+        3
+      ],
+      "quality": [
+        5,
+        5
+      ],
+      "long_retrieval": [
+        4,
+        4
+      ]
+    },
+    "candidate": {
+      "smoke": [
+        3,
+        3
+      ],
+      "quality": [
+        5,
+        5
+      ],
+      "long_retrieval": [
+        4,
+        4
+      ]
+    }
+  },
+  "scope": "Whole stacks: production DFlash7+CPU prefix cache vs SparseKV MTP7+INT4 host tier; same target weights/template/resource limits."
+}

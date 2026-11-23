@@ -1,0 +1,117 @@
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.0 s	total:   0.0 B	(0.0 B/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.0 s	total:   0.0 B	(0.0 B/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	waiting    	|--------------------------------------|
+   └──manifest (22c00cc4733a)           	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.1 s	total:   0.0 B	(0.0 B/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	waiting    	|--------------------------------------|
+   ├──manifest (22c00cc4733a)           	waiting    	|--------------------------------------|
+   └──manifest (50637ededf9d)           	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.1 s	total:   0.0 B	(0.0 B/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	waiting    	|--------------------------------------|
+   ├──manifest (22c00cc4733a)           	waiting    	|--------------------------------------|
+   └──manifest (50637ededf9d)           	waiting    	|--------------------------------------|
+      └──config (d9212a0223f1)          	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.2 s	total:   0.0 B	(0.0 B/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	waiting    	|--------------------------------------|
+   └──manifest (50637ededf9d)           	waiting    	|--------------------------------------|
+      └──config (d9212a0223f1)          	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.3 s	total:  857.0 	(2.6 KiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	waiting    	|--------------------------------------|
+      └──config (d9212a0223f1)          	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.3 s	total:  1.7 Ki	(5.1 KiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──config (d9212a0223f1)          	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.3 s	total:  27.5 K	(85.2 KiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 0.3 s	total:  109.0 	(337.5 KiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	waiting    	|--------------------------------------|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 1.1 s	total:  109.0 	(96.0 KiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	downloading	|++++++++++++++++----------------------|	27.0 MiB/61.0 MiB
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 1.2 s	total:  27.1 M	(22.2 MiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	extracting 	|++++++++++++--------------------------|	20.4 MiB/61.0 MiB
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 1.5 s	total:  20.5 M	(13.5 MiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	extracting 	|+++++++++++++++++---------------------|	27.3 MiB/61.0 MiB
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 1.8 s	total:  27.4 M	(15.1 MiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	extracting 	|++++++++++++++++++++------------------|	32.6 MiB/61.0 MiB
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 2.1 s	total:  32.7 M	(15.4 MiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	fetching image content
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	extracted  	|++++++++++++++++++++++++++++++++++++++|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 2.4 s	total:  61.1 M	(25.2 MiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	saved
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	extracted  	|++++++++++++++++++++++++++++++++++++++|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Pulling from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 2.5 s	total:  61.1 M	(24.4 MiB/s)
+127.0.0.1:5000/home llm strata:sparsekv 	saved
+└──index (ecb915cc18b9)                 	complete   	|++++++++++++++++++++++++++++++++++++++|
+   ├──manifest (22c00cc4733a)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+   └──manifest (50637ededf9d)           	complete   	|++++++++++++++++++++++++++++++++++++++|
+      ├──config (d9212a0223f1)          	complete   	|++++++++++++++++++++++++++++++++++++++|
+      └──layer (e6918e4d83a8)           	extracted  	|++++++++++++++++++++++++++++++++++++++|
+application/vnd.oci.image.index.v1+json sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679
+Completed pull from OCI Registry (127.0.0.1:5000/home-llm-strata:sparsekv-v1@sha256:ecb915cc18b92f1c81dcc97d22576bac3eacba436afc00fb7afeb6d1ba604679)	elapsed: 2.5 s	total:  61.1 M	(24.4 MiB/s)

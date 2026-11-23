@@ -1,0 +1,42 @@
+# Build from the repository root; use the adjacent Dockerfile-specific ignore file.
+FROM --platform=linux/amd64 node:24.11.0-bookworm-slim@sha256:87ccbf5cc428351bc8e242a9e43ceb998ec546c33a08fe77a839227c9142ab7e AS node
+FROM --platform=linux/amd64 python:3.12.15-slim-bookworm@sha256:57d96f71de145a98e7ceca18ee4ade77bba4103a33a72dfaea026b23625c6bf0
+
+# Snapshot URLs fix the OS repository contents; retain the installed inventory.
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
+    printf '%s\n' \
+      'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20261021T000000Z/ bookworm main' \
+      'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20261021T000000Z/ bookworm-security main' \
+      > /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgomp1 && \
+    mkdir -p /opt/ocr-build && dpkg-query -W > /opt/ocr-build/os-packages.txt && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+WORKDIR /opt/finance-ocr
+COPY services/ocr/deploy/requirements.layout.lock /opt/ocr-build/requirements.lock
+RUN python -m pip install --no-cache-dir --only-binary=:all: --require-hashes -r /opt/ocr-build/requirements.lock && \
+    python -m pip check && python -m pip freeze --all > /opt/ocr-build/python-packages.txt && \
+    python -c 'import paddle, paddleocr, pypdfium2, PIL; assert not paddle.is_compiled_with_cuda()'
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund && npm ls --all --json > /opt/ocr-build/node-packages.json
+COPY shared/ ./shared/
+COPY services/ocr/ ./services/ocr/
+ARG OCR_ADAPTER_TREE_SHA256
+RUN test -n "$OCR_ADAPTER_TREE_SHA256" && \
+    python services/ocr/deploy/source_inventory.py --expect "$OCR_ADAPTER_TREE_SHA256" --write /opt/ocr-build/adapter-tree.json
+LABEL org.finance-ocr.adapter-tree-sha256=$OCR_ADAPTER_TREE_SHA256
+RUN python services/ocr/deploy/preflight.py --check-packages layout && \
+    test "$(node --version)" = v24.11.0 && \
+    useradd --uid 10001 --no-create-home --home-dir /tmp/ocr-home --shell /usr/sbin/nologin ocr && \
+    mkdir -p /data && chmod 0700 /data && chown 10001:10001 /data
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
+    HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+    HF_HUB_DISABLE_TELEMETRY=1 PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True \
+    PADDLE_PDX_MODEL_SOURCE=HuggingFace OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
+    OCR_LISTEN_HOST=0.0.0.0 OCR_PORT=9417 OCR_DATA_DIR=/data
+USER 10001:10001
+CMD ["node", "--import", "tsx", "services/ocr/main.ts"]
+

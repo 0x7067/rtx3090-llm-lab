@@ -1,0 +1,46 @@
+FROM --platform=linux/amd64 python:3.12.15-slim-bookworm@sha256:57d96f71de145a98e7ceca18ee4ade77bba4103a33a72dfaea026b23625c6bf0
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
+    printf '%s\n' \
+      'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20261021T000000Z/ bookworm main' \
+      'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20261021T000000Z/ bookworm-security main' \
+      > /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends libglib2.0-0 libgomp1 && \
+    mkdir -p /opt/ocr-build && dpkg-query -W > /opt/ocr-build/os-packages.txt && \
+    rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/finance-ocr
+COPY services/ocr/deploy/requirements.vllm.lock /opt/ocr-build/requirements.lock
+# CUDA 12.8 user-space libraries arrive as exact hash-locked NVIDIA/Torch wheels.
+# The host driver is injected by NVIDIA Container Toolkit; no CUDA host install.
+RUN python -m pip install --no-cache-dir --only-binary=:all: --require-hashes -r /opt/ocr-build/requirements.lock && \
+    python -m pip check && python -m pip freeze --all > /opt/ocr-build/python-packages.txt
+# Triton 3.4 compiles its CUDA driver helper and launchers at runtime, even in eager mode.
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && \
+    dpkg-query -W > /opt/ocr-build/os-packages.txt && rm -rf /var/lib/apt/lists/*
+# PaddleX's CUDA plugin gate has an undeclared flash-attn requirement. Keep the
+# resolver lock unchanged and add one official wheel matched to Torch/Python/ABI.
+COPY services/ocr/deploy/requirements.vllm-gpu.lock /opt/ocr-build/requirements.gpu.lock
+COPY services/ocr/deploy/flash_wheel.py /opt/ocr-build/flash_wheel.py
+RUN python /opt/ocr-build/flash_wheel.py --destination /tmp/ocr-gpu-wheels && \
+    python -m pip install --no-cache-dir --no-index --no-deps --only-binary=:all: --require-hashes \
+      --find-links=/tmp/ocr-gpu-wheels -r /opt/ocr-build/requirements.gpu.lock && \
+    python -m pip check && \
+    python -c 'import torch; import flash_attn_2_cuda; import flash_attn; from flash_attn import flash_attn_varlen_func; assert torch._C._GLIBCXX_USE_CXX11_ABI; assert torch.version.cuda == "12.8"; assert flash_attn.__version__ == "2.8.3"' && \
+    python -m pip freeze --all > /opt/ocr-build/python-packages.txt && rm -rf /tmp/ocr-gpu-wheels
+COPY package.json package-lock.json ./
+COPY shared/ ./shared/
+COPY services/ocr/ ./services/ocr/
+ARG OCR_ADAPTER_TREE_SHA256
+RUN test -n "$OCR_ADAPTER_TREE_SHA256" && \
+    python services/ocr/deploy/source_inventory.py --expect "$OCR_ADAPTER_TREE_SHA256" --write /opt/ocr-build/adapter-tree.json
+LABEL org.finance-ocr.adapter-tree-sha256=$OCR_ADAPTER_TREE_SHA256
+RUN python services/ocr/deploy/preflight.py --check-packages vllm && \
+    useradd --uid 10001 --no-create-home --home-dir /tmp/ocr-home --shell /usr/sbin/nologin ocr
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
+    HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+    HF_HUB_DISABLE_TELEMETRY=1 PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True \
+    VLLM_NO_USAGE_STATS=1 DO_NOT_TRACK=1 \
+    NVIDIA_VISIBLE_DEVICES=all NVIDIA_DRIVER_CAPABILITIES=compute,utility \
+    OMP_NUM_THREADS=2
+USER 10001:10001
+ENTRYPOINT ["python", "services/ocr/deploy/run_vllm.py"]
+

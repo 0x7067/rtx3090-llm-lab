@@ -1,0 +1,6 @@
+ActiveState=active
+SubState=exited
+MainPID=0
+ExecMainStartTimestamp=Fri 2026-11-06 03:24:55 -03
+ExecMainExitTimestamp=Fri 2026-11-06 03:28:41 -03
+ExecMainStatus=0

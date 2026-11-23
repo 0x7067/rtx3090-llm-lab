@@ -1,0 +1,17 @@
+{
+  "image": "127.0.0.1:5000/home-llm-strata@sha256:83077f60377d9e303d446a2f045381daab28a123e8e314c5bbe1ba53314884a2",
+  "sparsekv": "29595e8712520ef017c51bcccb9ab6dbc3c68a01",
+  "hyperqwen": "ce9615c4f2309be727407918a6c979bd67968069",
+  "pth_flash_attn": "b0d4f7ee228448ecc3d85a2015db208ed8d21954",
+  "production_hyperqwen": "2cf50a01d9d43fe9b6e031d3718bd98ebffb6938",
+  "vllm": "0.31.0",
+  "torch": "2.13.0",
+  "triton": "3.7.1",
+  "cuda_compiler": "13.0.88",
+  "overlay_sha256": "2be555546ea5a529a335b1edadb62752350dca7c4c002f93190bbde7f7e07ae8",
+  "basis_sha256": "dee8b28281d5837ad512a560e4d5c31af245cbe42dc1dea66dc1510775b4b99b",
+  "hyperqwen_base_patch_sha256": "1377827a3227a14bbb09a37d462002e00019af2ae36f8b5684476b52ef61a37a",
+  "build_exit_status": 0,
+  "cpu_check": "pass",
+  "gpu_run": "pending"
+}

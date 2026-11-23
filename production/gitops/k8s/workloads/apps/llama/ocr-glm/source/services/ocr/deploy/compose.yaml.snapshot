@@ -1,0 +1,127 @@
+name: finance-ocr
+services:
+  ocr-ingress:
+    profiles: [ocr-real]
+    platform: linux/amd64
+    image: ${OCR_LAYOUT_IMAGE:-finance-ocr-layout:unbuilt}
+    pull_policy: never
+    command: [python, services/ocr/deploy/relay.py]
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 32
+    mem_limit: 128m
+    cpus: 0.25
+    restart: "no"
+    stop_grace_period: 5s
+    ports: ["127.0.0.1:9417:9417"]
+    networks: [ocr-ingress, ocr-private]
+    depends_on:
+      ocr-api: {condition: service_started}
+  ocr-api:
+    profiles: [ocr-real]
+    platform: linux/amd64
+    image: ${OCR_LAYOUT_IMAGE:-finance-ocr-layout:unbuilt}
+    pull_policy: never
+    build:
+      context: ../../..
+      dockerfile: services/ocr/deploy/Dockerfile.layout
+      args:
+        OCR_ADAPTER_TREE_SHA256: ${OCR_ADAPTER_TREE_SHA256:-}
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256
+    mem_limit: 8g
+    cpus: 4
+    restart: "no"
+    stop_grace_period: 30s
+    environment:
+      OCR_ENABLED: ${OCR_ENABLED:-disabled}
+      OCR_RUNTIME_MANIFEST: /etc/ocr/manifest.json
+      OCR_TOKEN_FILE: /run/secrets/ocr_service_token
+      OCR_NAMESPACE: ${OCR_NAMESPACE:-}
+      OCR_DATA_DIR: /data
+      OCR_PORT: "9417"
+      OCR_LISTEN_HOST: 0.0.0.0
+    volumes:
+      - type: bind
+        source: ${OCR_MANIFEST_PATH:-./local/manifest.json}
+        target: /etc/ocr/manifest.json
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${OCR_MODELS_DIR:-./local/models}
+        target: /models
+        read_only: true
+        bind: {create_host_path: false}
+      - type: volume
+        source: ocr-data
+        target: /data
+    tmpfs: ["/tmp:rw,nosuid,nodev,noexec,size=1073741824,mode=1777"]
+    secrets: [ocr_service_token]
+    networks: [ocr-private]
+    depends_on:
+      ocr-vllm: {condition: service_healthy}
+  ocr-vllm:
+    profiles: [ocr-real]
+    platform: linux/amd64
+    image: ${OCR_VLLM_IMAGE:-finance-ocr-vllm:unbuilt}
+    pull_policy: never
+    build:
+      context: ../../..
+      dockerfile: services/ocr/deploy/Dockerfile.vllm
+      args:
+        OCR_ADAPTER_TREE_SHA256: ${OCR_ADAPTER_TREE_SHA256:-}
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 512
+    mem_limit: 16g
+    cpus: 4
+    shm_size: 2g
+    restart: "no"
+    stop_grace_period: 30s
+    environment:
+      OCR_ENABLED: ${OCR_ENABLED:-disabled}
+      OCR_RUNTIME_MANIFEST: /etc/ocr/manifest.json
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    volumes:
+      - type: bind
+        source: ${OCR_MANIFEST_PATH:-./local/manifest.json}
+        target: /etc/ocr/manifest.json
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${OCR_MODELS_DIR:-./local/models}
+        target: /models
+        read_only: true
+        bind: {create_host_path: false}
+    tmpfs: ["/tmp:rw,nosuid,nodev,exec,size=2147483648,mode=1777"]
+    networks: [ocr-private]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=2).close()"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 180s
+networks:
+  ocr-ingress: {}
+  ocr-private: {internal: true}
+volumes:
+  ocr-data:
+secrets:
+  ocr_service_token:
+    file: ${OCR_TOKEN_PATH:-./local/service-token}

@@ -1,0 +1,9 @@
+{
+  "scope": "Observed selected MTP4 acceptance and production-rollout samples; excludes earlier draft-count trials",
+  "samples": 962,
+  "first_timestamp": "2026/11/20 17:20:08.878",
+  "last_timestamp": "2026/11/20 17:36:10.198",
+  "peak_memory_mib": 24090.0,
+  "peak_power_w": 301.81,
+  "peak_temperature_c": 76.0
+}

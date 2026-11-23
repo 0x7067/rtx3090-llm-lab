@@ -1,0 +1,6 @@
+Nov 11 08:54:11 denguinho-server systemd[1]: Started sparsekv-production-bench.service - Compare production HyperQwen and SparseKV and restore production.
+Nov 11 08:54:11 denguinho-server orchestrate.sh[383355]: time="2026-11-11T08:54:11-03:00" level=warning msg="Unable to read /etc/rancher/k3s/k3s.yaml, please start server with --write-kubeconfig-mode or --write-kubeconfig-group to modify kube config permissions"
+Nov 11 08:54:11 denguinho-server orchestrate.sh[383355]: error: error loading config file "/etc/rancher/k3s/k3s.yaml": open /etc/rancher/k3s/k3s.yaml: permission denied
+Nov 11 08:54:12 denguinho-server orchestrate.sh[383350]: Node disk pressure is present or unknown
+Nov 11 08:54:12 denguinho-server systemd[1]: sparsekv-production-bench.service: Main process exited, code=exited, status=1/FAILURE
+Nov 11 08:54:12 denguinho-server systemd[1]: sparsekv-production-bench.service: Failed with result 'exit-code'.

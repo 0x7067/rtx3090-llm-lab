@@ -8,7 +8,7 @@ applies.
 **Which repo answers what:**
 
 - *What is running, and with which flags?* [`production/STATUS.md`](production/STATUS.md),
-  generated hourly from GitOps `k8s/workloads/apps/llama/`. GitOps stays the
+  generated from GitOps `k8s/workloads/apps/llama/`. GitOps stays the
   source of truth; [`production/gitops/`](production/gitops/) is a read-only
   copy pinned in [`production/LOCK.json`](production/LOCK.json).
 - *Why was it chosen, and how was it measured?* This repo: dated campaigns

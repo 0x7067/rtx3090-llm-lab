@@ -1,0 +1,10 @@
+{"arm": "none", "task": "full-rewrite", "rep": 0, "n": 1536, "tg": 40.6, "pp": 894.5, "draft": null, "accepted": null, "wall": 39.9, "finish": "length"}
+{"arm": "none", "task": "full-rewrite", "rep": 1, "n": 1536, "tg": 40.0, "pp": 1226.9, "draft": null, "accepted": null, "wall": 39.9, "finish": "length"}
+{"arm": "none", "task": "add-feature", "rep": 0, "n": 1536, "tg": 40.0, "pp": 1172.5, "draft": null, "accepted": null, "wall": 39.7, "finish": "length"}
+{"arm": "none", "task": "add-feature", "rep": 1, "n": 1536, "tg": 40.3, "pp": 1186.7, "draft": null, "accepted": null, "wall": 39.4, "finish": "length"}
+{"arm": "none", "task": "search-replace", "rep": 0, "n": 100, "tg": 40.3, "pp": 1221.1, "draft": null, "accepted": null, "wall": 4.1, "finish": "stop"}
+{"arm": "none", "task": "search-replace", "rep": 1, "n": 100, "tg": 40.3, "pp": 1217.7, "draft": null, "accepted": null, "wall": 4.0, "finish": "stop"}
+{"arm": "none", "task": "explain", "rep": 0, "n": 446, "tg": 40.5, "pp": 1172.7, "draft": null, "accepted": null, "wall": 12.5, "finish": "stop"}
+{"arm": "none", "task": "explain", "rep": 1, "n": 446, "tg": 40.3, "pp": 1182.8, "draft": null, "accepted": null, "wall": 12.2, "finish": "stop"}
+{"arm": "none", "task": "fresh-gen", "rep": 0, "n": 1536, "tg": 38.9, "pp": 223.8, "draft": null, "accepted": null, "wall": 39.9, "finish": "length"}
+{"arm": "none", "task": "fresh-gen", "rep": 1, "n": 1536, "tg": 39.7, "pp": 101.0, "draft": null, "accepted": null, "wall": 39.3, "finish": "length"}

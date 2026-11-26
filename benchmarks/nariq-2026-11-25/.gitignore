@@ -1,0 +1,8 @@
+# Downloaded release archives and extracted executables/libraries.
+/bin/*
+!/bin/README.md
+!/bin/build-info.json
+!/bin/LICENSE*
+!/bin/NOTICE*
+/downloads/*
+!/downloads/SHA256SUMS

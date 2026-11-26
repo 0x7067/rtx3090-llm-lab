@@ -1,0 +1,10 @@
+{"arm": "mtp2", "task": "full-rewrite", "rep": 0, "n": 1536, "tg": 77.9, "pp": 568.6, "draft": 1024, "accepted": 1022, "wall": 23.0, "finish": "length"}
+{"arm": "mtp2", "task": "full-rewrite", "rep": 1, "n": 1536, "tg": 80.6, "pp": 1064.5, "draft": 1024, "accepted": 1022, "wall": 20.8, "finish": "length"}
+{"arm": "mtp2", "task": "add-feature", "rep": 0, "n": 1536, "tg": 78.5, "pp": 984.0, "draft": 1029, "accepted": 1020, "wall": 21.2, "finish": "length"}
+{"arm": "mtp2", "task": "add-feature", "rep": 1, "n": 1536, "tg": 77.4, "pp": 1015.4, "draft": 1029, "accepted": 1020, "wall": 21.4, "finish": "length"}
+{"arm": "mtp2", "task": "search-replace", "rep": 0, "n": 100, "tg": 75.1, "pp": 1050.5, "draft": 68, "accepted": 65, "wall": 3.2, "finish": "stop"}
+{"arm": "mtp2", "task": "search-replace", "rep": 1, "n": 100, "tg": 75.7, "pp": 1065.4, "draft": 68, "accepted": 65, "wall": 3.1, "finish": "stop"}
+{"arm": "mtp2", "task": "explain", "rep": 0, "n": 469, "tg": 58.2, "pp": 1000.0, "draft": 422, "accepted": 258, "wall": 9.7, "finish": "stop"}
+{"arm": "mtp2", "task": "explain", "rep": 1, "n": 469, "tg": 58.5, "pp": 992.3, "draft": 424, "accepted": 257, "wall": 9.3, "finish": "stop"}
+{"arm": "mtp2", "task": "fresh-gen", "rep": 0, "n": 1536, "tg": 74.4, "pp": 113.5, "draft": 1091, "accepted": 989, "wall": 21.3, "finish": "length"}
+{"arm": "mtp2", "task": "fresh-gen", "rep": 1, "n": 1536, "tg": 73.9, "pp": 228.9, "draft": 1091, "accepted": 989, "wall": 21.2, "finish": "length"}

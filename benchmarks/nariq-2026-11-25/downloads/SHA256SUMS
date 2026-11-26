@@ -1,0 +1,6 @@
+1bf65e866d46323594ffacaf0de95120677e954cdd80a91a4f1b9c91a7e5836a  nari-llama.cpp-b12431-nariv0-bin-linux-cuda-12.8-x64.tar.gz
+ec215628695711b8b80e232403165f0eb1d140cf7a28d804fe085b1eae5cddcc  cudart-nari-llama.cpp-b12431-nariv0-linux-cuda-12.8-x64.tar.gz
+9e52858b7f067c635da54a42981affbf237abeefec93602c2b825fb7136001c1  nari-llama.cpp-b12431-nariv0-bin-win-cuda-12.8-x64.zip
+fe20366827d357c00797eebb58244dddab7fd9a348d70090c3871004c320f38d  cudart-nari-llama.cpp-b12431-nariv0-win-cuda-12.8-x64.zip
+041beaee474824ea8a3d30cfdf6bbd86f8562cf89ad4234ff30c51acce98ba3a  run.sh
+81e231b92d2d300b3018a07bb05fb2c9d9be925c6dc41eae1b54cab7668b3736  run.ps1

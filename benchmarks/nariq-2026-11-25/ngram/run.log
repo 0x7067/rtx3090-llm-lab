@@ -1,0 +1,51 @@
+== mtp2 14:32:17Z
+   full-rewrite 0 tg 77.9 n 1536 acc 1022 / 1024 length
+   full-rewrite 1 tg 80.6 n 1536 acc 1022 / 1024 length
+   add-feature 0 tg 78.5 n 1536 acc 1020 / 1029 length
+   add-feature 1 tg 77.4 n 1536 acc 1020 / 1029 length
+   search-replace 0 tg 75.1 n 100 acc 65 / 68 stop
+   search-replace 1 tg 75.7 n 100 acc 65 / 68 stop
+   explain 0 tg 58.2 n 469 acc 258 / 422 stop
+   explain 1 tg 58.5 n 469 acc 257 / 424 stop
+   fresh-gen 0 tg 74.4 n 1536 acc 989 / 1091 length
+   fresh-gen 1 tg 73.9 n 1536 acc 989 / 1091 length
+4.10.796.851 I slot print_timing: id  0 | task 2579 | draft acceptance = 0.90651 (  989 accepted /  1091 generated), mean len =  2.81
+4.31.954.869 I slot print_timing: id  0 | task 3128 | draft acceptance = 0.90651 (  989 accepted /  1091 generated), mean len =  2.81
+== ngram 14:36:50Z
+   full-rewrite 0 tg 365.7 n 1536 acc 1488 / 1488 length
+   full-rewrite 1 tg 433.9 n 1536 acc 1511 / 1511 length
+   add-feature 0 tg 134.9 n 1536 acc 1205 / 1463 length
+   add-feature 1 tg 276.6 n 1536 acc 1459 / 1664 length
+   search-replace 0 tg 40.5 n 100 acc None / None stop
+   search-replace 1 tg 98.6 n 100 acc 64 / 64 stop
+   explain 0 tg 40.5 n 446 acc None / None stop
+   explain 1 tg 52.4 n 460 acc 140 / 320 stop
+   fresh-gen 0 tg 40.3 n 1536 acc None / None length
+   fresh-gen 1 tg 53.7 n 1536 acc 488 / 978 length
+3.06.929.162 I slot print_timing: id  0 | task 1084 | draft acceptance = 0.43750 (  140 accepted /   320 generated), mean len = 29.00
+4.14.341.868 I slot print_timing: id  0 | task 2945 | draft acceptance = 0.49898 (  488 accepted /   978 generated), mean len = 31.50
+== mtp2+ngram 14:41:07Z
+   full-rewrite 0 tg 384.7 n 1536 acc 1503 / 1503 length
+   full-rewrite 1 tg 441.3 n 1536 acc 1511 / 1511 length
+   add-feature 0 tg 192.1 n 1536 acc 1401 / 1668 length
+   add-feature 1 tg 298.0 n 1536 acc 1488 / 1693 length
+   search-replace 0 tg 77.5 n 100 acc 65 / 68 stop
+   search-replace 1 tg 160.5 n 100 acc 86 / 88 stop
+   explain 0 tg 59.9 n 469 acc 258 / 422 stop
+   explain 1 tg 92.5 n 549 acc 408 / 586 stop
+   fresh-gen 0 tg 75.7 n 1536 acc 989 / 1091 length
+   fresh-gen 1 tg 115.6 n 1536 acc 1249 / 1725 length
+1.14.373.936 I slot print_timing: id  0 | task 667 | draft acceptance = 0.90651 (  989 accepted /  1091 generated), mean len =  2.81
+1.27.998.989 I slot print_timing: id  0 | task 1216 | draft acceptance = 0.72406 ( 1249 accepted /  1725 generated), mean len =  5.56
+== none 14:42:37Z
+   full-rewrite 0 tg 40.6 n 1536 acc None / None length
+   full-rewrite 1 tg 40.0 n 1536 acc None / None length
+   add-feature 0 tg 40.0 n 1536 acc None / None length
+   add-feature 1 tg 40.3 n 1536 acc None / None length
+   search-replace 0 tg 40.3 n 100 acc None / None stop
+   search-replace 1 tg 40.3 n 100 acc None / None stop
+   explain 0 tg 40.5 n 446 acc None / None stop
+   explain 1 tg 40.3 n 446 acc None / None stop
+   fresh-gen 0 tg 38.9 n 1536 acc None / None length
+   fresh-gen 1 tg 39.7 n 1536 acc None / None length
+done 14:49:25Z

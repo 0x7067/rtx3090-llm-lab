@@ -1,0 +1,23 @@
+2026-11-25T12:03:23Z
+✔ kustomization suspended
+deployment.apps/llama scaled
+memory.used [MiB], temperature.gpu, power.limit [W]
+9 MiB, 56, 300.00 W
+== restore 2026-11-25T14:03:19Z
+NAMESPACE  	NAME       	REVISION          	SUSPENDED	READY	MESSAGE                              
+◎ waiting for Kustomization reconciliation
+✔ Kustomization apps reconciliation completed
+✔ applied revision main@sha1:f1db509bd91d107735435da1dad0a7ad2aafc699
+deployment.apps/llama scaled
+Waiting for deployment "llama" rollout to finish: 0 of 1 updated replicas are available...
+error: timed out waiting for the condition
+llama-6f944dd7c-wtkzd                     0/2     Init:0/2   0          15m   <none>        denguinho-server   <none>           <none>
+9 MiB
+== window2 (ngram) 2026-11-25T14:32:07Z
+✔ kustomization suspended
+deployment.apps/llama scaled
+== restore2 2026-11-25T14:52:38Z
+✔ applied revision main@sha1:f1db509bd91d107735435da1dad0a7ad2aafc699
+deployment.apps/llama scaled
+Waiting for deployment "llama" rollout to finish: 0 of 1 updated replicas are available...
+error: timed out waiting for the condition

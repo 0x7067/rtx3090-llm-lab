@@ -1,0 +1,15 @@
+<<<<<<< SEARCH
+def filler(approx_tokens, seed):
+=======
+def filler(approx_tokens: int, seed: int) -> str:
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+def stream(base_url, model, messages, timeout):
+=======
+def stream(base_url: str, model: str, messages: list[dict[str, str]], timeout: int) -> dict:
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+def main():
+=======
+def main() -> int:
+>>>>>>> REPLACE

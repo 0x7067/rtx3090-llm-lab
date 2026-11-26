@@ -1,0 +1,13 @@
+NariQ additions to llama.cpp
+Copyright Nari Labs
+
+The NariQ additions are under the same MIT license as llama.cpp (LICENSE).
+The vendored libtrellis (ggml/src/ggml-cuda/libtrellis) keeps its own Apache-2.0 LICENSE.
+
+NariQ implements trellis-coded quantization from the QTIP research (Tseng et al., 2024).
+The coded weight layout follows exllamav3 by turboderp (https://github.com/turboderp-org/exllamav3):
+its trellis code packing and in-tile order, its tensor-core order within a tile, and its MUL1
+multiplier for the INT8 grid. exllamav3 is under the MIT license, Copyright (c) 2025 Turboderp;
+its license text is in licenses/LICENSE-exllamav3 (LICENSE-exllamav3 in the release archives).
+
+This notice does not claim that upstream llama.cpp or exllamav3 implements or endorses NariQ.

@@ -1,0 +1,197 @@
+```python
+"""
+Thread-safe LRU cache with TTL expiry, size-in-bytes limit, and statistics.
+"""
+
+import threading
+import time
+from collections import OrderedDict
+from typing import Any, Callable, Optional, Tuple
+
+
+class LRUCache:
+    """
+    A thread-safe LRU (Least Recently Used) cache with:
+    - TTL (Time-To-Live) expiry
+    - Size-in-bytes limit
+    - Statistics tracking (hits, misses, evictions, expirations)
+    
+    Attributes:
+        max_size_bytes: Maximum total size in bytes for cached items.
+        default_ttl: Default time-to-live in seconds for cache entries.
+    """
+    
+    def __init__(self, max_size_bytes: int = 1024 * 1024, default_ttl: float = 300.0):
+        """
+        Initialize the LRU cache.
+        
+        Args:
+            max_size_bytes: Maximum total size in bytes for all cached items.
+            default_ttl: Default time-to-live in seconds for cache entries.
+        """
+        self.max_size_bytes = max_size_bytes
+        self.default_ttl = default_ttl
+        self._cache: OrderedDict[str, Tuple[Any, float, int]] = OrderedDict()
+        self._lock = threading.RLock()
+        self._current_size = 0
+        self._stats = {
+            'hits': 0,
+            'misses': 0,
+            'evictions': 0,
+            'expirations': 0,
+            'insertions': 0,
+            'deletions': 0,
+        }
+    
+    def _get_item_size(self, value: Any) -> int:
+        """
+        Estimate the size in bytes of a value.
+        
+        Args:
+            value: The value to measure.
+            
+        Returns:
+            Estimated size in bytes.
+        """
+        try:
+            return len(value)
+        except TypeError:
+            # For objects that don't have a len(), use sys.getsizeof
+            import sys
+            return sys.getsizeof(value)
+    
+    def _is_expired(self, expiry_time: float) -> bool:
+        """
+        Check if an entry has expired.
+        
+        Args:
+            expiry_time: The expiry timestamp of the entry.
+            
+        Returns:
+            True if the entry has expired, False otherwise.
+        """
+        return time.time() >= expiry_time
+    
+    def get(self, key: str, default: Any = None) -> Any:
+        """
+        Retrieve a value from the cache.
+        
+        Args:
+            key: The key to look up.
+            default: Value to return if key is not found or expired.
+            
+        Returns:
+            The cached value, or default if not found/expired.
+        """
+        with self._lock:
+            if key not in self._cache:
+                self._stats['misses'] += 1
+                return default
+            
+            value, expiry_time, size = self._cache[key]
+            
+            if self._is_expired(expiry_time):
+                # Remove expired entry
+                del self._cache[key]
+                self._current_size -= size
+                self._stats['expirations'] += 1
+                self._stats['misses'] += 1
+                return default
+            
+            # Move to end (most recently used)
+            self._cache.move_to_end(key)
+            self._stats['hits'] += 1
+            return value
+    
+    def put(self, key: str, value: Any, ttl: Optional[float] = None) -> None:
+        """
+        Insert or update a value in the cache.
+        
+        Args:
+            key: The key to store.
+            value: The value to store.
+            ttl: Time-to-live in seconds. If None, uses default_ttl.
+        """
+        with self._lock:
+            if ttl is None:
+                ttl = self.default_ttl
+            
+            expiry_time = time.time() + ttl
+            size = self._get_item_size(value)
+            
+            # If key already exists, remove it first
+            if key in self._cache:
+                old_value, old_expiry, old_size = self._cache[key]
+                del self._cache[key]
+                self._current_size -= old_size
+            
+            # Evict LRU entries until we have room
+            while self._current_size + size > self.max_size_bytes and self._cache:
+                evicted_key, (evicted_value, evicted_expiry, evicted_size) = self._cache.popitem(last=False)
+                self._current_size -= evicted_size
+                self._stats['evictions'] += 1
+            
+            # If the new item alone exceeds max size, don't cache it
+            if size > self.max_size_bytes:
+                return
+            
+            self._cache[key] = (value, expiry_time, size)
+            self._current_size += size
+            self._stats['insertions'] += 1
+    
+    def delete(self, key: str) -> bool:
+        """
+        Delete a key from the cache.
+        
+        Args:
+            key: The key to delete.
+            
+        Returns:
+            True if the key was found and deleted, False otherwise.
+        """
+        with self._lock:
+            if key in self._cache:
+                value, expiry_time, size = self._cache[key]
+                del self._cache[key]
+                self._current_size -= size
+                self._stats['deletions'] += 1
+                return True
+            return False
+    
+    def clear(self) -> None:
+        """
+        Clear all entries from the cache.
+        """
+        with self._lock:
+            self._cache.clear()
+            self._current_size = 0
+    
+    def get_stats(self) -> dict:
+        """
+        Get cache statistics.
+        
+        Returns:
+            A dictionary with keys: hits, misses, evictions, expirations, 
+            insertions, deletions, current_size, max_size, hit_rate.
+        """
+        with self._lock:
+            total = self._stats['hits'] + self._stats['misses']
+            hit_rate = (self._stats['hits'] / total) if total > 0 else 0.0
+            return {
+                'hits': self._stats['hits'],
+                'misses': self._stats['misses'],
+                'evictions': self._stats['evictions'],
+                'expirations': self._stats['expirations'],
+                'insertions': self._stats['insertions'],
+                'deletions': self._stats['deletions'],
+                'current_size': self._current_size,
+                'max_size': self.max_size_bytes,
+                'hit_rate': hit_rate,
+            }
+    
+    def __len__(self) -> int:
+        """
+        Return the number of items in the cache.
+        """
+        with self._lock:
+            return len(self._cache)

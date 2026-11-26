@@ -1,0 +1,41 @@
+[
+ {
+  "name": "nariq_3p0",
+  "base_url": "http://127.0.0.1:18184/v1",
+  "model": "nariq-3.0-qwen3.8-27b",
+  "metadata": {
+   "runtime": "nari-llama.cpp b12431-nariv0 (revision 30f794c), CUDA 12.8, kernels sm_80/sm_90/sm_120a (sm_86 runs sm_80 SASS)",
+   "image": "ghcr.io/nari-labs/nari-llama.cpp@sha256:1d7b7bb878a2d9381a977d7ea4a7d2aa7f0595f02905e8c5808c19a1bc111d79",
+   "weights": "nari-labs/Qwen3.8-27B-NariQ-GGUF Qwen3.8-27B-NariQ-3.0bpw.gguf sha256:1eaad934aa05579b8eba47ed9b26450392f9875fc2354efe8cfa8b29be8f4419, Qwen3.8-27B-NariQ-mmproj-BF16.gguf sha256:8832425f593068d3278e08eda4c1591072c7a2d8dc90f21e4f86394e4b2eb002",
+   "launch": "ctx=262144, parallel=1, full GPU offload, flash attention, q8_0 K and V, -t 1 -tb 8 -ub 2048 -b 2048, --fit off, Jinja, mmproj loaded, --spec-type ngram-mod (lossless n-gram speculation; DFlash2 drafter is incompatible with trellis-coded embeddings)",
+   "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4; production normal GPU profile (300 W, stock clocks)",
+   "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests"
+  }
+ },
+ {
+  "name": "nariq_2p5",
+  "base_url": "http://127.0.0.1:18184/v1",
+  "model": "nariq-2.5-qwen3.8-27b",
+  "metadata": {
+   "runtime": "nari-llama.cpp b12431-nariv0 (revision 30f794c), CUDA 12.8, kernels sm_80/sm_90/sm_120a (sm_86 runs sm_80 SASS)",
+   "image": "ghcr.io/nari-labs/nari-llama.cpp@sha256:1d7b7bb878a2d9381a977d7ea4a7d2aa7f0595f02905e8c5808c19a1bc111d79",
+   "weights": "nari-labs/Qwen3.8-27B-NariQ-GGUF Qwen3.8-27B-NariQ-2.5bpw.gguf sha256:2445372e6de20620b940fbfab53aa718af9ba741f202da30cd2f02b5df78d05c, Qwen3.8-27B-NariQ-mmproj-BF16.gguf sha256:8832425f593068d3278e08eda4c1591072c7a2d8dc90f21e4f86394e4b2eb002",
+   "launch": "ctx=262144, parallel=1, full GPU offload, flash attention, q8_0 K and V, -t 1 -tb 8 -ub 2048 -b 2048, --fit off, Jinja, mmproj loaded, --spec-type ngram-mod (lossless n-gram speculation; DFlash2 drafter is incompatible with trellis-coded embeddings)",
+   "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4; production normal GPU profile (300 W, stock clocks)",
+   "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests"
+  }
+ },
+ {
+  "name": "ctl_llamacpp_gsq",
+  "base_url": "http://127.0.0.1:18181/v1",
+  "model": "gsq-qwen3.8-27b",
+  "metadata": {
+   "runtime": "upstream llama.cpp build 11580 commit 4413a1924 (0.6.0-dev), server-cuda",
+   "image": "ghcr.io/ggml-org/llama.cpp@sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00",
+   "weights": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF@d562806dbafae37109975e970aae91b43e73b440 Qwen3.8-27B-GSQ-RCO-IQ3_S-mtp.gguf sha256:58fd826723939933dc86f45b7fe04545cbc2de1c70f6fe2cdd3858c87a98c12f, mmproj-Qwen3.8-27B-BF16.gguf sha256:13cb7bebccbd04afc8f4090cb949ecf8937cdf7377c5799b1a0c594e7c0d3e16",
+   "launch": "ctx=200704, parallel=1, full GPU offload, flash attention, q8_0 K and V, --fit off, Jinja, mmproj loaded, --spec-type draft-mtp --spec-draft-n-max 2",
+   "hardware": "RTX 3090 24576 MiB, driver 595.91.07, PCIe 3.0 x16, i9-10850K, 64 GB DDR4; production normal GPU profile (300 W, stock clocks), 2026-11-25 same-day control",
+   "cache_policy": "fresh container; one excluded warmup; no explicit cache reset between measured requests"
+  }
+ }
+]

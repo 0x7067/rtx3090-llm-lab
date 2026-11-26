@@ -1,0 +1,206 @@
+```python
+"""
+Thread-safe LRU cache with TTL expiry, size-in-bytes limit, and statistics.
+"""
+
+import threading
+import time
+from collections import OrderedDict
+from typing import Any, Optional, Callable
+
+
+class LRUCache:
+    """
+    A thread-safe LRU (Least Recently Used) cache with:
+    - TTL (Time-To-Live) expiry
+    - Size-in-bytes limit
+    - Statistics tracking (hits, misses, evictions, expirations)
+    
+    Attributes:
+        max_size_bytes: Maximum total size in bytes for cached items.
+        default_ttl: Default time-to-live in seconds for cache entries.
+        _cache: OrderedDict mapping keys to (value, expiry_time, size_bytes).
+        _lock: RLock for thread safety.
+        _stats: Dictionary tracking cache statistics.
+    """
+    
+    def __init__(
+        self,
+        max_size_bytes: int = 1024 * 1024,
+        default_ttl: Optional[float] = None,
+        size_func: Optional[Callable[[Any], int]] = None
+    ):
+        """
+        Initialize the LRU cache.
+        
+        Args:
+            max_size_bytes: Maximum total size in bytes for all cached items.
+            default_ttl: Default time-to-live in seconds. If None, items never expire.
+            size_func: Optional function to compute the size in bytes of a value.
+                       If None, uses a default size function.
+        """
+        self.max_size_bytes = max_size_bytes
+        self.default_ttl = default_ttl
+        self._size_func = size_func or self._default_size_func
+        self._cache: OrderedDict[Any, tuple] = OrderedDict()
+        self._lock = threading.RLock()
+        self._stats = {
+            'hits': 0,
+            'misses': 0,
+            'evictions': 0,
+            'expirations': 0,
+            'insertions': 0,
+            'deletions': 0,
+        }
+        self._current_size = 0
+    
+    @staticmethod
+    def _default_size_func(value: Any) -> int:
+        """
+        Default size function that estimates the size of a value in bytes.
+        
+        Args:
+            value: The value to estimate size for.
+            
+        Returns:
+            Estimated size in bytes.
+        """
+        # Use sys.getsizeof for a rough estimate
+        import sys
+        return sys.getsizeof(value)
+    
+    def _is_expired(self, expiry_time: Optional[float]) -> bool:
+        """
+        Check if a cache entry has expired.
+        
+        Args:
+            expiry_time: The expiry timestamp for the entry.
+            
+        Returns:
+            True if the entry has expired, False otherwise.
+        """
+        if expiry_time is None:
+            return False
+        return time.time() > expiry_time
+    
+    def _remove_entry(self, key: Any) -> None:
+        """
+        Remove an entry from the cache and update size.
+        
+        Args:
+            key: The key of the entry to remove.
+        """
+        if key in self._cache:
+            _, _, size_bytes = self._cache.pop(key)
+            self._current_size -= size_bytes
+    
+    def _evict_lru(self) -> None:
+        """
+        Evict least recently used entries until size limit is met.
+        """
+        while self._current_size > self.max_size_bytes and self._cache:
+            key, (_, _, size_bytes) = self._cache.popitem(last=False)
+            self._current_size -= size_bytes
+            self._stats['evictions'] += 1
+    
+    def _purge_expired(self) -> None:
+        """
+        Remove all expired entries from the cache.
+        """
+        expired_keys = []
+        for key, (value, expiry_time, size_bytes) in self._cache.items():
+            if self._is_expired(expiry_time):
+                expired_keys.append(key)
+        
+        for key in expired_keys:
+            self._remove_entry(key)
+            self._stats['expirations'] += 1
+    
+    def get(self, key: Any, default: Any = None) -> Any:
+        """
+        Get a value from the cache.
+        
+        Args:
+            key: The key to look up.
+            default: Value to return if key is not found or expired.
+            
+        Returns:
+            The cached value if found and not expired, otherwise default.
+        """
+        with self._lock:
+            self._purge_expired()
+            
+            if key in self._cache:
+                value, expiry_time, size_bytes = self._cache[key]
+                
+                if self._is_expired(expiry_time):
+                    self._remove_entry(key)
+                    self._stats['expirations'] += 1
+                    self._stats['misses'] += 1
+                    return default
+                
+                # Move to end (most recently used)
+                self._cache.move_to_end(key)
+                self._stats['hits'] += 1
+                return value
+            else:
+                self._stats['misses'] += 1
+                return default
+    
+    def put(self, key: Any, value: Any, ttl: Optional[float] = None) -> None:
+        """
+        Put a value into the cache.
+        
+        Args:
+            key: The key to store the value under.
+            value: The value to store.
+            ttl: Time-to-live in seconds for this specific entry.
+                 If None, uses default_ttl.
+        """
+        with self._lock:
+            self._purge_expired()
+            
+            size_bytes = self._size_func(value)
+            
+            # If key already exists, remove it first
+            if key in self._cache:
+                self._remove_entry(key)
+            
+            # Determine expiry time
+            if ttl is not None:
+                expiry_time = time.time() + ttl
+            elif self.default_ttl is not None:
+                expiry_time = time.time() + self.default_ttl
+            else:
+                expiry_time = None
+            
+            # Add new entry
+            self._cache[key] = (value, expiry_time, size_bytes)
+            self._current_size += size_bytes
+            self._stats['insertions'] += 1
+            
+            # Evict if over size limit
+            self._evict_lru()
+    
+    def delete(self, key: Any) -> bool:
+        """
+        Delete a key from the cache.
+        
+        Args:
+            key: The key to delete.
+            
+        Returns:
+            True if the key was found and deleted, False otherwise.
+        """
+        with self._lock:
+            if key in self._cache:
+                self._remove_entry(key)
+                self._stats['deletions'] += 1
+                return True
+            return False
+    
+    def clear(self) -> None:
+        """
+        Clear all entries from the cache.
+        """
+        with self._lock:

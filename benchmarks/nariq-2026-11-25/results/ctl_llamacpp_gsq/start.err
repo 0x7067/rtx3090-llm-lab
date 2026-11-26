@@ -1,0 +1,63 @@
+Unable to find image 'ghcr.io/ggml-org/llama.cpp@sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00' locally
+ghcr.io/ggml-org/llama.cpp@sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00: Pulling from ggml-org/llama.cpp
+5a7813e071bf: Pulling fs layer
+a102f36d092c: Pulling fs layer
+05ec76e31584: Pulling fs layer
+398182656c47: Pulling fs layer
+73389fbd088f: Pulling fs layer
+cbb9175a9bc5: Pulling fs layer
+3d6ab8c799cd: Pulling fs layer
+7209097bfb98: Pulling fs layer
+545a3ada5b6b: Pulling fs layer
+3dd6d441e93f: Pulling fs layer
+1a373b79ae4d: Pulling fs layer
+c6ab647db1f5: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+7209097bfb98: Waiting
+545a3ada5b6b: Waiting
+1a373b79ae4d: Waiting
+73389fbd088f: Waiting
+3dd6d441e93f: Waiting
+cbb9175a9bc5: Waiting
+c6ab647db1f5: Waiting
+3d6ab8c799cd: Waiting
+4f4fb700ef54: Waiting
+398182656c47: Waiting
+a102f36d092c: Verifying Checksum
+a102f36d092c: Download complete
+398182656c47: Verifying Checksum
+398182656c47: Download complete
+73389fbd088f: Download complete
+5a7813e071bf: Download complete
+3d6ab8c799cd: Verifying Checksum
+3d6ab8c799cd: Download complete
+7209097bfb98: Verifying Checksum
+7209097bfb98: Download complete
+5a7813e071bf: Pull complete
+545a3ada5b6b: Verifying Checksum
+545a3ada5b6b: Download complete
+a102f36d092c: Pull complete
+05ec76e31584: Download complete
+05ec76e31584: Pull complete
+398182656c47: Pull complete
+73389fbd088f: Pull complete
+1a373b79ae4d: Verifying Checksum
+1a373b79ae4d: Download complete
+c6ab647db1f5: Verifying Checksum
+c6ab647db1f5: Download complete
+4f4fb700ef54: Verifying Checksum
+4f4fb700ef54: Download complete
+3dd6d441e93f: Verifying Checksum
+3dd6d441e93f: Download complete
+cbb9175a9bc5: Verifying Checksum
+cbb9175a9bc5: Download complete
+cbb9175a9bc5: Pull complete
+3d6ab8c799cd: Pull complete
+7209097bfb98: Pull complete
+545a3ada5b6b: Pull complete
+3dd6d441e93f: Pull complete
+1a373b79ae4d: Pull complete
+c6ab647db1f5: Pull complete
+4f4fb700ef54: Pull complete
+Digest: sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00
+Status: Downloaded newer image for ghcr.io/ggml-org/llama.cpp@sha256:c4348afb91499b10fad12f92626c7a8ca8b69d6475d10c793b810cb61237ce00

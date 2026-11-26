@@ -1,0 +1,31 @@
+--spec-draft-prio, --prio-draft N       set draft process/thread priority : 0-normal, 1-medium, 2-high,
+--spec-draft-poll, --poll-draft <0|1>   Use polling to wait for draft model work (default: same as --poll)
+--spec-draft-prio-batch, --prio-batch-draft N
+--spec-draft-poll-batch, --poll-batch-draft <0|1>
+--spec-draft-n-max N                    number of tokens to draft for speculative decoding (default: 3)
+--spec-draft-n-min N                    minimum number of draft tokens to use for speculative decoding
+--spec-draft-p-split, --draft-p-split P
+--spec-draft-p-min, --draft-p-min P     minimum speculative decoding probability (greedy) (default: 0.00)
+--spec-type none,draft-simple,draft-eagle3,draft-mtp,draft-dflash,draft-dspark,draft-dflash2,draft-lilicorr,ngram-simple,ngram-map-k,ngram-map-k4v,ngram-mod,ngram-cache
+--spec-ngram-mod-n-min N                minimum number of ngram tokens to use for ngram-based speculative
+--spec-ngram-mod-n-max N                maximum number of ngram tokens to use for ngram-based speculative
+--spec-ngram-mod-n-match N              ngram-mod lookup length (default: 24)
+--spec-ngram-simple-size-n N            ngram size N for ngram-simple speculative decoding, length of lookup
+--spec-ngram-simple-size-m N            ngram size M for ngram-simple speculative decoding, length of draft
+--spec-ngram-simple-min-hits N          minimum hits for ngram-simple speculative decoding (default: 1)
+--spec-ngram-map-k-size-n N             ngram size N for ngram-map-k speculative decoding, length of lookup
+--spec-ngram-map-k-size-m N             ngram size M for ngram-map-k speculative decoding, length of draft
+--spec-ngram-map-k-min-hits N           minimum hits for ngram-map-k speculative decoding (default: 1)
+--spec-ngram-map-k4v-size-n N           ngram size N for ngram-map-k4v speculative decoding, length of lookup
+--spec-ngram-map-k4v-size-m N           ngram size M for ngram-map-k4v speculative decoding, length of draft
+--spec-ngram-map-k4v-min-hits N         minimum hits for ngram-map-k4v speculative decoding (default: 1)
+--draft, --draft-n, --draft-max N       the argument has been removed. use --spec-draft-n-max or
+                                        --spec-ngram-mod-n-max
+--draft-min, --draft-n-min N            the argument has been removed. use --spec-draft-n-min or
+                                        --spec-ngram-mod-n-min
+--spec-ngram-size-n N                   the argument has been removed. use the respective
+                                        --spec-ngram-*-size-n or --spec-ngram-mod-n-match
+--spec-ngram-size-m N                   the argument has been removed. use the respective
+                                        --spec-ngram-*-size-m
+--spec-ngram-min-hits N                 the argument has been removed. use the respective
+                                        --spec-ngram-*-min-hits

@@ -1,0 +1,161 @@
+[
+  {
+    "arm": "nariq_3p0",
+    "status": "ok",
+    "quality_full": 54,
+    "quality_score": 54.0,
+    "quality_attempted": 54,
+    "by_tier": {
+      "coding": "20/20",
+      "extraction": "6/6",
+      "reasoning": "2/2",
+      "relevance": "2/2",
+      "retrieval": "6/6",
+      "tool_replay": "16/16",
+      "transcript_qa": "2/2"
+    },
+    "speed:short-prose": {
+      "prompt_tokens": 99,
+      "completion_tokens": 512,
+      "ttft_s": 0.336,
+      "prefill_tok_s": 294.6,
+      "decode_tok_s": 42.56
+    },
+    "speed:short-code": {
+      "prompt_tokens": 103,
+      "completion_tokens": 512,
+      "ttft_s": 0.332,
+      "prefill_tok_s": 310.0,
+      "decode_tok_s": 42.44
+    },
+    "speed:ctx-64k": {
+      "prompt_tokens": 63265,
+      "completion_tokens": 512,
+      "ttft_s": 60.975,
+      "prefill_tok_s": 1037.6,
+      "decode_tok_s": 29.14
+    },
+    "speed:ctx-120k": {
+      "prompt_tokens": 119235,
+      "completion_tokens": 512,
+      "ttft_s": 137.757,
+      "prefill_tok_s": 865.5,
+      "decode_tok_s": 23.63
+    },
+    "speed:concurrent-4": {
+      "completion_tokens": 2048,
+      "aggregate_tok_s": 40.34
+    },
+    "host_min_available_gib": 35.5,
+    "gpu_peak_used_mib": 22348,
+    "container_peak_mem_gib": 14.7,
+    "gpu_peak_temp_c": 78,
+    "gpu_peak_power_w": 303.4
+  },
+  {
+    "arm": "nariq_2p5",
+    "status": "ok",
+    "quality_full": 53,
+    "quality_score": 53.0,
+    "quality_attempted": 54,
+    "by_tier": {
+      "coding": "20/20",
+      "extraction": "6/6",
+      "reasoning": "2/2",
+      "relevance": "2/2",
+      "retrieval": "5/6",
+      "tool_replay": "16/16",
+      "transcript_qa": "2/2"
+    },
+    "speed:short-prose": {
+      "prompt_tokens": 99,
+      "completion_tokens": 512,
+      "ttft_s": 0.348,
+      "prefill_tok_s": 284.4,
+      "decode_tok_s": 44.37
+    },
+    "speed:short-code": {
+      "prompt_tokens": 103,
+      "completion_tokens": 512,
+      "ttft_s": 0.336,
+      "prefill_tok_s": 306.2,
+      "decode_tok_s": 44.47
+    },
+    "speed:ctx-64k": {
+      "prompt_tokens": 63265,
+      "completion_tokens": 512,
+      "ttft_s": 61.176,
+      "prefill_tok_s": 1034.1,
+      "decode_tok_s": 30.03
+    },
+    "speed:ctx-120k": {
+      "prompt_tokens": 119235,
+      "completion_tokens": 512,
+      "ttft_s": 137.683,
+      "prefill_tok_s": 866.0,
+      "decode_tok_s": 23.29
+    },
+    "speed:concurrent-4": {
+      "completion_tokens": 2048,
+      "aggregate_tok_s": 42.27
+    },
+    "host_min_available_gib": 35.3,
+    "gpu_peak_used_mib": 20746,
+    "container_peak_mem_gib": 12.1,
+    "gpu_peak_temp_c": 79,
+    "gpu_peak_power_w": 302.76
+  },
+  {
+    "arm": "ctl_llamacpp_gsq",
+    "status": "ok",
+    "quality_full": 54,
+    "quality_score": 54.0,
+    "quality_attempted": 54,
+    "by_tier": {
+      "coding": "20/20",
+      "extraction": "6/6",
+      "reasoning": "2/2",
+      "relevance": "2/2",
+      "retrieval": "6/6",
+      "tool_replay": "16/16",
+      "transcript_qa": "2/2"
+    },
+    "speed:short-prose": {
+      "prompt_tokens": 98,
+      "completion_tokens": 512,
+      "ttft_s": 0.513,
+      "prefill_tok_s": 191.0,
+      "decode_tok_s": 57.29
+    },
+    "speed:short-code": {
+      "prompt_tokens": 102,
+      "completion_tokens": 512,
+      "ttft_s": 0.526,
+      "prefill_tok_s": 193.9,
+      "decode_tok_s": 65.39
+    },
+    "speed:ctx-64k": {
+      "prompt_tokens": 63264,
+      "completion_tokens": 512,
+      "ttft_s": 64.436,
+      "prefill_tok_s": 981.8,
+      "decode_tok_s": 48.24
+    },
+    "speed:ctx-120k": {
+      "prompt_tokens": 119234,
+      "completion_tokens": 512,
+      "ttft_s": 149.269,
+      "prefill_tok_s": 798.8,
+      "decode_tok_s": 36.55
+    },
+    "speed:concurrent-4": {
+      "completion_tokens": 2048,
+      "aggregate_tok_s": 50.0
+    },
+    "host_min_available_gib": 35.5,
+    "gpu_peak_used_mib": 22120,
+    "container_peak_mem_gib": 10.7,
+    "gpu_peak_temp_c": 78,
+    "gpu_peak_power_w": 300.12
+  }
+]

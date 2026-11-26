@@ -1,0 +1,7 @@
+== nariq_3p0 2026-11-25T12:57:04Z
+   nariq_3p0: ok
+== nariq_2p5 2026-11-25T13:19:08Z
+   nariq_2p5: ok
+== ctl_llamacpp_gsq 2026-11-25T13:40:47Z
+   ctl_llamacpp_gsq: ok
+done; see /data/docker-services/rtx3090-llm-lab/benchmarks/nariq-2026-11-25/results
